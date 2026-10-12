@@ -207,18 +207,25 @@ func _test_low_passages() -> void:
 	await _reset()
 	var low_roof := _add_box(Vector3(0, 0.9, -3), Vector3(3, 0.2, 4))
 	Input.action_press("move_forward")
-	var lowered_to_prone_from_stand := false
-	for i in 120:
+	var previous_posture := character.get_posture()
+	var adjacent := true
+	saw_crouch = false
+	saw_prone = false
+	for i in 400:
 		await _frames(1)
-		lowered_to_prone_from_stand = lowered_to_prone_from_stand or character.get_posture() == 2
-	_expect(not lowered_to_prone_from_stand, "handmatig staan activeert nooit automatisch lig")
-	_expect(character.position.z > -1.1, "staande voorkeur blokkeert vóór een doorgang die lig vereist")
+		var current := character.get_posture()
+		adjacent = adjacent and absi(current - previous_posture) <= 1
+		previous_posture = current
+		saw_crouch = saw_crouch or current == 1
+		saw_prone = saw_prone or current == 2
+	_expect(saw_crouch and saw_prone and adjacent and character.position.z < -5.9, "staande voorkeur passeert een ligingang automatisch via een echte kruiptussenhouding")
+	_expect(character.get_posture() == 0 and str(character.get_debug_state().get("manual_posture", "")) == "staan", "automatische ligingang herstelt de hoogste veilige staande voorkeur")
 	await _reset()
 	character.request_posture(1)
 	await _frames(3)
 	Input.action_press("move_forward")
-	var previous_posture := character.get_posture()
-	var adjacent := true
+	previous_posture = character.get_posture()
+	adjacent = true
 	saw_crouch = true
 	saw_prone = false
 	for i in 500:
@@ -323,39 +330,47 @@ func _test_camera() -> void:
 
 
 func _test_main_arena() -> void:
-	var main = load("res://scenes/main.tscn").instantiate()
-	main.capture_mouse_on_start = false
-	root.add_child(main)
-	var actor = main.get_node("Characters/AtlasA")
-	await _frames(8)
-	actor.global_position = Vector3(-6, 0.05, -3.8)
-	actor.velocity = Vector3.ZERO
-	actor.reset_physics_interpolation()
-	await _frames(8)
-	Input.action_press("move_forward")
-	var saw_crouch := false
-	var saw_prone := false
-	var adjacent := true
-	var previous: int = actor.get_posture()
-	var chose_crouch := false
-	for i in 850:
-		await _frames(1)
-		var current: int = actor.get_posture()
-		if actor.global_position.z < -6.5 and not chose_crouch:
-			actor.request_posture(1)
-			chose_crouch = true
-		adjacent = adjacent and absi(current - previous) <= 1
-		previous = current
-		saw_crouch = saw_crouch or current == 1
-		saw_prone = saw_prone or current == 2
-		if actor.global_position.z < -13.4:
-			break
-	Input.action_release("move_forward")
-	await _frames(30)
-	_expect(saw_crouch and saw_prone and adjacent and actor.global_position.z < -13.4 and actor.get_posture() == 1, "werkelijke arena: auto kruip, handmatige keuze voor ligroute en herstel naar kruip")
-	print("MEASURE: actual arena R1 final %s; crouch %s / prone %s / adjacent %s" % [str(actor.global_position), str(saw_crouch), str(saw_prone), str(adjacent)])
-	main.queue_free()
-	await process_frame
+	for choose_manual_crouch in [false, true]:
+		var main = load("res://scenes/main.tscn").instantiate()
+		main.capture_mouse_on_start = false
+		root.add_child(main)
+		var actor = main.get_node("Characters/AtlasA")
+		await _frames(8)
+		actor.global_position = Vector3(-6, 0.05, -3.8)
+		actor.velocity = Vector3.ZERO
+		actor.reset_physics_interpolation()
+		await _frames(8)
+		Input.action_press("move_forward")
+		var saw_crouch := false
+		var saw_prone := false
+		var adjacent := true
+		var previous: int = actor.get_posture()
+		var transitions: Array[int] = [previous]
+		var chose_crouch := false
+		var unexpected_slide := false
+		for i in 850:
+			await _frames(1)
+			var current: int = actor.get_posture()
+			if choose_manual_crouch and actor.global_position.z < -6.5 and not chose_crouch:
+				actor.request_posture(1)
+				chose_crouch = true
+			adjacent = adjacent and absi(current - previous) <= 1
+			if current != previous:
+				transitions.append(current)
+			previous = current
+			saw_crouch = saw_crouch or current == 1
+			saw_prone = saw_prone or current == 2
+			var state: Dictionary = actor.get_debug_state()
+			unexpected_slide = unexpected_slide or bool(state.get("slide_pending", false)) or bool(state.get("slide_active", false))
+			if actor.global_position.z < -13.4 and current == (1 if choose_manual_crouch else 0):
+				break
+		Input.action_release("move_forward")
+		await _frames(30)
+		_expect(saw_crouch and saw_prone and adjacent and actor.global_position.z < -13.4 and actor.get_posture() == (1 if choose_manual_crouch else 0), "werkelijke arena: kruip-ligroute herstelt %s" % ("handmatige kruip" if choose_manual_crouch else "automatisch staan zonder handmatige injectie"))
+		_expect(not unexpected_slide and str(actor.get_debug_state().get("manual_posture", "")) == ("kruipen" if choose_manual_crouch else "staan"), "arena-route bewaart de houdingvoorkeur en geeft geen slide")
+		print("MEASURE: actual arena R1 manualC %s final %s; postures %s; adjacent %s" % [choose_manual_crouch, str(actor.global_position), str(transitions), adjacent])
+		main.queue_free()
+		await process_frame
 
 
 func _jump_once() -> Dictionary:

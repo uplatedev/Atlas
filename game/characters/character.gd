@@ -107,13 +107,13 @@ enum Posture { STAND, CROUCH, PRONE }
 @export_range(0.0, 1.0, 0.01, "suffix:m") var crouch_step_height: float = 0.35
 ## Camerahoogte boven de voeten bij kruipen in meters; blijft binnen de vrije hoogte.
 @export_range(0.05, 3.0, 0.01, "suffix:m") var crouch_eye_height: float = 0.95
-## Maximale slide na Ctrl-kruip tijdens een sprong in seconden; 0 schakelt slides uit. Gewoon kruipen op de grond geeft geen slide.
-@export_range(0.0, 2.0, 0.01, "suffix:s") var crouch_slide_duration: float = 0.45
-## Horizontale slidewrijving in m/s² vanaf de landing; hoger verliest sneller vaart zonder snelheidsbonus.
-@export_range(0.0, 100.0, 0.5, "suffix:m/s²") var crouch_slide_deceleration: float = 18.0
+## Maximale slide na Ctrl tijdens een sprong in seconden; langer schuift verder. Daarna automatisch de hoogste veilige houding; 0 schakelt slides uit.
+@export_range(0.0, 2.0, 0.01, "suffix:s") var crouch_slide_duration: float = 0.75
+## Horizontale slidewrijving in m/s² vanaf de landing; lager bewaart meer afzetvaart, zonder extra snelheid te geven.
+@export_range(0.0, 100.0, 0.5, "suffix:m/s²") var crouch_slide_deceleration: float = 10.0
 ## Maximale richtingsbijsturing tijdens de slide in graden/s; bewegen versnelt de slide niet.
 @export_range(0.0, 180.0, 1.0, "suffix:°/s") var crouch_slide_steering: float = 35.0
-## Onder deze horizontale snelheid in m/s eindigt de slide in gewone kruip; de ingestelde duur blijft de bovengrens.
+## Onder deze horizontale snelheid in m/s eindigt de slide en richt de capsule veilig op; de ingestelde duur blijft de bovengrens.
 @export_range(0.0, 5.0, 0.1, "suffix:m/s") var crouch_slide_end_speed: float = 0.8
 ## Lichte richtingsbijsturing bij luchtkruip in m/s²; bestaande afzetvaart blijft behouden, binnen hetzelfde afzetbudget.
 @export_range(0.0, 10.0, 0.05, "suffix:m/s²") var crouch_air_acceleration: float = 0.75
@@ -639,9 +639,8 @@ func get_posture() -> int:
 ## Vraag een veilige handmatige houding. Expliciet liggen mag rechtstreeks; hoger worden gaat één stap tegelijk.
 func request_posture(posture: int) -> void:
 	_manual_posture = clampi(posture, Posture.STAND, Posture.PRONE)
-	if _manual_posture != Posture.CROUCH:
-		_slide_ground_exit_pending = _slide_active and get_camera_grounded()
-		_cancel_slide()
+	_slide_ground_exit_pending = _slide_ground_exit_pending or (_slide_active and get_camera_grounded())
+	_cancel_slide()
 	_auto_posture_demand = _manual_posture
 	_auto_probe_distance = 0.0
 	_manual_changed_this_frame = true
@@ -652,9 +651,10 @@ func _read_posture_input(input_allowed: bool) -> void:
 	if not input_allowed:
 		return
 	if InputMap.has_action("crouch") and Input.is_action_just_pressed("crouch"):
-		var target := Posture.STAND if _manual_posture == Posture.CROUCH and _posture != Posture.PRONE else Posture.CROUCH
+		var interrupted_slide := _slide_pending or _slide_active
+		var target := Posture.CROUCH if interrupted_slide else (Posture.STAND if _manual_posture == Posture.CROUCH and _posture != Posture.PRONE else Posture.CROUCH)
 		request_posture(target)
-		_slide_requested_this_frame = target == Posture.CROUCH and not get_camera_grounded()
+		_slide_requested_this_frame = not interrupted_slide and target == Posture.CROUCH and not get_camera_grounded()
 	elif InputMap.has_action("prone") and Input.is_action_just_pressed("prone"):
 		request_posture(Posture.PRONE)
 	elif Input.is_action_just_pressed("jump") and _posture > Posture.STAND:
@@ -665,6 +665,8 @@ func _read_posture_input(input_allowed: bool) -> void:
 func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 	_posture_changed_this_frame = false
 	var target := maxi(_manual_posture, _auto_posture_demand)
+	if _slide_pending or _slide_active:
+		target = maxi(target, Posture.CROUCH)
 	if target > _posture:
 		var next := Posture.PRONE if _manual_posture == Posture.PRONE else _posture + 1
 		if _posture_transition_clear(next):
@@ -695,6 +697,11 @@ func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 	# Alleen deze nieuwe druk in echte vlucht armt; een later passende vorm niet.
 	if _slide_requested_this_frame and not get_camera_grounded() and _posture == Posture.CROUCH and _manual_posture == Posture.CROUCH and _shape_fits(Posture.CROUCH, global_transform):
 		_slide_pending = crouch_slide_duration > 0.0
+		if _slide_pending:
+			# Lucht-Ctrl kiest een tijdelijke beweging, geen blijvende kruipvoorkeur.
+			_manual_posture = Posture.STAND
+			_auto_posture_demand = Posture.STAND
+			_auto_probe_distance = 0.0
 	_manual_changed_this_frame = false
 	_slide_requested_this_frame = false
 
@@ -955,10 +962,10 @@ func _physics_process(delta: float) -> void:
 	_actual_speed = real_horizontal.length()
 	_movement_direction = real_horizontal.normalized()
 	if _slide_active and (not get_camera_grounded() or _actual_speed < 0.02):
-		_cancel_slide()
+		_finish_slide()
 	if _slide_pending and not was_grounded and is_on_floor():
 		_slide_pending = false
-		if _posture == Posture.CROUCH and _manual_posture == Posture.CROUCH:
+		if _posture == Posture.CROUCH:
 			var landing_velocity := Vector3(velocity.x, 0.0, velocity.z).limit_length(_air_speed_cap)
 			velocity.x = landing_velocity.x
 			velocity.z = landing_velocity.z
@@ -1082,8 +1089,7 @@ func _update_slide(input: Vector2, delta: float) -> void:
 	_air_speed_cap = minf(_air_speed_cap, horizontal.length())
 	_slide_time_left = maxf(_slide_time_left - delta, 0.0)
 	if _slide_time_left <= 0.00001 or horizontal.length() <= crouch_slide_end_speed:
-		_slide_active = false
-		_slide_time_left = 0.0
+		_finish_slide()
 		_limit_ground_velocity()
 
 
@@ -1101,6 +1107,17 @@ func _cancel_slide() -> void:
 	_slide_pending = false
 	_slide_active = false
 	_slide_time_left = 0.0
+
+
+func _finish_slide() -> void:
+	_cancel_slide()
+	_auto_posture_demand = _manual_posture
+	_auto_probe_distance = 0.0
+	_restore_clear_time = 0.0
+	_slide_ground_exit_pending = _slide_ground_exit_pending or get_camera_grounded()
+	# Volgend physicsframe oprichten zodra volume en route veilig zijn. In de
+	# lucht blijft de automatische oprichting wachten op nieuwe grondsteun.
+	_manual_changed_this_frame = get_camera_grounded()
 
 
 func _start_jump() -> void:
@@ -1287,28 +1304,28 @@ func _update_auto_posture_demand(input: Vector2, delta: float) -> void:
 	if input.is_zero_approx() or _manual_posture == Posture.PRONE:
 		_auto_posture_demand = _manual_posture
 		return
-	# Automatisch lig vraagt vooraf handmatig kruip; handmatig staan autoriseert
-	# alleen kruip. Een eerdere lagere vraag blijft tot dezelfde route weer vrij is.
-	var candidate := Posture.CROUCH if _manual_posture == Posture.STAND else Posture.PRONE
+	# Eén gedeelde vooruitblik bewaakt zowel verlagen als herstellen. Zo kan
+	# automatische kruip verder naar lig zonder een te late tweede ingangstest.
 	var direction := _input_direction.normalized()
-	var probe_distance := maxf(_auto_probe_distance, _posture_probe_distance(candidate, direction, delta))
+	var probe_distance := maxf(_auto_probe_distance, _posture_probe_distance(Posture.PRONE, direction, delta))
 	var approach := direction * probe_distance
 	var previous := _auto_posture_demand
 	_auto_posture_demand = _manual_posture
-	if _clearance_path_passable(_manual_posture, approach):
-		return
-	var passable_lower := false
-	for option in _clearance_motion_options(candidate, approach):
-		if not _clearance_path_passable(candidate, option):
-			continue
-		if _clearance_path_passable(_manual_posture, option):
+	for candidate in range(_manual_posture, Posture.PRONE + 1):
+		for option in _clearance_motion_options(candidate, approach):
+			if not _clearance_path_passable(candidate, option):
+				continue
+			# De vraag mag twee stappen lager liggen; de echte collider verandert
+			# hoogstens één aangrenzende automatische houding per physicsframe.
+			var next := mini(candidate, _posture + 1)
+			if candidate > _posture and not _posture_transition_clear(next):
+				continue
+			_auto_posture_demand = candidate
+			if candidate > _manual_posture:
+				_auto_probe_distance = probe_distance
 			return
-		passable_lower = true
-	if passable_lower and (candidate <= _posture or _posture_transition_clear(candidate)):
-		_auto_posture_demand = candidate
-		_auto_probe_distance = probe_distance
-	elif previous > _manual_posture:
-		_auto_posture_demand = mini(previous, candidate)
+	if previous > _manual_posture:
+		_auto_posture_demand = previous
 		_auto_probe_distance = probe_distance
 
 
