@@ -15,6 +15,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Check-Atlas.ps1
 
 De tijdelijke execution policy geldt alleen voor die aanroep. De editor opent [game/project.godot](game/project.godot). Met F5 start je een leeg venster; F8 stopt het project. De controle importeert de bronnen en start de hoofdscene kort zonder venster. Er is nog geen speelbaar Character.
 
+Deze Atlas-map is de vaste lokale testplek. Bij ieder technisch gecontroleerd, testbaar checkpoint zet de uitvoerende agent hier de geselecteerde bronversie klaar en vermeldt wat je kunt proberen. Je blijft hetzelfde `game/project.godot` openen. Ook een nog te beoordelen werkbranchproef wordt zo lokaal beschikbaar; die hoeft daarvoor nog niet naar main. De agent bewaart jouw editorwijzigingen en lokale instellingen en verandert een lopende proef niet tussendoor. Zie [de werkwijze](docs/TESTING.md#vaste-lokale-testplek).
+
 ## Samen werken
 
 Vertel een agent gewoon wat je wilt ervaren, bouwen of veranderen. Je hoeft geen taaklabels, bestandsnamen of administratie aan te leveren. De agent onderhoudt de passende context, vraagt door bij wezenlijke keuzes en volgt [AGENTS.md](AGENTS.md).

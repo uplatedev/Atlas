@@ -46,6 +46,8 @@ De documentatie-/besprekingstaak is gereserveerd in main-commit `28f7ad14515a17e
 
 Scope: twee plaatsbare, individueel instelbare capsules volgens [de Character-beschrijving](topics/character.md), met naam, loop-/sprintinstellingen, begrensde gecombineerde input, richtingdebug, opstap, drie snelheidsafhankelijke sprongkarakters, beperkte luchtsturing en zoomcamera tot first person. Daarbij een klein meetbaar prototypelevel met echte rastertextures, twee lampen en sunset-skybox. Geen LAN, Steam, IK of klimarchitectuur in deze eerste stap.
 
+Oplevering: zet ieder testbaar checkpoint volgens [de lokale testwerkwijze](TESTING.md#vaste-lokale-testplek) klaar in de vaste Atlas-checkout. Alleen een remote-branch of verwijzing naar een tijdelijke worktree is geen volledige lokale testoverdracht. Houd die versie tijdens de gebruikersproef vast en bewaar diens eigen editorwijzigingen.
+
 - **Gebouwd:** nog niets; alleen de beschreven fundering is beschikbaar.
 - **Technisch gecontroleerd:** nog niet uitgevoerd. De gerichte [proefinstructies](TESTING.md#lokale-character-proef-nog-niet-gebouwd) liggen klaar.
 - **Door de gebruiker beoordeeld:** de gewenste eigenschappen zijn besproken; editorbediening, cameragedrag, bewegen, sprongen en uiterlijk moeten na de bouw nog worden geprobeerd.

@@ -46,6 +46,18 @@ Controleer dat Atlas geopend is, open `scenes/main.tscn` en bekijk de ene neutra
 
 Bij wijzigingen aan de helpers: controleer ook een ontbrekend pad, versieverschil, ongeldige hoofdscene en engine-/projectpaden met spaties. Gebruik tijdelijke kopieën voor foutproeven en herstel lokale instellingen. Maak geen scaffold-unittests die alleen de bestanden nabootsen.
 
+## Vaste lokale testplek
+
+De gebruiker opent steeds `game/project.godot` vanuit zijn vaste Atlas-checkout op de actieve computer. Bij ieder opgeleverd, technisch gecontroleerd testcheckpoint houdt de agent deze map bij. Tussentijdse onvoltooide edits blijven in de eigen ontwikkelworktree; tijdens een lopende menselijke proef blijft de geselecteerde versie vaststaan.
+
+De overdracht verloopt zo:
+
+1. Controleer en publiceer de samenhangende proef op de werkbranch volgens AGENTS. Noteer broncommit en korte handelingen voor de gebruiker. Een proef die nog menselijk oordeel nodig heeft, blijft op de werkbranch tot de vereiste acceptatie rond is.
+2. Controleer de actuele toestand van de vaste testcheckout én eventueel open Godot-project voordat bestanden veranderen. Bewaar wijzigingen aan scenes, instellingen en assets. Laat niet-opgeslagen editorwerk eerst opslaan; leid afwezigheid daarvan niet alleen uit een schone Git-status af. Niet stilzwijgend resetten, stashen, conflicten overschrijven of de editor sluiten.
+3. Zet de schone testcheckout op exact het geselecteerde gepushte checkpoint. Gebruik waar nodig een afzonderlijke lokale testbranch; een werkbranch kan niet tegelijk in de ontwikkelworktree en testcheckout uitgecheckt zijn. Meld de versieovergang. Behoud genegeerde lokale engine-instellingen en gebruikersbestanden. Bij bewaarwerk of conflicten blijft de huidige proef beschikbaar tot die veilig zijn opgelost.
+4. Controleer import/start op deze werkelijke testlocatie, vergelijk de bronversie en geef aan welke scene te openen en wat met F5 te proberen. Wanneer Godot nog openstaat, zorg voor een gecontroleerde herlaad-/heropenstap nadat het editorwerk is opgeslagen. De gebruiker hoeft niet zelf met branches of worktrees te werken.
+5. Na beoordeling volgt eventuele main-integratie volgens AGENTS. Houd de testplek bij die volgende overdracht opnieuw coherent. Een andere computer wordt niet vanzelf bijgewerkt; dat gebeurt in een actieve sessie op die machine. Een geselecteerde tweepc-testbuild blijft apart vaststaan zoals hieronder beschreven.
+
 ## Lokale Character-proef: nog niet gebouwd
 
 De [Character-fundering](topics/character.md) beschrijft de gewenste instellingen en aanpak. Deze controles zijn het plan voor de eerste implementatie; er zijn nog geen Character-testresultaten.

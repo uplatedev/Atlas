@@ -7,6 +7,7 @@ Bron: door de gebruiker opgedragen masterprompt, agentafspraken en Character-bes
 - Atlas moet prettig zijn om te spelen én om zelf content voor te maken.
 - De gebruiker praat vrijuit over doelen, ideeën en ervaringen. Agents onderhouden bruikbaar geheugen zonder administratiewerk terug te leggen bij hem.
 - De Godot-editor is onderdeel van het product. Een Character heeft één herkenbare ingang: plaatsen, aanklikken en begrijpelijk instellen. Interne samenwerking blijft overzichtelijk vanuit die ingang.
+- De gebruiker moet een testbaar checkpoint direct vanuit zijn vaste lokale Atlas-map kunnen proberen. De uitvoerende agent houdt die testplek bij per opgeleverd checkpoint, inclusief nog te beoordelen werkbranchproeven, en bewaart gebruikerswijzigingen. De gebruiker hoeft geen worktrees of branches te beheren. Dit is onderdeel van actieve uitvoering, geen ongevraagde achtergrondsynchronisatie.
 - Characters, vrienden en blokken moeten plaatsbaar en varieerbaar worden zonder gewone programmeerhandelingen of losse netwerkcode.
 - Twee instances kunnen onafhankelijk verschillen. Gedeelde Resources mogen een individuele wijziging niet ongemerkt op andere Characters toepassen.
 - Bij een wezenlijk nieuw systeem eerst samen ervaring, editorbediening en kleinste bewijsbare proef bespreken. Na bevestiging bouwen agents zelfstandig binnen de afgesproken grenzen.
