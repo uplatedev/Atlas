@@ -38,7 +38,9 @@ De gebruiker vraagt korte uitleg bij iedere instelbare eigenschap en afzonderlij
 
 Bij een geldige opstap automatisch lager worden als de huidige vorm niet past. Na de doorgang automatisch de hoogste veilige houding herstellen, met behoud van een handmatig gekozen kruip-/lighouding. De arena krijgt gerichte doorgangen om dit te proberen. De gemelde stapeling van sprintsprongsnelheid is in de bestaande proef gereproduceerd en moet worden verholpen.
 
-Vóór deze veranderingen wil de gebruiker grondig onderzoek en een movement-/cameravoorstel, inclusief snelheids-FOV en herstel of afnemende kracht bij opeenvolgende sprongen. [T-003](work/T-003.md) bevat het onderzoek, reproduceerbaar bewijs en de concrete voorgestelde afstelling. Krachtverlies, exacte waarden, Alt/Z en het bewegingsreferentiekader zijn voorstellen; ze zijn nog niet geïmplementeerd of als fundering bevestigd.
+De gebruiker heeft na het grondige movement-/cameraonderzoek het [T-003-voorstel](work/T-003.md) bevestigd voor implementatie. De volgende proef gebruikt geleidelijk krachtverlies bij herhaald springen, grondherstel, lichaamsrelatieve WASD, Alt voor sneak en Z voor liggen. De concrete waarden blijven afstelbare proefdefaults. Uitvoering en resultaten staan in [T-004](work/T-004.md).
+
+Hoofd-/kijkrichting en lichaamsrichting worden afzonderlijk bijgehouden voor een later zelfstandig bewegend hoofd. De hoofddraai ten opzichte van het lichaam is begrensd; bij die grens moet cameradraai afremmen. Dit vervangt geheel vrij rondkijken als het lichaam niet verder kan draaien. Binnen het bereik blijft kijken direct; het lichaam draait met de ingestelde limiet bij.
 
 ## Afgeronde bootstrap
 

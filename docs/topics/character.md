@@ -1,97 +1,55 @@
-# Character en eerste proeflevel
+# Character en lokale proef
 
-Bron: gebruikerswensen en vier beantwoorde besturingsvragen op 12 oktober 2026. Centraal beleid: [CONCEPT](../CONCEPT.md), [besluiten](../DECISIONS.md) en [AGENTS](../../AGENTS.md). Status en eigenaarschap staan uitsluitend in [WORK](../WORK.md); herhaalbare proeven staan in [TESTING](../TESTING.md#lokale-character-proef).
+Eén plaatsbare Character-scene als ingang voor naam, uiterlijk, movement, houdingen, springen en camera. Het goedgekeurde onderzoek staat in [T-003](../work/T-003.md); uitvoering en bewijs in [T-004](../work/T-004.md). [WORK](../WORK.md) bewaart centrale status en bronversie; [TESTING](../TESTING.md) beschrijft de herhaalbare controles. Het nieuwe speelgevoel wacht nog op menselijke beoordeling.
 
-Dit is de fundering en editorwerkwijze van de eerste lokale proef op de T-002-werkbranch. `game/characters/Character.tscn`, de bewegingscode, `game/levels/PrototypeLevel.tscn` en de hoofdscene zijn gebouwd. Technische resultaten en nog benodigd gebruikersoordeel staan in WORK; het speelgevoel is nog niet geaccepteerd voor main.
+## Nieuwe proef: movement, hoofd en houdingen
 
-Nieuwe feedback is onderzocht in [T-003 — movement, camera en houdingen](../work/T-003.md). De bestaande sprintsprong stapelt snelheid bij onmiddellijk opnieuw springen; dit is gereproduceerd maar nog niet gerepareerd. Hieronder beschreven T-002-gedrag is dus geen bewijs dat herhaalde sprongen veilig begrensd zijn. T-003 bevat primaire bronnen, diagnosebestanden en een concreet voorstel vóór verdere gameplaywijzigingen.
+WASD beweegt relatief aan de werkelijk bereikte lichaamsrichting. Het lichaam volgt de hoofd-/camerarichting met de draaisnelheid van zijn beweging. Hoofddraai is relatief aan het lichaam begrensd: voorlopig ±85°, met zachte afremming vanaf 60°. Terugkijken reageert direct. De groene pijl toont het hoofd, geel het lichaam, blauw input en oranje de werkelijke beweging. Dit is voorlopig de koppeling voor een later apart bewegend hoofdmodel.
 
-## Door de gebruiker bevestigd
+Ctrl schakelt kruipen aan/uit, Z kruip/lig, Alt vasthouden sneak en Shift vasthouden sprint. Alt heeft staand voorrang op Shift. Sneak vertraagt staand bewegen; kruip en lig gebruiken hun eigen capsules en instellingen. Z vanuit staan gaat eerst naar kruip; vanuit lig gaat Ctrl eerst naar kruip. Een volgende druk kan verder, zolang de vorm past. De latere keuze tussen Ctrl vasthouden en aan/uit staat nog open als vervolginstelling; voor deze proef is aan/uit bevestigd.
 
-| Onderdeel | Gewenst gedrag |
+Kruip is een verticale capsule van 1.10 m; lig een horizontale capsule van 1.80 m lang en 0.70 m hoog. Bij geldige lage doorgangen verandert de houding automatisch via de aangrenzende vorm. Na voldoende vrije ruimte herstelt de hoogste veilige houding, maar een handmatige kruip-/ligkeuze blijft behouden. Botsing begrenst ook de lange ligcapsule tijdens draaien. Kruip/lig hebben in deze proef geen sprong; sneak heeft een lage sprong van 0.45 m, met een instelbare minimumhoogte.
+
+Instellingen blijven op de Character-root, met eigen Nederlandse uitleg per veld:
+
+| Groep | Zelf af te stellen |
 | --- | --- |
-| Vorm en naam | Voorlopig een capsule, met een eenvoudig instelbare naam boven het hoofd. |
-| Camera | Begin in third person. Scrollen zoomt in/uit; zoominstellingen zijn aanpasbaar in de editor. Helemaal inzoomen kan naar first person, met vrij zicht door het eigen Character. |
-| Besturing | WASD bewegen, muis kijken, Shift vasthouden voor sprint, spatie voor springen. Het Character draait mee met de horizontale camerarichting: A/D zijn zijwaarts en S is achteruit. |
-| Lopen | Instelbare snelheid, acceleratie en afremming. Vooruit het snelst, zijwaarts ertussenin, achteruit het langzaamst. De onduidelijke oorspronkelijke vergelijking is door de gebruiker zo verduidelijkt. |
-| Sprint | Eigen instelbare snelheid, acceleratie en afremming. Sprint mag ook zijwaarts en achteruit, met lagere snelheden dan vooruit. |
-| Gecombineerde input | Twee inputs mogen snelheden niet bovenop elkaar zetten. Diagonaal bewegen levert geen snelheidsbonus op. |
-| Debug | Richting bijhouden en zichtbaar maken in een debugweergave. |
-| Opstappen | Instelbare hoogte voor over lage obstakels stappen. |
-| Springen | Stilstand: hoge sprong. Lopen: middelhoge sprong. Sprint: lage sprong met extra afstand. De werkelijke snelheid bij het afzetten bepaalt de sprong, met beperkte luchtsturing. |
-| Level | Twee lampen met edge-/fillfunctie. Vloeren én muren gebruiken echte prototype-textures met strepen/raster die afstand leesbaar maken. Geen strepen uit losse geometrie of een procedureel lijnenpatroon in de levelcode. Skybox rond zonsondergang. |
+| Lopen / Sprint / Sneak | Snelheid, zij-/achterwaartse verhoudingen, acceleratie, afremming en draaisnelheid |
+| Kruipen / Liggen | Eigen beweging, opstap, capsulehoogte/-lengte, radius en ooghoogte |
+| Draaien en tegensturen | Stilstand-/luchtdraai en extra remmen bij tegengestelde input |
+| Springen | Vier hoogteprofielen, extra sprintbonus, onafhankelijke luchtacceleratie, zwaartekracht, randtolerantie en landingsbuffer |
+| Sprongvermoeidheid | Aan/uit, kosten, grondherstel en minimumkracht per sprongtype |
+| Botsing en automatisch herstellen | Staande capsule, opstap, vrije-ruimtemarge en herstelstabiliteit |
+| Camera: kijken en hoofd | X/Y-gevoeligheid, hoofd-yawgrens, zachte zones, verticale grenzen en beginkijkhoek |
+| Camera: zoom en botsing | Afstanden, zoomstap, first-personovergang, camera-volume en veilige volgingstijden |
+| Camera: beeldhoek | Verticale FOV voor beide views, snelheids-FOV en overgangstijden |
 
-Alle Character-instellingen moeten per instance kunnen verschillen. De afgesproken proef houdt twee Characters in dezelfde scene; aan één instance wijzigen mag de andere niet veranderen.
+De gedeelde vermoeidheid wordt groter na geslaagde sprongen en herstelt uitsluitend op de grond. Herhaald springen geeft lagere sprongen en minder extra sprintafstand. Gewone loopsnelheid blijft gelijk. Een sprongbonus kan ook met vermoeidheid uit nooit opnieuw op de vorige bonus stapelen. De debug toont krachtverlies en het vastgelegde snelheidsbudget.
 
-### Bevestigde vervolgwensen, nog niet gebouwd
+F4 schakelt de snelheids-FOV van de actieve instance aan/uit voor vergelijking; F3 schakelt debug. De camera bewaart gewenste zoom los van muurbotsing. First person verbergt alleen de eigen capsule/naam; andere instances blijven zichtbaar.
 
-Korte uitleg bij ieder instelbaar veld, afzonderlijke lichaamsdraaisnelheden per beweging en een direct reagerende camera. Sneak heeft eigen snelheid/acceleratie/rem/draai en een lage sprong voor een opstapje. Ctrl is inmiddels kruipen aan/uit, Shift blijft sprint; later vasthouden versus aan/uit instelbaar. Alt vasthouden voor sneak is voorlopig voorgesteld. Kruipen is een kortere verticale capsule; liggen een lage horizontale capsule. Beide hebben eigen instellingen; een character-model volgt later.
+De nieuwe `PostureTestArea` staat als normale levelinstance in `PrototypeLevel.tscn`. Route 1 rond x=-6 heeft een kruipopstap en opvolgende ligdoorgang; route 2 rond x=-12 een directe lage ingang; rechts staan een onmogelijke doorgang, smalle ligbocht en rembaan. Selecteer gewone blokken/CollisionShape3D in de editor om afmetingen samen te veranderen. De bestaande metertextures, twee lampen en sky blijven onderdeel van de arena.
 
-Alleen staan ↔ kruipen ↔ liggen, nooit staan rechtstreeks naar liggen. Een geldige opstap onder lage doorgang mag automatisch naar een passende lagere aangrenzende houding leiden. Na de doorgang automatisch veilig hoger worden, zonder handmatig gekozen kruip/lig te wissen. De arena krijgt daarvoor proefgevallen. Sprintjumpstapeling is verboden.
+## Zelf content plaatsen en aanpassen
 
-De gebruiker vraagt vóór bouwen onderzoek naar strak bewegingsgevoel, camera en snelheids-FOV, en naar herstel per sprongtype of zwakkere opeenvolgende sprongen. De volledige afstelling en afweging staan in T-003. Lichaamsrelatieve WASD, Alt/Z en geleidelijk krachtverlies zijn voorstellen ter beoordeling, geen bevestigde besturing. Bestaande contenthandelingen blijven hieronder staan; nieuwe instellingen worden pas na de goedgekeurde proef aan deze gebruiksaanwijzing toegevoegd.
+Open `game/scenes/main.tscn` en selecteer `Characters/AtlasA` of `AtlasB`. A gebruikt de proefdefaults; B heeft een andere naam, kleur, hogere snelheid, sterkere acceleratie/remming en andere draaisnelheden. Wijzig eigenschappen op de Character-root. Botsingsvorm, mesh, materiaal, naam en camera worden per instance bijgewerkt. Gedeelde Resources mogen de tweede instance niet ongemerkt veranderen.
 
-## Eenvoudige uitvoering binnen deze fundering
+Plaats `game/characters/Character.tscn` onder `Characters`, of dupliceer een bestaande instance. Geef naam, positie en settings; de hoofdscene verzamelt directe Character-children automatisch voor Tab. F5 speelt de hoofdscene, F8 stopt. Een losse Character-scene heeft geen eigen proefvloer.
 
-Eén plaatsbare `Character.tscn` als herkenbare ingang, met eenvoudige botsingsbesturing, capsulepresentatie, naamlabel, camera en debug. De eerste uitvoering gebruikt `CharacterBody3D` met capsulebotsing. De capsule maakt bewegingsgedrag snel testbaar en kan later een andere visuele voorstelling krijgen.
+De stand-, kruip- en ligcapsules houden hun voetzool als grondanker. Totale capsulehoogte/-lengte omvat beide ronde uiteinden en moet minstens twee keer de radius zijn. Atlas behoudt de radius bij een onmogelijke verhouding en vergroot de maat tot dat minimum; de Inspector waarschuwt. Houd het bereik staan hoger dan kruip hoger dan lig. Ooghoogte en cameravolume worden veilig binnen de ruimte begrensd.
 
-Inspectorgroepen op de Character-root:
+Vooruit > zijwaarts > achteruit is de standaardvolgorde voor iedere beweging. Twee inputs tellen geen snelheden op. Alle houdingen starten met opstapgrens 0.35 m; een eigen lagere grens kan een anders geldige trede voor die houding blokkeren. Opstappen is geen automatisch klimmen over hoge muren.
 
-| Groep | Veilig te variëren instellingen |
-| --- | --- |
-| Naam en uiterlijk | Weergavenaam, kleur, hoogte boven het hoofd, zichtbaarheid en leesbare labelgrootte |
-| Lopen | Voorwaartse snelheid, zijwaartse/achterwaartse verhouding, acceleratie en afremming |
-| Sprint | Eigen voorwaartse snelheid, zijwaartse/achterwaartse verhouding, acceleratie en afremming |
-| Springen | Hoogte voor stilstand/lopen/sprint, extra horizontale sprintimpuls en beperkte luchtsturing |
-| Botsing | Capsuleafmetingen en opstaphoogte |
-| Camera | Beginafstand, maximale afstand, zoomstap, first-personovergang, ooghoogte, muisgevoeligheid en kijkgrenzen |
-| Debug | Richtingsweergave en bewegingswaarden aan/uit |
+Een stilstaande sprong gaat hoog, een lopende middelhoog en een sprint laag maar extra ver. Werkelijke afzetsnelheid bepaalt het profiel, ook wanneer Shift net is losgelaten. Alleen de toets veranderen geeft bij dezelfde snelheid geen ander profiel. Sneak is een eigen lage sprong. Beperkte luchtsturing verandert de afzetcap niet. Kosten en minimumkracht van sprongvermoeidheid staan als factoren: 0.25 is 25 procentpunten. Hersteltijd is grondtijd vanaf 100% vermoeidheid; een kleinere schuld herstelt evenredig sneller. Een nog niet herstelde reeks bewaart haar langzaamste herstelinstelling.
 
-Concrete waarden zijn afstelbare proefdefaults, geen door de gebruiker opgegeven getallen. Instellingen hebben eenheden en korte Inspector-uitleg. Botsingsvorm, capsulemesh en materiaal krijgen per instance eigen Resources; naam- en kleurwijzigingen zijn direct in de editor zichtbaar.
+## Level en assets
 
-## Content maken in de editor
+`PrototypeLevel.tscn` en `PostureTestArea.tscn` gebruiken gewone editor-zichtbare meshes, CollisionShape3D en labels. Houd mesh- en botsingsmaten gelijk bij aanpassen. De hoofdscene instantieert het level en de Characters; daarvoor is geen netwerkhandeling nodig.
 
-Open `game/scenes/main.tscn`. Onder `Characters` staan `AtlasA` (rustig) en `AtlasB` (vlot), met verschillende naam, kleur, loop-/sprintwaarden en opstaphoogte. Selecteer de Character-root en wijzig de geëxporteerde groepen in de Inspector. Pas normale contentinstellingen hier aan; interne capsule-, label- en cameraonderdelen worden vanuit deze ingang bijgewerkt.
+De vloer en muren gebruiken echte Kenney Prototype Textures. De volledige tile herhaalt per 2 m; twee hoofdvakken per tile betekenen 1 m per hoofdvak en 0.25 m per klein vak. De sunset is het ongewijzigde 2K Belfast Sunset (Pure Sky)-panorama van Poly Haven. Exact twee DirectionalLights: warm EdgeLight en koel FillLight. Licenties, hashes, brondownloads en schaal staan in [de assetuitleg op de proefbranch](https://github.com/uplatedev/Atlas/blob/Smyl3z/T-004-character-movement/game/assets/README.md).
 
-Plaats `game/characters/Character.tscn` onder `Characters`, of dupliceer een bestaande instance. Geef hem een eigen naam, positie en instellingen. De hoofdscene verzamelt die directe Character-children; Tab wisselt automatisch tussen hen. F5 speelt deze hoofdscene. Een los geopende Character-scene heeft bewust geen proefvloer of eigen startmanager.
+## Grenzen van deze proef
 
-De levelscene bevat gewone meshes, botsingsvormen, labels, twee lampen en een WorldEnvironment. Zie [de asset-/leveluitleg](https://github.com/uplatedev/Atlas/blob/Smyl3z/T-002-character-proef/game/assets/README.md#level-aanpassen-in-de-editor) voor afmetingen, texture-schaal en treden aanpassen. De hoofdscene instantieert level en Characters; er is geen losse netwerkhandeling nodig voor deze lokale proef.
+Dit is een lokale speel-/editorproef met één bestuurd Character tegelijk; Tab is de testhulp. Eigen camerarenderlayers ondersteunen voorlopig maximaal 19 Characters. Capsule en naam blijven zichtbaar voor andere Character-camera's. LAN, Steam, modellen en animatie zijn nog niet gebouwd. Een echte hoofdjoint kan later de afzonderlijke hoofd-/lichaamsrichting gebruiken.
 
-Beperkingen van deze eerste proef: de unieke renderlayers ondersteunen maximaal 19 Characters in één lokale scene. Capsule en naam blijven voor andere Character-camera's zichtbaar. LAN en Steam zijn nog niet uitgevoerd. De praktische hoofdscene bestuurt één Character tegelijk; Tab is de lokale testhulp.
-
-### Beweging, richting en debug
-
-Combineer input tot één begrensde bewegingsvector vóór de snelheid wordt bepaald. Pas daarop de richtingsafhankelijke limieten toe; tel geen aparte voorwaartse en zijwaartse snelheden bij elkaar op. Ook tijdens sprinten en richtingwissels geldt dit. Van sprint naar lopen gaat via de gekozen afremming naar de lagere limiet.
-
-De debugweergave toont als uitvoeringsvoorstel de kijkrichting, gewenste invoerrichting, werkelijke horizontale bewegingsrichting, snelheid en loop-/sprint-/luchtstatus. Tijdens uitrollen kan de capsule nog bewegen zonder input; die twee richtingen moeten onderscheidbaar zijn. Een richtingpijl voorkomt dat de ronde capsule zijn oriëntatie verbergt.
-
-### Camera en lokaal zicht
-
-Gebruik één camera-opstelling met een instelbare afstand tot het Character en een scrollovergang tot ooghoogte. Voorkom dat de camera bij muren achter de geometrie terechtkomt. Bij first person verbergt alleen de eigen camera de eigen capsule en het eigen naamlabel, zodat die het zicht niet blokkeren. Andere Characters blijven zichtbaar; een latere tweede speler moet de eerste capsule nog gewoon kunnen zien. Botsing en bewegingsgedrag blijven gelijk bij zoomen. Dit is een lokale presentatiekeuze, geen gedeelde onzichtbaarheid of globale transparantiewijziging.
-
-### Sprong en opstap
-
-Bepaal het sprongprofiel uit de werkelijke horizontale snelheid bij afzetten, afgezet tegen zowel de loop- als sprintgrens voor die richting. Gebruik niet alleen de momenteel actieve snelheidslimiet: bij dezelfde werkelijke snelheid mag alleen Shift omschakelen geen ander sprongprofiel opleveren. Zo geeft Shift vanuit rust niet automatisch de lage sprintsprong, en kan ook een zijwaartse/achterwaartse sprint passend beoordeeld worden. Leg de afzetwaarden voor die sprong vast. Beperkte luchtsturing mag de boog bijsturen, maar niet halverwege het sprongtype vervangen of snelheid onbeperkt opstapelen.
-
-Stilstand/lopen/sprint vormen drie instelbare ankerpunten voor hoogte en afstand; een overgang op basis van afzetsnelheid voorkomt een harde sprong bij minimale beweging. Bij sprint is zo nodig een extra horizontale afzetimpuls nodig: minder hoogte betekent minder vliegtijd en garandeert op zichzelf geen grotere afstand. Die bewuste sprongimpuls staat los van de verboden bonus door diagonale input.
-
-Opstappen gebruikt een kleine gecontroleerde botsingsproef tot de ingestelde hoogte. Geen automatisch beklimmen van hoge muren; controleer ook vrije ruimte boven de capsule. De latere proef beoordeelt treden en randen rond de gekozen grens, inclusief lage plafonds.
-
-## Prototypelevel en assets
-
-De eerste levelopzet ondersteunt gericht meten: vlakke loopbanen, referentiemuren, enkele treden rond de opstapgrens en ruimte voor drie soorten sprongen. Dit is een proefomgeving, geen besluit over de uiteindelijke spelwereld.
-
-Gebruik twee herkenbaar benoemde lampen: `EdgeLight` voor de rand/silhouet en `FillLight` om de schaduwzijde leesbaar te houden. De sunset komt uit de skybox; het voorstel voegt daarvoor geen derde zonlamp toe. Richt de edge-verlichting passend bij de sky. Kleur, intensiteit en plaatsing worden visueel beoordeeld.
-
-De assets zijn uit officiële bronnen opgehaald en gecontroleerd: bestaande texturebestanden met prototypepatroon en een panoramische sunset-sky. Geen in code of geometrie opgebouwde strepen. De UV-schaal geeft een duidelijk hoofdvak een bekende wereldafstand van 1 meter; een plaatje met raster is op zichzelf nog geen afstandsmeting. Vloeren en muren gebruiken dezelfde wereldschaal zodat verschillende vlakafmetingen geen uitrekking veroorzaken.
-
-Gecontroleerde kandidaten uit officiële bronnen (12-10-2026):
-
-- [Kenney — Prototype Textures](https://kenney.nl/assets/prototype-textures): bestaande prototype-gridtextures. De [officiële downloadpagina](https://kenney-assets.itch.io/prototype-textures) vermeldt 1024×1024 en CC0. Kies een rustige rastervariant en kalibreer de UV-schaal op echte wereldmaten; eventuele tekst/cijfers in het plaatje bewijzen de schaal niet.
-- [Poly Haven — Belfast Sunset (Pure Sky)](https://polyhaven.com/a/belfast_sunset_puresky): sunset-panorama zonder gefotografeerd terrein in de achtergrond. HDR/EXR, onder de [CC0-licentie van Poly Haven](https://polyhaven.com/license). Voorstel: beginnen met 2K als skybox en alleen de twee afgesproken lampen gebruiken.
-
-Deze bronnen zijn nu geïmporteerd: drie ongewijzigde Kenney `texture_02`-varianten en het 2K Belfast Sunset HDR-panorama. Bestanden, volledige bronlinks, licentieteksten, hashes en schaal staan in [game/assets/README.md](https://github.com/uplatedev/Atlas/blob/Smyl3z/T-002-character-proef/game/assets/README.md). De volledige gridtile herhaalt iedere 2 meter; twee hoofdvakken per tile maken elk hoofdvak 1 meter en de kleinste vakken 0.25 meter.
-
-## Volgorde van de proeven
-
-Eerst de kleine lokale Character-/editorproef met twee verschillend ingestelde instances. Lokaal wisselen tussen de twee bestuurde instances is een praktische voorgestelde testhulp; tegelijk over het netwerk spelen hoort bij de volgende fase. Na technische controle beoordeelt de gebruiker bewegen, sprongen, camera en editorbediening. Vervolgens vóór LAN eigenaarschap, spawnen en synchronisatie afspreken; daarna de al afgesproken beperkte Steamcompatibiliteitsproef. Het level en lokale bewegen leggen geen nieuw netwerkframework vast.
+Ligrotatie gebruikt een conservatieve controle langs het volledige draaipad. Bij vrijwel exact passende plafondhoogte kan die iets eerder blokkeren; de arena biedt 0.80 m vrije hoogte voor de 0.70 m ligvorm. Gevoel en editorbediening beoordeelt de gebruiker na de technische proef; zie WORK.
