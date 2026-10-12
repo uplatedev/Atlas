@@ -54,4 +54,6 @@ Alleen werkstructuur, volledige [agentafspraken](../AGENTS.md), een lege werkend
 
 ## Nog open
 
+Vóór verder bouwen vraagt de gebruiker een inventaris en onderbouwd voorstel voor juice. Kleine gameplayverfijningen mogen daarin mee als ze gevoel verbeteren; de tijdelijke capsule krijgt geen polishbeoordeling. Cameralogica hoort bij een eigen cameracomponent, met duidelijke scheiding van controller en presentatie. Eén plaatsbare Character-scene en begrijpelijke onafhankelijke instellingen blijven de editoringang. [T-006](work/T-006.md) bevat het onderzoek; de aanbevolen effecten, kleine tuningvarianten en eventuele settingsmigratie zijn voorstellen, nog geen geïmplementeerde of geaccepteerde nieuwe defaults.
+
 De verdere spelwereld en mechanics staan open. De exacte waarden en het gevoel van de afgesproken beweging, sprongen en camera worden met een kleine lokale proef afgestemd. Eigenaarschap, spawnen en precieze synchronisatie moeten vóór de LAN-implementatie expliciet worden afgesproken. De eerste proef blijft daarom lokaal. Voortgang en afhankelijkheden staan in [WORK](WORK.md); voorstellen voor latere systemen worden niet stilzwijgend besluiten.

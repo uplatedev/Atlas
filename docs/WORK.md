@@ -4,7 +4,7 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
-De gebruiker heeft T-004 gespeeld en concrete feedback gegeven; de eerste T-005-camera wordt als duidelijk beter beschreven. De nieuwste slide-/houdingverfijning is gepubliceerd en lokaal klaar op `69a8d9d7`: langere slide met veilig herstel, automatische kruip→lig, springen uit actieve slide en één spatie direct staan na handmatig staan→lig. Import/start en alle drie suites zijn ook in de vaste lokale map geslaagd. Het nieuwe gevoel blijft te beoordelen; LAN en Steam volgen na afzonderlijke afstemming over eigenaarschap en synchronisatie.
+De nieuwste Character-proef blijft lokaal klaar op `69a8d9d7`; het gevoel wacht op verdere beoordeling. Vóór verder bouwen is T-006 uitgevoerd: juice-inventaris, primaire bronnen en voorstel voor contactaudio, kleine camera-accenten, gerichte FOV-afstemming en separation of concerns. De tijdelijke capsule is buiten de polishbeoordeling gelaten. Kleine gameplaytuning is afzonderlijk voorgesteld; geen gameplay of camera is in dit onderzoek veranderd. LAN en Steam volgen na afzonderlijke afstemming over eigenaarschap en synchronisatie.
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -14,11 +14,16 @@ De gebruiker heeft T-004 gespeeld en concrete feedback gegeven; de eerste T-005-
 | T-003 | Movement, camera en houdingen onderzoeken | Afgerond; voorstel bevestigd voor uitvoering | atlas-T003-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-003-movement-camera-onderzoek` (documentatiecheckpoint; geheugen op main) | Geen onderzoekafhankelijkheid meer; uitvoering in T-004 |
 | T-004 | Movement, camera, hoofd en houdingen implementeren | Gespeeld; feedback wordt in T-005 verwerkt | atlas-T004-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-004-character-movement` | Historische proef bewaren; gevoel niet geaccepteerd |
 | T-005 | Charactergevoel en houdingknoppen verfijnen | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T005-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-005-character-verfijnen` | Slidesprong, directe lig-terugkeer en automatische route lokaal spelen |
-| T-006 | Juice inventariseren en onderzoeken | Gereserveerd; onderzoek | atlas-T006-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-006-juice-onderzoek` | Bestaande feedback inventariseren en concreet voorstel onderbouwen |
+| T-006 | Juice inventariseren en onderzoeken | Onderzoek afgerond; voorstel beschikbaar | atlas-T006-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-006-juice-onderzoek` | Eerste vergelijkingsproef kiezen: camera-eigenaarschap, daarna contactaudio |
 
 ## T-006 — Juice inventariseren en onderzoeken
 
-Reservering door `atlas-T006-20261012-01a12fd0`, STELLAR-FORGE (Windows), beoogde werkbranch `Smyl3z/T-006-juice-onderzoek`. Gebruikersopdracht 12 oktober 2026: vóór verder bouwen onderzoeken welke juice aanwezig is, waar feedback ontbreekt en hoe de huidige Character-proef beter kan voelen. De gebruiker staat bij dit onderzoek ook kleine verbeteringen aan snelheid, sprongen, botsing of besturing toe als die iets toevoegen; onderscheid zulke voorstellen van presentatie. Scope: broninventaris van `69a8d9d7`, primaire bronnen, prioriteiten en korte vergelijkingsproef. Geen implementatie in deze onderzoekstaak; vaste lokale speelversie behouden. T-005-beoordeling blijft open.
+Reservering door `atlas-T006-20261012-01a12fd0`, STELLAR-FORGE (Windows), gepubliceerd op main in `3221171e1956137949599082a93f3c773a138afd`. Gebruikersopdracht 12 oktober 2026: vóór verder bouwen onderzoeken welke juice aanwezig is, waar feedback ontbreekt en hoe de huidige Character-proef beter kan voelen. Lichte gameplaytuning mag als voorstel mee. De tijdelijke capsule valt buiten beoordeling; cameralogica moet apart van Character/controller. Geen implementatie in deze onderzoekstaak; vaste lokale speelversie behouden. T-005-beoordeling blijft open.
+
+- **Gebouwd:** [onderzoeksverslag T-006](work/T-006.md) met bestaande camera-/wereldfeedback, ontbrekende contactaudio/actiefeedback, twee concrete FOV-mappings, kleine tuningopties en bronmatige architectureaudit. Voorstel: camera als enige eigenaar, controller met physicsregels, afzonderlijke feedback en één begrijpelijke scene/Inspector-ingang.
+- **Technisch gecontroleerd:** read-only audit met `git show`/getrackte inventaris/searches op exact `69a8d9d7`; drie onafhankelijke audits en primaire GDC-slides/sessiebeschrijvingen plus engine-documentatie. Geen audio-assets/AudioStreamPlayer/contactpartikels in de gamebron. Camera kent al echte uitvoering, Character heeft dubbele afstand/threshold/fallbacks en camera-specifiek vluchtgeheugen. Nieuwe code-/engine-/luisterproeven waren niet onderdeel van dit onderzoek; code en tools blijven ongewijzigd.
+- **Door de gebruiker beoordeeld:** onderzoek, lichte tuningruimte, uitsluiting van capsulepolish en separation of concerns expliciet gevraagd. Effecten, proefwaarden en Resource-migratie zijn voorstellen, geen geaccepteerde of geïmplementeerde nieuwe defaults. Bestaand positief cameraoordeel blijft bewaard.
+- **Volgende stap:** kies de eerste uitvoering/proef. Aanbevolen: camerarestlogica gecontroleerd scheiden met gelijk gedrag, vervolgens contactaudio, daarna een kleine landings-/FOV-vergelijking. Nieuwe feedback wordt apart beoordeeld; geen afhankelijk multiplayerwerk gestart.
 
 ## T-005 — Charactergevoel en houdingknoppen verfijnen
 
