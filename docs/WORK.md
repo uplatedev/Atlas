@@ -4,7 +4,7 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
-T-008 voegt contactaudio als tweede afzonderlijke stap toe. Een eigen feedbackcomponent gebruikt echte groundtravel/contactfeiten voor vijf cadansen, afzet/impact en slideschuren; camera/gameplaywaarden blijven gelijk. Checkpoint `b533d618` is gepubliceerd en staat schoon in de vaste Atlas-map; import/start en alle vijf suites slagen ook op die echte testlocatie. Nieuwe klank/cadans blijven lokaal te beluisteren. De tijdelijke capsule valt buiten polish. De nieuwe klank en bestaande T-005-/T-007-ervaring blijven te beoordelen; LAN/Steam vereisen aparte afstemming.
+T-009 voert de kleine camera-/FOV-proef uit als derde afzonderlijke stap van T-006. Contactaudio uit T-008 blijft behouden en nog te beluisteren. Beweging en tijdelijke capsulepolish blijven buiten deze stap. Nieuwe camera-effectwaarden vragen een lokale vergelijking; LAN/Steam blijven aparte afstemming.
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -17,6 +17,16 @@ T-008 voegt contactaudio als tweede afzonderlijke stap toe. Een eigen feedbackco
 | T-006 | Juice inventariseren en onderzoeken | Onderzoek afgerond; voorstel beschikbaar | atlas-T006-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-006-juice-onderzoek` | Onderzoek klaar; camera-uitvoering volgt in T-007, daarna contactaudio |
 | T-007 | Camera-eigenaarschap scheiden, stap 1 | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T007-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-007-camera-scheiden` | Zelfde gevoel kort lokaal beoordelen; daarna contactaudio |
 | T-008 | Contactaudio, stap 2 | Gepubliceerd en lokaal klaar; luisterproef open | atlas-T008-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-008-contactaudio` | Klank/cadans/slide met F6 lokaal vergelijken |
+| T-009 | Camera-accenten, stap 3 | Gereserveerd | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Kleine landing-/FOV-proef bouwen en lokaal vergelijken |
+
+## T-009 — Camera-accenten, stap 3
+
+Reservering door `atlas-T009-20261012-01a12fd0`, STELLAR-FORGE (Windows), vanaf main `0431cdbcd987e321b6c1507870d4735fa517e5c7`. De gebruiker vraagt verder te gaan naar de volgende stapsgewijze uitvoering van T-006. Scope: kleine instelbare TP-landingsreactie (FP standaard nul), gedeeld begrensd camerabudget en veilige collisioncontrole; FOV-variant voor werkelijke afgebouwde luchtvaart en slidevaart. CameraRig blijft enige uitvoerder; één Character-Inspector met korte Nederlandse uitleg. Basis speelbron `b533d618`; beweging, sprongregels, contactaudio, level en capsulepolish blijven buiten deze stap. Afstelwaarden zijn nog te beoordelen proefdefaults.
+
+- **Gebouwd:** taak gereserveerd; implementatie begint na aantoonbare main-publicatie.
+- **Technisch gecontroleerd:** actuele remote, eigenaarschap, gebruikte GitHub-identiteit en schone ontwikkel-/testmappen gecontroleerd. Nog geen nieuwe engineproef.
+- **Door de gebruiker beoordeeld:** volgende stap expliciet opgedragen; T-008-luisterproef en nieuwe camera-effectwaarden nog open.
+- **Volgende stap:** camera-accenten afzonderlijk vergelijkbaar bouwen, bestaande regressies en gerichte camera-/physicsproef uitvoeren; checkpoint publiceren en vaste lokale map bijwerken.
 
 ## T-008 — Contactaudio, stap 2
 
