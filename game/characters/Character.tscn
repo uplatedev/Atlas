@@ -1,8 +1,9 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://characters/character.gd" id="1_character"]
 [ext_resource type="Script" path="res://characters/character_camera.gd" id="2_camera"]
 [ext_resource type="Script" path="res://characters/character_head_debug.gd" id="3_head_debug"]
+[ext_resource type="Script" path="res://characters/character_feedback.gd" id="4_feedback"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape"]
 resource_local_to_scene = true
@@ -75,6 +76,9 @@ position = Vector3(0, 0.9, 0)
 shape = SubResource("CapsuleShape")
 
 [node name="Presentation" type="Node3D" parent="."]
+
+[node name="Feedback" type="Node3D" parent="."]
+script = ExtResource("4_feedback")
 
 [node name="Capsule" type="MeshInstance3D" parent="Presentation"]
 position = Vector3(0, 0.9, 0)

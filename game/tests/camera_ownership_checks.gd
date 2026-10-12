@@ -4,6 +4,7 @@ extends SceneTree
 ## Optioneel: --record=<absoluut.json> en --compare=<baseline.json> na --.
 
 const CHARACTER = preload("res://characters/Character.tscn")
+const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
 const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var trace: Dictionary = {}
@@ -42,6 +43,7 @@ func _run() -> void:
 	await process_frame
 	await _test_main_controls()
 	_handle_trace()
+	await AUDIO_SHUTDOWN.drain(self)
 	if failures.is_empty():
 		print("PASS: camera-overdracht, FOV-/bewegingspariteit, kijkrichting, eigen zicht en instancebediening.")
 		quit(0)

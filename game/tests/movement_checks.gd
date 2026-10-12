@@ -2,6 +2,7 @@ extends SceneTree
 ## Meet herhaalde sprongen, nieuwe houdingen en afzonderlijke hoofd-/lichaamsrichting.
 
 const CHARACTER = preload("res://characters/Character.tscn")
+const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
 const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var world: Node3D
@@ -31,6 +32,7 @@ func _run() -> void:
 	world.queue_free()
 	await process_frame
 	await _test_main_arena()
+	await AUDIO_SHUTDOWN.drain(self)
 	if failures.is_empty():
 		print("PASS: movement-, houdings-, sprongherhaal- en hoofd/cameraregressies geslaagd.")
 		quit(0)

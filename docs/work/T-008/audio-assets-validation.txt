@@ -1,0 +1,16 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+AUDIO_BUFFER: footstep_concrete_000.wav seconds=0.10585034013605 peak=0.50140953063965
+AUDIO_BUFFER: footstep_concrete_001.wav seconds=0.10757369614512 peak=0.50099188089371
+AUDIO_BUFFER: footstep_concrete_002.wav seconds=0.11269841269841 peak=0.50099188089371
+AUDIO_BUFFER: footstep_concrete_003.wav seconds=0.11043083900227 peak=0.50099188089371
+AUDIO_BUFFER: footstep_concrete_004.wav seconds=0.11428571428571 peak=0.50099188089371
+AUDIO_BUFFER: jump_soft_000.wav seconds=0.11791383219955 peak=0.38138982653618
+AUDIO_BUFFER: jump_soft_001.wav seconds=0.18321995464853 peak=0.40528580546379
+AUDIO_BUFFER: landing_soft_000.wav seconds=0.50503401360544 peak=0.50104904174805
+AUDIO_BUFFER: landing_soft_001.wav seconds=0.57197278911565 peak=0.50099188089371
+AUDIO_BUFFER: low_contact_carpet_000.wav seconds=0.14471655328798 peak=0.50099188089371
+AUDIO_BUFFER: low_contact_carpet_001.wav seconds=0.14471655328798 peak=0.50099188089371
+AUDIO_BUFFER: low_contact_carpet_002.wav seconds=0.14471655328798 peak=0.50099188089371
+AUDIO_BUFFER: slide_scrape_loop.wav seconds=0.8 peak=0.50099188089371
+AUDIO_ASSET_CHECKS failures=0

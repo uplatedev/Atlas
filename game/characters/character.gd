@@ -9,6 +9,7 @@ enum Posture { STAND, CROUCH, PRONE }
 signal jump_accepted(horizontal_velocity: Vector3, walk_limit: float, sprint_limit: float, sneaking: bool)
 signal ground_motion_updated(horizontal_velocity: Vector3, walk_limit: float, sprint_limit: float, low_or_sneaking: bool)
 signal posture_changed(posture: String)
+signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 
 @export_category("Character")
 @export_group("Naam en uiterlijk")
@@ -327,6 +328,80 @@ signal posture_changed(posture: String)
 		debug_enabled = value
 		_refresh_if_ready()
 
+@export_group("Audio: algemeen")
+## Schakel alle Character-contactaudio aan of uit; verandert beweging en camera niet.
+@export var feedback_enabled: bool = true
+## Totale contactsterkte in dB; 0 houdt de bronsterkte, negatieve waarden klinken zachter.
+@export_range(-60.0, 6.0, 0.5, "suffix:dB") var feedback_master_volume_db: float = -6.0
+## Verste hoorafstand van andere Characters in meters; eigen contactaudio blijft zoomonafhankelijk.
+@export_range(1.0, 100.0, 1.0, "suffix:m") var feedback_max_distance: float = 24.0
+## Referentieafstand voor ruimtelijke verzwakking in meters; groter houdt anderen langer duidelijk hoorbaar.
+@export_range(0.1, 20.0, 0.1, "suffix:m") var feedback_unit_size: float = 4.0
+
+@export_group("Audio: samples")
+## Varianten voor stappen tijdens lopen, sprint en sneak; lege lijst geeft stil contact.
+@export var feedback_footstep_samples: Array[AudioStream] = [preload("res://assets/audio/footstep_concrete_000.wav"), preload("res://assets/audio/footstep_concrete_001.wav"), preload("res://assets/audio/footstep_concrete_002.wav"), preload("res://assets/audio/footstep_concrete_003.wav"), preload("res://assets/audio/footstep_concrete_004.wav")]
+## Zachtere contactvarianten voor kruip en lig; geen gewone voetstap nodig bij lage houdingen.
+@export var feedback_low_contact_samples: Array[AudioStream] = [preload("res://assets/audio/low_contact_carpet_000.wav"), preload("res://assets/audio/low_contact_carpet_001.wav"), preload("res://assets/audio/low_contact_carpet_002.wav")]
+## Korte afzetvarianten; spelen uitsluitend wanneer een echte sprong geaccepteerd is.
+@export var feedback_jump_samples: Array[AudioStream] = [preload("res://assets/audio/jump_soft_000.wav"), preload("res://assets/audio/jump_soft_001.wav")]
+## Landingsvarianten; impact bepaalt sterkte. Slide-landing geeft één cue plus de schuurlaag.
+@export var feedback_landing_samples: Array[AudioStream] = [preload("res://assets/audio/landing_soft_000.wav"), preload("res://assets/audio/landing_soft_001.wav")]
+## Naadloos schuurfragment voor actieve landingsslide; de component maakt zijn eigen loopkopie.
+@export var feedback_slide_sample: AudioStream = preload("res://assets/audio/slide_scrape_loop.wav")
+
+@export_group("Audio: cadans en intensiteit")
+## Werkelijk ondersteunde loopmeters per contact; kleiner geeft meer stappen, nooit door muurdruk.
+@export_range(0.2, 4.0, 0.05, "suffix:m") var walk_step_distance: float = 1.8
+## Extra contactsterkte tijdens lopen in dB, boven het algemene contactvolume.
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var walk_contact_volume_db: float = 0.0
+## Werkelijk ondersteunde sprintmeters per contact; de grotere snelheid bepaalt de uiteindelijke cadans.
+@export_range(0.2, 4.0, 0.05, "suffix:m") var sprint_step_distance: float = 2.4
+## Extra contactsterkte tijdens sprint in dB.
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var sprint_contact_volume_db: float = 1.0
+## Werkelijk ondersteunde sneakmeters per contact; langzaam bewegen klinkt minder vaak.
+@export_range(0.2, 4.0, 0.05, "suffix:m") var sneak_step_distance: float = 1.3
+## Extra contactsterkte tijdens sneak in dB; negatief geeft zachtere stappen en afzet.
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var sneak_contact_volume_db: float = -12.0
+## Werkelijk ondersteunde kruipmeters per laag contactgeluid.
+@export_range(0.2, 4.0, 0.05, "suffix:m") var crouch_step_distance: float = 1.2
+## Extra contactsterkte tijdens kruipen in dB.
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var crouch_contact_volume_db: float = -6.0
+## Werkelijk ondersteunde ligmeters per laag contactgeluid.
+@export_range(0.2, 4.0, 0.05, "suffix:m") var prone_step_distance: float = 1.0
+## Extra contactsterkte tijdens liggen in dB.
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var prone_contact_volume_db: float = -10.0
+## Daaronder geen afstandscadans in m/s; voorkomt contactspam door minieme vloerbeweging.
+@export_range(0.0, 1.0, 0.01, "suffix:m/s") var feedback_step_min_speed: float = 0.10
+## Basissterkte van afstandscontacten in dB, vóór profiel en kleine variatie.
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var feedback_step_volume_db: float = -2.0
+## Willekeurige toonhoogteafwijking als deel van 1; 0,025 is ongeveer 2,5%, 0 schakelt dit uit.
+@export_range(0.0, 0.10, 0.005) var feedback_pitch_variation: float = 0.025
+## Willekeurige volumeafwijking in dB; klein houdt herhaling natuurlijk zonder grote verschillen.
+@export_range(0.0, 3.0, 0.1, "suffix:dB") var feedback_volume_variation_db: float = 1.0
+
+@export_group("Audio: afzet en landing")
+## Basissterkte van een geaccepteerde afzet in dB; sneak gebruikt bovendien zijn zachtere profiel.
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var feedback_jump_volume_db: float = -5.0
+## Minimale neerwaartse impactsnelheid in m/s voor een landingscue; gewone opstapsteun geeft geen impact.
+@export_range(0.0, 10.0, 0.1, "suffix:m/s") var landing_min_speed: float = 0.75
+## Neerwaartse impactsnelheid in m/s waarop de landing zijn volle ingestelde sterkte bereikt.
+@export_range(0.1, 30.0, 0.1, "suffix:m/s") var landing_full_speed: float = 8.0
+## Landingssterkte bij de minimale impact in dB, vóór algemeen volume.
+@export_range(-40.0, 6.0, 0.5, "suffix:dB") var feedback_landing_min_volume_db: float = -12.0
+## Landingssterkte bij volle impact in dB; sterkere vallen worden niet steeds luider.
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var feedback_landing_max_volume_db: float = -2.0
+
+@export_group("Audio: slideschuurlaag")
+## Sterkte van de schuurlaag op referentiesnelheid in dB; deelt het algemene contactvolume.
+@export_range(-40.0, 6.0, 0.5, "suffix:dB") var feedback_slide_volume_db: float = -2.0
+## Horizontale snelheid in m/s waarop de schuurlaag volledig klinkt; afremmen maakt hem zachter.
+@export_range(0.1, 30.0, 0.1, "suffix:m/s") var feedback_slide_reference_speed: float = 9.0
+## Daaronder geen schuurlaag in m/s; alleen werkelijk ondersteunde, actieve slide klinkt.
+@export_range(0.0, 2.0, 0.05, "suffix:m/s") var slide_min_speed: float = 0.25
+## Halveringstijd van de schuursterkte in seconden; 0 schakelt zonder fade, sprong/reset/uit stoppen direct.
+@export_range(0.0, 0.5, 0.01, "suffix:s") var feedback_slide_fade_time: float = 0.08
+
 static var _used_presentation_layers: Dictionary = {}
 
 var _controlled: bool = false
@@ -379,6 +454,7 @@ var _step_support_direction: Vector3 = Vector3.ZERO
 @onready var _name_label: Label3D = $Presentation/NameLabel
 @onready var _camera_pivot: AtlasCharacterCamera = $CameraPivot
 @onready var _head_debug: AtlasCharacterHeadDebug = $DebugArrows/HeadArrow
+@onready var _feedback: AtlasCharacterFeedback = $Feedback
 @onready var _debug_arrows: Node3D = $DebugArrows
 @onready var _input_arrow: Node3D = $DebugArrows/InputArrow
 @onready var _movement_arrow: Node3D = $DebugArrows/MovementArrow
@@ -397,6 +473,10 @@ func _ready() -> void:
 	ground_motion_updated.connect(_camera_pivot.capture_ground_motion)
 	posture_changed.connect(_camera_pivot.capture_posture)
 	_camera_pivot.initialize(self)
+	_feedback.initialize(self)
+	_feedback.set_controlled(_controlled)
+	jump_accepted.connect(_feedback.capture_jump)
+	contact_frame_ready.connect(_feedback.consume_contact)
 
 
 func _exit_tree() -> void:
@@ -518,6 +598,7 @@ func set_controlled(value: bool) -> void:
 	if not is_node_ready():
 		return
 	_camera_pivot.set_controlled(value)
+	_feedback.set_controlled(value)
 	if not value:
 		_input_direction = Vector3.ZERO
 		_jump_buffer_remaining = 0.0
@@ -563,6 +644,7 @@ func reset_to_spawn() -> void:
 	_refresh_presentation()
 	reset_physics_interpolation()
 	_camera_pivot.reset_view(true)
+	_feedback.reset()
 	_update_debug_arrows()
 
 
@@ -965,6 +1047,7 @@ func _physics_process(delta: float) -> void:
 	if stepped:
 		velocity.x = 0.0
 		velocity.z = 0.0
+	var incoming_velocity := velocity
 	move_and_slide()
 	if stepped:
 		velocity.x = horizontal.x
@@ -987,6 +1070,22 @@ func _physics_process(delta: float) -> void:
 		# Een lage landing zonder Ctrl-slide geeft geen verborgen lange glijfase.
 		# Pas het grondbudget pas bij contact toe, nooit op de afzetvaart in vlucht.
 		_limit_ground_velocity()
+	# Feedback ontvangt uitsluitend de definitieve fysieke uitkomst, na slide- en
+	# lage landingscaps. De inkomende snelheid is vóór botsingsafhandeling bewaard.
+	var contact := AtlasCharacterContactFrame.new()
+	contact.delta = delta
+	contact.horizontal_travel = Vector3(travel.x, 0.0, travel.z)
+	contact.horizontal_speed = _actual_speed
+	contact.incoming_velocity = incoming_velocity
+	contact.supported = get_camera_grounded() and not jumped
+	contact.real_grounded = is_on_floor() and not jumped
+	contact.motion_profile = _movement_state()
+	contact.posture = _posture_name(_posture)
+	contact.sliding = _slide_active
+	contact.jumped = jumped
+	contact.landed = not was_grounded and is_on_floor() and not jumped and not stepped
+	contact.world_position = global_position
+	contact_frame_ready.emit(contact)
 	_jumped_last_frame = jumped
 	_update_debug_arrows()
 	if global_position.y < -20.0:

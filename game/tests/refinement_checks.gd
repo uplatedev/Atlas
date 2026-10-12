@@ -2,6 +2,7 @@ extends SceneTree
 ## Regressies uit de gespeelde T-004-feedback: echte physics, richting en knopvolgorde.
 
 const CHARACTER = preload("res://characters/Character.tscn")
+const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
 const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
 const PHYSICS_DELTA := 1.0 / 60.0
 var failures: Array[String] = []
@@ -41,6 +42,7 @@ func _run() -> void:
 	_release_inputs()
 	world.queue_free()
 	await process_frame
+	await AUDIO_SHUTDOWN.drain(self)
 	if failures.is_empty():
 		print("PASS: feedbackregressies voor sprongafstand, landingsslide, luchtrem, houdingknoppen, schuine doorgang en lichaamsdraai.")
 		quit(0)

@@ -70,7 +70,7 @@ Herhaalbare technische proef vanuit de Atlas-root:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Check-Atlas.ps1 -CharacterChecks
 ```
 
-Deze optionele suite draait de oorspronkelijke scene-/physicscontroles, movementregressies, T-005-verfijningsproeven en T-007-cameraoverdracht. Die laatste vergelijkt 5.611 numerieke waarden met de vastgelegde 69a8-brontrace en toetst de scheiding tussen physics en view. Ze meet echte Character-physics en controleert onder meer twaalf herhaalsprongen per richting, vermoeidheid, timing, lage doorgangen, hoofd-/lichaamsdraai en camera. De headless-suite gebruikt vaste renderdelta op 60 FPS zonder realtime wachten; de physics blijft 60 Hz. De gewone Check-Atlas-aanroep blijft een korte import-/startcontrole.
+Deze optionele suite draait de oorspronkelijke scene-/physicscontroles, movementregressies, T-005-verfijningsproeven T-007-cameraoverdracht en T-008-contactaudio. Die laatste vergelijkt 5.611 numerieke waarden met de vastgelegde 69a8-brontrace en toetst de scheiding tussen physics en view. Ze meet echte Character-physics en controleert onder meer twaalf herhaalsprongen per richting, vermoeidheid, timing, lage doorgangen, hoofd-/lichaamsdraai en camera. De headless-suite gebruikt vaste renderdelta op 60 FPS zonder realtime wachten; de physics blijft 60 Hz. De gewone Check-Atlas-aanroep blijft een korte import-/startcontrole.
 
 1. Plaats twee instances en geef ze andere namen en duidelijk verschillende loop-/sprintwaarden. Wijzig één instance en controleer dat de andere gelijk blijft; doe dit ook voor camera, sprong en opstap. Laat de gebruiker zelf plaatsen, aanklikken en instellen.
 2. Vergelijk na uitaccelereren vooruit, zijwaarts en achteruit, zowel lopend als sprintend. Controleer de afgesproken volgorde en de toepasselijke limiet. Combineer twee inputs: geen diagonale bonus, ook niet bij sprinten of richtingwissels. Tegengestelde inputs mogen geen snelheid opstapelen.
@@ -80,7 +80,13 @@ Deze optionele suite draait de oorspronkelijke scene-/physicscontroles, movement
 6. Test opstappen vlak onder, op en boven de ingestelde grens. Loop links route 1 binnen: 0.30 m trede met 1.20 m vrije ruimte geeft automatisch kruip. Loop zonder houdingknoppen door naar de 0.80 m vervolgroute: automatisch kruip moet automatisch lig worden en na de open uitgang via kruip naar staan herstellen. Herhaal met handmatige Ctrl-kruip: na de uitgang blijft die eigen kruipkeuze bewaard. Kies handmatig lig en controleer dat de uitgang ook die keuze bewaart. Kies Z om handmatig direct lig te proberen bij de lage ingang; probeer ook de onmogelijke 0.65 m doorgang en smalle ligbocht. Rechtstreeks automatisch staan→lig en opstappen boven de grens blijven uitgesloten.
 7. Controleer echte texturebestanden en bekende rasterafstand op vloeren én muren; geen uitrekking of verkeerde schaal. Beoordeel de capsule, naam en markeringen onder precies de twee edge-/fill-lampen met de sunset-skybox.
 
-Leg bij de actuele taak (nu T-007) bronversie, technische resultaten en het afzonderlijke gebruikersoordeel vast. Numerieke defaults zijn afstelbaar; technisch correcte waarden bewijzen nog geen prettig bewegingsgevoel.
+Leg bij de actuele taak (nu T-008) bronversie, technische resultaten en het afzonderlijke gebruikersoordeel vast. Numerieke defaults zijn afstelbaar; technisch correcte waarden bewijzen nog geen prettig bewegingsgevoel.
+
+### Contactaudio lokaal beoordelen
+
+F6 schakelt contactaudio van de actieve instance aan/uit; de HUD toont die keuze. Vergelijk in third en first person: lopen/sprint/sneak/kruip/lig, W tegen een wand, afzet/landing, Ctrl tijdens sprong met landingsslide en spatie uit slide. Scrollzoomen mag de eigen contactaudio niet zachter maken. Tab wisselt alleen welke instance eigen audio heeft. Beoordeel duidelijkheid, volume en herhaling; technische dummy-audioproeven zijn geen luisteroordeel. De Audio-groepen op de Character-root hebben alle instellingen en vervangbare samples met korte beschrijvingen.
+
+De contactaudio-suite toetst echte physicscontacten en 180-frame aan/uit-pariteit. De vijf snelversnelde suites wachten uitsluitend na alle assertions 120 ms echte tijd zodat de audiothread zijn playbackrefs kan opruimen; de meetroutes behouden hun vaste physics/renderdelta. Asset-/loopbewijs en resultaat staan bij T-008.
 
 ### Bekende beperking en T-003-diagnose
 

@@ -23,6 +23,8 @@ try {
 		Write-Host 'Camera-eigenaarschap en gedragsvergelijking controleren...'
 		$cameraBaseline = Join-Path (Split-Path $PSScriptRoot -Parent) 'docs/work/T-007/camera-baseline-69a8.json'
 		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/camera_ownership_checks.gd', '--', ('--compare=' + $cameraBaseline), '--require-separation'))
+		Write-Host 'Contactaudio, echte grondafstand en audio/physics-scheiding controleren...'
+		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/feedback_checks.gd'))
 	}
     Write-Host 'Atlas: versie, import en headless-start geslaagd.'
     exit 0

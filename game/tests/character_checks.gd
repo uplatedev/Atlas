@@ -2,6 +2,7 @@ extends SceneTree
 ## Werkelijke physicsproeven voor de lokale Character-controller.
 
 const CHARACTER = preload("res://characters/Character.tscn")
+const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
 const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var world: Node3D
@@ -28,6 +29,7 @@ func _run() -> void:
 	world.queue_free()
 	await process_frame
 	await _test_main_scene()
+	await AUDIO_SHUTDOWN.drain(self)
 	if failures.is_empty():
 		print("PASS: alle Character-physics- en scenecontroles geslaagd.")
 		quit(0)
