@@ -7,9 +7,12 @@ try {
     if (-not (Test-Path -LiteralPath (Join-Path $project 'project.godot'))) {
         throw "Atlas-project ontbreekt: $project"
     }
-    # Toon alleen de editor; verberg het extra consolevenster van de console-exe.
-    Start-Process -FilePath $engine -ArgumentList @('--editor', '--path', ('"' + $project + '"')) -WindowStyle Hidden | Out-Null
-    Write-Host 'Atlas is gestart in de Godot-editor. F6 speelt de open scene; F5 het project.'
+    # Gebruik de GUI-exe naast de console-exe als die aanwezig is.
+    $editor = $engine -replace '_console\.exe$', '.exe'
+    if (-not (Test-Path -LiteralPath $editor -PathType Leaf)) { $editor = $engine }
+    Write-Host 'Atlas openen. F5 speelt het project; F8 stopt. Sluit de editor om dit script af te ronden.'
+    $process = Start-Process -FilePath $editor -ArgumentList @('--editor', '--path', ('"' + $project + '"')) -WindowStyle Normal -PassThru -Wait
+    if ($process.ExitCode -ne 0) { throw "De Godot-editor stopte met exitcode $($process.ExitCode)." }
     exit 0
 }
 catch {
