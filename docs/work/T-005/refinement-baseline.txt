@@ -1,0 +1,104 @@
+T-005 baseline negatieve regressiecontrole
+Bron: 49d62546a73b4bd8d012dd26e099adcc57a2c227 (T-004 speelproef)
+Godot: 4.7.2.stable.official.ed1daf0bf, Jolt, 60 Hz physics, fixed-fps 60
+Datum: 12 oktober 2026
+Test: game/tests/refinement_checks.gd
+Uitkomst: exitcode 1 verwacht; de suite toetst nieuw opgedragen gedrag en reproduceren van gespeelde gebreken.
+
+Technische diagnoses:
+- Rechte automatische kruipingang wisselt 0 -> 1 -> 0 -> 1 tijdens één aanloop.
+- Schuine .30 m opstap bij 30/45 graden blijft op vloerniveau; wallslide 30 graden stopt voor de trede.
+- Sprintvlucht blijft 14 m/s na Ctrl/Z, hoewel de verticale vlucht door normale zwaartekracht correct doorloopt.
+- Korte versus volle sprintaanloop verschilt reeds: 3.033/14.000 m/s en 3.514/7.700 m.
+- De FAIL-knopregels zijn nieuwe T-005-wensen; ze worden niet als eerdere T-004-programmeerfouten gepresenteerd.
+- Geen oordeel over GPU-stotteren of prettig gevoel: deze headless proef meet beweging en houdingswisselingen.
+
+- Gedeeltelijke loopafzet 3.733 m/s versnelt in de lucht naar 5 m/s en reist 3.677 m; volle loop reist 3.667 m. Dit reproduceert een ontbrekende snelheidsafhankelijke afstand.
+
+Volledige uitvoer:
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+MEASURE: sprint partial/full launch 3.033/14.000 m/s; travel 3.514/7.700 m; apex 1.611/0.744 m; partial max-air 5.000/cap 5.000
+PASS: 0.10s sprintaanloop geeft minder afzetsnelheid dan volle sprint
+PASS: korte sprintaanloop geeft aantoonbaar minder sprongafstand dan volle sprint
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: acht onmiddellijke sprintsprongen stapelen niet wanneer vermoeidheid uitstaat
+PASS: de sprongcap blijft maximaal één ingestelde sprintbonus
+MEASURE: repeated launches [14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0]
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+MEASURE: walk partial/full launch 3.733/5.000; travel 3.677/3.667; partial max-air 5.000/cap 5.000
+PASS: 0.10s loopaanloop geeft minder afzetsnelheid dan volle loop
+MEASURE: airborne crouch speed 14.000 -> 14.000; vertical 2.625 -> 2.292
+PASS: crouch wordt tijdens een echte sprintsprong gemeten
+PASS: crouch verandert de verticale sprong niet behalve normale zwaartekracht
+PASS: crouch reset sprongvermoeidheid niet tijdens de precisierem
+PASS: crouch kiest rechtstreeks de bedoelde handmatige houding
+MEASURE: airborne prone speed 14.000 -> 14.000; vertical 2.625 -> 2.292
+PASS: prone wordt tijdens een echte sprintsprong gemeten
+PASS: prone verandert de verticale sprong niet behalve normale zwaartekracht
+PASS: prone reset sprongvermoeidheid niet tijdens de precisierem
+PASS: Ctrl in kruip houdt kruip; de toets is geen onverwachte sta-toggle
+PASS: opricht-input wordt geen gebufferde sprong na het staan
+PASS: spatie kan onder 1.40m plafond veilig niet vanuit kruip staan
+PASS: geblokkeerd oprichten geeft geen sprong of houdingflikkering
+MEASURE: auto from stand max posture 2, stopped z -3.063
+PASS: Ctrl tijdens automatisch kruip kiest handmatig kruip in plaats van terug naar stand te toggelen
+PASS: handmatig kruip mag automatisch lig gebruiken voor de lage doorgang
+PASS: na automatische lig keert de handmatig gekozen kruip terug
+MEASURE: oblique x 0.00 yaw 0.0 reached true at (0.0, 0.30088, -1.804523); maxY 0.301; postures [0, 1, 0, 1]
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x 0.00 / yaw 0.0
+PASS: staan kiest ook schuin geen automatische lighouding
+MEASURE: oblique x -1.75 yaw -30.0 reached false at (1.285275, 0.000861, -0.652778); maxY 0.001; postures [0, 1]
+PASS: staan kiest ook schuin geen automatische lighouding
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+MEASURE: oblique x 1.75 yaw 30.0 reached false at (-1.285275, 0.000861, -0.652778); maxY 0.001; postures [0, 1]
+PASS: staan kiest ook schuin geen automatische lighouding
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+MEASURE: oblique x -1.20 yaw -45.0 reached false at (10.53518, 0.000871, -9.55389); maxY 0.001; postures [0, 1, 0]
+PASS: staan kiest ook schuin geen automatische lighouding
+MEASURE: oblique x 1.20 yaw 45.0 reached false at (-10.53518, 0.000871, -9.55389); maxY 0.001; postures [0, 1, 0]
+PASS: staan kiest ook schuin geen automatische lighouding
+MEASURE: 30-degree wallslide reached false at (-0.098166, 0.000961, -0.652974)
+PASS: ver rondkijken bij de hoofdgrens laat ook stilstaand het lichaam bijdraaien
+PASS: tijdens beweging volgt het lichaam de kleine hoofddraai wel
+PASS: move_left plus cameradraai geeft beperkte echte luchtsturing
+PASS: move_left plus cameradraai vergroot de sprongcap niet
+MEASURE: move_left air steering 2.807 degrees; speed 13.851; cap 14.000
+PASS: move_right plus cameradraai geeft beperkte echte luchtsturing
+PASS: move_right plus cameradraai vergroot de sprongcap niet
+MEASURE: move_right air steering 2.807 degrees; speed 13.851; cap 14.000
+FAIL: luchtsturing versnelt een gedeeltelijke sprintafzet niet alsnog tot volle loopsnelheid
+FAIL: gedeeltelijke sprintafzet legt haar werkelijke eigen snelheidsbudget vast
+FAIL: gedeeltelijke loopaanloop geeft minder sprongafstand dan volle loop
+FAIL: luchtsturing maakt een gedeeltelijke loopafzet niet alsnog volle loopsnelheid
+FAIL: crouch remt sprintvlucht binnen één physicsframe abrupt horizontaal
+FAIL: crouch krijgt zonder nieuwe stuurinput geen oude sprintbonus terug
+FAIL: prone remt sprintvlucht binnen één physicsframe abrupt horizontaal
+FAIL: prone kiest rechtstreeks de bedoelde handmatige houding
+FAIL: prone krijgt zonder nieuwe stuurinput geen oude sprintbonus terug
+FAIL: Z kiest vanuit staan handmatig direct lig
+FAIL: Ctrl kiest vanuit lig expliciet kruip
+FAIL: eerste spatie vanuit lig richt op naar kruip zonder sprong
+FAIL: tweede spatie richt kruip op naar staan zonder sprong
+FAIL: pas een nieuwe spatie vanuit staan start werkelijk een sprong
+FAIL: na vrije hoofdruimte kan een nieuwe oprichtdruk veilig staan
+FAIL: automatische verlaging vanuit staan eindigt maximaal in kruip en blokkeert een ligingang
+FAIL: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+FAIL: geldige .30m opstap met 1.20m hoofdruimte passeert bij x -1.75 / yaw -30.0
+FAIL: geldige .30m opstap met 1.20m hoofdruimte passeert bij x 1.75 / yaw 30.0
+FAIL: geldige .30m opstap met 1.20m hoofdruimte passeert bij x -1.20 / yaw -45.0
+FAIL: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+FAIL: geldige .30m opstap met 1.20m hoofdruimte passeert bij x 1.20 / yaw 45.0
+FAIL: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+FAIL: schuine input langs een wand gebruikt het vrije pad om automatisch de geldige kruipopstap te nemen
+FAIL: klein rondkijken vanuit stilstand draait het lichaam niet mee
+FAIL: bij stilstand blijft aparte hoofdhoek behouden
