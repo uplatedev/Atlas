@@ -6,6 +6,10 @@ extends CharacterBody3D
 
 enum Posture { STAND, CROUCH, PRONE }
 
+signal jump_accepted(horizontal_velocity: Vector3, walk_limit: float, sprint_limit: float, sneaking: bool)
+signal ground_motion_updated(horizontal_velocity: Vector3, walk_limit: float, sprint_limit: float, low_or_sneaking: bool)
+signal posture_changed(posture: String)
+
 @export_category("Character")
 @export_group("Naam en uiterlijk")
 ## Tekst boven alleen dit Character; pas vrij aan per instance.
@@ -327,7 +331,8 @@ static var _used_presentation_layers: Dictionary = {}
 
 var _controlled: bool = false
 var _spawn_transform: Transform3D
-var _camera_distance: float = 4.0
+var _look_input: Vector2 = Vector2.ZERO
+var _camera_motion: AtlasCharacterCameraMotion = AtlasCharacterCameraMotion.new()
 var _presentation_layer: int = 0
 var _input_direction: Vector3 = Vector3.ZERO
 var _movement_direction: Vector3 = Vector3.ZERO
@@ -347,7 +352,6 @@ var _turn_rate: float = 0.0
 var _body_turn_blocked: bool = false
 var _idle_realigning: bool = false
 var _air_speed_cap: float = 0.0
-var _air_fov_mix: float = 0.0
 var _air_min_control_active: bool = false
 var _air_braking: bool = false
 var _slide_requested_this_frame: bool = false
@@ -373,9 +377,8 @@ var _step_support_direction: Vector3 = Vector3.ZERO
 @onready var _collider: CollisionShape3D = $CollisionShape3D
 @onready var _capsule: MeshInstance3D = $Presentation/Capsule
 @onready var _name_label: Label3D = $Presentation/NameLabel
-@onready var _camera_pivot: Node3D = $CameraPivot
-@onready var _camera_arm: SpringArm3D = $CameraPivot/SpringArm3D
-@onready var _camera: Camera3D = $CameraPivot/SpringArm3D/Camera3D
+@onready var _camera_pivot: AtlasCharacterCamera = $CameraPivot
+@onready var _head_debug: AtlasCharacterHeadDebug = $DebugArrows/HeadArrow
 @onready var _debug_arrows: Node3D = $DebugArrows
 @onready var _input_arrow: Node3D = $DebugArrows/InputArrow
 @onready var _movement_arrow: Node3D = $DebugArrows/MovementArrow
@@ -388,13 +391,12 @@ func _ready() -> void:
 		set_physics_process(false)
 		return
 	_allocate_presentation_layer()
-	if _camera_pivot.has_method("initialize"):
-		_camera_pivot.call("initialize", self)
-	else:
-		_camera_arm.add_excluded_object(get_rid())
-		set_camera_distance(camera_start_distance)
-		_camera_pivot.rotation.x = deg_to_rad(camera_start_pitch)
-	_refresh_camera()
+	_head_debug.initialize(self)
+	_camera_pivot.look_direction_changed.connect(set_look_input)
+	jump_accepted.connect(_camera_pivot.capture_jump)
+	ground_motion_updated.connect(_camera_pivot.capture_ground_motion)
+	posture_changed.connect(_camera_pivot.capture_posture)
+	_camera_pivot.initialize(self)
 
 
 func _exit_tree() -> void:
@@ -432,9 +434,6 @@ func _refresh_presentation() -> void:
 	_name_label.font_size = name_font_size
 	_name_label.visible = name_visible
 	_debug_arrows.visible = debug_enabled
-	if not _camera_pivot.has_method("initialize"):
-		_camera_pivot.position.y = get_eye_height()
-	_refresh_camera()
 
 
 func _allocate_presentation_layer() -> void:
@@ -479,28 +478,49 @@ func get_camera_grounded() -> bool:
 	return is_on_floor() or _step_support_remaining > 0.0
 
 
-func get_fov_speed_mix() -> float:
-	if _posture != Posture.STAND or _sneak_requested:
-		return 0.0
-	if not is_on_floor() and _step_support_remaining <= 0.0:
-		return _air_fov_mix
-	return _sprint_mix(_movement_direction * _actual_speed)
+func get_camera_motion_sample() -> AtlasCharacterCameraMotion:
+	_camera_motion.body_yaw = global_rotation.y
+	_camera_motion.motion_profile = _movement_state()
+	_camera_motion.grounded = get_camera_grounded()
+	_camera_motion.eye_height = get_eye_height()
+	_camera_motion.clearance_height = _posture_vertical_height(_posture)
+	_camera_motion.horizontal_velocity = Vector3(velocity.x, 0.0, velocity.z)
+	_camera_motion.actual_horizontal_velocity = _movement_direction * _actual_speed
+	var local := global_basis.inverse() * _camera_motion.actual_horizontal_velocity
+	var direction := Vector2(local.x, local.z)
+	_camera_motion.walk_speed_limit = direction_speed_limit(direction, false)
+	_camera_motion.sprint_speed_limit = direction_speed_limit(direction, true)
+	_camera_motion.excluded_body = get_rid()
+	_camera_motion.presentation_layer = _presentation_layer
+	_camera_motion.standing_radius = capsule_radius
+	# De child-rig is eerder ready dan deze root. Fysieke knopen bestaan dan al,
+	# maar de root-onreadyvelden zijn nog niet ingevuld.
+	var collider := _collider
+	if not is_instance_valid(collider):
+		collider = get_node_or_null("CollisionShape3D") as CollisionShape3D
+	_camera_motion.body_shape = collider.shape if collider != null else null
+	_camera_motion.body_shape_transform = collider.global_transform if collider != null else global_transform
+	return _camera_motion
+
+
+func set_look_input(yaw: float, pitch: float) -> void:
+	# Logische besturingsinvoer, onafhankelijk van de camera-rendertransform.
+	_look_input = Vector2(yaw, pitch)
+	_head_debug.set_head_orientation(yaw, pitch, get_eye_height())
+
+
+func get_look_input() -> Vector2:
+	return _look_input
 
 
 func set_controlled(value: bool) -> void:
 	_controlled = value
 	if not is_node_ready():
 		return
-	if _camera_pivot.has_method("set_controlled"):
-		_camera_pivot.call("set_controlled", value)
-	elif value:
-		_camera.make_current()
-	else:
-		_camera.clear_current(false)
+	_camera_pivot.set_controlled(value)
 	if not value:
 		_input_direction = Vector3.ZERO
 		_jump_buffer_remaining = 0.0
-	_refresh_camera()
 
 
 func is_controlled() -> bool:
@@ -523,7 +543,6 @@ func reset_to_spawn() -> void:
 	_auto_probe_distance = 0.0
 	_restore_clear_time = 0.0
 	_air_speed_cap = 0.0
-	_air_fov_mix = 0.0
 	_air_min_control_active = false
 	_air_braking = false
 	_slide_requested_this_frame = false
@@ -543,38 +562,13 @@ func reset_to_spawn() -> void:
 	_step_support_remaining = 0.0
 	_refresh_presentation()
 	reset_physics_interpolation()
-	if _camera_pivot.has_method("reset_view"):
-		_camera_pivot.call("reset_view")
-	else:
-		set_camera_distance(camera_start_distance)
-		_camera_pivot.rotation.x = deg_to_rad(camera_start_pitch)
-	_refresh_camera()
+	_camera_pivot.reset_view(true)
 	_update_debug_arrows()
 
 
 func set_camera_distance(distance: float) -> void:
-	_camera_distance = clampf(distance, 0.0, camera_max_distance)
-	if _camera_distance <= _effective_first_person_threshold():
-		_camera_distance = 0.0
 	if is_node_ready():
-		if _camera_pivot.has_method("set_distance"):
-			_camera_pivot.call("set_distance", distance)
-		else:
-			_refresh_camera()
-
-
-func _refresh_camera() -> void:
-	if _camera_pivot.has_method("get_state"):
-		return
-	_camera_arm.spring_length = _camera_distance
-	if _presentation_layer > 0:
-		var close_distance := maxf(_effective_first_person_threshold(), _posture_dimensions(_posture).x + _camera.near + _camera_arm.margin + 0.05)
-		var inside_self := _camera_distance == 0.0 or _camera_arm.get_hit_length() <= close_distance
-		_camera.set_cull_mask_value(_presentation_layer, not inside_self)
-
-
-func _effective_first_person_threshold() -> float:
-	return minf(first_person_threshold, camera_max_distance * 0.5)
+		_camera_pivot.set_distance(distance)
 
 
 ## Elliptische limiet; Vector2.y < 0 is vooruit, gecombineerde input krijgt geen bonus.
@@ -731,9 +725,8 @@ func _apply_posture(posture: int, manual_prone_return: bool = false) -> void:
 	if posture != Posture.CROUCH:
 		_slide_ground_exit_pending = _slide_ground_exit_pending or (_slide_active and get_camera_grounded())
 		_cancel_slide()
-	if posture != Posture.STAND:
-		_air_fov_mix = 0.0
 	_posture = posture
+	posture_changed.emit(_posture_name(posture))
 	_posture_changed_this_frame = true
 	_restore_clear_time = 0.0
 	_refresh_presentation()
@@ -838,9 +831,6 @@ func _shape_collision_normal(posture: int, feet: Transform3D, motion: Vector3) -
 
 func _turn_body(grounded: bool, delta: float, input: Vector2 = Vector2.ZERO) -> void:
 	_body_turn_blocked = false
-	if not _camera_pivot.has_method("get_look_yaw"):
-		_turn_rate = 0.0
-		return
 	var state := _movement_state()
 	_turn_rate = float(_movement_profile(state).turn)
 	if _posture == Posture.STAND:
@@ -853,7 +843,7 @@ func _turn_body(grounded: bool, delta: float, input: Vector2 = Vector2.ZERO) -> 
 		else:
 			_turn_rate = lerpf(walk_turn_speed, sprint_turn_speed, _sprint_mix(Vector3(velocity.x, 0.0, velocity.z)))
 	var current := global_rotation.y
-	var target: float = _camera_pivot.call("get_look_yaw")
+	var target := _look_input.x
 	var difference := wrapf(target - current, -PI, PI)
 	if input.is_zero_approx() and _actual_speed < 0.10:
 		var start_angle := minf(idle_body_turn_start_angle, head_max_yaw)
@@ -950,8 +940,8 @@ func _physics_process(delta: float) -> void:
 	_read_posture_input(input_allowed)
 	_turn_body(was_grounded, delta, input)
 	var input_basis := global_basis
-	if not was_grounded and _camera_pivot.has_method("get_look_yaw"):
-		input_basis = Basis(Vector3.UP, float(_camera_pivot.call("get_look_yaw")))
+	if not was_grounded:
+		input_basis = Basis(Vector3.UP, _look_input.x)
 	_input_direction = input_basis * Vector3(input.x, 0.0, input.y)
 	if was_grounded:
 		_update_auto_posture_demand(input, delta)
@@ -1046,7 +1036,9 @@ func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float) -
 		horizontal = horizontal.move_toward(target, rate * delta)
 		_air_speed_cap = maxf(horizontal.length(), air_min_control_speed)
 		_air_min_control_active = horizontal.length() < air_min_control_speed
-		_air_fov_mix = 0.0 if _posture != Posture.STAND or _sneak_requested else _sprint_mix(horizontal)
+		var local_ground := global_basis.inverse() * horizontal
+		var ground_direction := Vector2(local_ground.x, local_ground.z)
+		ground_motion_updated.emit(horizontal, direction_speed_limit(ground_direction, false), direction_speed_limit(ground_direction, true), _posture != Posture.STAND or _sneak_requested)
 	else:
 		if not input.is_zero_approx():
 			var acceleration := air_acceleration
@@ -1178,7 +1170,8 @@ func _start_jump(preserve_slide_momentum: bool = false) -> void:
 	_jump_height = parameters.height
 	_jump_boost = 0.0 if preserve_slide_momentum else float(parameters.horizontal_boost)
 	_launch_speed = horizontal.length() + _jump_boost
-	_air_fov_mix = 0.0 if _sneak_requested else float(parameters.sprint_weight)
+	# Geaccepteerde afzet vóór horizontale bonus: presentatie bepaalt eigen FOV.
+	jump_accepted.emit(horizontal, direction_speed_limit(direction, false), direction_speed_limit(direction, true), _sneak_requested)
 	if not horizontal.is_zero_approx():
 		horizontal += horizontal.normalized() * _jump_boost
 	velocity = horizontal + Vector3.UP * float(parameters.vertical_speed)
@@ -1373,10 +1366,6 @@ func _update_debug_arrows() -> void:
 	_debug_arrows.visible = debug_enabled
 	_update_arrow(_input_arrow, _input_direction)
 	_update_arrow(_movement_arrow, _movement_direction)
-	var head_arrow := _debug_arrows.get_node_or_null("HeadArrow") as Node3D
-	if head_arrow != null and not _camera_pivot.has_method("get_head_direction"):
-		var direction := -global_basis.z
-		_update_arrow(head_arrow, Vector3(direction.x, 0.0, direction.z))
 
 
 func _update_arrow(arrow: Node3D, world_direction: Vector3) -> void:
@@ -1395,10 +1384,9 @@ func get_debug_state() -> Dictionary:
 	elif _actual_speed < 0.02:
 		motion = "stilstand"
 	var local_input := global_basis.inverse() * _input_direction
-	var state := {"display_name": display_name, "speed": _actual_speed, "motion_mode": motion, "posture": _posture_name(_posture), "posture_index": _posture, "manual_posture": _posture_name(_manual_posture), "input_direction": _input_direction, "movement_direction": _movement_direction, "facing_direction": -global_basis.z, "body_direction": -global_basis.z, "body_yaw": rad_to_deg(global_rotation.y), "turn_rate": _turn_rate, "body_turn_blocked": _body_turn_blocked, "speed_limit": direction_speed_limit_for_state(Vector2(local_input.x, local_input.z), _movement_state()), "jump_profile": _jump_profile, "jump_height": _jump_height, "launch_speed": _launch_speed, "jump_boost": _jump_boost, "air_speed_cap": _air_speed_cap, "fatigue": _fatigue, "fatigue_recovery_time": _fatigue_recovery_duration, "coyote_remaining": _coyote_remaining, "jump_buffer_remaining": _jump_buffer_remaining, "ground_jump_available": _ground_jump_available, "camera_distance": _camera_distance, "camera_actual_distance": _camera_arm.get_hit_length(), "first_person": _camera_distance == 0.0, "step_height": _step_limit_for_posture(_posture), "last_step_height": _last_step_height, "debug_enabled": debug_enabled}
+	var state := {"display_name": display_name, "speed": _actual_speed, "motion_mode": motion, "posture": _posture_name(_posture), "posture_index": _posture, "manual_posture": _posture_name(_manual_posture), "input_direction": _input_direction, "movement_direction": _movement_direction, "facing_direction": -global_basis.z, "body_direction": -global_basis.z, "body_yaw": rad_to_deg(global_rotation.y), "turn_rate": _turn_rate, "body_turn_blocked": _body_turn_blocked, "speed_limit": direction_speed_limit_for_state(Vector2(local_input.x, local_input.z), _movement_state()), "jump_profile": _jump_profile, "jump_height": _jump_height, "launch_speed": _launch_speed, "jump_boost": _jump_boost, "air_speed_cap": _air_speed_cap, "fatigue": _fatigue, "fatigue_recovery_time": _fatigue_recovery_duration, "coyote_remaining": _coyote_remaining, "jump_buffer_remaining": _jump_buffer_remaining, "ground_jump_available": _ground_jump_available, "step_height": _step_limit_for_posture(_posture), "last_step_height": _last_step_height, "debug_enabled": debug_enabled}
 	state.merge({"air_braking": _air_braking, "slide_pending": _slide_pending, "slide_active": _slide_active, "slide_time_left": _slide_time_left, "slide_speed": Vector2(velocity.x, velocity.z).length() if _slide_active else 0.0, "prone_return_posture": _posture_name(_prone_return_posture)})
-	if _camera_pivot.has_method("get_state"):
-		state.merge(_camera_pivot.call("get_state"), true)
+	state.merge(_camera_pivot.get_state(), true)
 	return state
 
 

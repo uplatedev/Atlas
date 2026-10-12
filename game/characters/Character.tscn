@@ -1,7 +1,8 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://characters/character.gd" id="1_character"]
 [ext_resource type="Script" path="res://characters/character_camera.gd" id="2_camera"]
+[ext_resource type="Script" path="res://characters/character_head_debug.gd" id="3_head_debug"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape"]
 resource_local_to_scene = true
@@ -155,6 +156,7 @@ cast_shadow = 0
 
 [node name="HeadArrow" type="Node3D" parent="DebugArrows"]
 position = Vector3(0, 1.62, 0)
+script = ExtResource("3_head_debug")
 
 [node name="Shaft" type="MeshInstance3D" parent="DebugArrows/HeadArrow"]
 position = Vector3(0, 0, -0.65)

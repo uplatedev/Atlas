@@ -1,9 +1,14 @@
 @tool
+class_name AtlasCharacterCamera
 extends Node3D
 ## Camerarig van Character. Instellingen staan op de Character-root, zodat één
 ## Inspector-ingang voldoende blijft. Hoofd/kijkrichting is los van lichaamsyaw.
 
+signal look_direction_changed(yaw: float, pitch: float)
+
 var _character: Node3D
+var _motion_source: Callable
+var _motion: AtlasCharacterCameraMotion = AtlasCharacterCameraMotion.new()
 var _property_names: Dictionary = {}
 var _controlled: bool = false
 var _look_yaw: float = 0.0
@@ -23,9 +28,9 @@ var _inertia_reference_speed: float = 0.0
 var _inertia_brake_time: float = 0.0
 var _fov: float = 70.0
 var _target_fov: float = 70.0
+var _air_fov_mix: float = 0.0
 var _initialized: bool = false
 var _camera_shape: SphereShape3D = SphereShape3D.new()
-var _head_arrow: Node3D
 
 @onready var _arm: SpringArm3D = $SpringArm3D
 @onready var _camera: Camera3D = $SpringArm3D/Camera3D
@@ -39,6 +44,11 @@ func _ready() -> void:
 
 func initialize(character: Node3D) -> void:
 	_character = character
+	_motion_source = Callable(character, "get_camera_motion_sample")
+	if not _motion_source.is_valid():
+		push_error("Character-camera vereist een fysieke motion sample van zijn eigenaar.")
+		return
+	_refresh_motion_sample()
 	_property_names.clear()
 	if is_instance_valid(_character):
 		for entry in _character.get_property_list():
@@ -56,17 +66,13 @@ func initialize(character: Node3D) -> void:
 	top_level = true
 	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
 	_camera.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
-	if _character is CollisionObject3D:
-		_arm.add_excluded_object(_character.get_rid())
+	if _motion.excluded_body.is_valid():
+		_arm.add_excluded_object(_motion.excluded_body)
 	# SpringArm schrijft normaal ieder physics-tick de globale cameratransform.
 	# Onze renderchecks zijn de enige schrijver: geen tweede updatesnelheid.
 	_arm.set_physics_process_internal(false)
 	_arm.shape = _camera_shape
-	_head_arrow = _character.get_node_or_null("DebugArrows/HeadArrow") as Node3D
-	if _head_arrow != null:
-		_head_arrow.top_level = true
-		_head_arrow.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
-	reset_view()
+	reset_view(true)
 	set_controlled(_controlled)
 
 
@@ -76,10 +82,9 @@ func _value(property_name: String, fallback: Variant) -> Variant:
 	return fallback
 
 
-func _owner_number(method_name: String, fallback: float) -> float:
-	if is_instance_valid(_character) and _character.has_method(method_name):
-		return float(_character.call(method_name))
-	return fallback
+func _refresh_motion_sample() -> void:
+	if _motion_source.is_valid():
+		_motion = _motion_source.call()
 
 
 func set_controlled(value: bool) -> void:
@@ -97,6 +102,7 @@ func set_controlled(value: bool) -> void:
 func reset_follow_history() -> void:
 	if not is_instance_valid(_character):
 		return
+	_refresh_motion_sample()
 	_feet_height = _character.global_position.y
 	_eye_height = _safe_eye_height()
 	_follow_position = Vector3(_character.global_position.x, 0.0, _character.global_position.z)
@@ -108,11 +114,13 @@ func reset_follow_history() -> void:
 	_refresh_transform(0.0, true)
 
 
-func reset_view() -> void:
+func reset_view(reset_motion_history: bool = false) -> void:
 	if not is_node_ready() or not is_instance_valid(_character):
 		return
 	_look_yaw = _body_yaw()
 	_pitch = _clamp_pitch(deg_to_rad(_value("camera_start_pitch", -12.0)))
+	if reset_motion_history:
+		_air_fov_mix = 0.0
 	set_distance(_value("camera_start_distance", 4.0))
 	_zoom_distance = _requested_distance
 	_actual_distance = _requested_distance
@@ -214,7 +222,8 @@ func _advance_pitch(pitch: float, delta: float) -> float:
 
 
 func _body_yaw() -> float:
-	return _character.global_rotation.y if is_instance_valid(_character) else 0.0
+	_refresh_motion_sample()
+	return _motion.body_yaw
 
 
 func get_look_yaw() -> float:
@@ -262,8 +271,8 @@ func _process(delta: float) -> void:
 
 
 func _safe_eye_height() -> float:
-	var desired := _owner_number("get_eye_height", _value("camera_eye_height", 1.62))
-	var clearance := _owner_number("get_camera_clearance_height", _value("capsule_height", 1.8))
+	var desired := _motion.eye_height
+	var clearance := _motion.clearance_height
 	var radius := _effective_camera_radius()
 	var minimum := minf(radius + 0.01, clearance * 0.5)
 	return clampf(desired, minimum, maxf(minimum, clearance - radius - 0.01))
@@ -283,7 +292,7 @@ func _required_camera_radius() -> float:
 
 
 func _effective_camera_radius() -> float:
-	var clearance := _owner_number("get_camera_clearance_height", _value("capsule_height", 1.8))
+	var clearance := _motion.clearance_height
 	var desired: float = _value("camera_collision_radius", 0.18)
 	# Een vrijwillig groot volume blijft passend in een lage houding; de minimale
 	# beeldrandbescherming heeft altijd voorrang boven deze gewenste radius.
@@ -293,10 +302,11 @@ func _effective_camera_radius() -> float:
 func _refresh_transform(delta: float, immediate: bool = false) -> void:
 	if not is_instance_valid(_character) or Engine.is_editor_hint():
 		return
+	_refresh_motion_sample()
 	var interpolated: Transform3D = _character.get_global_transform_interpolated()
 	var eye := _safe_eye_height()
 	var actor_floor := interpolated.origin.y
-	var clearance := _owner_number("get_camera_clearance_height", _value("capsule_height", 1.8))
+	var clearance := _motion.clearance_height
 	var radius := _effective_camera_radius()
 	# Ook tijdens vallen gebruikt hoogte dezelfde renderpose. Een ruwe physics-Y
 	# zou de camera anders steeds één tick omlaag trekken en tussen ticks stilzetten.
@@ -309,9 +319,7 @@ func _refresh_transform(delta: float, immediate: bool = false) -> void:
 		_eye_height = eye if eye < _eye_height else lerpf(_eye_height, eye, _blend(delta, _value("camera_eye_half_life", 0.08)))
 		var feet_half_life: float = _value("camera_step_half_life", 0.07)
 		# Vlucht/val volgen zonder extra cameravertraging; kleine vloeropstapjes mogen zacht.
-		var grounded: bool = _character is CharacterBody3D and (_character as CharacterBody3D).is_on_floor()
-		if _character.has_method("get_camera_grounded"):
-			grounded = bool(_character.call("get_camera_grounded"))
+		var grounded := _motion.grounded
 		if absf(actor_floor - _feet_height) > 0.6 or not grounded:
 			_feet_height = actor_floor
 		else:
@@ -354,9 +362,7 @@ func _update_follow_position(target: Vector3, delta: float, immediate: bool) -> 
 	var half_life: float = _value("camera_first_person_follow_half_life", 0.0) if _requested_distance == 0.0 else _value("camera_follow_half_life", 0.018)
 	var displacement := target - _previous_follow_target
 	var current_speed := _previous_follow_velocity.length()
-	if _character is CharacterBody3D:
-		var owner_velocity := (_character as CharacterBody3D).velocity
-		current_speed = maxf(current_speed, Vector3(owner_velocity.x, 0.0, owner_velocity.z).length())
+	current_speed = maxf(current_speed, _motion.horizontal_velocity.length())
 	# Lange onderbrekingen en verplaatsingen buiten het normale bewegingsbereik
 	# zijn geen remactie. Wisselen/resetten wist dezelfde geschiedenis expliciet.
 	var teleported := displacement.length() > maxf(1.0, current_speed * maxf(delta, 0.0) * 3.0 + 0.25)
@@ -441,8 +447,8 @@ func _camera_query(position_at: Vector3) -> PhysicsShapeQueryParameters3D:
 	query.transform = Transform3D(Basis.IDENTITY, position_at)
 	query.collision_mask = _arm.collision_mask
 	query.collide_with_areas = false
-	if _character is CollisionObject3D:
-		query.exclude = [_character.get_rid()]
+	if _motion.excluded_body.is_valid():
+		query.exclude = [_motion.excluded_body]
 	return query
 
 
@@ -484,11 +490,39 @@ func _base_fov() -> float:
 
 
 func _motion_profile() -> String:
-	if _character.has_method("get_camera_motion_profile"):
-		return String(_character.call("get_camera_motion_profile"))
-	elif _character.has_method("_movement_state"):
-		return String(_character.call("_movement_state"))
-	return "lopen"
+	return _motion.motion_profile
+
+
+func _speed_mix(horizontal: Vector3, walk_limit: float, sprint_limit: float) -> float:
+	if sprint_limit <= walk_limit:
+		return 0.0
+	return clampf((horizontal.length() - walk_limit) / (sprint_limit - walk_limit), 0.0, 1.0)
+
+
+## Geaccepteerde afzet bevat de vaart vóór sprongbonus; het vluchtbeeld blijft
+## bewust gelijk aan de eerdere camera, ook tijdens S-luchtremmen.
+func capture_jump(horizontal: Vector3, walk_limit: float, sprint_limit: float, sneaking: bool) -> void:
+	_air_fov_mix = 0.0 if sneaking else _speed_mix(horizontal, walk_limit, sprint_limit)
+
+
+## De grondvaart vóór move_and_slide bewaart ook bij gewoon van een rand lopen
+## exact hetzelfde vluchtbeeld. Grond-FOV zelf gebruikt de echte afgelegde vaart.
+func capture_ground_motion(horizontal: Vector3, walk_limit: float, sprint_limit: float, low_or_sneaking: bool) -> void:
+	_air_fov_mix = 0.0 if low_or_sneaking else _speed_mix(horizontal, walk_limit, sprint_limit)
+
+
+func capture_posture(posture: String) -> void:
+	if posture not in ["staan", "stand"]:
+		_air_fov_mix = 0.0
+
+
+func get_fov_speed_mix() -> float:
+	_refresh_motion_sample()
+	if _motion_profile() in ["sneak", "kruipen", "crouch", "liggen", "prone"]:
+		return 0.0
+	if not _motion.grounded:
+		return _air_fov_mix
+	return _speed_mix(_motion.actual_horizontal_velocity, _motion.walk_speed_limit, _motion.sprint_speed_limit)
 
 
 func _profile_fov_offset() -> float:
@@ -505,7 +539,7 @@ func _profile_fov_offset() -> float:
 
 
 func _refresh_fov(delta: float, immediate: bool) -> void:
-	var mix := clampf(_owner_number("get_fov_speed_mix", 0.0), 0.0, 1.0)
+	var mix := clampf(get_fov_speed_mix(), 0.0, 1.0)
 	if _motion_profile() in ["sneak", "kruipen", "crouch", "liggen", "prone"]:
 		mix = 0.0
 	var target := _base_fov() + _profile_fov_offset()
@@ -520,18 +554,17 @@ func _refresh_fov(delta: float, immediate: bool) -> void:
 
 
 func _refresh_visibility() -> void:
-	var layer := int(_owner_number("get_presentation_layer", float(_value("_presentation_layer", 0))))
+	var layer := _motion.presentation_layer
 	if layer <= 0:
 		return
-	var radius: float = _value("capsule_radius", 0.35)
+	var radius := _motion.standing_radius
 	var close_distance := maxf(_first_person_threshold(), radius + _camera.near + _arm.margin + 0.05)
 	var inside_self := _requested_distance == 0.0 or _actual_distance <= close_distance
-	var collider := _character.get_node_or_null("CollisionShape3D") as CollisionShape3D
-	if collider != null and collider.shape is CapsuleShape3D:
+	if _motion.body_shape is CapsuleShape3D:
 		# De ligcapsule is langer achter het hoofd dan een staande capsule breed is.
 		# Test haar echte geroteerde vorm, zodat dicht zoomen geen eigen lichaam toont.
-		var capsule := collider.shape as CapsuleShape3D
-		var point := collider.global_transform.affine_inverse() * _camera.global_position
+		var capsule := _motion.body_shape as CapsuleShape3D
+		var point := _motion.body_shape_transform.affine_inverse() * _camera.global_position
 		var half_axis := maxf(capsule.height * 0.5 - capsule.radius, 0.0)
 		var closest := Vector3(0.0, clampf(point.y, -half_axis, half_axis), 0.0)
 		var overlap_radius := capsule.radius + _required_camera_radius() + _arm.margin + 0.05
@@ -541,10 +574,7 @@ func _refresh_visibility() -> void:
 
 func _refresh_rotation() -> void:
 	global_rotation = Vector3(_pitch, _look_yaw, 0.0)
-	if is_instance_valid(_head_arrow):
-		_head_arrow.global_rotation = Vector3(_pitch, _look_yaw, 0.0)
-		var render_position := _character.get_global_transform_interpolated().origin
-		_head_arrow.global_position = render_position + Vector3.UP * _owner_number("get_eye_height", _value("camera_eye_height", 1.62))
+	look_direction_changed.emit(_look_yaw, _pitch)
 
 
 func _blend(delta: float, half_life: float) -> float:
