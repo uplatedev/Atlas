@@ -10,7 +10,7 @@ De gecontroleerde lege basis is gereed. De eerste Character-wensen, besturing en
 | --- | --- | --- | --- | --- | --- | --- |
 | T-000 | Projectbasis opzetten | Afgerond | atlas-bootstrap-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-000-projectbasis` (geïntegreerd; opruiming zie hieronder) | Geen inhoudelijk bootstrapwerk meer; vervolg in T-002 |
 | T-001 | Character-fundering bespreken | Besproken en vastgelegd; afgerond | atlas-character-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-001-character-fundering` (lokale documentatiebranch; geheugen op main) | Uitvoering en beoordeling volgen in T-002 |
-| T-002 | Lokale Character- en levelproef | Klaar voor uitvoering; nog niet gestart | Niet geclaimd | Nog niet bepaald | Nog niet aangemaakt | Claimen, kleine lokale proef bouwen en gericht laten beoordelen |
+| T-002 | Lokale Character- en levelproef | Gereserveerd voor uitvoering en lokale testoverdracht | atlas-T002-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-002-character-proef` | Character en level bouwen, controleren en lokaal klaarzetten |
 
 ## T-000 — Projectbasis opzetten
 
