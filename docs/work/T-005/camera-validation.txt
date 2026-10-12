@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS bewegend doel zelfde minimale camera-achterstand bij 30 fps: 0.051937m
+PASS bewegend doel zelfde minimale camera-achterstand bij 60 fps: 0.051937m
+PASS bewegend doel zelfde minimale camera-achterstand bij 144 fps: 0.051937m
+PASS positievolging onafhankelijk van renderframerate
+PASS hoge snelheid houdt extra achterstand binnen 12cm
+PASS first person heeft standaard geen extra positie-lag
+PASS muisrichting blijft direct en los van positievolging
+PASS sneak heeft eigen zachte FOV zonder oude sprintbonus: 68.000
+PASS kruipen heeft eigen zachte FOV zonder oude sprintbonus: 67.000
+PASS liggen heeft eigen zachte FOV zonder oude sprintbonus: 65.000
+PASS F4-uit schakelt ook houdings-FOV uit
+PASS lig-FOV gebruikt first-personbasis als bewust ingezoomd
+PASS lage houding blijft met zachte camera direct plafondveilig
+PASS kleine camera-achterstand stopt veilig voor zijmuur: -0.0644
+PASS reset/wisselen wist positiegeschiedenis zonder zwaai
+PASS camera heeft één render-schrijver, geen SpringArm physics-overschrijving
+CAMERA T005 CHECKS failures=0

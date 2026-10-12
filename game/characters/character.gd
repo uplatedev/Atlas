@@ -82,7 +82,7 @@ enum Posture { STAND, CROUCH, PRONE }
 
 @export_group("Kruipen")
 ## Maximum vooruit in gebukte houding in m/s; Ctrl schakelt deze houding.
-@export_range(0.1, 20.0, 0.1, "suffix:m/s") var crouch_forward_speed: float = 1.4
+@export_range(0.1, 20.0, 0.1, "suffix:m/s") var crouch_forward_speed: float = 3.0
 ## Zijwaartse kruipsnelheid als deel van vooruit; 0.8 betekent 80%.
 @export_range(0.05, 1.0, 0.01) var crouch_side_ratio: float = 0.8
 ## Achterwaartse kruipsnelheid als deel van vooruit; 0.55 betekent 55%.
@@ -107,10 +107,16 @@ enum Posture { STAND, CROUCH, PRONE }
 @export_range(0.0, 1.0, 0.01, "suffix:m") var crouch_step_height: float = 0.35
 ## Camerahoogte boven de voeten bij kruipen in meters; blijft binnen de vrije hoogte.
 @export_range(0.05, 3.0, 0.01, "suffix:m") var crouch_eye_height: float = 0.95
+## Deel van horizontale luchtsnelheid direct behouden bij handmatig kruipen; 0 stopt meteen, val/spronghoogte blijven gelijk.
+@export_range(0.0, 1.0, 0.05) var crouch_air_speed_retention: float = 0.0
+## Extra horizontale luchtremming in m/s² zolang je kruipt; hoger stopt resterende vaart sneller.
+@export_range(0.0, 150.0, 1.0, "suffix:m/s²") var crouch_air_deceleration: float = 60.0
+## Lichte kruipbijsturing in de lucht in m/s², binnen het oorspronkelijke afzetbudget en kruiplimiet.
+@export_range(0.0, 10.0, 0.05, "suffix:m/s²") var crouch_air_acceleration: float = 0.75
 
 @export_group("Liggen")
 ## Maximum vooruit in lig in m/s; de horizontale capsule heeft een lange voetafdruk.
-@export_range(0.1, 20.0, 0.1, "suffix:m/s") var prone_forward_speed: float = 0.8
+@export_range(0.1, 20.0, 0.1, "suffix:m/s") var prone_forward_speed: float = 2.0
 ## Zijwaartse ligsnelheid als deel van vooruit; 0.8 betekent 80%.
 @export_range(0.05, 1.0, 0.01) var prone_side_ratio: float = 0.8
 ## Achterwaartse ligsnelheid als deel van vooruit; 0.55 betekent 55%.
@@ -135,10 +141,20 @@ enum Posture { STAND, CROUCH, PRONE }
 @export_range(0.0, 1.0, 0.01, "suffix:m") var prone_step_height: float = 0.35
 ## Camerahoogte boven de voeten bij liggen in meters; moet onder het plafond passen.
 @export_range(0.05, 3.0, 0.01, "suffix:m") var prone_eye_height: float = 0.55
+## Deel van horizontale luchtsnelheid direct behouden bij handmatig liggen; 0 geeft een precisieduik zonder de verticale baan te veranderen.
+@export_range(0.0, 1.0, 0.05) var prone_air_speed_retention: float = 0.0
+## Extra horizontale luchtremming in m/s² zolang je ligt; hoger stopt resterende vaart sneller.
+@export_range(0.0, 150.0, 1.0, "suffix:m/s²") var prone_air_deceleration: float = 90.0
+## Lichte ligbijsturing in de lucht in m/s², binnen het oorspronkelijke afzetbudget en liglimiet.
+@export_range(0.0, 10.0, 0.05, "suffix:m/s²") var prone_air_acceleration: float = 0.5
 
 @export_group("Draaien en tegensturen")
 ## Maximale lichaamsdraai bij gewone staande stilstand in graden/s.
 @export_range(0.0, 1440.0, 5.0, "suffix:°/s") var idle_turn_speed: float = 720.0
+## Relatieve hoofdhoek in graden waarbij een stilstaand lichaam begint bij te draaien; kleiner reageert eerder.
+@export_range(0.0, 85.0, 1.0, "suffix:°") var idle_body_turn_start_angle: float = 60.0
+## Relatieve hoofdhoek in graden waarbij stilstaand bijdraaien stopt; lager laat het lichaam verder volgen zonder alles recht te trekken.
+@export_range(0.0, 85.0, 1.0, "suffix:°") var idle_body_turn_stop_angle: float = 45.0
 ## Maximale lichaamsdraai in de lucht in graden/s; luchtsturing blijft afzonderlijk begrensd.
 @export_range(0.0, 1440.0, 5.0, "suffix:°/s") var air_turn_speed: float = 180.0
 ## Extra remming bij tegengestelde input; 1.25 remt 25% sterker, zonder extra snelheid.
@@ -156,9 +172,11 @@ enum Posture { STAND, CROUCH, PRONE }
 ## Minimum sneakhoogte in meters bij vermoeidheid; nooit hoger dan de ingestelde basishoogte.
 @export_range(0.0, 3.0, 0.01, "suffix:m") var sneak_min_jump_height: float = 0.4
 ## Eenmalige horizontale sprintafzetbonus in m/s; oude bonussen worden nooit opgeteld.
-@export_range(0.0, 15.0, 0.1, "suffix:m/s") var sprint_jump_boost: float = 5.0
+@export_range(0.0, 15.0, 0.1, "suffix:m/s") var sprint_jump_boost: float = 1.5
 ## Bijstuurversnelling in de lucht in m/s², binnen de vaste totale afzetlimiet.
 @export_range(0.0, 30.0, 0.1, "suffix:m/s²") var air_acceleration: float = 3.5
+## Klein luchtstuur-budget in m/s bij bijna stilstaande afzet of na een wandstop; geeft geen sprint en herstelt verloren sprintmomentum niet.
+@export_range(0.0, 3.0, 0.05, "suffix:m/s") var air_min_control_speed: float = 0.8
 ## Verticale versnelling in m/s²; hoger verkort de vlucht bij dezelfde spronghoogte.
 @export_range(1.0, 40.0, 0.5, "suffix:m/s²") var gravity_strength: float = 20.0
 ## Seconden waarin een nieuwe sprongdruk na een rand nog mag; één afzet per grondcontact.
@@ -254,15 +272,29 @@ enum Posture { STAND, CROUCH, PRONE }
 ## Halveringstijd in seconden voor kleine vloeropstapjes; sprongen/val volgen zonder extra vertraging.
 @export_range(0.0, 0.5, 0.01, "suffix:s") var camera_step_half_life: float = 0.07
 
+@export_group("Camera: positievolging")
+## Halveringstijd van kleine horizontale cameravolging in seconden; 0 volgt direct. De kijkrichting blijft altijd direct.
+@export_range(0.0, 0.1, 0.001, "suffix:s") var camera_follow_half_life: float = 0.018
+## Extra horizontale volgverzachting in first person, in seconden; standaard 0 voorkomt extra vertraging in de ogen.
+@export_range(0.0, 0.1, 0.001, "suffix:s") var camera_first_person_follow_half_life: float = 0.0
+## Grootste horizontale camera-achterstand in meters; 0 schakelt extra volgvertraging uit. Botsingen kunnen de achterstand verder verkleinen.
+@export_range(0.0, 0.3, 0.01, "suffix:m") var camera_follow_max_lag: float = 0.12
+
 @export_group("Camera: beeldhoek")
 ## Verticale third-personbeeldhoek in graden; hoger toont meer omgeving. Dit is geen horizontale FOV.
 @export_range(30.0, 100.0, 1.0, "suffix:° verticaal") var camera_fov_third_person: float = 70.0
 ## Verticale first-personbeeldhoek in graden; gebruikt uitsluitend bij bewust naar de ogen zoomen.
 @export_range(30.0, 100.0, 1.0, "suffix:° verticaal") var camera_fov_first_person: float = 75.0
-## Verbreed de beeldhoek bij werkelijke legale sprintsnelheid; uit houdt de basisbeeldhoek constant.
+## Dynamische FOV voor werkelijke sprint en sneak/kruip/lig; uit houdt de gekozen basisbeeldhoek constant. F4 schakelt dit tijdens spelen.
 @export var camera_speed_fov_enabled: bool = true
 ## Grootste extra verticale beeldhoek in graden bij sprint; sprongbonus vergroot deze waarde niet.
 @export_range(0.0, 15.0, 0.5, "suffix:°") var camera_sprint_fov_bonus: float = 6.0
+## Extra verticale FOV in graden bij sneak; negatief geeft rustiger/iets nauwer zicht. F4 schakelt ook deze profielverandering uit.
+@export_range(-15.0, 15.0, 0.5, "suffix:°") var camera_sneak_fov_offset: float = -2.0
+## Extra verticale FOV in graden bij kruipen; negatief versmalt licht. Overgang gebruikt dezelfde FOV-halveringstijden.
+@export_range(-15.0, 15.0, 0.5, "suffix:°") var camera_crouch_fov_offset: float = -3.0
+## Extra verticale FOV in graden bij liggen; onafhankelijk van sneak en kruip. 0 behoudt de gewone basisbeeldhoek.
+@export_range(-15.0, 15.0, 0.5, "suffix:°") var camera_prone_fov_offset: float = -5.0
 ## Seconden om de helft van een toenemende FOV-afwijking weg te werken; lager reageert sneller.
 @export_range(0.0, 1.0, 0.01, "suffix:s") var camera_fov_rise_half_life: float = 0.10
 ## Seconden om de helft van de FOV-terugkeer weg te werken; hoger maakt afremmen visueel rustiger.
@@ -289,14 +321,17 @@ var _sneak_requested: bool = false
 var _last_ground_state: String = "lopen"
 var _posture: int = Posture.STAND
 var _manual_posture: int = Posture.STAND
-var _pending_auto_posture: int = -1
+var _auto_posture_demand: int = Posture.STAND
+var _auto_probe_distance: float = 0.0
 var _posture_changed_this_frame: bool = false
 var _manual_changed_this_frame: bool = false
 var _restore_clear_time: float = 0.0
 var _turn_rate: float = 0.0
 var _body_turn_blocked: bool = false
+var _idle_realigning: bool = false
 var _air_speed_cap: float = 0.0
 var _air_fov_mix: float = 0.0
+var _air_min_control_active: bool = false
 var _jump_profile: String = "geen"
 var _jump_height: float = 0.0
 var _launch_speed: float = 0.0
@@ -364,6 +399,7 @@ func _refresh_presentation() -> void:
 	_capsule.mesh = capsule_mesh
 	_capsule.position = _collider.position
 	_capsule.rotation = _collider.rotation
+	_capsule.reset_physics_interpolation()
 	var material := StandardMaterial3D.new()
 	material.albedo_color = capsule_color
 	material.roughness = 0.7
@@ -412,11 +448,19 @@ func get_camera_clearance_height() -> float:
 	return _posture_vertical_height(_posture)
 
 
+func get_camera_motion_profile() -> String:
+	return _movement_state()
+
+
+func get_camera_grounded() -> bool:
+	return is_on_floor() or _step_support_remaining > 0.0
+
+
 func get_fov_speed_mix() -> float:
-	if not is_on_floor() and _step_support_remaining <= 0.0:
-		return _air_fov_mix
 	if _posture != Posture.STAND or _sneak_requested:
 		return 0.0
+	if not is_on_floor() and _step_support_remaining <= 0.0:
+		return _air_fov_mix
 	return _sprint_mix(_movement_direction * _actual_speed)
 
 
@@ -451,10 +495,13 @@ func reset_to_spawn() -> void:
 	_sneak_requested = false
 	_posture = Posture.STAND
 	_manual_posture = Posture.STAND
-	_pending_auto_posture = -1
+	_auto_posture_demand = Posture.STAND
+	_auto_probe_distance = 0.0
 	_restore_clear_time = 0.0
 	_air_speed_cap = 0.0
 	_air_fov_mix = 0.0
+	_air_min_control_active = false
+	_idle_realigning = false
 	_jump_profile = "geen"
 	_jump_height = 0.0
 	_launch_speed = 0.0
@@ -563,9 +610,11 @@ func get_posture() -> int:
 	return _posture
 
 
-## Vraag een handmatige houding; de physics voert uitsluitend veilige buur-overgangen uit.
+## Vraag een veilige handmatige houding. Expliciet liggen mag rechtstreeks; hoger worden gaat één stap tegelijk.
 func request_posture(posture: int) -> void:
 	_manual_posture = clampi(posture, Posture.STAND, Posture.PRONE)
+	_auto_posture_demand = _manual_posture
+	_auto_probe_distance = 0.0
 	_manual_changed_this_frame = true
 	_restore_clear_time = 0.0
 
@@ -574,28 +623,29 @@ func _read_posture_input(input_allowed: bool) -> void:
 	if not input_allowed:
 		return
 	if InputMap.has_action("crouch") and Input.is_action_just_pressed("crouch"):
-		request_posture(Posture.CROUCH if _posture != Posture.CROUCH else Posture.STAND)
+		request_posture(Posture.STAND if _manual_posture == Posture.CROUCH and _posture != Posture.PRONE else Posture.CROUCH)
 	elif InputMap.has_action("prone") and Input.is_action_just_pressed("prone"):
-		request_posture(Posture.PRONE if _posture == Posture.CROUCH else Posture.CROUCH)
+		request_posture(Posture.PRONE)
+	elif Input.is_action_just_pressed("jump") and _posture > Posture.STAND:
+		request_posture(_posture - 1)
+		_jump_buffer_remaining = 0.0
 
 
 func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 	_posture_changed_this_frame = false
-	var target := _manual_posture
-	if _pending_auto_posture > target:
-		target = _pending_auto_posture
-	_pending_auto_posture = -1
+	var target := maxi(_manual_posture, _auto_posture_demand)
 	if target > _posture:
-		var next := _posture + 1
+		var next := Posture.PRONE if _manual_posture == Posture.PRONE else _posture + 1
 		if _posture_transition_clear(next):
 			_apply_posture(next)
 		_restore_clear_time = 0.0
-	elif target < _posture and grounded:
+	elif target < _posture and (grounded or _manual_changed_this_frame):
 		var next := _posture - 1
 		var clear := _posture_transition_clear(next, posture_clearance_margin)
 		if clear and not _manual_changed_this_frame and not input.is_zero_approx():
-			var forward_probe := (global_basis * Vector3(input.x, 0.0, input.y)).normalized() * (_posture_dimensions(next).x + 0.12)
-			clear = _shape_sweep_clear(next, global_transform, forward_probe, posture_clearance_margin)
+			var direction := (global_basis * Vector3(input.x, 0.0, input.y)).normalized()
+			var probe_distance := maxf(_auto_probe_distance, _posture_probe_distance(_posture, direction, delta))
+			clear = _higher_path_clear(next, direction * probe_distance, posture_clearance_margin)
 		if clear:
 			_restore_clear_time += delta
 			if _manual_changed_this_frame or _restore_clear_time + 0.00001 >= posture_restore_time:
@@ -604,11 +654,22 @@ func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 			_restore_clear_time = 0.0
 	else:
 		_restore_clear_time = 0.0
+	if _posture == _manual_posture and _auto_posture_demand == _manual_posture:
+		_auto_probe_distance = 0.0
 	_manual_changed_this_frame = false
 
 
 func _apply_posture(posture: int) -> void:
-	assert(absi(posture - _posture) == 1)
+	assert(absi(posture - _posture) == 1 or (posture == Posture.PRONE and _manual_posture == Posture.PRONE))
+	if posture > _posture and _manual_changed_this_frame and not get_camera_grounded():
+		var retention := prone_air_speed_retention if posture == Posture.PRONE else crouch_air_speed_retention
+		velocity.x *= retention
+		velocity.z *= retention
+		var local_input := global_basis.inverse() * _input_direction
+		var state := "liggen" if posture == Posture.PRONE else "kruipen"
+		var retained_speed := Vector2(velocity.x, velocity.z).length()
+		_air_speed_cap = minf(_air_speed_cap, maxf(retained_speed, direction_speed_limit_for_state(Vector2(local_input.x, local_input.z), state)))
+		_air_fov_mix = 0.0
 	_posture = posture
 	_posture_changed_this_frame = true
 	_restore_clear_time = 0.0
@@ -635,11 +696,11 @@ func _posture_transition_clear(next: int, margin: float = 0.0) -> bool:
 			length = minf(length, radius * 2.0 + maxf(allowed_height - radius * 2.0, 0.0) / absf(cos(angle)))
 		var vertical := radius * 2.0 + (length - radius * 2.0) * absf(cos(angle))
 		var shape := CapsuleShape3D.new()
-		shape.radius = radius + margin * 0.5
-		shape.height = length + margin
+		shape.radius = radius
+		shape.height = length
 		var transform := global_transform
 		transform.basis = global_basis.orthonormalized() * Basis(Vector3.RIGHT, angle)
-		transform.origin.y += vertical * 0.5 + margin * 0.5 + 0.003
+		transform.origin.y += vertical * 0.5 + 0.003
 		if not _query_shape_clear(shape, transform):
 			return false
 	return true
@@ -648,7 +709,7 @@ func _posture_transition_clear(next: int, margin: float = 0.0) -> bool:
 func _shape_query(posture: int, feet: Transform3D, margin: float = 0.0) -> PhysicsShapeQueryParameters3D:
 	var dimensions := _posture_dimensions(posture)
 	var shape := CapsuleShape3D.new()
-	shape.radius = dimensions.x + margin * 0.5
+	shape.radius = dimensions.x + (margin * 0.5 if posture == Posture.PRONE else 0.0)
 	shape.height = dimensions.y + margin
 	var transform := feet
 	transform.basis = feet.basis.orthonormalized()
@@ -694,7 +755,25 @@ func _shape_sweep_clear(posture: int, feet: Transform3D, motion: Vector3, margin
 	return _shape_fits(posture, destination, margin)
 
 
-func _turn_body(grounded: bool, delta: float) -> void:
+func _shape_collision_normal(posture: int, feet: Transform3D, motion: Vector3) -> Vector3:
+	if motion.is_zero_approx():
+		return Vector3.ZERO
+	var space := get_world_3d().direct_space_state
+	var query := _shape_query(posture, feet)
+	query.motion = motion
+	var fraction := space.cast_motion(query)
+	if fraction[0] >= 0.9999:
+		return Vector3.ZERO
+	# cast_motion geeft fracties, geen normaal. Toets hetzelfde volume op het
+	# eerste contact; get_rest_info leest alleen deze echte contactpositie.
+	query.transform.origin += motion * minf(1.0, float(fraction[1]) + 0.002 / motion.length())
+	query.motion = Vector3.ZERO
+	query.margin = 0.001
+	var contact := space.get_rest_info(query)
+	return Vector3.ZERO if contact.is_empty() else Vector3(contact.normal)
+
+
+func _turn_body(grounded: bool, delta: float, input: Vector2 = Vector2.ZERO) -> void:
 	_body_turn_blocked = false
 	if not _camera_pivot.has_method("get_look_yaw"):
 		_turn_rate = 0.0
@@ -706,13 +785,26 @@ func _turn_body(grounded: bool, delta: float) -> void:
 			_turn_rate = air_turn_speed
 		elif _sneak_requested:
 			_turn_rate = sneak_turn_speed
-		elif _actual_speed < 0.10:
+		elif _actual_speed < 0.10 and input.is_zero_approx():
 			_turn_rate = idle_turn_speed
 		else:
 			_turn_rate = lerpf(walk_turn_speed, sprint_turn_speed, _sprint_mix(Vector3(velocity.x, 0.0, velocity.z)))
 	var current := global_rotation.y
 	var target: float = _camera_pivot.call("get_look_yaw")
 	var difference := wrapf(target - current, -PI, PI)
+	if input.is_zero_approx() and _actual_speed < 0.10:
+		var start_angle := minf(idle_body_turn_start_angle, head_max_yaw)
+		var stop_angle := minf(idle_body_turn_stop_angle, start_angle)
+		if not _idle_realigning and absf(difference) >= deg_to_rad(start_angle):
+			_idle_realigning = true
+		if _idle_realigning and absf(difference) <= deg_to_rad(stop_angle) + 0.0001:
+			_idle_realigning = false
+		if not _idle_realigning:
+			_turn_rate = 0.0
+			return
+		difference -= signf(difference) * deg_to_rad(stop_angle)
+	else:
+		_idle_realigning = false
 	var turn := clampf(difference, -deg_to_rad(_turn_rate) * delta, deg_to_rad(_turn_rate) * delta)
 	if _posture != Posture.PRONE:
 		global_rotation.y = current + turn
@@ -792,9 +884,16 @@ func _physics_process(delta: float) -> void:
 	var was_grounded := real_grounded or (_step_support_remaining > 0.0 and not _jumped_last_frame)
 	_update_jump_timing(input_allowed, was_grounded, real_grounded, delta)
 	_read_posture_input(input_allowed)
+	_turn_body(was_grounded, delta, input)
+	var input_basis := global_basis
+	if not was_grounded and _camera_pivot.has_method("get_look_yaw"):
+		input_basis = Basis(Vector3.UP, float(_camera_pivot.call("get_look_yaw")))
+	_input_direction = input_basis * Vector3(input.x, 0.0, input.y)
+	if was_grounded:
+		_update_auto_posture_demand(input, delta)
+	else:
+		_auto_posture_demand = _manual_posture
 	_update_posture(input, was_grounded, delta)
-	_turn_body(was_grounded, delta)
-	_input_direction = global_basis * Vector3(input.x, 0.0, input.y)
 	_update_horizontal_velocity(input, was_grounded, delta)
 	var jumped := false
 	if _posture == Posture.STAND and _jump_buffer_remaining > 0.0 and _ground_jump_available and (was_grounded or _coyote_remaining > 0.0):
@@ -808,8 +907,6 @@ func _physics_process(delta: float) -> void:
 	_last_step_height = 0.0
 	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
 	var stepped := was_grounded and not jumped and _try_step_up(horizontal * delta)
-	if was_grounded and not jumped and not stepped:
-		_consider_auto_lowering(horizontal * delta)
 	if stepped:
 		velocity.x = 0.0
 		velocity.z = 0.0
@@ -864,13 +961,35 @@ func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float) -
 		if opposing:
 			rate *= countersteer_brake_factor
 		horizontal = horizontal.move_toward(target, rate * delta)
-		_air_speed_cap = maxf(horizontal.length(), direction_speed_limit_for_state(input, state))
+		_air_speed_cap = maxf(horizontal.length(), air_min_control_speed)
+		_air_min_control_active = horizontal.length() < air_min_control_speed
 		_air_fov_mix = 0.0 if _posture != Posture.STAND or _sneak_requested else _sprint_mix(horizontal)
 	else:
-		if not input.is_zero_approx():
+		if _posture != Posture.STAND:
+			var low_limit := minf(_air_speed_cap, direction_speed_limit_for_state(input, state))
+			target = _input_direction.normalized() * low_limit * minf(input.length(), 1.0)
+			var acceleration := prone_air_acceleration if _posture == Posture.PRONE else crouch_air_acceleration
+			var deceleration := prone_air_deceleration if _posture == Posture.PRONE else crouch_air_deceleration
+			var slowing := target.length_squared() < horizontal.length_squared() or horizontal.dot(target) < 0.0
+			horizontal = horizontal.move_toward(target, (deceleration if slowing else acceleration) * delta)
+			_air_speed_cap = minf(_air_speed_cap, maxf(horizontal.length(), low_limit))
+		elif not input.is_zero_approx():
+			if horizontal.is_zero_approx() and not _air_min_control_active:
+				# Na een frontale wandstop blijft lichte zijsturing mogelijk;
+				# het verloren sprintmomentum mag daarbij niet terugkomen.
+				_air_speed_cap = minf(_air_speed_cap, air_min_control_speed)
+				_air_min_control_active = true
 			target = _input_direction.normalized() * _air_speed_cap * minf(input.length(), 1.0)
-			horizontal = horizontal.move_toward(target, air_acceleration * delta)
-			horizontal = horizontal.limit_length(_air_speed_cap)
+			if _air_min_control_active:
+				horizontal = horizontal.move_toward(target, air_acceleration * delta)
+			elif not horizontal.is_zero_approx():
+				# Richting veranderen zonder het afzetbudget naar een sprintdoel op te trekken.
+				var speed := horizontal.length()
+				var heading := atan2(-horizontal.x, -horizontal.z)
+				var desired := atan2(-target.x, -target.z)
+				var turn := clampf(wrapf(desired - heading, -PI, PI), -air_acceleration / speed * delta, air_acceleration / speed * delta)
+				horizontal = -Basis(Vector3.UP, heading + turn).z * speed
+		horizontal = horizontal.limit_length(_air_speed_cap)
 	velocity.x = horizontal.x
 	velocity.z = horizontal.z
 
@@ -896,7 +1015,8 @@ func _start_jump() -> void:
 	if not horizontal.is_zero_approx():
 		horizontal += horizontal.normalized() * _jump_boost
 	velocity = horizontal + Vector3.UP * float(parameters.vertical_speed)
-	_air_speed_cap = maxf(horizontal.length(), direction_speed_limit_for_state(direction, "sneak" if _sneak_requested else "lopen"))
+	_air_speed_cap = maxf(horizontal.length(), air_min_control_speed)
+	_air_min_control_active = horizontal.length() < air_min_control_speed
 	if jump_fatigue_enabled:
 		_fatigue = minf(_fatigue + float(parameters.fatigue_cost), 1.0)
 		_fatigue_recovery_duration = maxf(_fatigue_recovery_duration, float(parameters.recovery_time))
@@ -910,7 +1030,7 @@ func _step_limit_for_posture(posture: int) -> float:
 	return float(_movement_profile("sneak" if _sneak_requested else ("sprint" if _sprint_requested else "lopen")).step)
 
 
-func _step_plan(horizontal_motion: Vector3, posture: int, minimum_probe_distance: float = 0.0) -> Dictionary:
+func _step_plan(horizontal_motion: Vector3, posture: int, minimum_probe_distance: float = 0.0, margin: float = 0.0) -> Dictionary:
 	var limit := _step_limit_for_posture(posture)
 	if limit <= 0.0 or horizontal_motion.is_zero_approx():
 		return {}
@@ -921,31 +1041,45 @@ func _step_plan(horizontal_motion: Vector3, posture: int, minimum_probe_distance
 	if posture == Posture.PRONE:
 		extent += maxf(dimensions.y * 0.5 - dimensions.x, 0.0) * absf(local.z)
 	var probe_distance := maxf(maxf(horizontal_motion.length(), extent + 0.04), minimum_probe_distance)
+	var contact_normal := _shape_collision_normal(posture, global_transform, direction * maxf(probe_distance, 1.5))
+	var flat_normal := Vector3(contact_normal.x, 0.0, contact_normal.z).normalized()
+	if not flat_normal.is_zero_approx():
+		var plane_extent := dimensions.x
+		if posture == Posture.PRONE:
+			plane_extent += maxf(dimensions.y * 0.5 - dimensions.x, 0.0) * absf((-global_basis.z).dot(flat_normal))
+		# Een schuine aanloop moet verder langs zijn richting om dezelfde
+		# trederand te bereiken; radius+.04 alleen mist de bovenkant bij 30/45°.
+		probe_distance = maxf(probe_distance, minf((plane_extent + 0.04) / maxf(absf(direction.dot(flat_normal)), 0.15), 2.0))
 	var probe_motion := direction * probe_distance
 	var ray_from := global_position + probe_motion + Vector3.UP * (limit + 0.03)
 	var ray_to := global_position + probe_motion - Vector3.UP * 0.03
-	var ray := PhysicsRayQueryParameters3D.create(ray_from, ray_to, collision_mask, [get_rid()])
-	ray.hit_from_inside = true
-	var landing := get_world_3d().direct_space_state.intersect_ray(ray)
-	if landing.is_empty() or Vector3(landing.normal).dot(Vector3.UP) < cos(floor_max_angle):
-		return {}
-	var rise := Vector3(landing.position).y - global_position.y
-	if rise <= 0.005 or rise > limit + 0.005:
-		return {}
-	var lift := Vector3.UP * (rise + 0.003)
-	if not _shape_sweep_clear(posture, global_transform, lift):
-		return {}
-	var raised := global_transform
-	raised.origin += lift
-	if not _shape_sweep_clear(posture, raised, probe_motion):
-		return {}
-	var actual_destination := global_position + horizontal_motion
-	actual_destination.y = Vector3(landing.position).y + 0.001
-	var actual := global_transform
-	actual.origin.y = actual_destination.y
-	if not _shape_sweep_clear(posture, actual, horizontal_motion):
-		return {}
-	return {"destination": actual_destination, "support": Vector3(landing.position) + Vector3.UP * 0.001, "direction": direction, "remaining": maxf(probe_distance - horizontal_motion.length(), 0.0), "rise": rise}
+	var side := Vector3(-direction.z, 0.0, direction.x) * dimensions.x * 0.6
+	# Aan een buitenhoek raakt de middenray nog de gewone vloer terwijl de
+	# capsulerand al op de trede kan rusten. Toets iedere steun afzonderlijk.
+	for offset in [Vector3.ZERO, side, -side]:
+		var ray := PhysicsRayQueryParameters3D.create(ray_from + offset, ray_to + offset, collision_mask, [get_rid()])
+		ray.hit_from_inside = true
+		var landing := get_world_3d().direct_space_state.intersect_ray(ray)
+		if landing.is_empty() or Vector3(landing.normal).dot(Vector3.UP) < cos(floor_max_angle):
+			continue
+		var rise := Vector3(landing.position).y - global_position.y
+		if rise <= 0.005 or rise > limit + 0.005:
+			continue
+		var lift := Vector3.UP * (rise + 0.003)
+		if not _shape_sweep_clear(posture, global_transform, lift, margin):
+			continue
+		var raised := global_transform
+		raised.origin += lift
+		if not _shape_sweep_clear(posture, raised, probe_motion, margin):
+			continue
+		var actual_destination := global_position + horizontal_motion
+		actual_destination.y = Vector3(landing.position).y + 0.001
+		var actual := global_transform
+		actual.origin.y = actual_destination.y
+		if not _shape_sweep_clear(posture, actual, horizontal_motion, margin):
+			continue
+		return {"destination": actual_destination, "support": Vector3(landing.position) + Vector3.UP * 0.001, "direction": direction, "remaining": maxf(probe_distance - horizontal_motion.length(), 0.0), "rise": rise}
+	return {}
 
 
 func _try_step_up(horizontal_motion: Vector3) -> bool:
@@ -957,63 +1091,112 @@ func _try_step_up(horizontal_motion: Vector3) -> bool:
 	var collision := KinematicCollision3D.new()
 	if not test_move(global_transform, horizontal_motion, collision) or collision.get_normal().dot(Vector3.UP) >= cos(floor_max_angle):
 		return false
-	var plan := _step_plan(horizontal_motion, _posture)
-	if plan.is_empty():
-		return false
-	global_position = plan.destination
-	_step_support_point = plan.support
-	_step_support_direction = plan.direction
-	_step_support_remaining = plan.remaining
-	_last_step_height = plan.rise
-	return true
+	for option in _clearance_motion_options(_posture, horizontal_motion, false):
+		var plan := _step_plan(option, _posture)
+		if plan.is_empty():
+			continue
+		global_position = plan.destination
+		_step_support_point = plan.support
+		_step_support_direction = plan.direction
+		_step_support_remaining = plan.remaining
+		_last_step_height = plan.rise
+		return true
+	return false
 
 
 func _continue_step(horizontal_motion: Vector3) -> bool:
-	if horizontal_motion.normalized().dot(_step_support_direction) < 0.7:
+	var support_ray := PhysicsRayQueryParameters3D.create(_step_support_point + Vector3.UP * 0.05, _step_support_point - Vector3.UP * 0.05, collision_mask, [get_rid()])
+	var support := get_world_3d().direct_space_state.intersect_ray(support_ray)
+	if support.is_empty() or Vector3(support.normal).dot(Vector3.UP) < cos(floor_max_angle):
 		_step_support_remaining = 0.0
 		return false
-	var support_probe := global_transform
-	support_probe.origin = _step_support_point + Vector3.UP * 0.05
-	var support := KinematicCollision3D.new()
-	if not test_move(support_probe, Vector3.DOWN * 0.1, support) or support.get_normal().dot(Vector3.UP) < cos(floor_max_angle):
-		_step_support_remaining = 0.0
-		return false
-	var actual_destination := global_position + horizontal_motion
-	actual_destination.y = _step_support_point.y
-	if test_move(global_transform, actual_destination - global_position):
-		_step_support_remaining = 0.0
-		return false
-	_last_step_height = maxf(actual_destination.y - global_position.y, 0.0)
-	global_position = actual_destination
-	_step_support_remaining = maxf(_step_support_remaining - horizontal_motion.length(), 0.0)
-	return true
-
-
-func _consider_auto_lowering(horizontal_motion: Vector3) -> void:
-	if _posture >= Posture.PRONE or horizontal_motion.is_zero_approx():
-		return
-	var adjacent := _posture + 1
-	if not _posture_transition_clear(adjacent):
-		return
-	var direction := horizontal_motion.normalized()
-	var local_direction := global_basis.inverse() * direction
-	for candidate in range(adjacent, Posture.PRONE + 1):
-		var dimensions := _posture_dimensions(candidate)
-		var extent := dimensions.x
-		if candidate == Posture.PRONE:
-			extent += maxf(dimensions.y * 0.5 - dimensions.x, 0.0) * absf(local_direction.z)
-		# Lage vormen eerder toetsen: een ligvoetafdruk begint verder vóór de
-		# voeten dan een kruipvorm. Twee physicsstappen aanloop laten eerst de
-		# werkelijk afgeronde kruipstaat toe vóór de ligingang of lage trede.
-		var probe_distance := extent + 0.12 + horizontal_motion.length() * 2.0
-		var approach := direction * probe_distance
-		if _shape_sweep_clear(_posture, global_transform, approach) or not _step_plan(horizontal_motion, _posture, probe_distance).is_empty():
+	for option in _clearance_motion_options(_posture, horizontal_motion, false):
+		if option.normalized().dot(_step_support_direction) < 0.7:
 			continue
-		if _shape_sweep_clear(candidate, global_transform, approach) or not _step_plan(horizontal_motion, candidate, probe_distance).is_empty():
-			# Altijd eerst één werkelijk afgeronde kruipstaat, ook bij directe ligingang.
-			_pending_auto_posture = adjacent
-			_restore_clear_time = 0.0
+		var actual_destination := global_position + option
+		actual_destination.y = _step_support_point.y
+		if test_move(global_transform, actual_destination - global_position):
+			continue
+		_last_step_height = maxf(actual_destination.y - global_position.y, 0.0)
+		global_position = actual_destination
+		_step_support_remaining = maxf(_step_support_remaining - option.length(), 0.0)
+		return true
+	_step_support_remaining = 0.0
+	return false
+
+
+func _posture_probe_distance(posture: int, direction: Vector3, delta: float) -> float:
+	var dimensions := _posture_dimensions(posture)
+	var extent := dimensions.x
+	if posture == Posture.PRONE:
+		extent += maxf(dimensions.y * 0.5 - dimensions.x, 0.0) * absf((-global_basis.z).dot(direction))
+	var local := global_basis.inverse() * direction
+	var manual_state := "kruipen" if _manual_posture == Posture.CROUCH else ("sneak" if _sneak_requested else ("sprint" if _sprint_requested else "lopen"))
+	var requested_speed := direction_speed_limit_for_state(Vector2(local.x, local.z), manual_state)
+	var speed := maxf(Vector2(velocity.x, velocity.z).length(), requested_speed)
+	return extent + 0.12 + speed * delta * 2.0
+
+
+func _clearance_motion_options(posture: int, motion: Vector3, normalize_length: bool = true) -> Array[Vector3]:
+	var options: Array[Vector3] = [motion]
+	var current := motion
+	for index in 2:
+		var normal := _shape_collision_normal(posture, global_transform, current)
+		if normal.is_zero_approx() or absf(normal.y) > 0.5:
+			break
+		var slid := current.slide(normal)
+		slid.y = 0.0
+		if slid.length() < 0.02 or slid.normalized().dot(motion.normalized()) < 0.1:
+			break
+		if normalize_length:
+			slid = slid.normalized() * motion.length()
+		if slid.normalized().dot(current.normalized()) > 0.999:
+			break
+		options.append(slid)
+		current = slid
+	return options
+
+
+func _clearance_path_passable(posture: int, motion: Vector3, margin: float = 0.0) -> bool:
+	if _shape_sweep_clear(posture, global_transform, motion, margin):
+		return true
+	return not _step_plan(motion, posture, motion.length(), margin).is_empty()
+
+
+func _higher_path_clear(posture: int, motion: Vector3, margin: float) -> bool:
+	for option in _clearance_motion_options(_posture, motion):
+		if _clearance_path_passable(posture, option, margin):
+			return true
+	return false
+
+
+func _update_auto_posture_demand(input: Vector2, delta: float) -> void:
+	if input.is_zero_approx() or _manual_posture == Posture.PRONE:
+		_auto_posture_demand = _manual_posture
+		return
+	# Automatisch lig vraagt vooraf handmatig kruip; handmatig staan autoriseert
+	# alleen kruip. Een eerdere lagere vraag blijft tot dezelfde route weer vrij is.
+	var candidate := Posture.CROUCH if _manual_posture == Posture.STAND else Posture.PRONE
+	var direction := _input_direction.normalized()
+	var probe_distance := maxf(_auto_probe_distance, _posture_probe_distance(candidate, direction, delta))
+	var approach := direction * probe_distance
+	var previous := _auto_posture_demand
+	_auto_posture_demand = _manual_posture
+	if _clearance_path_passable(_manual_posture, approach):
+		return
+	var passable_lower := false
+	for option in _clearance_motion_options(candidate, approach):
+		if not _clearance_path_passable(candidate, option):
+			continue
+		if _clearance_path_passable(_manual_posture, option):
 			return
+		passable_lower = true
+	if passable_lower and (candidate <= _posture or _posture_transition_clear(candidate)):
+		_auto_posture_demand = candidate
+		_auto_probe_distance = probe_distance
+	elif previous > _manual_posture:
+		_auto_posture_demand = mini(previous, candidate)
+		_auto_probe_distance = probe_distance
 
 
 func _update_debug_arrows() -> void:
@@ -1021,10 +1204,8 @@ func _update_debug_arrows() -> void:
 	_update_arrow(_input_arrow, _input_direction)
 	_update_arrow(_movement_arrow, _movement_direction)
 	var head_arrow := _debug_arrows.get_node_or_null("HeadArrow") as Node3D
-	if head_arrow != null:
+	if head_arrow != null and not _camera_pivot.has_method("get_head_direction"):
 		var direction := -global_basis.z
-		if _camera_pivot.has_method("get_head_direction"):
-			direction = _camera_pivot.call("get_head_direction")
 		_update_arrow(head_arrow, Vector3(direction.x, 0.0, direction.z))
 
 
@@ -1064,4 +1245,8 @@ func _get_configuration_warnings() -> PackedStringArray:
 		warnings.append("Minimum sneakhoogte is hoger dan de basis. Atlas houdt de ingestelde basis aan; verhoog die zelf voor een bruikbaar opstapje.")
 	if camera_eye_height >= _posture_vertical_height(Posture.STAND) or crouch_eye_height >= _posture_vertical_height(Posture.CROUCH) or prone_eye_height >= _posture_vertical_height(Posture.PRONE):
 		warnings.append("Plaats iedere ooghoogte binnen de eigen capsulehoogte. De camera begrenst een onveilige hoogte voor de doorgang.")
+	if idle_body_turn_stop_angle >= idle_body_turn_start_angle and idle_body_turn_start_angle > 0.0:
+		warnings.append("Laat stilstaand bijdraaien stoppen bij een kleinere hoofdhoek dan de starthoek; dat voorkomt flikkeren rond de grens.")
+	if idle_body_turn_start_angle > head_max_yaw:
+		warnings.append("De stilstaande draaistart ligt voorbij de hoofdlimiet; Atlas begint uiterlijk bij de hoofdlimiet.")
 	return warnings

@@ -18,6 +18,8 @@ try {
 		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/character_checks.gd'))
 		Write-Host 'Herhaalde sprongen, houdingen, hoofdrichting en camera controleren...'
 		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/movement_checks.gd'))
+		Write-Host 'Houdingknoppen, precisiesprongen, lichaamsdraai en hoekovergangen controleren...'
+		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/refinement_checks.gd'))
 	}
     Write-Host 'Atlas: versie, import en headless-start geslaagd.'
     exit 0

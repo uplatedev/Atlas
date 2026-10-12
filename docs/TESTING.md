@@ -60,9 +60,9 @@ De overdracht verloopt zo:
 
 ## Lokale Character-proef
 
-Deze instructies gelden voor de geselecteerde [T-004-proefbranch](https://github.com/uplatedev/Atlas/tree/Smyl3z/T-004-character-movement). De actuele broncommit en lokale overdracht staan in WORK. Gameplay en de `-CharacterChecks`-optie zitten op die werkbranch; main blijft het gedeelde geheugen totdat de noodzakelijke gebruikersbeoordeling rond is.
+Deze instructies gelden voor de geselecteerde [T-005-proefbranch](https://github.com/uplatedev/Atlas/tree/Smyl3z/T-005-character-verfijnen). De actuele broncommit en lokale overdracht staan in WORK. Gameplay en de `-CharacterChecks`-optie zitten op die werkbranch; main blijft het gedeelde geheugen totdat de noodzakelijke gebruikersbeoordeling rond is.
 
-De [Character-beschrijving](topics/character.md) beschrijft de instellingen en editorwerkwijze. Open `game/scenes/main.tscn` en druk op F5. WASD/muis/Shift/spatie besturen, Alt is sneak, Ctrl kruip aan/uit, Z kruip/lig, scroll zoomt, Tab wisselt Character, R reset beide, F3 wisselt debug en F4 snelheids-FOV. Esc geeft de muis vrij en klik hervat. Resultaten van controles staan bij T-004 in WORK; menselijke beoordeling van het gevoel blijft nodig.
+De [Character-beschrijving](topics/character.md) beschrijft de instellingen en editorwerkwijze. Open `game/scenes/main.tscn` en druk op F5. WASD/muis/Shift/spatie besturen, Alt is sneak, Ctrl kruip aan/uit, Z lig, spatie één houding omhoog of springen vanuit staan, scroll zoomt, Tab wisselt Character, R reset beide, F3 wisselt debug en F4 dynamische FOV. Esc geeft de muis vrij en klik hervat. Resultaten van controles staan bij T-004 in WORK; menselijke beoordeling van het gevoel blijft nodig.
 
 Herhaalbare technische proef vanuit de Atlas-root:
 
@@ -70,14 +70,14 @@ Herhaalbare technische proef vanuit de Atlas-root:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Check-Atlas.ps1 -CharacterChecks
 ```
 
-Deze optionele suite draait de oorspronkelijke scene-/physicscontroles plus de nieuwe movementregressies. Ze meet echte Character-physics en controleert onder meer twaalf herhaalsprongen per richting, vermoeidheid, timing, lage doorgangen, hoofd-/lichaamsdraai en camera. De headless-suite gebruikt vaste renderdelta op 60 FPS zonder realtime wachten; de physics blijft 60 Hz. De gewone Check-Atlas-aanroep blijft een korte import-/startcontrole.
+Deze optionele suite draait de oorspronkelijke scene-/physicscontroles, movementregressies en T-005-verfijningsproeven. Ze meet echte Character-physics en controleert onder meer twaalf herhaalsprongen per richting, vermoeidheid, timing, lage doorgangen, hoofd-/lichaamsdraai en camera. De headless-suite gebruikt vaste renderdelta op 60 FPS zonder realtime wachten; de physics blijft 60 Hz. De gewone Check-Atlas-aanroep blijft een korte import-/startcontrole.
 
 1. Plaats twee instances en geef ze andere namen en duidelijk verschillende loop-/sprintwaarden. Wijzig één instance en controleer dat de andere gelijk blijft; doe dit ook voor camera, sprong en opstap. Laat de gebruiker zelf plaatsen, aanklikken en instellen.
 2. Vergelijk na uitaccelereren vooruit, zijwaarts en achteruit, zowel lopend als sprintend. Controleer de afgesproken volgorde en de toepasselijke limiet. Combineer twee inputs: geen diagonale bonus, ook niet bij sprinten of richtingwissels. Tegengestelde inputs mogen geen snelheid opstapelen.
 3. Meet versnellen, uitrollen na loslaten en overgang van sprint naar lopen met de afzonderlijke acceleratie-/afremwaarden. Debug toont invoer en werkelijke beweging onderscheidbaar, ook wanneer er tijdens afremmen geen input meer is.
 4. Draai de muis: hoofd/camera kijken direct binnen het bereik; het lichaam draait begrensd bij. Bekijk beide debugpijlen, zachte hoofdzone, direct terugkijken en een liglichaam dat niet verder door de tunnel kan draaien. A/D strafen en S loopt achteruit ten opzichte van het lichaam. Zoom via scroll naar first person en terug; test aangepaste zoomgrenzen/-stap, muren en lage plafonds. Eigen capsule/naam blokkeren het zicht niet; andere instances blijven zichtbaar.
 5. Vergelijk werkelijke spronghoogte en landingsafstand vanuit stilstand, uitgeaccelereerd lopen en uitgeaccelereerd sprinten. Stilstand het hoogst, lopen ertussenin, sprint het laagst maar extra ver. Controleer ook zij-/achterwaartse sprint, Shift vanuit rust, diagonale afzet en beperkte luchtsturing: geen onbeperkte snelheidsopbouw of wisseling van het afzetprofiel midden in de lucht.
-6. Test opstappen vlak onder, op en boven de ingestelde grens. Loop links route 1 binnen: 0.30 m trede met 1.20 m vrije ruimte geeft kruip, de volgende 0.20 m trede met 0.80 m geeft lig; de open uitgang herstelt veilig via kruip naar staan. Kies handmatig kruip/lig en controleer dat de uitgang die keuze bewaart. Probeer ook de directe lage ingang, onmogelijke 0.65 m doorgang en smalle ligbocht. Boven de opstapgrens blijft het een obstakel.
+6. Test opstappen vlak onder, op en boven de ingestelde grens. Loop links route 1 binnen: 0.30 m trede met 1.20 m vrije ruimte geeft automatisch kruip. Zonder eigen houdingkeuze blokkeert de 0.80 m lage vervolgroute. Kies Ctrl-kruip om automatische lig toe te staan; na de open uitgang herstelt kruip. Spatie richt je daarna op. Kies handmatig kruip/lig en controleer dat de uitgang die keuze bewaart. Kies Z om handmatig direct lig te proberen bij de lage ingang; probeer ook, onmogelijke 0.65 m doorgang en smalle ligbocht. Boven de opstapgrens blijft het een obstakel.
 7. Controleer echte texturebestanden en bekende rasterafstand op vloeren én muren; geen uitrekking of verkeerde schaal. Beoordeel de capsule, naam en markeringen onder precies de twee edge-/fill-lampen met de sunset-skybox.
 
 Leg bij T-002 bronversie, technische resultaten en het afzonderlijke gebruikersoordeel vast. Numerieke defaults zijn afstelbaar; technisch correcte waarden bewijzen nog geen prettig bewegingsgevoel.
@@ -103,9 +103,19 @@ De eerste harness geeft exitcode 0 als de oude fout daadwerkelijk is gereproduce
 
 ### Nieuwe regressies en menselijke vervolgproef
 
-`game/tests/movement_checks.gd` controleert directe herhaalsprongen in alle richtingen, geen stapeling met vermoeidheid uit, zwakker worden en grondherstel, geen reset via profielwissel, minimale sneakhoogte en één uitvoering per druk. De suite controleert ook landingsbuffer/randtolerantie, veilige aangrenzende houdingsovergangen, behoud van handmatige houding, hoofdgrenzen en de ligvorm in een smalle tunnel.
+`game/tests/movement_checks.gd` controleert directe herhaalsprongen in alle richtingen, geen stapeling met vermoeidheid uit, zwakker worden en grondherstel, geen reset via profielwissel, minimale sneakhoogte en één uitvoering per druk. De suite controleert ook landingsbuffer/randtolerantie, veilige houdingsovergangen, behoud van handmatige houding, hoofdgrenzen en de ligvorm in een smalle tunnel.
 
 Laat de gebruiker dezelfde loop-/sprint-/rem-/draairoute spelen met snelheid-FOV uit en aan, third en first person, en snelle cameradraai met begrensd lichaam. Test camera op verschillende renderframerates, Tab/reset, eigen zicht en het verschil tussen gevraagde zoom en muurcompressie. Vergelijk volle en opeenvolgende sprongen en terugkeer naar volle kracht na grondrust. De arena-/defaultdetails staan in T-003; resultaten komen pas na werkelijke uitvoering in WORK.
+
+## T-005 opnieuw op gevoel proberen
+
+Start dezelfde hoofdscene met F5. Vergelijk een zeer korte aanloop (bijna tegelijk W/Shift/spatie) met volledig uitaccelereren. Doe dit ook lopend. Kies tijdens een sprintsprong Ctrl of Z: horizontaal moet je direct sterk stoppen, terwijl de verticale sprong doorgaat. Probeer hiermee precies op een metermarkering of post te landen.
+
+Z kiest lig; Ctrl kiest kruip. Druk vanuit lig twee keer afzonderlijk spatie: eerst kruip, dan staan, zonder sprong. Een derde nieuwe druk springt. Onder een plafond blijft oprichten veilig geblokkeerd. Als route 1 je automatisch laat kruipen, kies Ctrl om kruip zelf vast te leggen en automatische lig verderop toe te staan. Zonder die eigen keuze mag staan nooit automatisch lig worden.
+
+Kijk vanuit stilstand een kleine hoek opzij: het lichaam blijft staan. Begin te bewegen of kijk ver opzij: het lichaam draait met zijn ingestelde limiet bij. Probeer de verhoogde post vóór de linker kruipingang en benader schuin. Vergelijk cameravolging bij lopen, sprinten en vallen; vergelijk FOV met F4 bij sprint/sneak/kruip/lig. Alle extra cameraverzachting is per Character instelbaar en kan op nul.
+
+`refinement_checks.gd` meet de korte en volle afzet, maximale luchtsnelheid, horizontale precisierem met behoud van verticale snelheid, expliciete houdingknoppen, Ctrl na automatische kruip, hoek-/wandbenaderingen en lichaams-/luchtsturing. Het bijbehorende [T-005-verslag](work/T-005.md) bevat bronversie en werkelijk uitgevoerde resultaten. Een technisch geslaagde proef bewijst het nieuwe gevoel nog niet.
 
 ## Latere proeven: nog niet uitgevoerd
 

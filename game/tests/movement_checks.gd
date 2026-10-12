@@ -70,13 +70,13 @@ func _test_sneak_and_postures() -> void:
 	Input.action_press("jump")
 	await _frames(2)
 	Input.action_release("jump")
-	_expect(character.is_on_floor(), "lig heeft in deze proef geen sprong")
+	_expect(character.is_on_floor() and character.get_posture() == 1, "spatie richt lig één houding op zonder sprong")
 	await _reset()
 	Input.action_press("prone")
 	await _frames(2)
 	Input.action_release("prone")
 	await _frames(5)
-	_expect(character.get_posture() == 1, "Z vanuit staan slaat de kruiphouding niet over")
+	_expect(character.get_posture() == 2, "Z kiest handmatig rechtstreeks lig vanuit staan")
 	await _reset()
 	Input.action_press("sneak")
 	var sneak_jump: Dictionary = await _jump_once()
@@ -207,9 +207,19 @@ func _test_low_passages() -> void:
 	await _reset()
 	var low_roof := _add_box(Vector3(0, 0.9, -3), Vector3(3, 0.2, 4))
 	Input.action_press("move_forward")
+	var lowered_to_prone_from_stand := false
+	for i in 120:
+		await _frames(1)
+		lowered_to_prone_from_stand = lowered_to_prone_from_stand or character.get_posture() == 2
+	_expect(not lowered_to_prone_from_stand, "handmatig staan activeert nooit automatisch lig")
+	_expect(character.position.z > -1.1, "staande voorkeur blokkeert vóór een doorgang die lig vereist")
+	await _reset()
+	character.request_posture(1)
+	await _frames(3)
+	Input.action_press("move_forward")
 	var previous_posture := character.get_posture()
 	var adjacent := true
-	saw_crouch = false
+	saw_crouch = true
 	saw_prone = false
 	for i in 500:
 		await _frames(1)
@@ -218,11 +228,11 @@ func _test_low_passages() -> void:
 		previous_posture = current
 		saw_crouch = saw_crouch or current == 1
 		saw_prone = saw_prone or current == 2
-	_expect(saw_crouch and saw_prone and adjacent and character.position.z < -5.9, "directe lage ingang passeert alleen via voltooide kruip- en ligstaten")
+	_expect(saw_crouch and saw_prone and adjacent and character.position.z < -5.9, "handmatige kruip staat automatische lig toe bij lage ingang")
 	_release_inputs()
 	low_roof.queue_free()
 	await _frames(20)
-	_expect(character.get_posture() == 0, "automatisch lig herstelt via kruip naar staan")
+	_expect(character.get_posture() == 1, "automatisch lig herstelt naar de handmatig gekozen kruip")
 	await _reset()
 	character.request_posture(1)
 	await _frames(5)
@@ -267,7 +277,7 @@ func _test_head_and_turning() -> void:
 	await _frames(1)
 	_expect(absf(wrapf(character.rotation.y - start_yaw, -PI, PI)) <= deg_to_rad(character.idle_turn_speed) / 60.0 + 0.002, "lichaam draait per physicsframe binnen zijn limiet bij")
 	await _frames(40)
-	_expect(absf(float(character.get_debug_state().get("head_relative_yaw", 999.0))) < 1.0, "vrij lichaam haalt de hoofdrichting in")
+	_expect(absf(float(character.get_debug_state().get("head_relative_yaw", 999.0))) <= 46.0, "stilstaand lichaam haalt alleen de noodzakelijke hoofdhoek in")
 	await _reset()
 	var left := _add_box(Vector3(-0.55, 0.8, 0), Vector3(0.2, 1.6, 10))
 	var right := _add_box(Vector3(0.55, 0.8, 0), Vector3(0.2, 1.6, 10))
@@ -327,9 +337,13 @@ func _test_main_arena() -> void:
 	var saw_prone := false
 	var adjacent := true
 	var previous: int = actor.get_posture()
+	var chose_crouch := false
 	for i in 850:
 		await _frames(1)
 		var current: int = actor.get_posture()
+		if actor.global_position.z < -6.5 and not chose_crouch:
+			actor.request_posture(1)
+			chose_crouch = true
 		adjacent = adjacent and absi(current - previous) <= 1
 		previous = current
 		saw_crouch = saw_crouch or current == 1
@@ -338,7 +352,7 @@ func _test_main_arena() -> void:
 			break
 	Input.action_release("move_forward")
 	await _frames(30)
-	_expect(saw_crouch and saw_prone and adjacent and actor.global_position.z < -13.4 and actor.get_posture() == 0, "werkelijke arena: kruipopstap, ligopstap en veilig herstel worden samen doorlopen")
+	_expect(saw_crouch and saw_prone and adjacent and actor.global_position.z < -13.4 and actor.get_posture() == 1, "werkelijke arena: auto kruip, handmatige keuze voor ligroute en herstel naar kruip")
 	print("MEASURE: actual arena R1 final %s; crouch %s / prone %s / adjacent %s" % [str(actor.global_position), str(saw_crouch), str(saw_prone), str(adjacent)])
 	main.queue_free()
 	await process_frame

@@ -9,10 +9,12 @@ var characters: Array[AtlasCharacter] = []
 @onready var values_label: Label = $UI/Info/Margin/Rows/Values
 @onready var debug_label: Label = $UI/Info/Margin/Rows/Debug
 @onready var version_label: Label = $UI/Version
+@onready var fps_label: Label = $UI/FPS
 @onready var mouse_hint: Label = $UI/MouseHint
 
 var active_index := 0
 var debug_visible := true
+var _fps_refresh_remaining := 0.0
 
 
 func _ready() -> void:
@@ -63,7 +65,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_fps_refresh_remaining -= delta
+	if _fps_refresh_remaining <= 0.0:
+		fps_label.text = "%d FPS" % roundi(Engine.get_frames_per_second())
+		_fps_refresh_remaining = 0.25
 	if characters.is_empty():
 		return
 	var character := characters[active_index]
@@ -105,7 +111,7 @@ func _direction_text(value: Variant) -> String:
 
 
 func _version_text() -> String:
-	var version := "T-004 · lokale proef"
+	var version := "T-005 · lokale proef"
 	var path := "res://test-version.local.json"
 	if FileAccess.file_exists(path):
 		var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))

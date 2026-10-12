@@ -1,0 +1,13 @@
+Bron: T-004 commit 49d62546, vóór de T-005-camera-aanpassingen.
+Godot 4.7.2.stable.official.ed1daf0bf, Jolt, physics 60 Hz.
+Realtime headless rendercap 30/60/144, geen --fixed-fps.
+Rechte proef: 40 m/s, first person; meten na één seconde opwarmen.
+
+MEASURE camera-position fps=30 samples=61 raw_stalls=0 interp_stalls=0 camera_stalls=0 max_raw_step=1.33333587646484 camera_vs_interpolated_error=0.0 camera_speed_min/max=39.9997340629359/40.0001329725211
+MEASURE camera-position fps=60 samples=121 raw_stalls=0 interp_stalls=0 camera_stalls=0 max_raw_step=0.66666793823242 camera_vs_interpolated_error=0.0 camera_speed_min/max=39.9995051856775/40.0003030150503
+MEASURE camera-position fps=144 samples=289 raw_stalls=168 interp_stalls=0 camera_stalls=0 max_raw_step=0.66666793823242 camera_vs_interpolated_error=0.0 camera_speed_min/max=39.9990318741745/40.000854580837
+
+Valproef: start 80m, 144 rendercap, first person, nul horizontale input.
+Camera-Y vergeleken met geïnterpoleerde body-Y + veilige staande ooghoogte 1.61m.
+De laatste stilstaande samples horen bij de landing. Exacte realtime-delta verschilt per run.
+MEASURE camera-position fps=144 samples=289 raw_stalls=178 interp_stalls=23 camera_stalls=178 max_raw_step=0.93888777494431 camera_vs_interpolated_error=0.87406574249268 camera_speed_min/max=0.0/135.20848435191

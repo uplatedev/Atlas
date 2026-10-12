@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3]
+[gd_scene load_steps=37 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/prototype/kenney_light_grid.png" id="1_light"]
 [ext_resource type="Texture2D" path="res://assets/prototype/kenney_orange_grid.png" id="2_orange"]
@@ -117,6 +117,12 @@ size = Vector3(3.8, 2.1, 0.2)
 [sub_resource type="BoxShape3D" id="Shape_15"]
 size = Vector3(3.8, 2.1, 0.2)
 
+[sub_resource type="BoxMesh" id="Mesh_approach_post"]
+size = Vector3(1.2, 0.3, 2.2)
+
+[sub_resource type="BoxShape3D" id="Shape_approach_post"]
+size = Vector3(1.2, 0.3, 2.2)
+
 [node name="PostureTestArea" type="Node3D"]
 metadata/proef = "Editorzichtbare houdingsstations. Alle vrije maten staan in de namen en bordjes; meshes en botsingsvormen gebruiken dezelfde meters. Alleen echte Kenney-rastertextures."
 
@@ -194,10 +200,29 @@ material_override = SubResource("Material_wall")
 [node name="Collision" type="CollisionShape3D" parent="AdjacentPostureRoute/RightWall"]
 shape = SubResource("Shape_4")
 
+[node name="RaisedApproachPost" type="StaticBody3D" parent="AdjacentPostureRoute"]
+position = Vector3(-0.8, 0.15, 0)
+metadata/proef = "0.30 m hoge post vóór de kruipingang. Benader de ingang vanaf deze post onder een schuine hoek; de vrije route blijft veilig doorlopen."
+
+[node name="Mesh" type="MeshInstance3D" parent="AdjacentPostureRoute/RaisedApproachPost"]
+mesh = SubResource("Mesh_approach_post")
+material_override = SubResource("Material_step")
+
+[node name="Collision" type="CollisionShape3D" parent="AdjacentPostureRoute/RaisedApproachPost"]
+shape = SubResource("Shape_approach_post")
+
+[node name="ApproachSign" type="Label3D" parent="AdjacentPostureRoute"]
+position = Vector3(-2.3, 0.9, 1.6)
+text = "HOEKBENADERING\nPost +0.30 m → lage ingang"
+font_size = 24
+pixel_size = 0.006
+billboard = 1
+modulate = Color(0.96, 0.71, 0.39, 1)
+
 [node name="EntrySign" type="Label3D" parent="AdjacentPostureRoute"]
 position = Vector3(0, 2.65, 0.1)
 billboard = 1
-text = "1 / HOUDINGSROUTE\n+0.30 m → kruip · 1.20 m vrij\n+0.20 m → lig · 0.80 m vrij"
+text = "1 / HOUDINGSROUTE\n+0.30 m → kruip · 1.20 m vrij\n+0.20 m → lig na Ctrl · 0.80 m vrij"
 font_size = 29
 pixel_size = 0.006
 outline_size = 6
@@ -207,7 +232,7 @@ outline_modulate = Color(0.035, 0.04, 0.055, 1)
 [node name="ExitSign" type="Label3D" parent="AdjacentPostureRoute"]
 position = Vector3(0, 1.9, -8.9)
 billboard = 1
-text = "OPEN UITGANG\nAuto: veilig hoger\nHandmatig: houding blijft"
+text = "OPEN UITGANG\nAuto: herstelt je eigen houding\nHandmatig: houding blijft"
 font_size = 25
 pixel_size = 0.006
 outline_size = 6
@@ -216,7 +241,7 @@ outline_modulate = Color(0.035, 0.04, 0.055, 1)
 
 [node name="DirectLowEntrance" type="Node3D" parent="."]
 position = Vector3(-12, 0, -6)
-metadata/proef = "Loop naar -Z: 0.80 m vrije hoogte. Eerst kruipen op de vrije positie voor de ingang, dan liggen. Geen rechtstreekse staan-naar-lig-overgang."
+metadata/proef = "0.80 m vrije hoogte: Z kiest handmatig lig, of kies Ctrl-kruip om automatische lig toe te staan. Vanuit staan blijft de doorgang geblokkeerd."
 
 [node name="LowRoof080m" type="StaticBody3D" parent="DirectLowEntrance"]
 position = Vector3(0, 0.9, -3)
@@ -251,7 +276,7 @@ shape = SubResource("Shape_6")
 [node name="EntrySign" type="Label3D" parent="DirectLowEntrance"]
 position = Vector3(0, 2.55, 0.15)
 billboard = 1
-text = "2 / LAGE INGANG\n0.80 m vrij\nEerst kruip → dan lig"
+text = "2 / LAGE INGANG\n0.80 m vrij\nCtrl-kruip → auto lig / Z lig"
 font_size = 28
 pixel_size = 0.006
 outline_size = 6
@@ -378,7 +403,7 @@ outline_modulate = Color(0.035, 0.04, 0.055, 1)
 
 [node name="BrakingAndTurning" type="Node3D" parent="."]
 position = Vector3(10, 0, 12)
-metadata/proef = "Vrije baan over 10 meter naar -Z. Vergelijk versnellen, loslaten, terugsturen, lichaamsdraai en F4 snelheids-FOV. Meterstrepen zijn de bestaande vloertexture."
+metadata/proef = "Vrije baan over 10 meter naar -Z. Vergelijk versnellen, loslaten, terugsturen, lichaamsdraai en F4 dynamische FOV. Meterstrepen zijn de bestaande vloertexture."
 
 [node name="StartSign" type="Label3D" parent="BrakingAndTurning"]
 position = Vector3(0, 1.45, 0)

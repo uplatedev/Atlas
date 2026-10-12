@@ -1,0 +1,17 @@
+Bron: T-005 camera-working-tree, na dezelfde-pose hoogtecorrectie en enkele camerawriter.
+Godot 4.7.2.stable.official.ed1daf0bf, Jolt, physics60, realtime rendercap.
+Valproef 144fps (resterende22 stilstaandeframes zijn na landing):
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+MEASURE camera-position fps=144 samples=289 raw_stalls=178 interp_stalls=22 camera_stalls=22 max_raw_step=0.93888777494431 camera_vs_interpolated_error=0.0000032043457 camera_speed_min/max=0.0/56.3332809656966
+
+Rechte proef40m/s, firstperson30/60/144:
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+MEASURE camera-position fps=30 samples=61 raw_stalls=0 interp_stalls=0 camera_stalls=0 max_raw_step=1.33333587646484 camera_vs_interpolated_error=0.0 camera_speed_min/max=39.9996784828727/40.0001329725211
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+MEASURE camera-position fps=60 samples=121 raw_stalls=0 interp_stalls=0 camera_stalls=0 max_raw_step=0.66666793823242 camera_vs_interpolated_error=0.0 camera_speed_min/max=39.9995051856775/40.0001918174527
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+MEASURE camera-position fps=144 samples=289 raw_stalls=168 interp_stalls=0 camera_stalls=0 max_raw_step=0.66666793823242 camera_vs_interpolated_error=0.0 camera_speed_min/max=39.9990875943218/40.0007826416754

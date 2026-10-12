@@ -15,7 +15,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Check-Atlas.ps1
 
 De tijdelijke execution policy geldt alleen voor die aanroep. De editor opent [game/project.godot](game/project.godot). Open `scenes/main.tscn` en druk op F5 om de proef te spelen; F8 stopt het project. De controle importeert de bronnen en start de hoofdscene kort zonder venster. Met `-CharacterChecks` voert Check-Atlas ook de fysieke proeven uit.
 
-WASD beweegt, de muis kijkt, Shift sprint, Alt is sneak, Ctrl schakelt kruip aan/uit, Z wisselt kruip/lig, spatie springt en scroll zoomt tot first person. Tab wisselt tussen de Characters; R brengt ze terug naar hun start. F3 schakelt de richtingsdebug en pijlen; F4 vergelijkt snelheids-FOV. Esc geeft de muis vrij; klik in het spel om verder te spelen.
+WASD beweegt, de muis kijkt, Shift sprint, Alt is sneak, Ctrl schakelt kruip aan/uit, Z kiest lig, spatie richt één houding op of springt vanuit staan en scroll zoomt tot first person. Tab wisselt tussen de Characters; R brengt ze terug naar hun start. F3 schakelt de richtingsdebug en pijlen; F4 vergelijkt dynamische FOV. Esc geeft de muis vrij; klik in het spel om verder te spelen.
 
 Selecteer `Characters/AtlasA` of `Characters/AtlasB` in de hoofdscene om naam, kleur, beweging, springen, opstap en camera in de Inspector te wijzigen. Open [Character.tscn](game/characters/Character.tscn) om die ingang te bekijken. Je kunt deze scene onder `Characters` plaatsen of een bestaande instance dupliceren; Tab neemt die extra instance automatisch mee. Zie [de editorwerkwijze](docs/topics/character.md#content-maken-in-de-editor).
 
