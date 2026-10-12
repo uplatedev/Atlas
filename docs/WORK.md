@@ -4,7 +4,7 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
-T-009 voert de kleine camera-/FOV-proef uit als derde afzonderlijke stap van T-006. Contactaudio uit T-008 blijft behouden en nog te beluisteren. Beweging en tijdelijke capsulepolish blijven buiten deze stap. Nieuwe camera-effectwaarden vragen een lokale vergelijking; LAN/Steam blijven aparte afstemming.
+T-009 is als afzonderlijke camera-/FOV-proef gepubliceerd op `9f75853c`; import/start en alle zes suites slagen. De vaste Atlas-map staat nog op `b533d618` omdat de Atlas-editor openstaat; gecontroleerd opslaan/sluiten of herladen is nog nodig vóór update. Contactaudio uit T-008 blijft behouden en nog te beluisteren. Beweging en tijdelijke capsulepolish blijven buiten deze stap. Nieuwe camera-effectwaarden vragen een lokale vergelijking; LAN/Steam blijven aparte afstemming.
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -17,16 +17,19 @@ T-009 voert de kleine camera-/FOV-proef uit als derde afzonderlijke stap van T-0
 | T-006 | Juice inventariseren en onderzoeken | Onderzoek afgerond; voorstel beschikbaar | atlas-T006-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-006-juice-onderzoek` | Onderzoek klaar; camera-uitvoering volgt in T-007, daarna contactaudio |
 | T-007 | Camera-eigenaarschap scheiden, stap 1 | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T007-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-007-camera-scheiden` | Zelfde gevoel kort lokaal beoordelen; daarna contactaudio |
 | T-008 | Contactaudio, stap 2 | Gepubliceerd en lokaal klaar; luisterproef open | atlas-T008-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-008-contactaudio` | Klank/cadans/slide met F6 lokaal vergelijken |
-| T-009 | Camera-accenten, stap 3 | Gereserveerd | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Kleine landing-/FOV-proef bouwen en lokaal vergelijken |
+| T-009 | Camera-accenten, stap 3 | Gepubliceerd; lokale update wacht op opgeslagen editorwerk | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Kleine landing-/FOV-proef bouwen en lokaal vergelijken |
 
 ## T-009 — Camera-accenten, stap 3
 
 Reservering door `atlas-T009-20261012-01a12fd0`, STELLAR-FORGE (Windows), vanaf main `0431cdbcd987e321b6c1507870d4735fa517e5c7`. De gebruiker vraagt verder te gaan naar de volgende stapsgewijze uitvoering van T-006. Scope: kleine instelbare TP-landingsreactie (FP standaard nul), gedeeld begrensd camerabudget en veilige collisioncontrole; FOV-variant voor werkelijke afgebouwde luchtvaart en slidevaart. CameraRig blijft enige uitvoerder; één Character-Inspector met korte Nederlandse uitleg. Basis speelbron `b533d618`; beweging, sprongregels, contactaudio, level en capsulepolish blijven buiten deze stap. Afstelwaarden zijn nog te beoordelen proefdefaults.
 
-- **Gebouwd:** taak gereserveerd; implementatie begint na aantoonbare main-publicatie.
-- **Technisch gecontroleerd:** actuele remote, eigenaarschap, gebruikte GitHub-identiteit en schone ontwikkel-/testmappen gecontroleerd. Nog geen nieuwe engineproef.
+- **Gebouwd:** kleine camera-eigen landingspuls, begrensd gezamenlijk rem-/landingsbudget, werkelijke lucht-/slide-FOV en F7/F9-vergelijking. Twaalf nieuwe rootinstellingen met uitleg; alle 156 oude velden behouden. Details in [work/T-009.md](work/T-009.md).
+- **Technisch gecontroleerd:** Godot 4.7.2/Jolt: import/start en alle zes suites geslaagd. Echte TP-piek .009982 m, FP0, 30/60/144 dezelfde tijdcurve; 220-frame physics/kijkvergelijking en historische 5.611 camera-getallen met grootste afwijking0. Startup, virtuele step, reset/Tab in vlucht, teleport/disable, audio-onafhankelijkheid, werkelijke camerasphere en opgeslagen/herladen onafhankelijke overrides slagen. Windows HUD-render en bronreview gecontroleerd; diffcheck schoon.
 - **Door de gebruiker beoordeeld:** volgende stap expliciet opgedragen; T-008-luisterproef en nieuwe camera-effectwaarden nog open.
-- **Volgende stap:** camera-accenten afzonderlijk vergelijkbaar bouwen, bestaande regressies en gerichte camera-/physicsproef uitvoeren; checkpoint publiceren en vaste lokale map bijwerken.
+- **Volgende stap:** open editorwerk veilig opslaan en gecontroleerd sluiten/herladen; daarna vaste Atlas-map op `9f75853c` zetten, daar import/start en zes suites herhalen en met F7/F9 vergelijken. Nieuwe camerawaarden en T-008-klank blijven een menselijke proef vragen; geen gameplay-/netwerkfase gestart.
+
+
+Gepubliceerd checkpoint [`9f75853c000589e465e5c8aad0b1124e352c8a89`](https://github.com/uplatedev/Atlas/commit/9f75853c000589e465e5c8aad0b1124e352c8a89), bronboom `94deb6c990614406c8ededf16e158b56644fd9d5` exact gelijk aan het gecontroleerde native checkpoint; gameboom `868ff1c09ee67a8d8634160cce5e5d644c4fa10b`. Geen main-gameplayintegratie vóór noodzakelijke beoordeling. Op STELLAR-FORGE is de bestaande Atlas-editor open; de vaste testcheckout en HUD-metadata blijven daarom op T-008 `b533d618`. De gebruiker is gevraagd eventuele editorwijzigingen op te slaan en de editor gecontroleerd te sluiten voordat de lokale map wordt bijgewerkt. Geen lopend editorwerk overschreven en geen andere pc bijgewerkt.
 
 ## T-008 — Contactaudio, stap 2
 
