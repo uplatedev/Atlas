@@ -46,6 +46,20 @@ Controleer dat Atlas geopend is, open `scenes/main.tscn` en bekijk de ene neutra
 
 Bij wijzigingen aan de helpers: controleer ook een ontbrekend pad, versieverschil, ongeldige hoofdscene en engine-/projectpaden met spaties. Gebruik tijdelijke kopieën voor foutproeven en herstel lokale instellingen. Maak geen scaffold-unittests die alleen de bestanden nabootsen.
 
+## Lokale Character-proef: nog niet gebouwd
+
+De [Character-fundering](topics/character.md) beschrijft de gewenste instellingen en aanpak. Deze controles zijn het plan voor de eerste implementatie; er zijn nog geen Character-testresultaten.
+
+1. Plaats twee instances en geef ze andere namen en duidelijk verschillende loop-/sprintwaarden. Wijzig één instance en controleer dat de andere gelijk blijft; doe dit ook voor camera, sprong en opstap. Laat de gebruiker zelf plaatsen, aanklikken en instellen.
+2. Vergelijk na uitaccelereren vooruit, zijwaarts en achteruit, zowel lopend als sprintend. Controleer de afgesproken volgorde en de toepasselijke limiet. Combineer twee inputs: geen diagonale bonus, ook niet bij sprinten of richtingwissels. Tegengestelde inputs mogen geen snelheid opstapelen.
+3. Meet versnellen, uitrollen na loslaten en overgang van sprint naar lopen met de afzonderlijke acceleratie-/afremwaarden. Debug toont invoer en werkelijke beweging onderscheidbaar, ook wanneer er tijdens afremmen geen input meer is.
+4. Draai de muis: het Character draait horizontaal mee, A/D strafen en S loopt achteruit. Zoom via scroll van third person naar first person en terug; test aangepaste zoomgrenzen/-stap, muren en lage plafonds. Eigen capsule/naam blokkeren het first-personzicht niet; de andere instance blijft zichtbaar. Later in LAN moet ook de andere speler de lokaal verborgen capsule blijven zien.
+5. Vergelijk werkelijke spronghoogte en landingsafstand vanuit stilstand, uitgeaccelereerd lopen en uitgeaccelereerd sprinten. Stilstand het hoogst, lopen ertussenin, sprint het laagst maar extra ver. Controleer ook zij-/achterwaartse sprint, Shift vanuit rust, diagonale afzet en beperkte luchtsturing: geen onbeperkte snelheidsopbouw of wisseling van het afzetprofiel midden in de lucht.
+6. Test opstappen vlak onder, op en boven de ingestelde grens, met hoge wanden en lage plafonds. Geen doorsnijden of ongewenst omhoog verplaatsen. Boven de grens blijft het een obstakel.
+7. Controleer echte texturebestanden en bekende rasterafstand op vloeren én muren; geen uitrekking of verkeerde schaal. Beoordeel de capsule, naam en markeringen onder precies de twee edge-/fill-lampen met de sunset-skybox.
+
+Leg bij T-002 bronversie, technische resultaten en het afzonderlijke gebruikersoordeel vast. Numerieke defaults zijn afstelbaar; technisch correcte waarden bewijzen nog geen prettig bewegingsgevoel.
+
 ## Latere proeven: nog niet uitgevoerd
 
 Deze aanpak is afgesproken; de benodigde functionaliteit bestaat nog niet:
@@ -55,4 +69,4 @@ Deze aanpak is afgesproken; de benodigde functionaliteit bestaat nog niet:
 3. **Bediening:** beschrijf bij die proef de werkelijke eenvoudige host/join-handelingen. Noteer technische synchronisatie afzonderlijk van het oordeel van de gebruiker over instellen, bediening en gevoel, steeds met build-ID en wat er werkelijk op beide pc's gebeurde.
 4. **Steam:** bewijs vroeg met dezelfde beperkte gameplay en editorwerkwijze de Windows-export, actuele engine-/plugincompatibiliteit, sessiontoegang, identiteit, eigenaarschap en toestandsoverdracht. Een andere transportklasse alleen bewijst dit niet. Kies de plugin pas na actuele verificatie. AppID 480 hoort bij Spacewar-ontwikkeling en is geen definitieve Atlas-identiteit; gebruik bij gelijktijdige proeven twee verschillende Steam-accounts en houd Atlas-projectidentiteit/versie apart herkenbaar.
 
-Er is nog geen Windows-testexport, LAN-proef, beoordeling van speelgevoel of Steamproef uitgevoerd. De noodzakelijke Character-bespreking staat in [WORK](WORK.md).
+Er is nog geen Character-proef, Windows-testexport, LAN-proef, beoordeling van speelgevoel of Steamproef uitgevoerd. De Character-bespreking is vastgelegd; implementatie en vervolgafstemming staan in [WORK](WORK.md).

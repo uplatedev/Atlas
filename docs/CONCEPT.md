@@ -1,6 +1,6 @@
 # Concept van Atlas
 
-Bron: door de gebruiker opgedragen masterprompt en agentafspraken, 12 oktober 2026. Dit document beschrijft de gewenste ervaring en werkwijze; bestaande code staat er niet automatisch als ontwerpbesluit in.
+Bron: door de gebruiker opgedragen masterprompt, agentafspraken en Character-bespreking met vervolgantwoorden, 12 oktober 2026. Dit document beschrijft de gewenste ervaring en werkwijze; bestaande code staat er niet automatisch als ontwerpbesluit in.
 
 ## Vaststaande uitgangspunten
 
@@ -15,16 +15,26 @@ Bron: door de gebruiker opgedragen masterprompt en agentafspraken, 12 oktober 20
 
 ## Les uit Artemis
 
-Bewegingsvrijheid was belangrijk in het vorige hobbyproject Artemis. Daar werd bij klimmen te vroeg ingezet op IK-solvers en fysieke reacties. Voor Atlas onderzoeken we eerst welke eenvoudige besturing en overtuigende visuele voorstelling de gewenste ervaring opleveren. Een capsule langs geometrie is een mogelijk voorbeeld, geen al gekozen Character-ontwerp.
+Bewegingsvrijheid was belangrijk in het vorige hobbyproject Artemis. Daar werd bij klimmen te vroeg ingezet op IK-solvers en fysieke reacties. Voor Atlas onderzoeken we eerst welke eenvoudige besturing en overtuigende visuele voorstelling de gewenste ervaring opleveren. Een capsule langs geometrie was bij de bootstrap alleen een voorbeeld. De gebruiker heeft de capsule inmiddels voor de eerste Character-proef gekozen; daarmee is nog geen klimsysteem gekozen.
 
 ## Eerste latere proef
 
 Twee Characters in dezelfde scène, ieder via de editor afzonderlijk instelbaar, waaronder snelheid, acceleratie en deceleratie. Die scène moet gelijktijdig op beide Windows-computers speelbaar worden, met behoud van de individuele instellingen. Eerst via LAN, daarna vroeg een beperkte Steamproef met dezelfde gameplay en editorwerkwijze. Zie [TESTING](TESTING.md#latere-proeven-nog-niet-uitgevoerd).
 
-## Grens van de bootstrap
+## Eerste Character en proeflevel
+
+De gebruiker heeft voor de eerste proef een capsule gekozen, met een instelbare naam boven het hoofd. De camera begint in third person en kan met instelbaar scrollzoomen naar first person; de eigen capsule mag het zicht daar niet blokkeren. Het Character draait horizontaal met de camera mee. WASD beweegt, de muis kijkt, Shift vasthouden sprint en spatie springt.
+
+Lopen en sprinten hebben afzonderlijk instelbare snelheid, acceleratie en afremming. Vooruit is sneller dan zijwaarts, zijwaarts sneller dan achteruit; ook sprinten mag in alle richtingen met die lagere zij-/achterwaartse snelheden. Gecombineerde input mag geen extra snelheid opleveren. Een debugweergave maakt de richting zichtbaar en de opstaphoogte is instelbaar.
+
+Een stilstaande sprong gaat hoog, een lopende sprong zit ertussenin en een sprintsprong blijft laag maar gaat extra ver. De werkelijke snelheid bij het afzetten bepaalt de sprong; er is beperkte luchtsturing.
+
+Het proeflevel krijgt twee lampen met edge-/fillfunctie, echte prototype-textures met afstandsmarkeringen op vloeren en muren en een skybox rond zonsondergang. De gedetailleerde werkwijze, instellingen, technische voorstellen en assetbronnen staan in [Character en proeflevel](topics/character.md). Dit zijn gewenste eigenschappen, nog geen geïmplementeerde functies.
+
+## Afgeronde bootstrap
 
 Alleen werkstructuur, volledige [agentafspraken](../AGENTS.md), een lege werkende Godot-basis en kleine open-/controlehulpmiddelen. Geen Character, bewegingscontroller, networking, IK, klimmechaniek, Steam-integratie, lobby, netwerkabstractie of multiplayerlauncher. Ook geen lege gameplaycomponenten als voorschot.
 
 ## Nog open
 
-Spelwereld, camera, 2D/3D-besturing, bewegingsgevoel, verdere mechanics en Character-architectuur. Ook eigenaarschap, spawnen en precieze synchronisatie moeten voor de eerste multiplayerproef expliciet worden afgesproken. De neutrale root van de lege scene beslist hierover niets. De bespreking staat in [WORK](WORK.md#t-001--character-fundering-bespreken); voorstellen worden pas na bevestiging uitgangspunten.
+De verdere spelwereld en mechanics staan open. De exacte waarden en het gevoel van de afgesproken beweging, sprongen en camera worden met een kleine lokale proef afgestemd. Eigenaarschap, spawnen en precieze synchronisatie moeten vóór de LAN-implementatie expliciet worden afgesproken. De eerste proef blijft daarom lokaal. Voortgang en afhankelijkheden staan in [WORK](WORK.md); voorstellen voor latere systemen worden niet stilzwijgend besluiten.

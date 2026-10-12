@@ -1,6 +1,6 @@
 # Atlas
 
-Atlas is een nieuw Godot-gameproject. Deze basis bevat een lege startscene en afspraken waarmee we samen verder kunnen bouwen. De gewenste spelwereld, camera en Character-fundering staan nog open.
+Atlas is een nieuw Godot-gameproject. Er is een gecontroleerde lege startscene. De eerste [Character-proef](docs/topics/character.md) is beschreven: een instelbare capsule, camera met zoom van third person naar first person en een meetbaar prototypelevel. De gameplay is nog niet gebouwd; de verdere spelwereld staat open.
 
 ## Openen en controleren op Windows
 
