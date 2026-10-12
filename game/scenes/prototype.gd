@@ -1,6 +1,7 @@
 extends Node3D
-## Kleine lokale proef: Tab wisselt tussen de twee editor-instances.
+## Lokale movementproef: Tab wisselt tussen zelfstandig instelbare Characters.
 
+## Leg de muis meteen vast bij starten. Uit is handig voor screenshots en tests.
 @export var capture_mouse_on_start := true
 
 var characters: Array[AtlasCharacter] = []
@@ -49,6 +50,13 @@ func _unhandled_input(event: InputEvent) -> void:
 				debug_visible = not debug_visible
 				for character in characters:
 					character.debug_enabled = debug_visible
+			KEY_F4:
+				if not characters.is_empty():
+					var character := characters[active_index]
+					var enabled: Variant = character.get("camera_speed_fov_enabled")
+					if enabled is bool:
+						character.set("camera_speed_fov_enabled", not enabled)
+				get_viewport().set_input_as_handled()
 			KEY_ESCAPE:
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -60,32 +68,44 @@ func _process(_delta: float) -> void:
 		return
 	var character := characters[active_index]
 	var state := character.get_debug_state()
+	var head_limit: Variant = character.get("head_max_yaw")
 	character_label.text = "%s  ·  %d / %d" % [character.display_name, active_index + 1, characters.size()]
-	values_label.text = "%s   %.2f m/s   ·   camera %.1f m" % [
+	var speed_fov: Variant = character.get("camera_speed_fov_enabled")
+	values_label.text = "%s · %s · %.2f m/s\nZoom %.1f / vrij %.1f m · FOV %.1f° · snelheid %s" % [
+		str(state.get("posture", "staan")),
 		str(state.get("motion_mode", "lopen")),
 		float(state.get("speed", 0.0)),
 		float(state.get("camera_distance", 0.0)),
+		float(state.get("camera_actual_distance", state.get("camera_distance", 0.0))),
+		float(state.get("fov", 75.0)),
+		"aan" if speed_fov == true else "uit",
 	]
 	debug_label.visible = debug_visible
-	debug_label.text = "Kijken %s\nInput %s\nBeweging %s\nSprong %s" % [
-		_direction_text(state.get("facing_direction", Vector3.FORWARD)),
+	debug_label.text = "Hoofd  %s\nLichaam  %s\nInput  %s\nBeweging  %s\nHoofd t.o.v. lichaam  %+.1f° / ±%.0f°\nSprong %s · %.2f m hoog · cap %.2f m/s\nVermoeidheid %.0f%%" % [
+		_direction_text(state.get("head_direction", state.get("facing_direction", Vector3.FORWARD))),
+		_direction_text(state.get("body_direction", state.get("facing_direction", Vector3.FORWARD))),
 		_direction_text(state.get("input_direction", Vector3.ZERO)),
 		_direction_text(state.get("movement_direction", Vector3.ZERO)),
+		float(state.get("head_relative_yaw", 0.0)),
+		float(head_limit) if head_limit is float or head_limit is int else 85.0,
 		str(state.get("jump_profile", "—")),
+		float(state.get("jump_height", 0.0)),
+		float(state.get("air_speed_cap", 0.0)),
+		clampf(float(state.get("fatigue", 0.0)), 0.0, 1.0) * 100.0,
 	]
 	mouse_hint.visible = Input.mouse_mode != Input.MOUSE_MODE_CAPTURED
 
 
 func _direction_text(value: Variant) -> String:
 	if value is Vector3:
-		return "(%+.2f, %+.2f)" % [value.x, value.z]
+		return "(%+.2f, %+.2f, %+.2f)" % [value.x, value.y, value.z]
 	if value is Vector2:
 		return "(%+.2f, %+.2f)" % [value.x, value.y]
 	return str(value)
 
 
 func _version_text() -> String:
-	var version := "T-002 · lokale proef"
+	var version := "T-004 · lokale proef"
 	var path := "res://test-version.local.json"
 	if FileAccess.file_exists(path):
 		var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))

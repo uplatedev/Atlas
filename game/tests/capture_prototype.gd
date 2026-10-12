@@ -15,6 +15,11 @@ func _capture() -> void:
 			main.get_node("Characters/AtlasA").set_camera_distance(0.0)
 		elif argument == "--view=second":
 			main.call("set_active_character", 1)
+		elif argument == "--view=prone":
+			main.get_node("Characters/AtlasA").request_posture(2)
+		elif argument == "--view=arena":
+			main.get_node("Characters/AtlasA").global_position = Vector3(-6, 0.05, -3.8)
+			main.get_node("Characters/AtlasA").reset_physics_interpolation()
 	for i in 45:
 		await process_frame
 	main.set_process(false)

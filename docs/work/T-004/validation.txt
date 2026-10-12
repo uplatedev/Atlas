@@ -1,0 +1,177 @@
+Godot-versie akkoord. Project importeren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registering global classes... (2 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  33% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+Hoofdscene headless starten (10 frames)...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Character-physics en scenecontrole uitvoeren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: lopen bereikt ingestelde voorwaartse snelheid
+PASS: lopen: vooruit > zijwaarts > achteruit
+PASS: diagonale loopinput geeft geen snelheidsbonus
+PASS: sprint bereikt ingestelde voorwaartse snelheid
+PASS: sprint werkt in alle richtingen met lagere zij-/achterwaartse snelheden
+PASS: diagonale sprintinput geeft geen snelheidsbonus
+PASS: tegengestelde inputs heffen elkaar op
+PASS: acceleratie bouwt snelheid op
+PASS: loslaten remt af
+PASS: sprint naar lopen keert terug naar looplimiet
+MEASURE: walk 5.000 / side 4.000 / back 2.750 / diagonal 4.417; sprint 9.000 / 7.200 / 4.950 / 7.951
+PASS: sprong komt los en landt weer
+PASS: sprong komt los en landt weer
+PASS: sprong komt los en landt weer
+PASS: gemeten spronghoogte: stilstand > lopen > sprint
+PASS: gemeten sprintsprong gaat extra ver
+PASS: alleen Shift verandert sprongprofiel niet bij dezelfde snelheid
+PASS: stationaire sprong blijft hoog
+MEASURE: jumps standing 2.075m / 0.000m range; walk 1.309m / 3.667m; sprint 0.744m / 7.700m
+PASS: lage trede wordt werkelijk opgestapt
+PASS: trede boven opstapgrens blijft obstakel
+PASS: geldige trede onder laag plafond passeert met automatisch lagere houding
+MEASURE: steps low 0.301 / z -7.974; high 0.001 / z -0.649; ceiling 0.301 / z -14.507
+PASS: twee onafhankelijke editorinstellingen aanwezig
+PASS: instancewijziging blijft lokaal
+PASS: capsulebotsingen hebben eigen Resources
+PASS: capsulematerialen hebben eigen Resources
+PASS: naamwijziging raakt tweede instance niet
+PASS: camera kan naar first person zoomen
+PASS: first-personcamera verbergt uitsluitend eigen capsule
+PASS: andere capsule blijft zichtbaar voor first-personcamera
+PASS: zoom blijft binnen instelbare maximale afstand
+PASS: tweede instance houdt eigen camerafstand
+PASS: camera van tweede Character ziet de eerste capsule
+PASS: reset keert terug naar eigen startpositie
+PASS: camera-arm comprimeert werkelijk bij een nabije muur
+PASS: gecomprimeerde camera blijft vrij van eigen capsule
+PASS: eigen capsule wordt zichtbaar zodra de camera weer vrij is
+PASS: kleine ingestelde maximale zoomafstand blijft bruikbaar
+PASS: prototypelevel bevat precies twee lampen
+PASS: alle Character-physics- en scenecontroles geslaagd.
+Herhaalde sprongen, houdingen, hoofdrichting en camera controleren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: Alt-sneak heeft voorrang op sprint
+PASS: sneak verandert de staande capsule niet
+PASS: Ctrl kiest kruip en bewaart die na loslaten
+PASS: kruip gebruikt eigen bewegingssnelheid
+PASS: Z gaat vanuit kruip naar lig
+PASS: lig gebruikt eigen bewegingssnelheid
+PASS: lig heeft in deze proef geen sprong
+PASS: Z vanuit staan slaat de kruiphouding niet over
+PASS: sprong wordt uitgevoerd en landt
+PASS: sneak-sprong blijft laag en boven de ingestelde minimumhoogte
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_forward"]
+MEASURE: repeated no-fatigue ["move_forward"] [14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_right"]
+MEASURE: repeated no-fatigue ["move_right"] [12.1999988555908, 12.1999988555908, 12.1999988555908, 12.1999988555908, 12.1999988555908, 12.1999988555908, 12.1999988555908, 12.1999988555908, 12.1999988555908, 12.1999988555908, 12.1999988555908, 12.1999988555908]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_back"]
+MEASURE: repeated no-fatigue ["move_back"] [9.94999885559082, 9.94999885559082, 9.94999885559082, 9.94999885559082, 9.94999885559082, 9.94999885559082, 9.94999885559082, 9.94999885559082, 9.94999885559082, 9.94999885559082, 9.94999885559082, 9.94999885559082]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_forward", "move_right"]
+MEASURE: repeated no-fatigue ["move_forward", "move_right"] [12.9510669708252, 12.9510698318481, 12.9510698318481, 12.9510698318481, 12.9510698318481, 12.9510698318481, 12.9510698318481, 12.9510698318481, 12.9510698318481, 12.9510698318481, 12.9510698318481, 12.9510698318481]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: opeenvolgende sprintsprongen worden lager
+PASS: opeenvolgende sprintsprongen verliezen extra sprintbonus
+MEASURE: fatigue heights 0.744 / 0.648 / 0.551; launch 14.000 / 12.083 / 10.167
+PASS: wisselen naar sneak wist sprintvermoeidheid niet
+PASS: voldoende grondrust herstelt volle sprongkracht
+PASS: sprong wordt uitgevoerd en landt
+PASS: na grondherstel komt dezelfde volle sprong terug
+PASS: sprongvermoeidheid herstelt niet tijdens vliegen
+PASS: vasthouden van spatie veroorzaakt geen automatische volgende sprong
+PASS: tweede druk binnen coyotetijd geeft geen dubbele luchtjump
+PASS: vroege nieuwe druk wordt eenmaal bij landing uitgevoerd
+PASS: kort na een echte rand blijft de coyote-sprong geldig
+PASS: na verlopen coyotetijd start geen luchtjump
+PASS: geldige .30m trede met 1.20m hoofdruimte wordt automatisch kruipend gepasseerd
+PASS: automatisch kruipen herstelt na vrije uitgang naar staan
+PASS: directe lage ingang passeert alleen via voltooide kruip- en ligstaten
+PASS: automatisch lig herstelt via kruip naar staan
+PASS: handmatige kruiphouding blijft op open grond behouden
+PASS: handmatige lighouding blijft op open grond behouden
+PASS: doorgang lager dan elke capsulevorm blijft geblokkeerd
+PASS: gelijke muisbeweging draait geleidelijk langzamer in de zachte hoofdzone
+PASS: grote muisinput kan de hoofdgrens niet overschrijden
+PASS: hoofdrichting en lichaamsrichting worden afzonderlijk bijgehouden
+PASS: terugdraaien reageert direct bij de hoofdgrens
+PASS: lichaam draait per physicsframe binnen zijn limiet bij
+PASS: vrij lichaam haalt de hoofdrichting in
+PASS: horizontale ligcapsule draait niet door de smalle tunnelwanden
+PASS: hoofd en camera blijven begrensd wanneer lichaam niet kan draaien
+PASS: FOV-uit houdt de gekozen third-personbasis
+PASS: snelheids-FOV reageert begrensd op echte sprint
+PASS: FOV keert na afremmen naar de basis terug
+PASS: first person gebruikt zijn eigen verticale basis-FOV
+PASS: camerahoogte volgt de ligcapsule
+PASS: werkelijke arena: kruipopstap, ligopstap en veilig herstel worden samen doorlopen
+MEASURE: actual arena R1 final (-6.0, 0.000126, -14.52159); crouch true / prone true / adjacent true
+PASS: movement-, houdings-, sprongherhaal- en hoofd/cameraregressies geslaagd.
+Atlas: versie, import en headless-start geslaagd.

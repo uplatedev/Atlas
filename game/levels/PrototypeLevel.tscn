@@ -1,9 +1,10 @@
-[gd_scene load_steps=29 format=3]
+[gd_scene load_steps=30 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/prototype/kenney_dark_grid.png" id="1_dark"]
 [ext_resource type="Texture2D" path="res://assets/prototype/kenney_light_grid.png" id="2_light"]
 [ext_resource type="Texture2D" path="res://assets/prototype/kenney_orange_grid.png" id="3_orange"]
 [ext_resource type="Texture2D" path="res://assets/sky/belfast_sunset_puresky_2k.hdr" id="4_sunset"]
+[ext_resource type="PackedScene" path="res://levels/PostureTestArea.tscn" id="5_posture"]
 
 [sub_resource type="StandardMaterial3D" id="Material_floor"]
 resource_name = "Vloerraster - hoofdvak 1 m"
@@ -221,9 +222,9 @@ shape = SubResource("Shape_step045")
 [node name="Height" type="Label3D" parent="StepTests/Step045m"]
 position = Vector3(0, 0.55, 0)
 billboard = 1
-text = "0.45 m"
-font_size = 40
-pixel_size = 0.008
+text = "0.45 m\nA blok · B ok"
+font_size = 32
+pixel_size = 0.006
 outline_size = 6
 
 [node name="Step060m" type="StaticBody3D" parent="StepTests"]
@@ -270,7 +271,7 @@ shape = SubResource("Shape_clearance_step")
 [node name="Height" type="Label3D" parent="LowClearance"]
 position = Vector3(0, 2.6, 0)
 billboard = 1
-text = "Hoofdruimte: 1.95 m / boven trede: 1.65 m"
+text = "1.95 m vrij\nboven trede: 1.65 m"
 font_size = 36
 pixel_size = 0.007
 outline_size = 6
@@ -356,3 +357,5 @@ text = "18 m"
 font_size = 32
 pixel_size = 0.007
 outline_size = 6
+
+[node name="PostureTestArea" parent="." instance=ExtResource("5_posture")]

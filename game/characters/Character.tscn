@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://characters/character.gd" id="1_character"]
+[ext_resource type="Script" path="res://characters/character_camera.gd" id="2_camera"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape"]
 resource_local_to_scene = true
@@ -23,6 +24,10 @@ radius = 0.18
 [sub_resource type="StandardMaterial3D" id="FacingMaterial"]
 shading_mode = 0
 albedo_color = Color(1, 0.84, 0.22, 1)
+
+[sub_resource type="StandardMaterial3D" id="HeadMaterial"]
+shading_mode = 0
+albedo_color = Color(0.3, 1, 0.35, 1)
 
 [sub_resource type="StandardMaterial3D" id="InputMaterial"]
 shading_mode = 0
@@ -87,6 +92,7 @@ text = "Character"
 [node name="CameraPivot" type="Node3D" parent="."]
 position = Vector3(0, 1.62, 0)
 rotation = Vector3(-0.2094395, 0, 0)
+script = ExtResource("2_camera")
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
 spring_length = 4.0
@@ -97,7 +103,7 @@ shape = SubResource("CameraShape")
 [node name="Camera3D" type="Camera3D" parent="CameraPivot/SpringArm3D"]
 position = Vector3(0, 0, 4)
 near = 0.05
-fov = 75.0
+fov = 70.0
 
 [node name="DebugArrows" type="Node3D" parent="."]
 
@@ -145,6 +151,23 @@ position = Vector3(0, 0, -1.0)
 rotation = Vector3(-1.5707963, 0, 0)
 mesh = SubResource("MovementShaft")
 material_override = SubResource("MovementMaterial")
+cast_shadow = 0
+
+[node name="HeadArrow" type="Node3D" parent="DebugArrows"]
+position = Vector3(0, 1.62, 0)
+
+[node name="Shaft" type="MeshInstance3D" parent="DebugArrows/HeadArrow"]
+position = Vector3(0, 0, -0.65)
+rotation = Vector3(-1.5707963, 0, 0)
+mesh = SubResource("ArrowShaft")
+material_override = SubResource("HeadMaterial")
+cast_shadow = 0
+
+[node name="Tip" type="MeshInstance3D" parent="DebugArrows/HeadArrow"]
+position = Vector3(0, 0, -1.1)
+rotation = Vector3(-1.5707963, 0, 0)
+mesh = SubResource("ArrowTip")
+material_override = SubResource("HeadMaterial")
 cast_shadow = 0
 
 [node name="Tip" type="MeshInstance3D" parent="DebugArrows/MovementArrow"]

@@ -1,0 +1,373 @@
+@tool
+extends Node3D
+## Camerarig van Character. Instellingen staan op de Character-root, zodat één
+## Inspector-ingang voldoende blijft. Hoofd/kijkrichting is los van lichaamsyaw.
+
+var _character: Node3D
+var _property_names: Dictionary = {}
+var _controlled: bool = false
+var _look_yaw: float = 0.0
+var _pitch: float = 0.0
+var _requested_distance: float = 4.0
+var _zoom_distance: float = 4.0
+var _actual_distance: float = 4.0
+var _eye_height: float = 1.62
+var _feet_height: float = 0.0
+var _fov: float = 70.0
+var _initialized: bool = false
+var _camera_shape: SphereShape3D = SphereShape3D.new()
+
+@onready var _arm: SpringArm3D = $SpringArm3D
+@onready var _camera: Camera3D = $SpringArm3D/Camera3D
+
+
+func _ready() -> void:
+	process_priority = 100
+	if not _initialized:
+		initialize(get_parent() as Node3D)
+
+
+func initialize(character: Node3D) -> void:
+	_character = character
+	_property_names.clear()
+	if is_instance_valid(_character):
+		for entry in _character.get_property_list():
+			_property_names[entry.name] = true
+	if not is_node_ready():
+		return
+	_initialized = true
+	if Engine.is_editor_hint():
+		top_level = false
+		position = Vector3(0.0, _value("camera_eye_height", 1.62), 0.0)
+		rotation = Vector3(deg_to_rad(_value("camera_start_pitch", -12.0)), 0.0, 0.0)
+		_arm.spring_length = _value("camera_start_distance", 4.0)
+		_camera.fov = _value("camera_fov_third_person", 70.0)
+		return
+	top_level = true
+	physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	_camera.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+	if _character is CollisionObject3D:
+		_arm.add_excluded_object(_character.get_rid())
+	# Naast SpringArm testen we het volledige cameravolume ook in het renderframe.
+	# Zo blijven directe muis/hoogteveranderingen veilig tussen twee physics-ticks.
+	_arm.shape = _camera_shape
+	reset_view()
+	set_controlled(_controlled)
+
+
+func _value(property_name: String, fallback: Variant) -> Variant:
+	if is_instance_valid(_character) and _property_names.has(property_name):
+		return _character.get(property_name)
+	return fallback
+
+
+func _owner_number(method_name: String, fallback: float) -> float:
+	if is_instance_valid(_character) and _character.has_method(method_name):
+		return float(_character.call(method_name))
+	return fallback
+
+
+func set_controlled(value: bool) -> void:
+	_controlled = value
+	if not is_node_ready() or Engine.is_editor_hint():
+		return
+	if value:
+		# Wisselen neemt de eigen bewaarde zoom/kijkhoek over, zonder oude positie-lag.
+		reset_follow_history()
+		_camera.make_current()
+	else:
+		_camera.clear_current(false)
+
+
+func reset_follow_history() -> void:
+	if not is_instance_valid(_character):
+		return
+	_feet_height = _character.global_position.y
+	_eye_height = _safe_eye_height()
+	reset_physics_interpolation()
+	_camera.reset_physics_interpolation()
+	_refresh_transform(0.0, true)
+
+
+func reset_view() -> void:
+	if not is_node_ready() or not is_instance_valid(_character):
+		return
+	_look_yaw = _body_yaw()
+	_pitch = _clamp_pitch(deg_to_rad(_value("camera_start_pitch", -12.0)))
+	set_distance(_value("camera_start_distance", 4.0))
+	_zoom_distance = _requested_distance
+	_actual_distance = _requested_distance
+	_fov = _base_fov()
+	reset_follow_history()
+
+
+func set_distance(distance: float) -> void:
+	_requested_distance = clampf(distance, 0.0, _value("camera_max_distance", 8.0))
+	if _requested_distance <= _first_person_threshold():
+		_requested_distance = 0.0
+	if is_node_ready() and Engine.is_editor_hint():
+		_arm.spring_length = _requested_distance
+
+
+func _first_person_threshold() -> float:
+	return minf(_value("first_person_threshold", 0.45), _value("camera_max_distance", 8.0) * 0.5)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not _controlled or Engine.is_editor_hint():
+		return
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		apply_look_delta(event.screen_relative)
+	elif event is InputEventMouseButton and event.pressed:
+		var step: float = _value("camera_zoom_step", 0.5)
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			set_distance(_requested_distance - step)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			var distance := _requested_distance + step
+			if _requested_distance == 0.0:
+				distance = maxf(distance, _first_person_threshold() + step)
+			set_distance(distance)
+
+
+## Hetzelfde pad als muisinvoer, publiek voor herhaalbare hoofdgrensproeven.
+func apply_look_delta(screen_pixels: Vector2) -> void:
+	if not _initialized or not is_instance_valid(_character):
+		return
+	var old_sensitivity: float = _value("look_sensitivity", 0.12)
+	var yaw_delta := deg_to_rad(-screen_pixels.x * float(_value("look_sensitivity_x", old_sensitivity)))
+	var pitch_delta := deg_to_rad(-screen_pixels.y * float(_value("look_sensitivity_y", 0.10)))
+	var body_yaw := _body_yaw()
+	var relative_yaw := wrapf(_look_yaw - body_yaw, -PI, PI)
+	var max_yaw := _max_head_yaw()
+	relative_yaw = clampf(relative_yaw, -max_yaw, max_yaw)
+	var soft_start := deg_to_rad(clampf(_value("head_soft_limit_start", 60.0), 0.0, rad_to_deg(max_yaw)))
+	# Integreer zachte afremming analytisch: grote events kunnen de grens niet
+	# overslaan. Omkeren reageert direct; afgewezen beweging wordt niet opgespaard.
+	if not is_zero_approx(yaw_delta):
+		var direction := signf(yaw_delta)
+		var relative := relative_yaw * direction
+		var remaining := absf(yaw_delta)
+		if relative < soft_start:
+			var direct := minf(remaining, soft_start - relative)
+			relative += direct
+			remaining -= direct
+		if remaining > 0.0:
+			var soft_range := max_yaw - soft_start
+			if soft_range > 0.00001:
+				relative = max_yaw - (max_yaw - relative) * exp(-remaining / soft_range)
+			else:
+				relative = minf(relative + remaining, max_yaw)
+		relative_yaw = clampf(relative * direction, -max_yaw, max_yaw)
+	_look_yaw = wrapf(body_yaw + relative_yaw, -PI, PI)
+	_pitch = _advance_pitch(_pitch, pitch_delta)
+	_refresh_rotation()
+
+
+func _max_head_yaw() -> float:
+	# Ook een ongeldige/scriptmatig ingestelde waarde kan geen volledige draai geven.
+	return deg_to_rad(clampf(_value("head_max_yaw", 85.0), 1.0, 120.0))
+
+
+func _clamp_pitch(pitch: float) -> float:
+	var minimum := deg_to_rad(clampf(_value("camera_min_pitch", -65.0), -85.0, 0.0))
+	var maximum := deg_to_rad(clampf(_value("camera_max_pitch", 70.0), 0.0, 85.0))
+	return clampf(pitch, minimum, maximum)
+
+
+func _advance_pitch(pitch: float, delta: float) -> float:
+	pitch = _clamp_pitch(pitch)
+	if is_zero_approx(delta):
+		return pitch
+	var direction := signf(delta)
+	var limit: float = _value("camera_max_pitch", 70.0) if direction > 0.0 else -float(_value("camera_min_pitch", -65.0))
+	limit = deg_to_rad(clampf(limit, 0.0, 85.0))
+	var soft_range := deg_to_rad(clampf(_value("camera_pitch_soft_limit_range", 10.0), 0.0, rad_to_deg(limit)))
+	var start := limit - soft_range
+	var angle := pitch * direction
+	var remaining := absf(delta)
+	if angle < start:
+		var direct := minf(remaining, start - angle)
+		angle += direct
+		remaining -= direct
+	if remaining > 0.0:
+		angle = limit - (limit - angle) * exp(-remaining / soft_range) if soft_range > 0.00001 else minf(angle + remaining, limit)
+	return _clamp_pitch(angle * direction)
+
+
+func _body_yaw() -> float:
+	return _character.global_rotation.y if is_instance_valid(_character) else 0.0
+
+
+func get_look_yaw() -> float:
+	return _look_yaw
+
+
+func get_head_direction() -> Vector3:
+	return -(Basis.from_euler(Vector3(_pitch, _look_yaw, 0.0))).z
+
+
+func get_state() -> Dictionary:
+	return {
+		"camera_distance": _requested_distance,
+		"camera_actual_distance": _actual_distance,
+		"actual_distance": _actual_distance,
+		"first_person": _requested_distance == 0.0,
+		"head_direction": get_head_direction(),
+		"head_yaw": rad_to_deg(_look_yaw),
+		"head_pitch": rad_to_deg(_pitch),
+		"head_relative_yaw": rad_to_deg(wrapf(_look_yaw - _body_yaw(), -PI, PI)),
+		"body_yaw": rad_to_deg(_body_yaw()),
+		"camera_fov": _fov,
+		"fov": _fov,
+	}
+
+
+func _process(delta: float) -> void:
+	if not _initialized or not is_instance_valid(_character):
+		return
+	if Engine.is_editor_hint():
+		position.y = _value("camera_eye_height", 1.62)
+		_arm.spring_length = _value("camera_start_distance", 4.0)
+		_camera.fov = _value("camera_fov_third_person", 70.0)
+		return
+	# De fysieke ligcapsule kan lichaamsdraai blokkeren; hoofdgrens geldt toch.
+	var relative := wrapf(_look_yaw - _body_yaw(), -PI, PI)
+	_look_yaw = wrapf(_body_yaw() + clampf(relative, -_max_head_yaw(), _max_head_yaw()), -PI, PI)
+	_pitch = _clamp_pitch(_pitch)
+	_refresh_transform(delta)
+
+
+func _safe_eye_height() -> float:
+	var desired := _owner_number("get_eye_height", _value("camera_eye_height", 1.62))
+	var clearance := _owner_number("get_camera_clearance_height", _value("capsule_height", 1.8))
+	var radius := _effective_camera_radius()
+	var minimum := minf(radius + 0.01, clearance * 0.5)
+	return clampf(desired, minimum, maxf(minimum, clearance - radius - 0.01))
+
+
+func _required_camera_radius() -> float:
+	# De sphere omvat ook de hoeken van het near-plane bij de grootste toegestane
+	# beeldhoek/aspectratio. Een kleine Inspector-radius kan die niet uitschakelen.
+	var size := get_viewport().get_visible_rect().size
+	var aspect := size.x / maxf(size.y, 1.0)
+	var maximum_fov := maxf(_value("camera_fov_third_person", 70.0), _value("camera_fov_first_person", 75.0))
+	maximum_fov = clampf(maximum_fov + float(_value("camera_sprint_fov_bonus", 6.0)), 30.0, 110.0)
+	var near_height := _camera.near * tan(deg_to_rad(maximum_fov) * 0.5)
+	var near_width := near_height * aspect
+	return sqrt(_camera.near * _camera.near + near_height * near_height + near_width * near_width) + 0.01
+
+
+func _effective_camera_radius() -> float:
+	var clearance := _owner_number("get_camera_clearance_height", _value("capsule_height", 1.8))
+	var desired: float = _value("camera_collision_radius", 0.18)
+	# Een vrijwillig groot volume blijft passend in een lage houding; de minimale
+	# beeldrandbescherming heeft altijd voorrang boven deze gewenste radius.
+	return maxf(_required_camera_radius(), minf(desired, maxf(0.01, clearance * 0.5 - 0.01)))
+
+
+func _refresh_transform(delta: float, immediate: bool = false) -> void:
+	if not is_instance_valid(_character) or Engine.is_editor_hint():
+		return
+	var interpolated: Transform3D = _character.get_global_transform_interpolated()
+	var eye := _safe_eye_height()
+	var actor_floor := interpolated.origin.y
+	var clearance := _owner_number("get_camera_clearance_height", _value("capsule_height", 1.8))
+	var radius := _effective_camera_radius()
+	var maximum_y := _character.global_position.y + maxf(clearance * 0.5, clearance - radius - 0.01)
+	if immediate:
+		_eye_height = eye
+		_feet_height = _character.global_position.y
+	else:
+		# Neerwaartse vormwissel wordt direct veilig; omhoog volgt zacht.
+		_eye_height = eye if eye < _eye_height else lerpf(_eye_height, eye, _blend(delta, _value("camera_eye_half_life", 0.08)))
+		var feet_half_life: float = _value("camera_step_half_life", 0.07)
+		# Vlucht/val volgen zonder extra cameravertraging; kleine vloeropstapjes mogen zacht.
+		var grounded: bool = _character is CharacterBody3D and (_character as CharacterBody3D).is_on_floor()
+		if absf(actor_floor - _feet_height) > 0.6 or not grounded:
+			_feet_height = actor_floor
+		else:
+			_feet_height = lerpf(_feet_height, actor_floor, _blend(delta, feet_half_life))
+	global_position = Vector3(interpolated.origin.x, minf(_feet_height + _eye_height, maximum_y), interpolated.origin.z)
+	_refresh_rotation()
+	_zoom_distance = lerpf(_zoom_distance, _requested_distance, _blend(delta, _value("camera_zoom_half_life", 0.06))) if not immediate else _requested_distance
+	if absf(_zoom_distance - _requested_distance) < 0.001:
+		_zoom_distance = _requested_distance
+	_camera_shape.radius = radius
+	_arm.spring_length = _zoom_distance
+	var safe_distance := _query_safe_distance(_zoom_distance)
+	if immediate or safe_distance < _actual_distance:
+		_actual_distance = safe_distance
+	else:
+		_actual_distance = lerpf(_actual_distance, safe_distance, _blend(delta, _value("camera_obstacle_return_half_life", 0.12)))
+	# SpringArm doet dezelfde volumecheck op physics-ticks. Dit renderframe gebruikt
+	# de nieuwste kijkhoek en blijft binnen de zojuist gecontroleerde afstand.
+	_camera.position = Vector3(0.0, 0.0, _actual_distance)
+	_refresh_fov(delta, immediate)
+	_refresh_visibility()
+
+
+func _query_safe_distance(distance: float) -> float:
+	if distance <= 0.0 or not is_inside_tree():
+		return 0.0
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = _camera_shape
+	query.transform = Transform3D(Basis.IDENTITY, global_position)
+	query.collision_mask = _arm.collision_mask
+	query.collide_with_areas = false
+	if _character is CollisionObject3D:
+		query.exclude = [_character.get_rid()]
+	var space := get_world_3d().direct_space_state
+	# cast_motion slaat begin-overlap over; controleer die daarom afzonderlijk.
+	if not space.intersect_shape(query, 1).is_empty():
+		return 0.0
+	query.motion = global_basis.z * distance
+	var fraction := space.cast_motion(query)
+	return maxf(0.0, distance * float(fraction[0]) - _arm.margin) if float(fraction[0]) < 1.0 else distance
+
+
+func _base_fov() -> float:
+	return _value("camera_fov_first_person", 75.0) if _requested_distance == 0.0 else _value("camera_fov_third_person", 70.0)
+
+
+func _refresh_fov(delta: float, immediate: bool) -> void:
+	var mix := clampf(_owner_number("get_fov_speed_mix", 0.0), 0.0, 1.0)
+	var target := _base_fov()
+	if _value("camera_speed_fov_enabled", true):
+		target += mix * float(_value("camera_sprint_fov_bonus", 6.0))
+	target = clampf(target, 30.0, 110.0)
+	var half_life: float = _value("camera_fov_rise_half_life", 0.10) if target > _fov else _value("camera_fov_return_half_life", 0.18)
+	_fov = target if immediate else lerpf(_fov, target, _blend(delta, half_life))
+	_camera.keep_aspect = Camera3D.KEEP_HEIGHT
+	_camera.fov = _fov
+
+
+func _refresh_visibility() -> void:
+	var layer := int(_owner_number("get_presentation_layer", float(_value("_presentation_layer", 0))))
+	if layer <= 0:
+		return
+	var radius: float = _value("capsule_radius", 0.35)
+	var close_distance := maxf(_first_person_threshold(), radius + _camera.near + _arm.margin + 0.05)
+	var inside_self := _requested_distance == 0.0 or _actual_distance <= close_distance
+	var collider := _character.get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if collider != null and collider.shape is CapsuleShape3D:
+		# De ligcapsule is langer achter het hoofd dan een staande capsule breed is.
+		# Test haar echte geroteerde vorm, zodat dicht zoomen geen eigen lichaam toont.
+		var capsule := collider.shape as CapsuleShape3D
+		var point := collider.global_transform.affine_inverse() * _camera.global_position
+		var half_axis := maxf(capsule.height * 0.5 - capsule.radius, 0.0)
+		var closest := Vector3(0.0, clampf(point.y, -half_axis, half_axis), 0.0)
+		var overlap_radius := capsule.radius + _required_camera_radius() + _arm.margin + 0.05
+		inside_self = inside_self or point.distance_squared_to(closest) <= overlap_radius * overlap_radius
+	_camera.set_cull_mask_value(layer, not inside_self)
+
+
+func _refresh_rotation() -> void:
+	global_rotation = Vector3(_pitch, _look_yaw, 0.0)
+	var arrow := _character.get_node_or_null("DebugArrows/HeadArrow") as Node3D
+	if is_instance_valid(arrow):
+		arrow.global_rotation = Vector3(_pitch, _look_yaw, 0.0)
+		arrow.position.y = _owner_number("get_eye_height", _value("camera_eye_height", 1.62))
+
+
+func _blend(delta: float, half_life: float) -> float:
+	return 1.0 if half_life <= 0.0 else 1.0 - exp(-log(2.0) * maxf(delta, 0.0) / half_life)

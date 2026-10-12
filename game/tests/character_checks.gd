@@ -2,7 +2,7 @@ extends SceneTree
 ## Werkelijke physicsproeven voor de lokale Character-controller.
 
 const CHARACTER = preload("res://characters/Character.tscn")
-const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "jump"]
+const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var world: Node3D
 var character: AtlasCharacter
@@ -102,8 +102,8 @@ func _test_steps() -> void:
 	await _frames(2)
 	low = _add_box(Vector3(0, 0.15, -2.5), Vector3(3, 0.3, 3))
 	var ceiling := _add_box(Vector3(0, 2.05, -2.5), Vector3(3, 0.2, 3))
-	var headroom: Dictionary = await _walk_over_obstacle()
-	_expect(headroom.max_y < 0.15 and headroom.final_z > -1.4, "laag plafond voorkomt onveilige opstap")
+	var headroom: Dictionary = await _walk_over_obstacle(300)
+	_expect(headroom.max_y > 0.26 and headroom.final_z < -4.1, "geldige trede onder laag plafond passeert met automatisch lagere houding")
 	low.queue_free()
 	ceiling.queue_free()
 	print("MEASURE: steps low %.3f / z %.3f; high %.3f / z %.3f; ceiling %.3f / z %.3f" % [climb.max_y, climb.final_z, blocked.max_y, blocked.final_z, headroom.max_y, headroom.final_z])
@@ -126,7 +126,7 @@ func _test_main_scene() -> void:
 	first.display_name = "Alleen eerste naam gewijzigd"
 	_expect(second.get_node("Presentation/NameLabel").text == second.display_name, "naamwijziging raakt tweede instance niet")
 	first.set_camera_distance(0.0)
-	await _frames(6)
+	await _frames(45)
 	_expect(bool(first.get_debug_state().first_person), "camera kan naar first person zoomen")
 	var first_mesh := first.get_node("Presentation/Capsule") as MeshInstance3D
 	var second_mesh := second.get_node("Presentation/Capsule") as MeshInstance3D
@@ -149,7 +149,7 @@ func _test_main_scene() -> void:
 	_expect(float(first.get_debug_state().camera_actual_distance) < 0.5, "camera-arm comprimeert werkelijk bij een nabije muur")
 	_expect((first_camera.cull_mask & first_mesh.layers) == 0, "gecomprimeerde camera blijft vrij van eigen capsule")
 	wall.queue_free()
-	await _frames(10)
+	await _frames(60)
 	_expect((first_camera.cull_mask & first_mesh.layers) != 0, "eigen capsule wordt zichtbaar zodra de camera weer vrij is")
 	first.camera_max_distance = 0.3
 	first.set_camera_distance(0.0)
@@ -195,11 +195,11 @@ func _jump(actions: Array) -> Dictionary:
 	return {"height": apex - start.y, "distance": distance}
 
 
-func _walk_over_obstacle() -> Dictionary:
+func _walk_over_obstacle(frames: int = 100) -> Dictionary:
 	await _reset()
 	Input.action_press("move_forward")
 	var max_y := character.global_position.y
-	for i in 100:
+	for i in frames:
 		await _frames(1)
 		max_y = maxf(max_y, character.global_position.y)
 	_release_inputs()
