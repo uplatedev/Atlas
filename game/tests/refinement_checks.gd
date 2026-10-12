@@ -31,6 +31,9 @@ func _run() -> void:
 	await _test_slide_step_boundary()
 	await _test_slide_safe_restore()
 	await _test_slide_default_range()
+	await _test_slide_jump()
+	await _test_slide_jump_negative_cases()
+	await _test_repeated_slide_jumps()
 	await _test_explicit_posture_controls()
 	await _test_automatic_posture_policy()
 	await _test_oblique_step_and_chatter()
@@ -499,6 +502,124 @@ func _coast_slide_range() -> Dictionary:
 	return {"frames": frames, "travel": Vector2(character.position.x - start.x, character.position.z - start.z).length(), "launch": launch, "max_speed": max_speed}
 
 
+func _test_slide_jump() -> void:
+	await _active_slide()
+	var horizontal := Vector3(character.velocity.x, 0, character.velocity.z)
+	var speed_before := horizontal.length()
+	var fatigue_before := float(character.get_debug_state().get("fatigue", 0.0))
+	var expected: Dictionary = character.jump_parameters(horizontal)
+	Input.action_press("jump")
+	await _frames(1)
+	var state := character.get_debug_state()
+	var launch_cap := float(state.get("air_speed_cap", 0.0))
+	var launch_fatigue := float(state.get("fatigue", 0.0))
+	var launched := not character.is_on_floor() and character.velocity.y > 1.0
+	_expect(launched and character.get_posture() == 0 and not _flag("slide_active") and not _flag("slide_pending"), "een nieuwe spatie onderbreekt een echte actieve slide direct met een staande sprong")
+	_expect(_speed() <= speed_before + 0.03 and _speed() >= speed_before - _setting("crouch_slide_deceleration", 10.0) * PHYSICS_DELTA - 0.03 and launch_cap <= speed_before + 0.03, "slide-sprong bewaart de overgebleven afzetvaart zonder sprintbonus toe te voegen of het oude budget te herstellen")
+	_expect(absf(float(state.get("jump_boost", -1.0))) < 0.001 and absf(character.velocity.y - float(expected.vertical_speed)) < 0.08, "slide-sprong gebruikt het actuele hoogteprofiel maar geen extra horizontale bonus")
+	_expect(fatigue_before > 0.1 and launch_fatigue > fatigue_before + 0.1, "slide-sprong behoudt opgebouwde vermoeidheid en betaalt een echte nieuwe sprong")
+	_expect(not _flag("ground_jump_available") and float(state.get("jump_buffer_remaining", 1.0)) <= 0.001 and float(state.get("coyote_remaining", 1.0)) <= 0.001, "slide-sprong verbruikt grondticket, buffer en coyote eenmaal")
+	print("MEASURE: slide jump speed %.3f -> %.3f; cap %.3f; Y %.3f; fatigue %.3f -> %.3f; bonus %.3f" % [speed_before, _speed(), launch_cap, character.velocity.y, fatigue_before, launch_fatigue, float(state.get("jump_boost", -1.0))])
+	Input.action_release("jump")
+	if not launched:
+		return
+	await _frames(1)
+	var vertical := character.velocity.y
+	Input.action_press("jump")
+	await _frames(1)
+	_expect(absf(character.velocity.y - (vertical - character.gravity_strength * PHYSICS_DELTA)) < 0.04 and absf(float(character.get_debug_state().get("fatigue", 0.0)) - launch_fatigue) < 0.001, "een tweede druk binnen coyotetijd geeft na slide-sprong geen tweede afzet of extra fatigue")
+	var air_max := _speed()
+	for i in 140:
+		await _frames(1)
+		air_max = maxf(air_max, _speed())
+		if character.is_on_floor():
+			break
+	_expect(air_max <= launch_cap + 0.03 and character.is_on_floor(), "de hele slide-sprong houdt haar eigen beperkte budget en landt werkelijk")
+	await _frames(12)
+	_expect(character.is_on_floor() and character.velocity.y <= 0.05, "verlopen buffer en vastgehouden replay-spatie starten na de landing geen stille extra sprong")
+	Input.action_release("jump")
+
+
+func _test_slide_jump_negative_cases() -> void:
+	# De oorspronkelijke spatie blijft vanaf de eerste afzet ingedrukt; alleen
+	# een nieuwe druk mag de later gestarte slide onderbreken.
+	await _reset()
+	character.jump_fatigue_enabled = true
+	Input.action_press("move_forward")
+	Input.action_press("sprint")
+	await _frames(80)
+	Input.action_press("jump")
+	await _frames(9)
+	await _pulse("crouch")
+	await _wait_for_landing()
+	await _frames(8)
+	_expect(_flag("slide_active") and character.get_posture() == 1 and character.is_on_floor(), "vastgehouden oorspronkelijke sprongspatie onderbreekt de nieuwe landingsslide niet")
+	await _frames(60)
+	_expect(character.is_on_floor() and character.get_posture() == 0, "originele held-spatie geeft ook na natuurlijk slide-einde geen automatische sprong")
+	Input.action_release("jump")
+	await _reset()
+	await _pulse("crouch")
+	await _pulse("jump")
+	await _frames(12)
+	_expect(character.get_posture() == 0 and character.is_on_floor() and character.velocity.y <= 0.05 and not _flag("slide_active"), "Ctrl op de grond geeft geen skill: spatie richt gewone kruip alleen op zonder sprong")
+	await _active_slide()
+	var roof := _add_box(character.position + Vector3(0, 1.3, -5), Vector3(8, 0.2, 16))
+	await _frames(1)
+	var fatigue_before := float(character.get_debug_state().get("fatigue", 0.0))
+	var time_before := float(character.get_debug_state().get("slide_time_left", 0.0))
+	Input.action_press("jump")
+	await _frames(1)
+	_expect(character.get_posture() == 1 and character.is_on_floor() and character.velocity.y <= 0.05 and _flag("slide_active"), "onvoldoende staande hoofdruimte weigert slide-sprong zonder clippen of het onderbreken van de slide")
+	_expect(float(character.get_debug_state().get("jump_buffer_remaining", 1.0)) <= 0.001 and float(character.get_debug_state().get("fatigue", 0.0)) <= fatigue_before + 0.001 and float(character.get_debug_state().get("slide_time_left", 1.0)) < time_before, "geweigerde slide-sprong bewaart de aflopende skill en maakt geen ticketkosten of buffer")
+	roof.queue_free()
+	await _frames(9)
+	_expect(_flag("slide_active") and character.get_posture() == 1 and character.is_on_floor(), "vrijgekomen hoofdruimte herhaalt een geblokkeerde held-spatie niet alsnog stil")
+	Input.action_release("jump")
+	await _frames(1)
+	Input.action_press("jump")
+	await _frames(1)
+	_expect(character.get_posture() == 0 and not character.is_on_floor() and character.velocity.y > 1.0 and not _flag("slide_active"), "na een geweigerde poging kan alleen een nieuwe veilige druk de slide werkelijk onderbreken")
+	Input.action_release("jump")
+
+
+func _test_repeated_slide_jumps() -> void:
+	await _launch_sprint()
+	character.jump_fatigue_enabled = false
+	await _pulse("crouch")
+	await _wait_for_landing()
+	var first_speed := _speed()
+	var launches: Array[float] = []
+	var budgets_kept := true
+	for i in 12:
+		await _frames(3)
+		var before := _speed()
+		Input.action_press("jump")
+		await _frames(1)
+		Input.action_release("jump")
+		if character.is_on_floor() or character.velocity.y <= 1.0:
+			break
+		launches.append(_speed())
+		budgets_kept = budgets_kept and _speed() <= before + 0.03 and float(character.get_debug_state().get("air_speed_cap", 0.0)) <= before + 0.03 and absf(float(character.get_debug_state().get("jump_boost", -1.0))) < 0.001
+		if i < 11:
+			await _frames(8)
+			await _pulse("crouch")
+			await _wait_for_landing()
+			if not _flag("slide_active"):
+				break
+	_expect(launches.size() == 12 and budgets_kept, "twaalf echte slide-sprong-slidecycli behouden ieder hun actuele budget zonder nieuwe bonus, ook met fatigue uit")
+	_expect(not launches.is_empty() and launches.max() <= first_speed + 0.03, "herhaald slide-springen stapelt nooit boven de oorspronkelijke sprintafzet")
+	print("MEASURE: twelve slide jump launches %s; individual budgets %s" % [str(launches), budgets_kept])
+	character.jump_fatigue_enabled = true
+
+
+func _active_slide() -> void:
+	await _launch_sprint()
+	await _pulse("crouch")
+	await _wait_for_landing()
+	await _frames(6)
+	_expect(_flag("slide_active") and character.get_posture() == 1 and character.is_on_floor(), "slide-sprongproef begint met een werkelijk actieve, ondersteunde kruipslide")
+
+
 func _brake_flight(brake: bool) -> Dictionary:
 	var start: Vector3 = await _launch_sprint()
 	if brake:
@@ -568,10 +689,8 @@ func _test_explicit_posture_controls() -> void:
 	await _frames(25)
 	Input.action_release("jump")
 	await _frames(2)
-	_expect(character.get_posture() == 1 and character.is_on_floor(), "eerste spatie vanuit lig richt op naar kruip zonder sprong")
-	_expect(character.get_posture() == 1, "vasthouden van oprichtspatie voert geen tweede houdingstap uit")
-	await _pulse("jump")
-	_expect(character.get_posture() == 0 and character.is_on_floor(), "tweede spatie richt kruip op naar staan zonder sprong")
+	_expect(character.get_posture() == 0 and character.is_on_floor() and character.velocity.y <= 0.05, "staan-Z-spatie keert direct terug naar staan zonder tussentijdse kruip of sprong")
+	_expect(float(character.get_debug_state().get("jump_buffer_remaining", 1.0)) <= 0.001, "vasthouden van directe oprichtspatie voert geen sprong of buffer uit")
 	await _frames(20)
 	_expect(character.is_on_floor(), "opricht-input wordt geen gebufferde sprong na het staan")
 	Input.action_press("jump")
@@ -579,16 +698,31 @@ func _test_explicit_posture_controls() -> void:
 	_expect(not character.is_on_floor() and character.velocity.y > 1.0, "pas een nieuwe spatie vanuit staan start werkelijk een sprong")
 	Input.action_release("jump")
 	await _reset()
+	await _pulse("crouch")
+	await _pulse("prone")
+	await _pulse("jump")
+	_expect(character.get_posture() == 1 and character.is_on_floor() and str(character.get_debug_state().get("manual_posture", "")) == "kruipen", "handmatige kruip-Z-spatie keert terug naar de vorige kruipvoorkeur zonder sprong")
+	await _frames(20)
+	_expect(character.get_posture() == 1 and character.velocity.y <= 0.05, "de onthouden kruipvoorkeur blijft na de handmatige lig-terugkeer bewaard")
+	await _reset()
+	await _pulse("prone")
+	await _pulse("prone")
+	await _pulse("jump")
+	_expect(character.get_posture() == 0 and character.is_on_floor(), "herhaalde Z overschrijft de vorige staande voorkeur niet")
+	await _reset()
 	await _pulse("prone")
 	var roof := _add_box(Vector3(0, 1.5, 0), Vector3(4, 0.2, 4))
 	await _frames(2)
-	await _pulse("jump")
-	await _pulse("jump")
-	_expect(character.get_posture() == 1 and character.is_on_floor(), "spatie kan onder 1.40m plafond veilig niet vanuit kruip staan")
+	Input.action_press("jump")
+	await _frames(1)
+	_expect(character.get_posture() == 2 and character.is_on_floor(), "geblokkeerde directe lig-naar-staan-terugkeer blijft lig, ook als kruip wel zou passen")
 	await _frames(15)
-	_expect(character.get_posture() == 1 and character.velocity.y <= 0.05, "geblokkeerd oprichten geeft geen sprong of houdingflikkering")
+	_expect(character.get_posture() == 2 and character.velocity.y <= 0.05 and float(character.get_debug_state().get("jump_buffer_remaining", 1.0)) <= 0.001, "geblokkeerde lig-terugkeer geeft geen fallback, sprong, buffer of houdingflikkering")
 	roof.queue_free()
-	await _frames(3)
+	await _frames(9)
+	_expect(character.get_posture() == 2 and character.is_on_floor(), "vrijgekomen hoofdruimte voert geweigerde held-oprichtinput niet stil alsnog uit")
+	Input.action_release("jump")
+	await _frames(1)
 	await _pulse("jump")
 	_expect(character.get_posture() == 0 and character.is_on_floor(), "na vrije hoofdruimte kan een nieuwe oprichtdruk veilig staan")
 

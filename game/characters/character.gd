@@ -107,7 +107,7 @@ enum Posture { STAND, CROUCH, PRONE }
 @export_range(0.0, 1.0, 0.01, "suffix:m") var crouch_step_height: float = 0.35
 ## Camerahoogte boven de voeten bij kruipen in meters; blijft binnen de vrije hoogte.
 @export_range(0.05, 3.0, 0.01, "suffix:m") var crouch_eye_height: float = 0.95
-## Maximale slide na Ctrl tijdens een sprong in seconden; langer schuift verder. Daarna automatisch de hoogste veilige houding; 0 schakelt slides uit.
+## Maximale slide na Ctrl tijdens een sprong in seconden; langer schuift verder. Daarna automatisch de hoogste veilige houding; spatie springt eruit als staan veilig past. 0 schakelt slides uit.
 @export_range(0.0, 2.0, 0.01, "suffix:s") var crouch_slide_duration: float = 0.75
 ## Horizontale slidewrijving in m/s² vanaf de landing; lager bewaart meer afzetvaart, zonder extra snelheid te geven.
 @export_range(0.0, 100.0, 0.5, "suffix:m/s²") var crouch_slide_deceleration: float = 10.0
@@ -337,6 +337,7 @@ var _sneak_requested: bool = false
 var _last_ground_state: String = "lopen"
 var _posture: int = Posture.STAND
 var _manual_posture: int = Posture.STAND
+var _prone_return_posture: int = Posture.STAND
 var _auto_posture_demand: int = Posture.STAND
 var _auto_probe_distance: float = 0.0
 var _posture_changed_this_frame: bool = false
@@ -517,6 +518,7 @@ func reset_to_spawn() -> void:
 	_sneak_requested = false
 	_posture = Posture.STAND
 	_manual_posture = Posture.STAND
+	_prone_return_posture = Posture.STAND
 	_auto_posture_demand = Posture.STAND
 	_auto_probe_distance = 0.0
 	_restore_clear_time = 0.0
@@ -636,9 +638,12 @@ func get_posture() -> int:
 	return _posture
 
 
-## Vraag een veilige handmatige houding. Expliciet liggen mag rechtstreeks; hoger worden gaat één stap tegelijk.
+## Vraag een veilige handmatige houding. Liggen bewaart de vorige handmatige houding voor oprichten met spatie.
 func request_posture(posture: int) -> void:
-	_manual_posture = clampi(posture, Posture.STAND, Posture.PRONE)
+	var desired := clampi(posture, Posture.STAND, Posture.PRONE)
+	if desired == Posture.PRONE and _manual_posture != Posture.PRONE:
+		_prone_return_posture = _manual_posture
+	_manual_posture = desired
 	_slide_ground_exit_pending = _slide_ground_exit_pending or (_slide_active and get_camera_grounded())
 	_cancel_slide()
 	_auto_posture_demand = _manual_posture
@@ -658,8 +663,22 @@ func _read_posture_input(input_allowed: bool) -> void:
 	elif InputMap.has_action("prone") and Input.is_action_just_pressed("prone"):
 		request_posture(Posture.PRONE)
 	elif Input.is_action_just_pressed("jump") and _posture > Posture.STAND:
-		request_posture(_posture - 1)
+		if _posture == Posture.PRONE and _manual_posture == Posture.PRONE:
+			_return_from_manual_prone()
+		elif not _slide_active:
+			request_posture(_posture - 1)
 		_jump_buffer_remaining = 0.0
+
+
+func _return_from_manual_prone() -> void:
+	if _prone_return_posture == Posture.STAND:
+		# Een geblokkeerde directe terugkeer blijft liggen; geen onverwachte
+		# kruipkeuze of latere sprong wanneer de hoofdruimte weer vrij wordt.
+		if _posture_transition_clear(Posture.STAND, posture_clearance_margin):
+			request_posture(Posture.STAND)
+			_apply_posture(Posture.STAND, true)
+	else:
+		request_posture(Posture.CROUCH)
 
 
 func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
@@ -706,8 +725,9 @@ func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 	_slide_requested_this_frame = false
 
 
-func _apply_posture(posture: int) -> void:
-	assert(absi(posture - _posture) == 1 or (posture == Posture.PRONE and _manual_posture == Posture.PRONE))
+func _apply_posture(posture: int, manual_prone_return: bool = false) -> void:
+	var direct_return := manual_prone_return and _posture == Posture.PRONE and posture == Posture.STAND and _manual_posture == Posture.STAND and _prone_return_posture == Posture.STAND
+	assert(absi(posture - _posture) == 1 or (posture == Posture.PRONE and _manual_posture == Posture.PRONE) or direct_return)
 	if posture != Posture.CROUCH:
 		_slide_ground_exit_pending = _slide_ground_exit_pending or (_slide_active and get_camera_grounded())
 		_cancel_slide()
@@ -925,6 +945,7 @@ func _physics_process(delta: float) -> void:
 	_sprint_requested = input_allowed and Input.is_action_pressed("sprint") and not _sneak_requested
 	var real_grounded := is_on_floor() and not _jumped_last_frame
 	var was_grounded := real_grounded or (_step_support_remaining > 0.0 and not _jumped_last_frame)
+	var slide_jump_requested := input_allowed and _slide_active and Input.is_action_just_pressed("jump")
 	_update_jump_timing(input_allowed, was_grounded, real_grounded, delta)
 	_read_posture_input(input_allowed)
 	_turn_body(was_grounded, delta, input)
@@ -937,15 +958,16 @@ func _physics_process(delta: float) -> void:
 	else:
 		_auto_posture_demand = _manual_posture
 	_update_posture(input, was_grounded, delta)
-	_update_horizontal_velocity(input, was_grounded, delta)
-	var jumped := false
-	if _posture == Posture.STAND and _jump_buffer_remaining > 0.0 and _ground_jump_available and (was_grounded or _coyote_remaining > 0.0):
-		_start_jump()
-		jumped = true
-	elif was_grounded:
-		velocity.y = -0.1
-	else:
-		velocity.y -= gravity_strength * delta
+	var jumped := slide_jump_requested and _try_slide_jump(delta)
+	if not jumped:
+		_update_horizontal_velocity(input, was_grounded, delta)
+		if _posture == Posture.STAND and _jump_buffer_remaining > 0.0 and _ground_jump_available and (was_grounded or _coyote_remaining > 0.0):
+			_start_jump()
+			jumped = true
+		elif was_grounded:
+			velocity.y = -0.1
+		else:
+			velocity.y -= gravity_strength * delta
 	var before := global_position
 	_last_step_height = 0.0
 	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
@@ -1120,8 +1142,26 @@ func _finish_slide() -> void:
 	_manual_changed_this_frame = get_camera_grounded()
 
 
-func _start_jump() -> void:
+func _try_slide_jump(delta: float) -> bool:
+	# Een nieuwe druk krijgt één poging; een geblokkeerde poging blijft geen
+	# verborgen sprongbuffer en onderbreekt de bestaande slide niet.
+	if not _slide_active or _posture != Posture.CROUCH or not get_camera_grounded() or not _ground_jump_available:
+		return false
+	if not _posture_transition_clear(Posture.STAND, posture_clearance_margin):
+		return false
+	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
+	if not _higher_path_clear(Posture.STAND, horizontal * delta, posture_clearance_margin):
+		return false
+	_apply_posture(Posture.STAND)
+	_auto_posture_demand = Posture.STAND
+	_auto_probe_distance = 0.0
+	_start_jump(true)
+	return true
+
+
+func _start_jump(preserve_slide_momentum: bool = false) -> void:
 	_cancel_slide()
+	_slide_ground_exit_pending = false
 	_step_support_remaining = 0.0
 	_jump_buffer_remaining = 0.0
 	_coyote_remaining = 0.0
@@ -1129,15 +1169,15 @@ func _start_jump() -> void:
 	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
 	var local := global_basis.inverse() * horizontal
 	var direction := Vector2(local.x, local.z)
-	# Verwijder eerdere afstandbonus vóór het profiel. Behouden sprintmomentum
-	# blijft een echte sprintafzet, ook als Shift net is losgelaten.
+	# Gewone grondafzet verwijdert de oude bonus vóór het profiel. Vanuit slide
+	# blijft alleen de echte resterende vaart behouden, zonder een nieuwe bonus.
 	var ground_limit := direction_speed_limit_for_state(direction, "sneak" if _sneak_requested else "sprint")
-	horizontal = horizontal.limit_length(ground_limit)
+	horizontal = horizontal.limit_length(_air_speed_cap if preserve_slide_momentum else ground_limit)
 	var parameters := jump_parameters(horizontal)
 	_jump_profile = parameters.profile
 	_jump_height = parameters.height
-	_jump_boost = parameters.horizontal_boost
-	_launch_speed = parameters.launch_speed
+	_jump_boost = 0.0 if preserve_slide_momentum else float(parameters.horizontal_boost)
+	_launch_speed = horizontal.length() + _jump_boost
 	_air_fov_mix = 0.0 if _sneak_requested else float(parameters.sprint_weight)
 	if not horizontal.is_zero_approx():
 		horizontal += horizontal.normalized() * _jump_boost
@@ -1356,7 +1396,7 @@ func get_debug_state() -> Dictionary:
 		motion = "stilstand"
 	var local_input := global_basis.inverse() * _input_direction
 	var state := {"display_name": display_name, "speed": _actual_speed, "motion_mode": motion, "posture": _posture_name(_posture), "posture_index": _posture, "manual_posture": _posture_name(_manual_posture), "input_direction": _input_direction, "movement_direction": _movement_direction, "facing_direction": -global_basis.z, "body_direction": -global_basis.z, "body_yaw": rad_to_deg(global_rotation.y), "turn_rate": _turn_rate, "body_turn_blocked": _body_turn_blocked, "speed_limit": direction_speed_limit_for_state(Vector2(local_input.x, local_input.z), _movement_state()), "jump_profile": _jump_profile, "jump_height": _jump_height, "launch_speed": _launch_speed, "jump_boost": _jump_boost, "air_speed_cap": _air_speed_cap, "fatigue": _fatigue, "fatigue_recovery_time": _fatigue_recovery_duration, "coyote_remaining": _coyote_remaining, "jump_buffer_remaining": _jump_buffer_remaining, "ground_jump_available": _ground_jump_available, "camera_distance": _camera_distance, "camera_actual_distance": _camera_arm.get_hit_length(), "first_person": _camera_distance == 0.0, "step_height": _step_limit_for_posture(_posture), "last_step_height": _last_step_height, "debug_enabled": debug_enabled}
-	state.merge({"air_braking": _air_braking, "slide_pending": _slide_pending, "slide_active": _slide_active, "slide_time_left": _slide_time_left, "slide_speed": Vector2(velocity.x, velocity.z).length() if _slide_active else 0.0})
+	state.merge({"air_braking": _air_braking, "slide_pending": _slide_pending, "slide_active": _slide_active, "slide_time_left": _slide_time_left, "slide_speed": Vector2(velocity.x, velocity.z).length() if _slide_active else 0.0, "prone_return_posture": _posture_name(_prone_return_posture)})
 	if _camera_pivot.has_method("get_state"):
 		state.merge(_camera_pivot.call("get_state"), true)
 	return state

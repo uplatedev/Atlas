@@ -15,7 +15,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Check-Atlas.ps1
 
 De tijdelijke execution policy geldt alleen voor die aanroep. De editor opent [game/project.godot](game/project.godot). Open `scenes/main.tscn` en druk op F5 om de proef te spelen; F8 stopt het project. De controle importeert de bronnen en start de hoofdscene kort zonder venster. Met `-CharacterChecks` voert Check-Atlas ook de fysieke proeven uit.
 
-WASD beweegt, de muis kijkt, Shift sprint, Alt is sneak, Ctrl schakelt kruip aan/uit, Z kiest lig, spatie richt één houding op of springt vanuit staan en scroll zoomt tot first person. Tab wisselt tussen de Characters; R brengt ze terug naar hun start. F3 schakelt de richtingsdebug en pijlen; F4 vergelijkt dynamische FOV. Esc geeft de muis vrij; klik in het spel om verder te spelen.
+WASD beweegt, de muis kijkt, Shift sprint, Alt is sneak, Ctrl schakelt kruip aan/uit, Z kiest lig en scroll zoomt tot first person. Spatie springt vanuit staan of actieve slide; gewone lage houdingen richt je ermee op. Vanuit staan gekozen lig keert met één spatie direct veilig naar staan terug, zonder tegelijk te springen. Tab wisselt tussen de Characters; R brengt ze terug naar hun start. F3 schakelt de richtingsdebug en pijlen; F4 vergelijkt dynamische FOV. Esc geeft de muis vrij; klik in het spel om verder te spelen.
 
 Kies Ctrl tijdens een sprong om bij landing te sliden. Na de slide sta je automatisch op als dat past; onder een laag plafond blijf je automatisch kruipen. Een volgende nog lagere doorgang kan kruip naar lig laten overgaan. De vluchtvaart blijft behouden; Z-lig en Ctrl op de grond geven geen slide. S remt tegen voorwaartse vlucht of slide geleidelijk af. De FPS-teller staat rechtsboven.
 
