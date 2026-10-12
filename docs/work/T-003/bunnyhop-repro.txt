@@ -1,0 +1,61 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SOURCE: c23038f4a97836773fbcbfe897b82b4b9e141e77
+ENGINE: 4.7.2-stable (official)
+PHYSICS: Jolt Physics
+PHYSICS_RATE: 60
+CASE: immediate_next_physics_frame; grounded initial speed=9.0
+PRE_JUMP 01 frame=116 grounded=true y=0.00087 speed=9.00000
+LAUNCH 01 frame=117 grounded=false y=0.08908 speed=14.00000 profile=sprint cap=14.00000
+LAND 01 frame=149 grounded=true y=0.00087 speed=14.00000 vertical=0.00000
+PRE_JUMP 02 frame=149 grounded=true y=0.00087 speed=14.00000
+LAUNCH 02 frame=150 grounded=false y=0.08907 speed=18.73333 profile=sprint cap=18.73333
+LAND 02 frame=182 grounded=true y=0.00087 speed=18.73333 vertical=0.00000
+PRE_JUMP 03 frame=182 grounded=true y=0.00087 speed=18.73333
+LAUNCH 03 frame=183 grounded=false y=0.08907 speed=23.46667 profile=sprint cap=23.46667
+LAND 03 frame=215 grounded=true y=0.00087 speed=23.46667 vertical=0.00000
+PRE_JUMP 04 frame=215 grounded=true y=0.00087 speed=23.46667
+LAUNCH 04 frame=216 grounded=false y=0.08907 speed=28.20000 profile=sprint cap=28.20000
+LAND 04 frame=248 grounded=true y=0.00087 speed=28.20000 vertical=0.00000
+PRE_JUMP 05 frame=248 grounded=true y=0.00087 speed=28.20000
+LAUNCH 05 frame=249 grounded=false y=0.08907 speed=32.93333 profile=sprint cap=32.93333
+LAND 05 frame=281 grounded=true y=0.00087 speed=32.93333 vertical=0.00000
+PRE_JUMP 06 frame=281 grounded=true y=0.00087 speed=32.93333
+LAUNCH 06 frame=282 grounded=false y=0.08907 speed=37.66667 profile=sprint cap=37.66667
+LAND 06 frame=314 grounded=true y=0.00087 speed=37.66667 vertical=0.00000
+PRE_JUMP 07 frame=314 grounded=true y=0.00087 speed=37.66667
+LAUNCH 07 frame=315 grounded=false y=0.08906 speed=42.40000 profile=sprint cap=42.40000
+LAND 07 frame=347 grounded=true y=0.00087 speed=42.40000 vertical=0.00000
+PRE_JUMP 08 frame=347 grounded=true y=0.00087 speed=42.40000
+LAUNCH 08 frame=348 grounded=false y=0.08907 speed=47.13334 profile=sprint cap=47.13334
+LAND 08 frame=380 grounded=true y=0.00087 speed=47.13334 vertical=0.00000
+PRE_JUMP 09 frame=380 grounded=true y=0.00087 speed=47.13334
+LAUNCH 09 frame=381 grounded=false y=0.08906 speed=51.86667 profile=sprint cap=51.86667
+LAND 09 frame=413 grounded=true y=0.00087 speed=51.86667 vertical=0.00000
+PRE_JUMP 10 frame=413 grounded=true y=0.00087 speed=51.86667
+LAUNCH 10 frame=414 grounded=false y=0.08907 speed=56.60000 profile=sprint cap=56.60000
+LAND 10 frame=446 grounded=true y=0.00087 speed=56.60000 vertical=0.00000
+PRE_JUMP 11 frame=446 grounded=true y=0.00087 speed=56.60000
+LAUNCH 11 frame=447 grounded=false y=0.08906 speed=61.33334 profile=sprint cap=61.33334
+LAND 11 frame=479 grounded=true y=0.00087 speed=61.33334 vertical=0.00000
+PRE_JUMP 12 frame=479 grounded=true y=0.00087 speed=61.33334
+LAUNCH 12 frame=480 grounded=false y=0.08907 speed=66.06667 profile=sprint cap=66.06667
+LAND 12 frame=512 grounded=true y=0.00087 speed=66.06667 vertical=0.00000
+CASE: 30_ground_frames_between_jumps; grounded initial speed=9.0
+PRE_JUMP 01 frame=620 grounded=true y=0.00087 speed=9.00000
+LAUNCH 01 frame=621 grounded=false y=0.08908 speed=14.00000 profile=sprint cap=14.00000
+LAND 01 frame=653 grounded=true y=0.00087 speed=14.00000 vertical=0.00000
+PRE_JUMP 02 frame=683 grounded=true y=0.00087 speed=9.00000
+LAUNCH 02 frame=684 grounded=false y=0.08908 speed=14.00000 profile=sprint cap=14.00000
+LAND 02 frame=716 grounded=true y=0.00087 speed=14.00000 vertical=0.00000
+PRE_JUMP 03 frame=746 grounded=true y=0.00087 speed=9.00000
+LAUNCH 03 frame=747 grounded=false y=0.08908 speed=14.00000 profile=sprint cap=14.00000
+LAND 03 frame=779 grounded=true y=0.00087 speed=14.00000 vertical=0.00000
+PRE_JUMP 04 frame=809 grounded=true y=0.00087 speed=9.00000
+LAUNCH 04 frame=810 grounded=false y=0.08908 speed=14.00000 profile=sprint cap=14.00000
+LAND 04 frame=842 grounded=true y=0.00087 speed=14.00000 vertical=0.00000
+SEQUENCE_IMMEDIATE: [14.0, 18.7333335876465, 23.466667175293, 28.2000007629395, 32.9333343505859, 37.6666679382324, 42.4000015258789, 47.1333351135254, 51.8666687011719, 56.6000022888184, 61.3333358764648, 66.0666694641113]
+SEQUENCE_SETTLED: [14.0, 14.0, 14.0, 14.0]
+REPRODUCED_STACKING: true
+SETTLED_CONTROL_NO_STACKING: true
+The harness exits 0 when the reported defect is reproduced; this is not a regression pass.

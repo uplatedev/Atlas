@@ -4,6 +4,8 @@ Bron: gebruikerswensen en vier beantwoorde besturingsvragen op 12 oktober 2026. 
 
 Dit is de fundering en editorwerkwijze van de eerste lokale proef op de T-002-werkbranch. `game/characters/Character.tscn`, de bewegingscode, `game/levels/PrototypeLevel.tscn` en de hoofdscene zijn gebouwd. Technische resultaten en nog benodigd gebruikersoordeel staan in WORK; het speelgevoel is nog niet geaccepteerd voor main.
 
+Nieuwe feedback is onderzocht in [T-003 — movement, camera en houdingen](../work/T-003.md). De bestaande sprintsprong stapelt snelheid bij onmiddellijk opnieuw springen; dit is gereproduceerd maar nog niet gerepareerd. Hieronder beschreven T-002-gedrag is dus geen bewijs dat herhaalde sprongen veilig begrensd zijn. T-003 bevat primaire bronnen, diagnosebestanden en een concreet voorstel vóór verdere gameplaywijzigingen.
+
 ## Door de gebruiker bevestigd
 
 | Onderdeel | Gewenst gedrag |
@@ -20,6 +22,14 @@ Dit is de fundering en editorwerkwijze van de eerste lokale proef op de T-002-we
 | Level | Twee lampen met edge-/fillfunctie. Vloeren én muren gebruiken echte prototype-textures met strepen/raster die afstand leesbaar maken. Geen strepen uit losse geometrie of een procedureel lijnenpatroon in de levelcode. Skybox rond zonsondergang. |
 
 Alle Character-instellingen moeten per instance kunnen verschillen. De afgesproken proef houdt twee Characters in dezelfde scene; aan één instance wijzigen mag de andere niet veranderen.
+
+### Bevestigde vervolgwensen, nog niet gebouwd
+
+Korte uitleg bij ieder instelbaar veld, afzonderlijke lichaamsdraaisnelheden per beweging en een direct reagerende camera. Sneak heeft eigen snelheid/acceleratie/rem/draai en een lage sprong voor een opstapje. Ctrl is inmiddels kruipen aan/uit, Shift blijft sprint; later vasthouden versus aan/uit instelbaar. Alt vasthouden voor sneak is voorlopig voorgesteld. Kruipen is een kortere verticale capsule; liggen een lage horizontale capsule. Beide hebben eigen instellingen; een character-model volgt later.
+
+Alleen staan ↔ kruipen ↔ liggen, nooit staan rechtstreeks naar liggen. Een geldige opstap onder lage doorgang mag automatisch naar een passende lagere aangrenzende houding leiden. Na de doorgang automatisch veilig hoger worden, zonder handmatig gekozen kruip/lig te wissen. De arena krijgt daarvoor proefgevallen. Sprintjumpstapeling is verboden.
+
+De gebruiker vraagt vóór bouwen onderzoek naar strak bewegingsgevoel, camera en snelheids-FOV, en naar herstel per sprongtype of zwakkere opeenvolgende sprongen. De volledige afstelling en afweging staan in T-003. Lichaamsrelatieve WASD, Alt/Z en geleidelijk krachtverlies zijn voorstellen ter beoordeling, geen bevestigde besturing. Bestaande contenthandelingen blijven hieronder staan; nieuwe instellingen worden pas na de goedgekeurde proef aan deze gebruiksaanwijzing toegevoegd.
 
 ## Eenvoudige uitvoering binnen deze fundering
 

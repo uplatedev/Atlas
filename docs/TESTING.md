@@ -82,6 +82,31 @@ Deze optionele suite draait echte Character-physics met een vloer, treden en pla
 
 Leg bij T-002 bronversie, technische resultaten en het afzonderlijke gebruikersoordeel vast. Numerieke defaults zijn afstelbaar; technisch correcte waarden bewijzen nog geen prettig bewegingsgevoel.
 
+### Bekende beperking en T-003-diagnose
+
+De gebruiker heeft stapelende sprintsprongen gemeld. De huidige suite reset vóór losse sprongen en bewijst daarom geen veilige herhaalreeks. [T-003](work/T-003.md#diagnose-van-de-huidige-proef) bevat de gemeten reproductie op T-002-bron `c23038f4a97836773fbcbfe897b82b4b9e141e77`, inclusief script/log en de zes afzonderlijke kandidaatvormqueries. De fix, vermoeidheid, nieuwe camera en houdingscontroller zijn nog niet gebouwd.
+
+De diagnosebestanden staan buiten game. Gebruik de Godot-versie uit de toolchain en een geïmporteerde T-002-gamecheckout van die exacte bron; main alleen bevat het benodigde Character nog niet. Laad de bestaande proceshelper vanuit de documentatiecheckout en wijs een afzonderlijke T-002-proefmap aan:
+
+```powershell
+. .\tools\Atlas-Engine.ps1
+$engine = Get-AtlasEngine
+$proefRoot = 'PAD-NAAR-DE-T-002-CHECKOUT'
+$proefGame = Join-Path $proefRoot 'game'
+$hopScript = [IO.Path]::GetFullPath('docs/work/T-003/bunnyhop_repro.gd')
+$vormScript = [IO.Path]::GetFullPath('docs/work/T-003/stance_shape_probe.gd')
+Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--path', $proefGame, '--script', $hopScript)
+Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--path', $proefGame, '--script', $vormScript)
+```
+
+De eerste harness geeft exitcode 0 als de oude fout daadwerkelijk is gereproduceerd, met oplopende snelheden in de log. De tweede geeft exitcode 0 voor zes geslaagde volumequeries. Dit is geen vervanging voor een latere regressietest die juist géén stapeling verwacht. Gebruik een afzonderlijke proefmap als de gebruiker in de vaste map speelt; de diagnose verandert geen gameplaybron.
+
+### Geplande vervolgcontrole, nog niet uitgevoerd
+
+Na bevestiging van T-003 zijn nodig: directe én gebufferde herhaalsprongen in alle richtingen, geen stapeling met vermoeidheid aan/uit, grondherstel per profiel zonder omzeiling door profielwissel, minimale sneakhoogte en één uitvoering per druk. Controleer veilige aangrenzende houdingsovergangen, behoud van handmatige houding, opstapgrenzen per staat, volledige ligvorm inclusief rotatiepad en camera onder lage plafonds.
+
+Laat de gebruiker dezelfde loop-/sprint-/rem-/draairoute spelen met snelheid-FOV uit en aan, third en first person, en snelle cameradraai met begrensd lichaam. Test camera op verschillende renderframerates, Tab/reset, eigen zicht en het verschil tussen gevraagde zoom en muurcompressie. Vergelijk volle en opeenvolgende sprongen en terugkeer naar volle kracht na grondrust. De arena-/defaultdetails staan in T-003; resultaten komen pas na werkelijke uitvoering in WORK.
+
 ## Latere proeven: nog niet uitgevoerd
 
 Deze aanpak is afgesproken; de benodigde functionaliteit bestaat nog niet:

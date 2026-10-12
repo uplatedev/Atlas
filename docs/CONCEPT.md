@@ -32,6 +32,14 @@ Een stilstaande sprong gaat hoog, een lopende sprong zit ertussenin en een sprin
 
 Het proeflevel heeft twee lampen met edge-/fillfunctie, echte prototype-textures met afstandsmarkeringen op vloeren en muren en een skybox rond zonsondergang. De eerste uitvoering staat op de T-002-werkbranch en wacht op beoordeling van gevoel en editorbediening. De gedetailleerde werkwijze, instellingen en assetbronnen staan in [Character en proeflevel](topics/character.md); resultaten en beperkingen staan in WORK.
 
+### Vervolg na de eerste speelervaring
+
+De gebruiker vraagt korte uitleg bij iedere instelbare eigenschap en afzonderlijke draaisnelheden per bewegingsstaat. De camera kijkt direct; het lichaam draait begrensd bij. Sneak krijgt eigen instellingen en een lage sprong voor een hoger opstapje. De laatste besturingskeuze is Ctrl voor kruipen aan/uit en Shift voor sprint; Alt voor sneak is voorlopig voorgesteld. Later moet vasthouden versus aan/uit een setting worden. Kruipen gebruikt voorlopig een kortere verticale capsule, liggen een horizontale capsule. Beide krijgen eigen bewegings- en vorminstellingen. Overgangen lopen alleen via aangrenzende houdingen: staan ↔ kruipen ↔ liggen.
+
+Bij een geldige opstap automatisch lager worden als de huidige vorm niet past. Na de doorgang automatisch de hoogste veilige houding herstellen, met behoud van een handmatig gekozen kruip-/lighouding. De arena krijgt gerichte doorgangen om dit te proberen. De gemelde stapeling van sprintsprongsnelheid is in de bestaande proef gereproduceerd en moet worden verholpen.
+
+Vóór deze veranderingen wil de gebruiker grondig onderzoek en een movement-/cameravoorstel, inclusief snelheids-FOV en herstel of afnemende kracht bij opeenvolgende sprongen. [T-003](work/T-003.md) bevat het onderzoek, reproduceerbaar bewijs en de concrete voorgestelde afstelling. Krachtverlies, exacte waarden, Alt/Z en het bewegingsreferentiekader zijn voorstellen; ze zijn nog niet geïmplementeerd of als fundering bevestigd.
+
 ## Afgeronde bootstrap
 
 Alleen werkstructuur, volledige [agentafspraken](../AGENTS.md), een lege werkende Godot-basis en kleine open-/controlehulpmiddelen. Geen Character, bewegingscontroller, networking, IK, klimmechaniek, Steam-integratie, lobby, netwerkabstractie of multiplayerlauncher. Ook geen lege gameplaycomponenten als voorschot.

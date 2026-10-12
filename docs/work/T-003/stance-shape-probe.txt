@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SOURCE: c23038f4a97836773fbcbfe897b82b4b9e141e77; candidate query harness only
+ENGINE: 4.7.2-stable (official); Jolt Physics
+PASS: 1.20m headroom blocks standing 1.80m capsule
+PASS: 1.20m headroom admits crawl 1.10m capsule
+PASS: 0.80m headroom blocks crawl 1.10m capsule
+PASS: 0.80m headroom admits prone horizontal capsule, 0.70m high
+PASS: 0.90m tunnel admits straight prone capsule
+PASS: 0.90m tunnel blocks 90 degree prone rotation
+MINIMUM_CAPSULE: requested height=0.50m/radius=0.35m; actual height=0.5; actual radius=0.25
+This checks candidate shape volumes only. It does not prove automatic posture transitions.
