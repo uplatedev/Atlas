@@ -13,6 +13,13 @@ De gebruiker heeft het T-003-voorstel bevestigd. T-004 bouwt de nieuwe movement-
 | T-002 | Lokale Character- en levelproef | Feedback verwerkt via T-004; oude proef bewaard | atlas-T002-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-002-character-proef` | Opvolgproef in T-004 beoordelen |
 | T-003 | Movement, camera en houdingen onderzoeken | Afgerond; voorstel bevestigd voor uitvoering | atlas-T003-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-003-movement-camera-onderzoek` (documentatiecheckpoint; geheugen op main) | Geen onderzoekafhankelijkheid meer; uitvoering in T-004 |
 | T-004 | Movement, camera, hoofd en houdingen implementeren | Gepubliceerd en lokaal klaar; nieuwe gebruikersproef open | atlas-T004-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-004-character-movement` | Nieuwe beweging, hoofdgrens, camera en houdingsroute spelen en beoordelen |
+| T-005 | Charactergevoel en houdingknoppen verfijnen | Gereserveerd; uitvoering na publicatie claim | atlas-T005-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-005-character-verfijnen` | Feedback op T-004 onderzoeken, verbeteren en lokaal opnieuw laten spelen |
+
+## T-005 — Charactergevoel en houdingknoppen verfijnen
+
+Reservering door `atlas-T005-20261012-01a12fd0`, STELLAR-FORGE (Windows), werkbranch `Smyl3z/T-005-character-verfijnen`. Bron: gebruikersfeedback en verduidelijkingen op 12 oktober 2026. Basis is T-004-checkpoint `49d62546`.
+
+Scope: expliciete Ctrl-kruip/Z-lig en spatie-oprichten; automatisch lig alleen vanuit handmatig kruip; snellere lage houdingen; echte snelheidsafhankelijke sprongafstand en minder sprintbonus; abrupte precisierem bij luchtkruip/lig; lichaamsdraai pas bij beweging of hoofdgrens; hoekrobuuste automatische kruip/lig; lichte A/D-/camera-luchtsturing; onderzoek naar stotteren en subtiele camera-aanhechting/FOV voor alle bewegingsstaten. Geen netwerk of character-model. Menselijk speelgevoel blijft na technische controle opnieuw te beoordelen. Bewaar aanwezige lokale editorwijzigingen bij overdracht.
 
 ## T-000 — Projectbasis opzetten
 
