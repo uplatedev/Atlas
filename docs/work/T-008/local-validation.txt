@@ -1,0 +1,480 @@
+T-008 controle in vaste lokale Atlas-map; gepubliceerde bron b533d618849055b973d92d7ba98dc97367c898a1
+Godot-versie akkoord. Project importeren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | Started Registering global classes... (10 steps)[39m[0m
+[   0% ] [90m[1mupdate_scripts_classes[22m | AtlasCharacter[39m[0m
+[   9% ] [90m[1mupdate_scripts_classes[22m | AtlasCharacterContactFrame[39m[0m
+[  18% ] [90m[1mupdate_scripts_classes[22m | AtlasCharacterFeedback[39m[0m
+[  27% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  36% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  45% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  54% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  63% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  72% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[  81% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
+[92m[ DONE ][39m [1mupdate_scripts_classes[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (13 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | footstep_concrete_000.wav[39m[0m
+[   7% ] [90m[1m_update_scan_actions[22m | footstep_concrete_001.wav[39m[0m
+[  14% ] [90m[1m_update_scan_actions[22m | footstep_concrete_002.wav[39m[0m
+[  21% ] [90m[1m_update_scan_actions[22m | footstep_concrete_003.wav[39m[0m
+[  28% ] [90m[1m_update_scan_actions[22m | footstep_concrete_004.wav[39m[0m
+[  35% ] [90m[1m_update_scan_actions[22m | jump_soft_000.wav[39m[0m
+[  42% ] [90m[1m_update_scan_actions[22m | jump_soft_001.wav[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | landing_soft_000.wav[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | landing_soft_001.wav[39m[0m
+[  64% ] [90m[1m_update_scan_actions[22m | low_contact_carpet_000.wav[39m[0m
+[  71% ] [90m[1m_update_scan_actions[22m | low_contact_carpet_001.wav[39m[0m
+[  78% ] [90m[1m_update_scan_actions[22m | low_contact_carpet_002.wav[39m[0m
+[  85% ] [90m[1m_update_scan_actions[22m | slide_scrape_loop.wav[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (13 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   7% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  14% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  21% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  35% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  42% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  50% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  57% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  64% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  71% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  78% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  85% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mreimport[22m | footstep_concrete_000.wav[39m[0m
+[   7% ] [90m[1mreimport[22m | footstep_concrete_001.wav[39m[0m
+[  14% ] [90m[1mreimport[22m | footstep_concrete_002.wav[39m[0m
+[  21% ] [90m[1mreimport[22m | footstep_concrete_003.wav[39m[0m
+[  28% ] [90m[1mreimport[22m | footstep_concrete_004.wav[39m[0m
+[  35% ] [90m[1mreimport[22m | jump_soft_000.wav[39m[0m
+[  42% ] [90m[1mreimport[22m | jump_soft_001.wav[39m[0m
+[  50% ] [90m[1mreimport[22m | landing_soft_000.wav[39m[0m
+[  57% ] [90m[1mreimport[22m | landing_soft_001.wav[39m[0m
+[  64% ] [90m[1mreimport[22m | low_contact_carpet_000.wav[39m[0m
+[  71% ] [90m[1mreimport[22m | low_contact_carpet_001.wav[39m[0m
+[  78% ] [90m[1mreimport[22m | low_contact_carpet_002.wav[39m[0m
+[  85% ] [90m[1mreimport[22m | slide_scrape_loop.wav[39m[0m
+[  92% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (13 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[  33% ] [90m[1mloading_editor_layout[22m | Reopening scenes...[39m[0m
+[  50% ] [90m[1mloading_editor_layout[22m | Loading central editor layout...[39m[0m
+[  66% ] [90m[1mloading_editor_layout[22m | Loading plugin window layout...[39m[0m
+[  83% ] [90m[1mloading_editor_layout[22m | Editor layout ready.[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m
+Hoofdscene headless starten (10 frames)...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Character-physics en scenecontrole uitvoeren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: lopen bereikt ingestelde voorwaartse snelheid
+PASS: lopen: vooruit > zijwaarts > achteruit
+PASS: diagonale loopinput geeft geen snelheidsbonus
+PASS: sprint bereikt ingestelde voorwaartse snelheid
+PASS: sprint werkt in alle richtingen met lagere zij-/achterwaartse snelheden
+PASS: diagonale sprintinput geeft geen snelheidsbonus
+PASS: tegengestelde inputs heffen elkaar op
+PASS: acceleratie bouwt snelheid op
+PASS: loslaten remt af
+PASS: sprint naar lopen keert terug naar looplimiet
+MEASURE: walk 5.000 / side 4.000 / back 2.750 / diagonal 4.417; sprint 9.000 / 7.200 / 4.950 / 7.951
+PASS: sprong komt los en landt weer
+PASS: sprong komt los en landt weer
+PASS: sprong komt los en landt weer
+PASS: gemeten spronghoogte: stilstand > lopen > sprint
+PASS: gemeten sprintsprong gaat extra ver
+PASS: alleen Shift verandert sprongprofiel niet bij dezelfde snelheid
+PASS: stationaire sprong blijft hoog
+MEASURE: jumps standing 2.075m / 0.000m range; walk 1.309m / 3.667m; sprint 0.744m / 5.775m
+PASS: lage trede wordt werkelijk opgestapt
+PASS: trede boven opstapgrens blijft obstakel
+PASS: geldige trede onder laag plafond passeert met automatisch lagere houding
+MEASURE: steps low 0.301 / z -7.973; high 0.001 / z -0.649; ceiling 0.301 / z -20.851
+PASS: twee onafhankelijke editorinstellingen aanwezig
+PASS: instancewijziging blijft lokaal
+PASS: capsulebotsingen hebben eigen Resources
+PASS: capsulematerialen hebben eigen Resources
+PASS: naamwijziging raakt tweede instance niet
+PASS: camera kan naar first person zoomen
+PASS: first-personcamera verbergt uitsluitend eigen capsule
+PASS: andere capsule blijft zichtbaar voor first-personcamera
+PASS: zoom blijft binnen instelbare maximale afstand
+PASS: tweede instance houdt eigen camerafstand
+PASS: camera van tweede Character ziet de eerste capsule
+PASS: reset keert terug naar eigen startpositie
+PASS: camera-arm comprimeert werkelijk bij een nabije muur
+PASS: gecomprimeerde camera blijft vrij van eigen capsule
+PASS: eigen capsule wordt zichtbaar zodra de camera weer vrij is
+PASS: kleine ingestelde maximale zoomafstand blijft bruikbaar
+PASS: prototypelevel bevat precies twee lampen
+PASS: alle Character-physics- en scenecontroles geslaagd.
+Herhaalde sprongen, houdingen, hoofdrichting en camera controleren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: Alt-sneak heeft voorrang op sprint
+PASS: sneak verandert de staande capsule niet
+PASS: Ctrl kiest kruip en bewaart die na loslaten
+PASS: kruip gebruikt eigen bewegingssnelheid
+PASS: Z gaat vanuit kruip naar lig
+PASS: lig gebruikt eigen bewegingssnelheid
+PASS: spatie richt lig één houding op zonder sprong
+PASS: Z kiest handmatig rechtstreeks lig vanuit staan
+PASS: sprong wordt uitgevoerd en landt
+PASS: sneak-sprong blijft laag en boven de ingestelde minimumhoogte
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_forward"]
+MEASURE: repeated no-fatigue ["move_forward"] [10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_right"]
+MEASURE: repeated no-fatigue ["move_right"] [8.69999980926514, 8.69999980926514, 8.69999980926514, 8.69999980926514, 8.69999980926514, 8.69999980926514, 8.69999980926514, 8.69999980926514, 8.69999980926514, 8.69999980926514, 8.69999980926514, 8.69999980926514]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_back"]
+MEASURE: repeated no-fatigue ["move_back"] [6.44999980926514, 6.44999980926514, 6.44999980926514, 6.44999980926514, 6.44999980926514, 6.44999980926514, 6.44999980926514, 6.44999980926514, 6.44999980926514, 6.44999980926514, 6.44999980926514, 6.44999980926514]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_forward", "move_right"]
+MEASURE: repeated no-fatigue ["move_forward", "move_right"] [9.45106887817383, 9.45106983184814, 9.45106983184814, 9.45106983184814, 9.45106983184814, 9.45106983184814, 9.45106983184814, 9.45106983184814, 9.45106983184814, 9.45106983184814, 9.45106983184814, 9.45106983184814]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: opeenvolgende sprintsprongen worden lager
+PASS: opeenvolgende sprintsprongen verliezen extra sprintbonus
+MEASURE: fatigue heights 0.744 / 0.648 / 0.551; launch 10.500 / 9.925 / 9.350
+PASS: wisselen naar sneak wist sprintvermoeidheid niet
+PASS: voldoende grondrust herstelt volle sprongkracht
+PASS: sprong wordt uitgevoerd en landt
+PASS: na grondherstel komt dezelfde volle sprong terug
+PASS: sprongvermoeidheid herstelt niet tijdens vliegen
+PASS: vasthouden van spatie veroorzaakt geen automatische volgende sprong
+PASS: tweede druk binnen coyotetijd geeft geen dubbele luchtjump
+PASS: vroege nieuwe druk wordt eenmaal bij landing uitgevoerd
+PASS: kort na een echte rand blijft de coyote-sprong geldig
+PASS: na verlopen coyotetijd start geen luchtjump
+PASS: geldige .30m trede met 1.20m hoofdruimte wordt automatisch kruipend gepasseerd
+PASS: automatisch kruipen herstelt na vrije uitgang naar staan
+PASS: staande voorkeur passeert een ligingang automatisch via een echte kruiptussenhouding
+PASS: automatische ligingang herstelt de hoogste veilige staande voorkeur
+PASS: handmatige kruip staat automatische lig toe bij lage ingang
+PASS: automatisch lig herstelt naar de handmatig gekozen kruip
+PASS: handmatige kruiphouding blijft op open grond behouden
+PASS: handmatige lighouding blijft op open grond behouden
+PASS: doorgang lager dan elke capsulevorm blijft geblokkeerd
+PASS: gelijke muisbeweging draait geleidelijk langzamer in de zachte hoofdzone
+PASS: grote muisinput kan de hoofdgrens niet overschrijden
+PASS: hoofdrichting en lichaamsrichting worden afzonderlijk bijgehouden
+PASS: terugdraaien reageert direct bij de hoofdgrens
+PASS: lichaam draait per physicsframe binnen zijn limiet bij
+PASS: stilstaand lichaam haalt alleen de noodzakelijke hoofdhoek in
+PASS: horizontale ligcapsule draait niet door de smalle tunnelwanden
+PASS: hoofd en camera blijven begrensd wanneer lichaam niet kan draaien
+PASS: FOV-uit houdt de gekozen third-personbasis
+PASS: snelheids-FOV reageert begrensd op echte sprint
+PASS: FOV keert na afremmen naar de basis terug
+PASS: first person gebruikt zijn eigen verticale basis-FOV
+PASS: camerahoogte volgt de ligcapsule
+PASS: werkelijke arena: kruip-ligroute herstelt automatisch staan zonder handmatige injectie
+PASS: arena-route bewaart de houdingvoorkeur en geeft geen slide
+MEASURE: actual arena R1 manualC false final (-5.854083, 0.000126, -14.54908); postures [0, 1, 2, 1, 0]; adjacent true
+PASS: werkelijke arena: kruip-ligroute herstelt handmatige kruip
+PASS: arena-route bewaart de houdingvoorkeur en geeft geen slide
+MEASURE: actual arena R1 manualC true final (-5.854083, 0.000067, -14.12383); postures [0, 1, 2, 1]; adjacent true
+PASS: movement-, houdings-, sprongherhaal- en hoofd/cameraregressies geslaagd.
+Houdingknoppen, precisiesprongen, lichaamsdraai en hoekovergangen controleren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+MEASURE: sprint partial/full launch 3.033/10.500 m/s; travel 2.477/5.775 m; apex 1.611/0.744 m; partial max-air 3.033/cap 3.033
+PASS: 0.10s sprintaanloop geeft minder afzetsnelheid dan volle sprint
+PASS: korte sprintaanloop geeft aantoonbaar minder sprongafstand dan volle sprint
+PASS: luchtsturing versnelt een gedeeltelijke sprintafzet niet alsnog tot volle loopsnelheid
+PASS: gedeeltelijke sprintafzet legt haar werkelijke eigen snelheidsbudget vast
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: acht onmiddellijke sprintsprongen stapelen niet wanneer vermoeidheid uitstaat
+PASS: de sprongcap blijft maximaal één ingestelde sprintbonus
+MEASURE: repeated launches [10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5]
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+MEASURE: walk partial/full launch 3.733/5.000; travel 2.924/3.667; partial max-air 3.733/cap 3.733
+PASS: 0.10s loopaanloop geeft minder afzetsnelheid dan volle loop
+PASS: gedeeltelijke loopaanloop geeft minder sprongafstand dan volle loop
+PASS: luchtsturing maakt een gedeeltelijke loopafzet niet alsnog volle loopsnelheid
+PASS: echte frontale wandbotsing remt horizontale sprintvlucht tot nul voordat de speler landt
+MEASURE: air wall recovery speed 0.350; current/launch cap 0.800/10.500; floor false
+PASS: na een frontale luchtbotsing kan zijinput binnen de beperkte luchtsturing weer langs de wand bewegen
+PASS: herstel na een luchtbotsing blijft binnen het actuele budget en vergroot de bestaande afzetcap niet
+MEASURE: airborne crouch speed 10.500 -> 10.500; vertical 2.625 -> 2.292; pending true
+PASS: crouch wordt tijdens een echte sprintsprong gemeten
+PASS: crouch bewaart de horizontale afzetvaart tijdens de vlucht
+PASS: crouch bewaart het werkelijke afzetbudget tijdens de vormwissel
+PASS: crouch verandert de verticale sprong niet behalve normale zwaartekracht
+PASS: crouch reset werkelijk opgebouwde sprongvermoeidheid niet
+PASS: crouch kiest rechtstreeks de bedoelde handmatige houding
+PASS: alleen succesvolle lucht-Ctrl bereidt een slide voor; de slide begint nog niet
+PASS: crouch behoudt de vaart tot een echte landing zonder lucht-slide
+PASS: de Ctrl-landing behoudt momentum zonder nieuwe sprongbonus
+PASS: Ctrl-slide begint uitsluitend op het eerste echte grondcontact en verbruikt de voorbereiding
+PASS: de Ctrl-skill bewaart staan als voorkeur tijdens de echte slide
+PASS: zijinput stuurt de grondslide beperkt bij in plaats van direct negentig graden te draaien
+PASS: grondslide verliest geleidelijk vaart door wrijving in plaats van een onmiddellijke stop
+PASS: W en Shift toevoegen tijdens de slide geen snelheid of oude boost
+PASS: de tijdelijke skill blijft fysiek kruip zolang de slide actief is zonder permanente kruipvoorkeur
+PASS: een echte opstap via de steunroute herstart de landingsslide niet
+PASS: grondslide eindigt binnen de ingestelde maximale duur
+PASS: natuurlijk slide-einde herstelt veilig staan ondanks nog vastgehouden Ctrl
+PASS: vastgehouden Ctrl maakt na natuurlijk slide-einde geen tweede skill
+MEASURE: slide steering 3.500deg; duration 45 frames; step support true; end speed 3.000; restored posture 0
+MEASURE: airborne prone speed 10.500 -> 10.500; vertical 2.625 -> 2.292; pending false
+PASS: prone wordt tijdens een echte sprintsprong gemeten
+PASS: prone bewaart de horizontale afzetvaart tijdens de vlucht
+PASS: prone bewaart het werkelijke afzetbudget tijdens de vormwissel
+PASS: prone verandert de verticale sprong niet behalve normale zwaartekracht
+PASS: prone reset werkelijk opgebouwde sprongvermoeidheid niet
+PASS: prone kiest rechtstreeks de bedoelde handmatige houding
+PASS: alleen succesvolle lucht-Ctrl bereidt een slide voor; de slide begint nog niet
+PASS: prone behoudt de vaart tot een echte landing zonder lucht-slide
+PASS: Z-lig start ook bij de landing geen kruipslide
+PASS: Z-lig krijgt bij het eerste echte contact zijn eigen grondbudget zonder verborgen slide
+MEASURE: prone first contact speed 2.000; ground limit 2.000; slide false
+PASS: gemeten luchtremvlucht eindigt werkelijk op de vloer
+PASS: gemeten luchtremvlucht eindigt werkelijk op de vloer
+PASS: S tijdens een voorwaartse sprintsprong geeft werkelijk een kortere landingsafstand
+PASS: S verlaagt de luchtvaart over meerdere frames zonder onmiddellijke stop
+PASS: S verandert de verticale vlucht niet vergeleken met dezelfde ongeremde afzet
+MEASURE: airborne S travel 5.108 vs 5.775 without S; initial speeds [10.3666667938232, 10.2333335876465, 10.1000003814697, 9.96666717529297]
+PASS: vooruit sturen na luchtremmen herstelt geen verloren sprintbonus
+PASS: S remt een achterwaartse afzet niet wanneer de input al met de vaart meegaat
+PASS: S remt een achterwaartse afzet niet wanneer de input al met de vaart meegaat
+PASS: S remt ook een werkelijk voorwaartse diagonale afzet geleidelijk
+PASS: de vergeleken grondrem wordt tijdens een echte actieve slide gemeten
+PASS: de vergeleken grondrem wordt tijdens een echte actieve slide gemeten
+PASS: S remt een voorwaartse grondslide sterker maar niet onmiddellijk tot stilstand
+PASS: extra sliderem geeft een aantoonbaar kortere verplaatsing op de grond
+MEASURE: slide S speed/travel 8.700/0.945 vs 9.500/0.992 without S
+PASS: Ctrl op de grond is gewone kruip en start geen slide
+PASS: een programmatisch aangevraagde lage houding in de lucht is geen handmatige Ctrl-skill
+PASS: automatisch aangevraagde kruip start bij de landing geen slide
+PASS: een lage landing zonder Ctrl-skill houdt geen verborgen sprintvaart over
+PASS: een werkelijk geblokkeerde brede kruipvorm bereidt geen slide voor
+PASS: mislukte lucht-Ctrl wordt bij de landing geen vertraagde slide
+PASS: succesvolle lucht-Ctrl bereidt de volgende negatieve proef werkelijk voor
+PASS: crouch annuleert de voorbereiding vóór de landing
+PASS: een nieuwe Ctrl tijdens voorbereide skill kiest permanente kruip en annuleert de skill
+PASS: crouch laat een geannuleerde voorbereiding bij de landing niet terugkomen
+PASS: succesvolle lucht-Ctrl bereidt de volgende negatieve proef werkelijk voor
+PASS: prone annuleert de voorbereiding vóór de landing
+PASS: prone laat een geannuleerde voorbereiding bij de landing niet terugkomen
+PASS: respawnproef begint met een werkelijk voorbereide slide
+PASS: respawn wist de oude slide en begint weer gewoon staand
+PASS: de korte slide begint met echte bewaarde afzetvaart
+PASS: ook een slide van 0.02s zonder wrijving eindigt binnen het grondbudget van de veilige houding
+MEASURE: short frictionless slide exit speed 3.000; ground limit 3.000
+PASS: grond-Z-proef begint met een echte actieve Ctrl-slide
+PASS: Z tijdens de grondslide kiest lig, annuleert de slide en houdt alleen veilige ligvaart over
+PASS: uitsluitend virtuele steun op een geldige opstap bewaart de bestaande slide zonder herstart of nieuwe voorbereiding
+MEASURE: virtual-only step support true; continued slide true; speed 8.833
+PASS: een geldige trede van 0.30m op 0.50m vooruit bewaart de default-capsuleslide zonder botsingsstop of nieuwe vaart
+MEASURE: close step crossed true; slide continued true; speed 8.833
+PASS: een echte hoge wand stopt de slide en wordt niet als geldige opstap of nieuwe voorbereiding behandeld
+PASS: de slide blijft vóór de echte wand zonder lift of doorsnijden
+PASS: een natuurlijke wandstop herstelt vrij staan zonder vastgehouden kruipvoorkeur
+PASS: zijinput na een echte wandstop herstelt alleen gewone grondacceleratie zonder de oude sprintboost
+MEASURE: real wall slide stopped; lateral recovery 2.600; ground limit 7.200
+PASS: lucht-Ctrl is een tijdelijke skill bovenop de staande voorkeur
+PASS: de speedgrens beëindigt de sterk geremde slide ruim vóór haar timer
+PASS: een natuurlijk einde op snelheid herstelt vrij staan
+PASS: slide-einde onder 1.20m plafond blijft veilig automatisch kruip met voorkeur staan
+PASS: na een lage slide-uitgang volgt automatisch kruip-lig-kruip-staan zonder handmatige druk
+PASS: herstelroute verandert de staande voorkeur niet en maakt geen tweede slide
+MEASURE: low slide exit postures [1, 2, 1, 0]; adjacent true; relative z -24.255
+PASS: een ligingang tijdens actieve kruipslide verlaagt veilig, annuleert de skill en laat geen ligslide of overvaart achter
+PASS: ook een ligingang tijdens de skill herstelt daarna veilig de staande voorkeur
+MEASURE: active slide prone entry true; lingering skill false; legal speed true; relative z -6.113
+PASS: expliciete houdingkeuze wordt tijdens een echte slide getoetst
+PASS: crouch tijdens de skill annuleert en bewaart de expliciete houding in plaats van later automatisch op te richten
+PASS: expliciete houdingkeuze wordt tijdens een echte slide getoetst
+PASS: prone tijdens de skill annuleert en bewaart de expliciete houding in plaats van later automatisch op te richten
+PASS: de gemeten slideafstand gebruikt een echte, beëindigde landingsslide
+PASS: de gemeten slideafstand gebruikt een echte, beëindigde landingsslide
+PASS: sterkere slide-defaults bewaren de oorspronkelijke vaart langer en vergroten de werkelijke grondafstand
+PASS: de langere slide voegt geen boost toe en blijft binnen haar ingestelde duur
+MEASURE: default/previous slide frames 45/27; range 5.000/2.835; launch/max 10.500/10.500
+PASS: slide-sprongproef begint met een werkelijk actieve, ondersteunde kruipslide
+PASS: een nieuwe spatie onderbreekt een echte actieve slide direct met een staande sprong
+PASS: slide-sprong bewaart de overgebleven afzetvaart zonder sprintbonus toe te voegen of het oude budget te herstellen
+PASS: slide-sprong gebruikt het actuele hoogteprofiel maar geen extra horizontale bonus
+PASS: slide-sprong behoudt opgebouwde vermoeidheid en betaalt een echte nieuwe sprong
+PASS: slide-sprong verbruikt grondticket, buffer en coyote eenmaal
+MEASURE: slide jump speed 9.500 -> 9.500; cap 9.500; Y 5.022; fatigue 0.300 -> 0.683; bonus 0.000
+PASS: een tweede druk binnen coyotetijd geeft na slide-sprong geen tweede afzet of extra fatigue
+PASS: de hele slide-sprong houdt haar eigen beperkte budget en landt werkelijk
+PASS: verlopen buffer en vastgehouden replay-spatie starten na de landing geen stille extra sprong
+PASS: vastgehouden oorspronkelijke sprongspatie onderbreekt de nieuwe landingsslide niet
+PASS: originele held-spatie geeft ook na natuurlijk slide-einde geen automatische sprong
+PASS: Ctrl op de grond geeft geen skill: spatie richt gewone kruip alleen op zonder sprong
+PASS: slide-sprongproef begint met een werkelijk actieve, ondersteunde kruipslide
+PASS: onvoldoende staande hoofdruimte weigert slide-sprong zonder clippen of het onderbreken van de slide
+PASS: geweigerde slide-sprong bewaart de aflopende skill en maakt geen ticketkosten of buffer
+PASS: vrijgekomen hoofdruimte herhaalt een geblokkeerde held-spatie niet alsnog stil
+PASS: na een geweigerde poging kan alleen een nieuwe veilige druk de slide werkelijk onderbreken
+PASS: twaalf echte slide-sprong-slidecycli behouden ieder hun actuele budget zonder nieuwe bonus, ook met fatigue uit
+PASS: herhaald slide-springen stapelt nooit boven de oorspronkelijke sprintafzet
+MEASURE: twelve slide jump launches [9.99999904632568, 9.49999809265137, 8.99999713897705, 8.49999618530273, 7.99999570846558, 7.49999618530273, 6.99999666213989, 6.49999713897705, 5.99999761581421, 5.49999809265137, 4.99999856948853, 4.49999904632568]; individual budgets true
+PASS: Z kiest vanuit staan handmatig direct lig
+PASS: Z tijdens lig blijft lig; alleen oprichten brengt de speler hoger
+PASS: Ctrl kiest vanuit lig expliciet kruip
+PASS: Ctrl schakelt de handmatig gekozen kruiphouding weer uit
+PASS: staan-Z-spatie keert direct terug naar staan zonder tussentijdse kruip of sprong
+PASS: vasthouden van directe oprichtspatie voert geen sprong of buffer uit
+PASS: opricht-input wordt geen gebufferde sprong na het staan
+PASS: pas een nieuwe spatie vanuit staan start werkelijk een sprong
+PASS: handmatige kruip-Z-spatie keert terug naar de vorige kruipvoorkeur zonder sprong
+PASS: de onthouden kruipvoorkeur blijft na de handmatige lig-terugkeer bewaard
+PASS: herhaalde Z overschrijft de vorige staande voorkeur niet
+PASS: geblokkeerde directe lig-naar-staan-terugkeer blijft lig, ook als kruip wel zou passen
+PASS: geblokkeerde lig-terugkeer geeft geen fallback, sprong, buffer of houdingflikkering
+PASS: vrijgekomen hoofdruimte voert geweigerde held-oprichtinput niet stil alsnog uit
+PASS: na vrije hoofdruimte kan een nieuwe oprichtdruk veilig staan
+PASS: automatisch staan bereikt een ligingang via een werkelijk gemeten kruipframe, nooit rechtstreeks staan naar lig
+PASS: na een automatische ligingang herstelt de hoogste veilige houding zonder handmatige voorkeur te wijzigen
+PASS: automatisch kruip en lig voorbereiden of starten geen slide
+MEASURE: auto direct low passage postures [0, 1, 2, 1, 0]; adjacent true; z -6.123
+PASS: eerste 1.20m doorgang kiest automatisch kruip en bewaart staan als voorkeur
+PASS: getrapte kruip-naar-ligdoorgang passeert en herstelt automatisch staan via veilige tussenhoudingen
+PASS: lage route bewaart de gekozen voorkeur zonder slide-skill
+MEASURE: stepped low route manualC false; postures [1, 2, 1, 0]; z -8.102; restored true
+PASS: eerste 1.20m doorgang kiest automatisch kruip en bewaart staan als voorkeur
+PASS: Ctrl tijdens automatisch kruip kiest permanent kruip zonder een slide te geven
+PASS: getrapte kruip-naar-ligdoorgang passeert en herstelt handmatige kruip via veilige tussenhoudingen
+PASS: lage route bewaart de gekozen voorkeur zonder slide-skill
+MEASURE: stepped low route manualC true; postures [1, 2, 1]; z -8.125; restored true
+MEASURE: oblique x 0.00 yaw 0.0 reached true at (0.0, 0.300132, -1.825); maxY 0.301; postures [0, 1]
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x 0.00 / yaw 0.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+MEASURE: oblique x -1.75 yaw -30.0 reached true at (-0.288083, 0.300133, -1.816838); maxY 0.302; postures [0, 1]
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x -1.75 / yaw -30.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+MEASURE: oblique x 1.75 yaw 30.0 reached true at (0.288083, 0.300133, -1.816838); maxY 0.302; postures [0, 1]
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x 1.75 / yaw 30.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+MEASURE: oblique x -1.20 yaw -45.0 reached true at (0.788703, 0.300133, -1.803662); maxY 0.301; postures [0, 1]
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x -1.20 / yaw -45.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+MEASURE: oblique x 1.20 yaw 45.0 reached true at (-0.788703, 0.300133, -1.803662); maxY 0.301; postures [0, 1]
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x 1.20 / yaw 45.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+MEASURE: 30-degree wallslide reached true at (-0.098884, 0.300907, -1.816348)
+PASS: schuine input langs een wand gebruikt het vrije pad om automatisch de geldige kruipopstap te nemen
+PASS: klein rondkijken vanuit stilstand draait het lichaam niet mee
+PASS: bij stilstand blijft aparte hoofdhoek behouden
+PASS: ver rondkijken bij de hoofdgrens laat ook stilstaand het lichaam bijdraaien
+PASS: stilstaand rondkijken in de lucht gebruikt een echte verticale sprong zonder WASD
+PASS: klein rondkijken tijdens een verticale stilstandsprong draait het lichaam niet mee
+PASS: bij de hoofdgrens draait een horizontaal stilstaand lichaam in de lucht binnen de eigen luchtdraailimiet
+PASS: tijdens beweging volgt het lichaam de kleine hoofddraai wel
+PASS: move_left plus cameradraai geeft beperkte echte luchtsturing
+PASS: move_left plus cameradraai vergroot de sprongcap niet
+MEASURE: move_left air steering 3.820 degrees; speed 10.500; cap 10.500
+PASS: move_right plus cameradraai geeft beperkte echte luchtsturing
+PASS: move_right plus cameradraai vergroot de sprongcap niet
+MEASURE: move_right air steering 3.820 degrees; speed 10.500; cap 10.500
+PASS: feedbackregressies voor sprongafstand, landingsslide, luchtrem, houdingknoppen, schuine doorgang en lichaamsdraai.
+Camera-eigenaarschap en gedragsvergelijking controleren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+COMPARE: 5611 numerieke waarden; grootste afwijking 0.00000000 (trace.logical_air.body_yaw).
+PASS: camera-overdracht, FOV-/bewegingspariteit, kijkrichting, eigen zicht en instancebediening.
+Contactaudio, echte grondafstand en audio/physics-scheiding controleren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+MEASURE: walk afstand 12.150 m, stappen 6, instelling 1.800 m/stap.
+MEASURE: sprint afstand 21.017 m, stappen 8, instelling 2.400 m/stap.
+MEASURE: sneak afstand 4.905 m, stappen 3, instelling 1.300 m/stap.
+MEASURE: crouch afstand 7.075 m, stappen 5, instelling 1.200 m/stap.
+MEASURE: prone afstand 4.683 m, stappen 4, instelling 1.000 m/stap.
+MEASURE: slide-volume piek/eind -9.307/-10.936 dB; vaart begin/eind 10.333/5.333 m/s.
+MEASURE: audio aan/uit 180 physicsframes; grootste verschil 0.00000000.
+PASS: contactaudio voor echte afstand/afzet/impact/slide, routing, reset en ongewijzigde physics.
+Atlas: versie, import en headless-start geslaagd.
+Exitcode: 0
