@@ -1,0 +1,358 @@
+[gd_scene load_steps=29 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/prototype/kenney_dark_grid.png" id="1_dark"]
+[ext_resource type="Texture2D" path="res://assets/prototype/kenney_light_grid.png" id="2_light"]
+[ext_resource type="Texture2D" path="res://assets/prototype/kenney_orange_grid.png" id="3_orange"]
+[ext_resource type="Texture2D" path="res://assets/sky/belfast_sunset_puresky_2k.hdr" id="4_sunset"]
+
+[sub_resource type="StandardMaterial3D" id="Material_floor"]
+resource_name = "Vloerraster - hoofdvak 1 m"
+albedo_texture = ExtResource("1_dark")
+metallic_specular = 0.2
+roughness = 0.95
+texture_filter = 5
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 16.0
+uv1_world_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="Material_wall"]
+resource_name = "Muurraster - hoofdvak 1 m"
+albedo_texture = ExtResource("2_light")
+albedo_color = Color(0.38, 0.42, 0.46, 1)
+metallic_specular = 0.2
+roughness = 0.95
+texture_filter = 5
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 16.0
+uv1_world_triplanar = true
+
+[sub_resource type="StandardMaterial3D" id="Material_step"]
+resource_name = "Tredenraster - hoofdvak 1 m"
+albedo_texture = ExtResource("3_orange")
+albedo_color = Color(0.45, 0.45, 0.45, 1)
+metallic_specular = 0.2
+roughness = 0.95
+texture_filter = 5
+uv1_scale = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+uv1_triplanar_sharpness = 16.0
+uv1_world_triplanar = true
+
+[sub_resource type="PanoramaSkyMaterial" id="Panorama_sunset"]
+panorama = ExtResource("4_sunset")
+energy_multiplier = 0.35
+
+[sub_resource type="Sky" id="Sky_sunset"]
+sky_material = SubResource("Panorama_sunset")
+
+[sub_resource type="Environment" id="Environment_sunset"]
+background_mode = 2
+sky = SubResource("Sky_sunset")
+sky_rotation = Vector3(0, 3.1415927, 0)
+ambient_light_source = 3
+ambient_light_energy = 0.65
+reflected_light_source = 2
+tonemap_mode = 3
+ssao_enabled = true
+ssao_intensity = 0.6
+
+[sub_resource type="BoxMesh" id="Mesh_floor"]
+size = Vector3(32, 0.3, 32)
+
+[sub_resource type="BoxShape3D" id="Shape_floor"]
+size = Vector3(32, 0.3, 32)
+
+[sub_resource type="BoxMesh" id="Mesh_wall_back"]
+size = Vector3(32, 3, 0.3)
+
+[sub_resource type="BoxShape3D" id="Shape_wall_back"]
+size = Vector3(32, 3, 0.3)
+
+[sub_resource type="BoxMesh" id="Mesh_wall_side"]
+size = Vector3(0.3, 3, 32)
+
+[sub_resource type="BoxShape3D" id="Shape_wall_side"]
+size = Vector3(0.3, 3, 32)
+
+[sub_resource type="BoxMesh" id="Mesh_step015"]
+size = Vector3(1.5, 0.15, 2)
+
+[sub_resource type="BoxShape3D" id="Shape_step015"]
+size = Vector3(1.5, 0.15, 2)
+
+[sub_resource type="BoxMesh" id="Mesh_step030"]
+size = Vector3(1.5, 0.3, 2)
+
+[sub_resource type="BoxShape3D" id="Shape_step030"]
+size = Vector3(1.5, 0.3, 2)
+
+[sub_resource type="BoxMesh" id="Mesh_step045"]
+size = Vector3(1.5, 0.45, 2)
+
+[sub_resource type="BoxShape3D" id="Shape_step045"]
+size = Vector3(1.5, 0.45, 2)
+
+[sub_resource type="BoxMesh" id="Mesh_step060"]
+size = Vector3(1.5, 0.6, 2)
+
+[sub_resource type="BoxShape3D" id="Shape_step060"]
+size = Vector3(1.5, 0.6, 2)
+
+[sub_resource type="BoxMesh" id="Mesh_ceiling"]
+size = Vector3(3, 0.35, 3)
+
+[sub_resource type="BoxShape3D" id="Shape_ceiling"]
+size = Vector3(3, 0.35, 3)
+
+[sub_resource type="BoxMesh" id="Mesh_clearance_step"]
+size = Vector3(2.5, 0.3, 1.5)
+
+[sub_resource type="BoxShape3D" id="Shape_clearance_step"]
+size = Vector3(2.5, 0.3, 1.5)
+
+[node name="PrototypeLevel" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sunset")
+
+[node name="EdgeLight" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.35, 2.4, 0)
+light_color = Color(1, 0.72, 0.47, 1)
+light_energy = 0.85
+shadow_enabled = true
+directional_shadow_max_distance = 55.0
+
+[node name="FillLight" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.75, -0.8, 0)
+light_color = Color(0.8, 0.87, 1, 1)
+light_energy = 0.7
+
+[node name="Floor" type="StaticBody3D" parent="."]
+position = Vector3(0, -0.15, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("Mesh_floor")
+material_override = SubResource("Material_floor")
+
+[node name="Collision" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("Shape_floor")
+
+[node name="ReferenceWalls" type="Node3D" parent="."]
+
+[node name="BackWall" type="StaticBody3D" parent="ReferenceWalls"]
+position = Vector3(0, 1.5, -16)
+
+[node name="Mesh" type="MeshInstance3D" parent="ReferenceWalls/BackWall"]
+mesh = SubResource("Mesh_wall_back")
+material_override = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="ReferenceWalls/BackWall"]
+shape = SubResource("Shape_wall_back")
+
+[node name="LeftWall" type="StaticBody3D" parent="ReferenceWalls"]
+position = Vector3(-16, 1.5, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="ReferenceWalls/LeftWall"]
+mesh = SubResource("Mesh_wall_side")
+material_override = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="ReferenceWalls/LeftWall"]
+shape = SubResource("Shape_wall_side")
+
+[node name="ScaleLabel" type="Label3D" parent="ReferenceWalls"]
+position = Vector3(0, 2.25, -15.82)
+text = "HOOFDVAK = 1 METER  |  kleine vakken = 0.25 m"
+font_size = 44
+pixel_size = 0.007
+outline_size = 6
+modulate = Color(0.9, 0.95, 1, 1)
+outline_modulate = Color(0.04, 0.05, 0.07, 1)
+
+[node name="StepTests" type="Node3D" parent="."]
+
+[node name="Step015m" type="StaticBody3D" parent="StepTests"]
+position = Vector3(6, 0.075, -2)
+
+[node name="Mesh" type="MeshInstance3D" parent="StepTests/Step015m"]
+mesh = SubResource("Mesh_step015")
+material_override = SubResource("Material_step")
+
+[node name="Collision" type="CollisionShape3D" parent="StepTests/Step015m"]
+shape = SubResource("Shape_step015")
+
+[node name="Height" type="Label3D" parent="StepTests/Step015m"]
+position = Vector3(0, 0.4, 0)
+billboard = 1
+text = "0.15 m"
+font_size = 40
+pixel_size = 0.008
+outline_size = 6
+
+[node name="Step030m" type="StaticBody3D" parent="StepTests"]
+position = Vector3(8, 0.15, -2)
+
+[node name="Mesh" type="MeshInstance3D" parent="StepTests/Step030m"]
+mesh = SubResource("Mesh_step030")
+material_override = SubResource("Material_step")
+
+[node name="Collision" type="CollisionShape3D" parent="StepTests/Step030m"]
+shape = SubResource("Shape_step030")
+
+[node name="Height" type="Label3D" parent="StepTests/Step030m"]
+position = Vector3(0, 0.45, 0)
+billboard = 1
+text = "0.30 m"
+font_size = 40
+pixel_size = 0.008
+outline_size = 6
+
+[node name="Step045m" type="StaticBody3D" parent="StepTests"]
+position = Vector3(10, 0.225, -2)
+
+[node name="Mesh" type="MeshInstance3D" parent="StepTests/Step045m"]
+mesh = SubResource("Mesh_step045")
+material_override = SubResource("Material_step")
+
+[node name="Collision" type="CollisionShape3D" parent="StepTests/Step045m"]
+shape = SubResource("Shape_step045")
+
+[node name="Height" type="Label3D" parent="StepTests/Step045m"]
+position = Vector3(0, 0.55, 0)
+billboard = 1
+text = "0.45 m"
+font_size = 40
+pixel_size = 0.008
+outline_size = 6
+
+[node name="Step060m" type="StaticBody3D" parent="StepTests"]
+position = Vector3(12, 0.3, -2)
+
+[node name="Mesh" type="MeshInstance3D" parent="StepTests/Step060m"]
+mesh = SubResource("Mesh_step060")
+material_override = SubResource("Material_step")
+
+[node name="Collision" type="CollisionShape3D" parent="StepTests/Step060m"]
+shape = SubResource("Shape_step060")
+
+[node name="Height" type="Label3D" parent="StepTests/Step060m"]
+position = Vector3(0, 0.6, 0)
+billboard = 1
+text = "0.60 m"
+font_size = 40
+pixel_size = 0.008
+outline_size = 6
+
+[node name="LowClearance" type="Node3D" parent="."]
+position = Vector3(-10, 0, 2)
+
+[node name="Ceiling" type="StaticBody3D" parent="LowClearance"]
+position = Vector3(0, 2.125, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="LowClearance/Ceiling"]
+mesh = SubResource("Mesh_ceiling")
+material_override = SubResource("Material_wall")
+
+[node name="Collision" type="CollisionShape3D" parent="LowClearance/Ceiling"]
+shape = SubResource("Shape_ceiling")
+
+[node name="Step030m" type="StaticBody3D" parent="LowClearance"]
+position = Vector3(0, 0.15, -0.75)
+
+[node name="Mesh" type="MeshInstance3D" parent="LowClearance/Step030m"]
+mesh = SubResource("Mesh_clearance_step")
+material_override = SubResource("Material_step")
+
+[node name="Collision" type="CollisionShape3D" parent="LowClearance/Step030m"]
+shape = SubResource("Shape_clearance_step")
+
+[node name="Height" type="Label3D" parent="LowClearance"]
+position = Vector3(0, 2.6, 0)
+billboard = 1
+text = "Hoofdruimte: 1.95 m / boven trede: 1.65 m"
+font_size = 36
+pixel_size = 0.007
+outline_size = 6
+
+[node name="JumpMeasure" type="Node3D" parent="."]
+
+[node name="Start" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.3, 6)
+billboard = 1
+text = "SPRONGBAAN | 0 m"
+font_size = 36
+pixel_size = 0.007
+outline_size = 6
+
+[node name="At02m" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.2, 4)
+billboard = 1
+text = "2 m"
+font_size = 32
+pixel_size = 0.007
+outline_size = 6
+
+[node name="At04m" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.2, 2)
+billboard = 1
+text = "4 m"
+font_size = 32
+pixel_size = 0.007
+outline_size = 6
+
+[node name="At06m" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.2, 0)
+billboard = 1
+text = "6 m"
+font_size = 32
+pixel_size = 0.007
+outline_size = 6
+
+[node name="At08m" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.2, -2)
+billboard = 1
+text = "8 m"
+font_size = 32
+pixel_size = 0.007
+outline_size = 6
+
+[node name="At10m" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.2, -4)
+billboard = 1
+text = "10 m"
+font_size = 32
+pixel_size = 0.007
+outline_size = 6
+
+[node name="At12m" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.2, -6)
+billboard = 1
+text = "12 m"
+font_size = 32
+pixel_size = 0.007
+outline_size = 6
+
+[node name="At14m" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.2, -8)
+billboard = 1
+text = "14 m"
+font_size = 32
+pixel_size = 0.007
+outline_size = 6
+
+[node name="At16m" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.2, -10)
+billboard = 1
+text = "16 m"
+font_size = 32
+pixel_size = 0.007
+outline_size = 6
+
+[node name="At18m" type="Label3D" parent="JumpMeasure"]
+position = Vector3(-0.7, 0.2, -12)
+billboard = 1
+text = "18 m"
+font_size = 32
+pixel_size = 0.007
+outline_size = 6

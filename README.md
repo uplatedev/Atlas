@@ -1,6 +1,6 @@
 # Atlas
 
-Atlas is een nieuw Godot-gameproject. Er is een gecontroleerde lege startscene. De eerste [Character-proef](docs/topics/character.md) is beschreven: een instelbare capsule, camera met zoom van third person naar first person en een meetbaar prototypelevel. De gameplay is nog niet gebouwd; de verdere spelwereld staat open.
+Atlas is een nieuw Godot-gameproject. Deze werkbranch bevat de eerste [lokale Character-proef](docs/topics/character.md): twee individueel instelbare capsules, camera met zoom van third person naar first person en een meetbaar prototypelevel. Technische controle en gebruikersoordeel staan in [WORK](docs/WORK.md). De verdere spelwereld staat open.
 
 ## Openen en controleren op Windows
 
@@ -13,7 +13,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Open-Atlas.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Check-Atlas.ps1
 ```
 
-De tijdelijke execution policy geldt alleen voor die aanroep. De editor opent [game/project.godot](game/project.godot). Met F5 start je een leeg venster; F8 stopt het project. De controle importeert de bronnen en start de hoofdscene kort zonder venster. Er is nog geen speelbaar Character.
+De tijdelijke execution policy geldt alleen voor die aanroep. De editor opent [game/project.godot](game/project.godot). Open `scenes/main.tscn` en druk op F5 om de proef te spelen; F8 stopt het project. De controle importeert de bronnen en start de hoofdscene kort zonder venster. Met `-CharacterChecks` voert Check-Atlas ook de fysieke proeven uit.
+
+WASD beweegt, de muis kijkt, Shift sprint, spatie springt en scroll zoomt tot first person. Tab wisselt tussen de Characters; R brengt ze terug naar hun start. F3 schakelt de richtingsdebug en pijlen. Esc geeft de muis vrij; klik in het spel om verder te spelen.
+
+Selecteer `Characters/AtlasA` of `Characters/AtlasB` in de hoofdscene om naam, kleur, beweging, springen, opstap en camera in de Inspector te wijzigen. Open [Character.tscn](game/characters/Character.tscn) om die ingang te bekijken. Je kunt deze scene onder `Characters` plaatsen of een bestaande instance dupliceren; Tab neemt die extra instance automatisch mee. Zie [de editorwerkwijze](docs/topics/character.md#content-maken-in-de-editor).
 
 Deze Atlas-map is de vaste lokale testplek. Bij ieder technisch gecontroleerd, testbaar checkpoint zet de uitvoerende agent hier de geselecteerde bronversie klaar en vermeldt wat je kunt proberen. Je blijft hetzelfde `game/project.godot` openen. Ook een nog te beoordelen werkbranchproef wordt zo lokaal beschikbaar; die hoeft daarvoor nog niet naar main. De agent bewaart jouw editorwijzigingen en lokale instellingen en verandert een lopende proef niet tussendoor. Zie [de werkwijze](docs/TESTING.md#vaste-lokale-testplek).
 

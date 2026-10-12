@@ -30,7 +30,7 @@ Lopen en sprinten hebben afzonderlijk instelbare snelheid, acceleratie en afremm
 
 Een stilstaande sprong gaat hoog, een lopende sprong zit ertussenin en een sprintsprong blijft laag maar gaat extra ver. De werkelijke snelheid bij het afzetten bepaalt de sprong; er is beperkte luchtsturing.
 
-Het proeflevel krijgt twee lampen met edge-/fillfunctie, echte prototype-textures met afstandsmarkeringen op vloeren en muren en een skybox rond zonsondergang. De gedetailleerde werkwijze, instellingen, technische voorstellen en assetbronnen staan in [Character en proeflevel](topics/character.md). Dit zijn gewenste eigenschappen, nog geen geïmplementeerde functies.
+Het proeflevel heeft twee lampen met edge-/fillfunctie, echte prototype-textures met afstandsmarkeringen op vloeren en muren en een skybox rond zonsondergang. De eerste uitvoering staat op de T-002-werkbranch en wacht op beoordeling van gevoel en editorbediening. De gedetailleerde werkwijze, instellingen en assetbronnen staan in [Character en proeflevel](topics/character.md); resultaten en beperkingen staan in WORK.
 
 ## Afgeronde bootstrap
 

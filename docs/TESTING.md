@@ -42,7 +42,7 @@ Open daarna de editor:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Open-Atlas.ps1
 ```
 
-Controleer dat Atlas geopend is, open `scenes/main.tscn` en bekijk de ene neutrale `Main`-node. F5 toont een leeg venster, F8 stopt. Dit is de volledige huidige proef; er valt nog geen Character te bedienen. Opnieuw importeren mag geen onverwachte bronwijzigingen achterlaten. `.godot/` is cache; `.uid`-bestanden en importinstellingen zijn niet algemeen genegeerd.
+Controleer dat Atlas geopend is, open `scenes/main.tscn` en start de actuele hoofdscene met F5; F8 stopt. Tijdens de bootstrap was dit een lege scene met één neutrale Main-node. De T-002-werkbranch bevat nu de Character-proef hieronder. Opnieuw importeren mag geen onverwachte bronwijzigingen achterlaten. `.godot/` is cache; `.uid`-bestanden en importinstellingen zijn niet algemeen genegeerd.
 
 Bij wijzigingen aan de helpers: controleer ook een ontbrekend pad, versieverschil, ongeldige hoofdscene en engine-/projectpaden met spaties. Gebruik tijdelijke kopieën voor foutproeven en herstel lokale instellingen. Maak geen scaffold-unittests die alleen de bestanden nabootsen.
 
@@ -58,9 +58,17 @@ De overdracht verloopt zo:
 4. Controleer import/start op deze werkelijke testlocatie, vergelijk de bronversie en geef aan welke scene te openen en wat met F5 te proberen. Wanneer Godot nog openstaat, zorg voor een gecontroleerde herlaad-/heropenstap nadat het editorwerk is opgeslagen. De gebruiker hoeft niet zelf met branches of worktrees te werken.
 5. Na beoordeling volgt eventuele main-integratie volgens AGENTS. Houd de testplek bij die volgende overdracht opnieuw coherent. Een andere computer wordt niet vanzelf bijgewerkt; dat gebeurt in een actieve sessie op die machine. Een geselecteerde tweepc-testbuild blijft apart vaststaan zoals hieronder beschreven.
 
-## Lokale Character-proef: nog niet gebouwd
+## Lokale Character-proef
 
-De [Character-fundering](topics/character.md) beschrijft de gewenste instellingen en aanpak. Deze controles zijn het plan voor de eerste implementatie; er zijn nog geen Character-testresultaten.
+De [Character-beschrijving](topics/character.md) beschrijft de instellingen en editorwerkwijze. Open `game/scenes/main.tscn` en druk op F5. WASD/muis/Shift/spatie besturen, scroll zoomt, Tab wisselt Character, R reset beide, F3 wisselt debug, Esc geeft de muis vrij en klik hervat. Resultaten van controles staan bij T-002 in WORK; menselijke beoordeling van het gevoel blijft nodig.
+
+Herhaalbare technische proef vanuit de Atlas-root:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Check-Atlas.ps1 -CharacterChecks
+```
+
+Deze optionele suite draait echte Character-physics met een vloer, treden en plafond, meet snelheid/spronghoogte/afstand en controleert de echte hoofdscene, individuele Resources en camera-layers. Het duurt ongeveer een halve minuut. De gewone Check-Atlas-aanroep blijft een korte import-/startcontrole.
 
 1. Plaats twee instances en geef ze andere namen en duidelijk verschillende loop-/sprintwaarden. Wijzig één instance en controleer dat de andere gelijk blijft; doe dit ook voor camera, sprong en opstap. Laat de gebruiker zelf plaatsen, aanklikken en instellen.
 2. Vergelijk na uitaccelereren vooruit, zijwaarts en achteruit, zowel lopend als sprintend. Controleer de afgesproken volgorde en de toepasselijke limiet. Combineer twee inputs: geen diagonale bonus, ook niet bij sprinten of richtingwissels. Tegengestelde inputs mogen geen snelheid opstapelen.
@@ -81,4 +89,4 @@ Deze aanpak is afgesproken; de benodigde functionaliteit bestaat nog niet:
 3. **Bediening:** beschrijf bij die proef de werkelijke eenvoudige host/join-handelingen. Noteer technische synchronisatie afzonderlijk van het oordeel van de gebruiker over instellen, bediening en gevoel, steeds met build-ID en wat er werkelijk op beide pc's gebeurde.
 4. **Steam:** bewijs vroeg met dezelfde beperkte gameplay en editorwerkwijze de Windows-export, actuele engine-/plugincompatibiliteit, sessiontoegang, identiteit, eigenaarschap en toestandsoverdracht. Een andere transportklasse alleen bewijst dit niet. Kies de plugin pas na actuele verificatie. AppID 480 hoort bij Spacewar-ontwikkeling en is geen definitieve Atlas-identiteit; gebruik bij gelijktijdige proeven twee verschillende Steam-accounts en houd Atlas-projectidentiteit/versie apart herkenbaar.
 
-Er is nog geen Character-proef, Windows-testexport, LAN-proef, beoordeling van speelgevoel of Steamproef uitgevoerd. De Character-bespreking is vastgelegd; implementatie en vervolgafstemming staan in [WORK](WORK.md).
+De lokale Character-proef is gebouwd op de T-002-werkbranch. Er is nog geen Windows-testexport, LAN-proef, gebruikersbeoordeling van speelgevoel of Steamproef uitgevoerd. Technische resultaten en vervolgafstemming staan in [WORK](WORK.md).

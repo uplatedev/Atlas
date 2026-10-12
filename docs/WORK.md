@@ -4,13 +4,13 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
-De gecontroleerde lege basis is gereed. De eerste Character-wensen, besturing en proefomgeving zijn besproken en vastgelegd. De volgende stap is de kleine lokale Character-/editorproef; er is nog geen Character-code gebouwd. LAN en Steam volgen na afzonderlijke afstemming over eigenaarschap en synchronisatie.
+De eerste lokale Character-/editorproef is gebouwd en technisch gecontroleerd op de T-002-werkbranch. De volgende stap is de proef in de vaste Atlas-map spelen en de editorinstellingen beoordelen. LAN en Steam volgen na afzonderlijke afstemming over eigenaarschap en synchronisatie.
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
 | T-000 | Projectbasis opzetten | Afgerond | atlas-bootstrap-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-000-projectbasis` (geïntegreerd; opruiming zie hieronder) | Geen inhoudelijk bootstrapwerk meer; vervolg in T-002 |
 | T-001 | Character-fundering bespreken | Besproken en vastgelegd; afgerond | atlas-character-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-001-character-fundering` (lokale documentatiebranch; geheugen op main) | Uitvoering en beoordeling volgen in T-002 |
-| T-002 | Lokale Character- en levelproef | Gereserveerd voor uitvoering en lokale testoverdracht | atlas-T002-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-002-character-proef` | Character en level bouwen, controleren en lokaal klaarzetten |
+| T-002 | Lokale Character- en levelproef | Technisch gecontroleerd; gebruikersproef en acceptatie open | atlas-T002-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-002-character-proef` | Checkpoint lokaal klaarzetten en gevoel/editorbediening laten beoordelen |
 
 ## T-000 — Projectbasis opzetten
 
@@ -48,7 +48,15 @@ Scope: twee plaatsbare, individueel instelbare capsules volgens [de Character-be
 
 Oplevering: zet ieder testbaar checkpoint volgens [de lokale testwerkwijze](TESTING.md#vaste-lokale-testplek) klaar in de vaste Atlas-checkout. Alleen een remote-branch of verwijzing naar een tijdelijke worktree is geen volledige lokale testoverdracht. Houd die versie tijdens de gebruikersproef vast en bewaar diens eigen editorwijzigingen.
 
-- **Gebouwd:** nog niets; alleen de beschreven fundering is beschikbaar.
-- **Technisch gecontroleerd:** nog niet uitgevoerd. De gerichte [proefinstructies](TESTING.md#lokale-character-proef-nog-niet-gebouwd) liggen klaar.
-- **Door de gebruiker beoordeeld:** de gewenste eigenschappen zijn besproken; editorbediening, cameragedrag, bewegen, sprongen en uiterlijk moeten na de bouw nog worden geprobeerd.
-- **Volgende stap:** reserveer de taak vanaf actuele main, bouw de kleinste lokale proef en publiceer het controleerbare resultaat op de werkbranch. Vraag daarna gericht gebruikersoordeel; pas na noodzakelijke technische controles en menselijke beoordeling naar main.
+De reservering is gepubliceerd op main in `63e9b0b42199041d2493c36bd01d6d80d88e5ef5`, eigenaar `atlas-T002-20261012-01a12fd0`, vóór implementatie. Controller, level/assets en integratie zijn in afzonderlijke fysieke worktrees gebouwd onder deze claim; de subbranches zijn lokale onderdelen van deze taak.
+
+- **Gebouwd:** `game/characters/Character.tscn` als editoringang met eigen naam/kleur/Resources, lopen en sprint in alle richtingen, onafhankelijke acceleratie/afremming, drie sprongankers op werkelijke afzetsnelheid, beperkte luchtsturing, veilige opstap, zoom tot first person en richtingpijlen. De hoofdscene bevat twee verschillend ingestelde instances, HUD en Tab-wisseling. Nieuwe directe Character-instances onder `Characters` doen automatisch mee. Prototypelevel met echte Kenney-rastertextures op meterschaal, twee lampen, 2K Belfast Sunset-sky, vier treden en plafondproef. Bronnen/licenties/hashes staan in game/assets/README.md.
+- **Technisch gecontroleerd:** Godot `4.7.2.stable.official.ed1daf0bf` importeert en start de geïntegreerde scene foutvrij. De echte physicsuite meet lopen vooruit/zijwaarts/achteruit/diagonaal op 5.000/4.000/2.750/4.417 m/s en sprint op 9.000/7.200/4.950/7.951 m/s. Gemeten spronghoogtes 2.075/1.309/0.744 m en afstanden 0/3.667/7.700 m voor stilstand/lopen/sprint. Trede 0.30 m passeert bij opstapgrens 0.35 m; 0.45 m en onvoldoende hoofdruimte blokkeren. Instance-Resources, naamwijziging, camera-maskers, zoomgrenzen en reset zijn gecontroleerd. Grafische Windows-renders met D3D12/Forward+ tonen echte hoofdscene en vrij first-personzicht. Documentlinks en bronmetadata worden bij publicatie gecontroleerd. Dit verslag hoort bij het proefcheckpoint; de definitieve gepubliceerde broncommit staat in de overdracht/main-status en wordt lokaal na publicatie in de HUD geladen.
+- **Door de gebruiker beoordeeld:** eigenschappen en fundering zijn bevestigd; nog geen speelgevoel of daadwerkelijke editorbediening door de gebruiker beoordeeld. Richtingsdebug, raster, naamlabels en lichtbeeld zijn technisch/rendermatig bekeken. Het resultaat blijft op de werkbranch totdat noodzakelijk gebruikersoordeel rond is.
+- **Volgende stap:** publiceer dit proefcheckpoint, zet exact die versie in de vaste Atlas-map klaar en voer daar opnieuw de lokale controle uit. Laat de gebruiker lopen/sprinten/springen, zoom en Tab proberen en de twee instances zelf aanpassen. Verwerk daarna gericht feedback; geen nieuwe afhankelijke netwerkfase starten vóór die beoordeling.
+
+### Eerste menselijke proef
+
+Open `game/project.godot`, vervolgens `scenes/main.tscn`, druk F5. Begin met WASD en Shift, spring vanuit stilstand/lopen/sprint, scroll helemaal in en terug, wissel met Tab en vergelijk rustig/vlot. R zet beide terug; Esc maakt de muis vrij. Selecteer in de editor `Characters/AtlasA` en `AtlasB`, wijzig alleen de eerste naam of loopsnelheid en controleer dat de tweede gelijk blijft. Probeer rechts de treden met labels; links staat de lage-hoofdruimteproef.
+
+Nog nodig: oordeel over acceleratie/afremmen, de hoge/middel/lage-verre sprong, beperkte luchtsturing, cameragevoeligheid/zoom, leesbaarheid en de Inspector-ingang. Numerieke defaults mogen na die proef bijgesteld worden. Maximaal 19 Characters voor de huidige lokale renderlayeraanpak; dit is een beperkte proef, geen bewezen LAN/Steam-oplossing.
