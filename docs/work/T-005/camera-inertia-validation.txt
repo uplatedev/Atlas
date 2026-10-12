@@ -1,0 +1,60 @@
+Camera: kleine nawerking bij stevig afremmen
+Godot 4.7.2.stable.official.ed1daf0bf, Windows headless, physics60.
+Bronbasis: 1ba0d9095fab3bca8facaef3328c35b626c0a112.
+Geteste camera-scriptblob: fc8a0b2f23d8634fbd3651f87d0e6ffc3177cecd.
+Rootinstellingen afzonderlijk gecontroleerd tegen 72f9018 (zelfde defaults).
+
+Defaults: enabled=true, maximale extra veeruitslag0.035m,
+recovery_time0.32s, min_speed3m/s, full_speed9m/s,
+first_person_enabled=false. Gewone camera-follow18ms blijft apart.
+De herstelwaarde bepaalt omega=6/recovery_time; dit is een praktisch
+rustpunt, geen exacte deadline. Kritische demping geeft geen herhaalde oscillatie.
+
+Alleen verloren horizontale snelheidslengte drijft de veer aan.
+De kracht over ieder renderinterval heeft een exacte springoplossing.
+De camera overschrijdt geen extra0.035m veeruitslag of bestaande0.12m
+totale ankerafwijking. Muren stoppen de veerdruk direct via spherequeries.
+Muis/head, verticaal volgen en FOV blijven bestaande onafhankelijke paden.
+
+Daadwerkelijk bewegend Character: sprint9m/s, input loslaten, rem36m/s2.
+fps    frontpeak(m)    springpeak(m)    totaleafwijking(m)    rest na1s(m)
+30     0.012770        0.018845         0.120000             0.000000578
+60     0.012371        0.019154         0.120001             0.000000343
+144    0.011885        0.019292         0.119997             0.000000253
+Alle processen exit0. Realtime renderdeltas verschillen licht per herhaling.
+De totale afwijking bevat normale volgachterstand vóór het afremmen.
+Voorwaartse overshoot verschilt minder dan0.9mm tussen deze uitvoeringen.
+
+Gerichte rendertrajecten (zelfde Godot-rig, expliciete dt30/60/144):
+- Sprint9m/s rem36: voorwaartse piek0.011678/0.012333/0.011817m.
+- Abrupte sprintstop9m/s: voorwaartse piek0.028462/0.027882/0.027014m;
+  maximale veeruitslag0.034275/0.034738/0.034964m.
+- Abrupte loopstop5m/s: voorwaartse piek0.000801/0.000724/0.000666m.
+- Sneak2m/s: geen extra veeruitslag.
+- Haakse bocht op gelijk9m/s: geen remimpuls.
+- 1200 afwisselende40m/s/0 stops: veeruitslag nooit boven0.035m;
+  na1s rustig herstel zonder resterende druk.
+- First person standaard geen accent; terugzoomen bewaart geen kick.
+- Teleport, reset en Tab wissen veerpositie/snelheid/geschiedenis.
+- Tijdens accent blijft10px horizontale muisbeweging direct1.2graden.
+- Zijwand begrenst werkelijk pivot op0.014687m en wist veerdruk;
+  echte camera-sphere heeft geen overlap met de wand.
+
+camera_inertia_checks.gd:37 checks PASS op camera-deelcheckout;
+42 checks PASS tegen echte root Character met de zes nieuwe exports.
+Rootproef bewijst editor-usage metadata, tweede instance onafhankelijk,
+gewijzigde uitslag werkt, geheel uitschakelen werkt, first person apart
+inschakelbaar. Dit is geen gespeelde menselijke Inspector-/feelbeoordeling.
+camera_refinement_checks.gd:16 bestaande camera/FOV/veiligheidschecks PASS.
+
+Herhalen vanuit geïntegreerde broncheckout:
+ . ./tools/Atlas-Engine.ps1
+ $atlasEngine = Get-AtlasEngine
+ Invoke-AtlasEngine -Engine $atlasEngine -Arguments @('--headless','--path','game','--script','../docs/work/T-005/camera_inertia_checks.gd','--quit-after','360')
+ Invoke-AtlasEngine -Engine $atlasEngine -Arguments @('--headless','--path','game','--script','../docs/work/T-005/camera_inertia_motion_probe.gd','--quit-after','600','--','--fps=144')
+ Herhaal de laatste regel met30 en60 fps. Helpers schrijven uitsluitendstdout.
+
+Menselijke proef nog nodig: stevig vooruit sprinten en loslaten; let op het
+kleine doorgaan/terugkomen van de camera, ook vlak bij een wand. Vergelijk
+Camera Inertia Enabled aan/uit en pas hoeveelheid/herstel per Character aan.
+Technische metingen bewijzen de begrenzing, geen definitief prettig gevoel.

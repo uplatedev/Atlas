@@ -17,7 +17,9 @@ De tijdelijke execution policy geldt alleen voor die aanroep. De editor opent [g
 
 WASD beweegt, de muis kijkt, Shift sprint, Alt is sneak, Ctrl schakelt kruip aan/uit, Z kiest lig, spatie richt één houding op of springt vanuit staan en scroll zoomt tot first person. Tab wisselt tussen de Characters; R brengt ze terug naar hun start. F3 schakelt de richtingsdebug en pijlen; F4 vergelijkt dynamische FOV. Esc geeft de muis vrij; klik in het spel om verder te spelen.
 
-Selecteer `Characters/AtlasA` of `Characters/AtlasB` in de hoofdscene om naam, kleur, beweging, springen, opstap en camera in de Inspector te wijzigen. Open [Character.tscn](game/characters/Character.tscn) om die ingang te bekijken. Je kunt deze scene onder `Characters` plaatsen of een bestaande instance dupliceren; Tab neemt die extra instance automatisch mee. Zie [de editorwerkwijze](docs/topics/character.md#content-maken-in-de-editor).
+Kies Ctrl-kruip tijdens een sprong om bij landing een korte slide te starten. De vluchtvaart blijft behouden; Z-lig en Ctrl op de grond geven geen slide. S remt tegen voorwaartse vlucht of slide geleidelijk af. De FPS-teller staat rechtsboven.
+
+Selecteer `Characters/AtlasA` of `Characters/AtlasB` in de hoofdscene om naam, kleur, beweging, springen, opstap en camera in de Inspector te wijzigen. Open [Character.tscn](game/characters/Character.tscn) om die ingang te bekijken. Je kunt deze scene onder `Characters` plaatsen of een bestaande instance dupliceren; Tab neemt die extra instance automatisch mee. Zie [de editorwerkwijze](docs/topics/character.md#zelf-content-plaatsen-en-aanpassen).
 
 Deze Atlas-map is de vaste lokale testplek. Bij ieder technisch gecontroleerd, testbaar checkpoint zet de uitvoerende agent hier de geselecteerde bronversie klaar en vermeldt wat je kunt proberen. Je blijft hetzelfde `game/project.godot` openen. Ook een nog te beoordelen werkbranchproef wordt zo lokaal beschikbaar; die hoeft daarvoor nog niet naar main. De agent bewaart jouw editorwijzigingen en lokale instellingen en verandert een lopende proef niet tussendoor. Zie [de werkwijze](docs/TESTING.md#vaste-lokale-testplek).
 

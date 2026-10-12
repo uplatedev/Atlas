@@ -16,6 +16,11 @@ var _feet_height: float = 0.0
 var _follow_position: Vector3 = Vector3.ZERO
 var _previous_follow_target: Vector3 = Vector3.ZERO
 var _follow_lag: float = 0.0
+var _previous_follow_velocity: Vector3 = Vector3.ZERO
+var _inertia_offset: Vector3 = Vector3.ZERO
+var _inertia_velocity: Vector3 = Vector3.ZERO
+var _inertia_reference_speed: float = 0.0
+var _inertia_brake_time: float = 0.0
 var _fov: float = 70.0
 var _target_fov: float = 70.0
 var _initialized: bool = false
@@ -97,6 +102,7 @@ func reset_follow_history() -> void:
 	_follow_position = Vector3(_character.global_position.x, 0.0, _character.global_position.z)
 	_previous_follow_target = _follow_position
 	_follow_lag = 0.0
+	_clear_inertia_history()
 	reset_physics_interpolation()
 	_camera.reset_physics_interpolation()
 	_refresh_transform(0.0, true)
@@ -235,6 +241,8 @@ func get_state() -> Dictionary:
 		"camera_target_fov": _target_fov,
 		"camera_profile_fov_offset": _profile_fov_offset(),
 		"camera_follow_lag": _follow_lag,
+		"camera_inertia_offset": _inertia_offset,
+		"camera_inertia_amount": _inertia_offset.length(),
 	}
 
 
@@ -313,10 +321,19 @@ func _refresh_transform(delta: float, immediate: bool = false) -> void:
 	_update_follow_position(target, delta, immediate)
 	var eye_y := minf(_feet_height + _eye_height, maximum_y)
 	var target_eye := Vector3(target.x, eye_y, target.z)
-	var followed_eye := Vector3(_follow_position.x, eye_y, _follow_position.z)
+	# Het remaccent verandert de gewone volgfilter niet. Beide samen blijven
+	# binnen dezelfde absolute afwijking en hetzelfde gecontroleerde volume.
+	var maximum_lag: float = maxf(0.0, _value("camera_follow_max_lag", 0.12))
+	var followed := target + (_follow_position - target + _inertia_offset).limit_length(maximum_lag)
+	var followed_eye := Vector3(followed.x, eye_y, followed.z)
 	global_position = _safe_follow_anchor(target_eye, followed_eye)
-	_follow_position = Vector3(global_position.x, 0.0, global_position.z)
-	_follow_lag = _follow_position.distance_to(target)
+	if global_position.distance_squared_to(followed_eye) > 0.00000001:
+		# Een wand stopt ook de veer direct; er blijft geen opgebouwde druk over
+		# die de camera later alsnog tegen of door die wand zou duwen.
+		_follow_position = Vector3(global_position.x, 0.0, global_position.z)
+		_inertia_offset = Vector3.ZERO
+		_inertia_velocity = Vector3.ZERO
+	_follow_lag = Vector3(global_position.x, 0.0, global_position.z).distance_to(target)
 	_refresh_rotation()
 	_zoom_distance = lerpf(_zoom_distance, _requested_distance, _blend(delta, _value("camera_zoom_half_life", 0.06))) if not immediate else _requested_distance
 	if absf(_zoom_distance - _requested_distance) < 0.001:
@@ -335,18 +352,87 @@ func _refresh_transform(delta: float, immediate: bool = false) -> void:
 
 func _update_follow_position(target: Vector3, delta: float, immediate: bool) -> void:
 	var half_life: float = _value("camera_first_person_follow_half_life", 0.0) if _requested_distance == 0.0 else _value("camera_follow_half_life", 0.018)
-	if immediate or half_life <= 0.0 or delta <= 0.0:
+	var displacement := target - _previous_follow_target
+	var current_speed := _previous_follow_velocity.length()
+	if _character is CharacterBody3D:
+		var owner_velocity := (_character as CharacterBody3D).velocity
+		current_speed = maxf(current_speed, Vector3(owner_velocity.x, 0.0, owner_velocity.z).length())
+	# Lange onderbrekingen en verplaatsingen buiten het normale bewegingsbereik
+	# zijn geen remactie. Wisselen/resetten wist dezelfde geschiedenis expliciet.
+	var teleported := displacement.length() > maxf(1.0, current_speed * maxf(delta, 0.0) * 3.0 + 0.25)
+	if immediate or delta <= 0.0 or delta > 0.25 or teleported:
+		_follow_position = target
+		_previous_follow_target = target
+		_clear_inertia_history()
+		return
+	var target_velocity := displacement / delta
+	_update_inertia(target_velocity, delta)
+	if half_life <= 0.0:
 		_follow_position = target
 	else:
 		# Exacte oplossing voor een lineair bewegend renderdoel, geen gewone lerp
 		# die bij dezelfde snelheid een andere achterstand krijgt op 30 versus 144 fps.
 		var tau := half_life / log(2.0)
-		var target_velocity := (target - _previous_follow_target) / delta
 		var decay := exp(-delta / tau)
 		_follow_position = target - target_velocity * tau + (_follow_position - _previous_follow_target + target_velocity * tau) * decay
 		var maximum_lag: float = maxf(0.0, _value("camera_follow_max_lag", 0.12))
 		_follow_position = target + (_follow_position - target).limit_length(maximum_lag)
 	_previous_follow_target = target
+
+
+func _clear_inertia_history() -> void:
+	_previous_follow_velocity = Vector3.ZERO
+	_inertia_offset = Vector3.ZERO
+	_inertia_velocity = Vector3.ZERO
+	_inertia_reference_speed = 0.0
+	_inertia_brake_time = 0.0
+
+
+func _update_inertia(target_velocity: Vector3, delta: float) -> void:
+	var enabled: bool = _value("camera_inertia_enabled", true)
+	if _requested_distance == 0.0 and not _value("camera_first_person_inertia_enabled", false):
+		enabled = false
+	var amount := clampf(_value("camera_inertia_amount", 0.035), 0.0, 0.08)
+	var speed := target_velocity.length()
+	if not enabled or amount <= 0.0:
+		_clear_inertia_history()
+		_previous_follow_velocity = target_velocity
+		_inertia_reference_speed = speed
+		return
+	var previous_speed := _previous_follow_velocity.length()
+	var lost_speed := maxf(0.0, previous_speed - speed)
+	_inertia_brake_time = maxf(0.0, _inertia_brake_time - delta)
+	if lost_speed > 0.01:
+		if _inertia_brake_time <= 0.0:
+			_inertia_reference_speed = previous_speed
+		# Bij 144 fps liggen enkele renderframes tussen twee physics-ticks.
+		# Bewaar de snelheid vóór deze remactie ook tijdens die tussenframes.
+		_inertia_brake_time = 0.10
+	elif speed > previous_speed + 0.01 or _inertia_brake_time <= 0.0:
+		_inertia_reference_speed = speed
+	var minimum: float = maxf(0.0, _value("camera_inertia_min_speed", 3.0))
+	var full_speed: float = maxf(minimum + 0.01, _value("camera_inertia_full_speed", 9.0))
+	var weight := clampf((_inertia_reference_speed - minimum) / (full_speed - minimum), 0.0, 1.0)
+	weight *= weight
+	var recovery: float = clampf(_value("camera_inertia_recovery_time", 0.32), 0.05, 2.0)
+	var omega := 6.0 / recovery
+	# Een kritisch gedempte veer krijgt uitsluitend verloren horizontale snelheid
+	# als kracht. Muisbeweging en bochten op gelijke snelheid geven geen impuls.
+	# Volledige remming op full_speed bereikt ongeveer amount aan veeruitslag.
+	var force := _previous_follow_velocity.normalized() * (lost_speed / delta) * (amount * omega * exp(1.0) / full_speed) * weight
+	var equilibrium := force / (omega * omega)
+	var shifted := _inertia_offset - equilibrium
+	var coefficient := _inertia_velocity + omega * shifted
+	var decay := exp(-omega * delta)
+	# Exact voor constante kracht in dit renderinterval, zonder Euler-stap die
+	# bij een andere framerate meer energie of een ander herstel zou geven.
+	_inertia_offset = equilibrium + (shifted + coefficient * delta) * decay
+	_inertia_velocity = (_inertia_velocity - omega * coefficient * delta) * decay
+	if _inertia_offset.length() > amount:
+		_inertia_offset = _inertia_offset.limit_length(amount)
+		var outward := _inertia_offset.normalized()
+		_inertia_velocity -= outward * maxf(0.0, _inertia_velocity.dot(outward))
+	_previous_follow_velocity = target_velocity
 
 
 func _camera_query(position_at: Vector3) -> PhysicsShapeQueryParameters3D:

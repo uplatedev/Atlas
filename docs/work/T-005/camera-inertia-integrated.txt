@@ -1,0 +1,109 @@
+Geïntegreerde cameracontrole T-005 vervolg
+Bron tijdens uitvoering: c16b11f (camera fc8a0b2 en zes echte rootexports).
+Godot 4.7.2; exitcode 0.
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] first_scan_filesystem | Started Project initialization (5 steps)
+[   0% ] first_scan_filesystem | Scanning file structure...
+[  16% ] first_scan_filesystem | Loading global class names...
+[  33% ] first_scan_filesystem | Verifying GDExtensions...
+[  50% ] first_scan_filesystem | Creating autoload scripts...
+[  66% ] first_scan_filesystem | Initializing plugins...
+[  83% ] first_scan_filesystem | Starting file scan...
+[ DONE ] first_scan_filesystem
+
+[   0% ] update_scripts_classes | Started Registering global classes... (4 steps)
+[   0% ] update_scripts_classes | AtlasCharacter
+[  20% ] update_scripts_classes | 
+[  40% ] update_scripts_classes | 
+[  60% ] update_scripts_classes | 
+[ DONE ] update_scripts_classes
+
+[   0% ] loading_editor_layout | Started Loading editor (5 steps)
+[   0% ] loading_editor_layout | Loading editor layout...
+[  16% ] loading_editor_layout | Loading docks...
+[ DONE ] loading_editor_layout
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+MEASURE inertia fps=30 speed=2.0 brake=0.0 front=0.000000m offset=0.000000m total=0.014388m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 30 fps, 2.0m/s, rem 0.0
+PASS sneaksnelheid geeft geen remaccent bij 30 fps
+MEASURE inertia fps=30 speed=2.0 brake=36.0 front=0.000000m offset=0.000000m total=0.040672m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 30 fps, 2.0m/s, rem 36.0
+PASS sneaksnelheid geeft geen remaccent bij 30 fps
+MEASURE inertia fps=30 speed=5.0 brake=0.0 front=0.000801m offset=0.002116m total=0.032021m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 30 fps, 5.0m/s, rem 0.0
+MEASURE inertia fps=30 speed=5.0 brake=36.0 front=0.000535m offset=0.001605m total=0.115705m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 30 fps, 5.0m/s, rem 36.0
+MEASURE inertia fps=30 speed=9.0 brake=0.0 front=0.028462m offset=0.034275m total=0.028462m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 30 fps, 9.0m/s, rem 0.0
+MEASURE inertia fps=30 speed=9.0 brake=36.0 front=0.011678m offset=0.018539m total=0.118679m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 30 fps, 9.0m/s, rem 36.0
+MEASURE inertia fps=60 speed=2.0 brake=0.0 front=0.000000m offset=0.000000m total=0.027337m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 60 fps, 2.0m/s, rem 0.0
+PASS sneaksnelheid geeft geen remaccent bij 60 fps
+MEASURE inertia fps=60 speed=2.0 brake=36.0 front=0.000000m offset=0.000000m total=0.048247m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 60 fps, 2.0m/s, rem 36.0
+PASS sneaksnelheid geeft geen remaccent bij 60 fps
+MEASURE inertia fps=60 speed=5.0 brake=0.0 front=0.000724m offset=0.002144m total=0.062414m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 60 fps, 5.0m/s, rem 0.0
+MEASURE inertia fps=60 speed=5.0 brake=36.0 front=0.000489m offset=0.001650m total=0.119955m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 60 fps, 5.0m/s, rem 36.0
+MEASURE inertia fps=60 speed=9.0 brake=0.0 front=0.027882m offset=0.034738m total=0.051058m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 60 fps, 9.0m/s, rem 0.0
+MEASURE inertia fps=60 speed=9.0 brake=36.0 front=0.012333m offset=0.019078m total=0.119597m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 60 fps, 9.0m/s, rem 36.0
+MEASURE inertia fps=144 speed=2.0 brake=0.0 front=0.000000m offset=0.000000m total=0.039750m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 144 fps, 2.0m/s, rem 0.0
+PASS sneaksnelheid geeft geen remaccent bij 144 fps
+MEASURE inertia fps=144 speed=2.0 brake=36.0 front=0.000000m offset=0.000000m total=0.051176m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 144 fps, 2.0m/s, rem 36.0
+PASS sneaksnelheid geeft geen remaccent bij 144 fps
+MEASURE inertia fps=144 speed=5.0 brake=0.0 front=0.000666m offset=0.002158m total=0.091492m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 144 fps, 5.0m/s, rem 0.0
+MEASURE inertia fps=144 speed=5.0 brake=36.0 front=0.000460m offset=0.001692m total=0.119991m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 144 fps, 5.0m/s, rem 36.0
+MEASURE inertia fps=144 speed=9.0 brake=0.0 front=0.027014m offset=0.034964m total=0.086161m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 144 fps, 9.0m/s, rem 0.0
+MEASURE inertia fps=144 speed=9.0 brake=36.0 front=0.011817m offset=0.019209m total=0.119922m remaining=0.000000000m
+PASS begrensde uitslag en rustig herstel 144 fps, 9.0m/s, rem 36.0
+PASS normaal sprintloslaten geeft ongeveer 1–2cm echte doorschieting
+PASS abrupte sprintstop blijft onder 3,5cm echte doorschieting
+PASS 30/60/144 fps piekverschil onder 2mm
+PASS kijkrichting reageert direct tijdens camera-nawerking
+PASS haakse bocht op gelijke snelheid geeft geen remimpuls
+PASS veel opeenvolgende harde remacties stapelen niet boven 3,5cm: 0.035000m
+PASS ook na herhaald afremmen verdwijnt nawerking zonder blijvende druk
+PASS first person heeft standaard geen remaccent
+PASS terugzoomen veroorzaakt geen bewaarde remimpuls
+PASS teleport wist remgeschiedenis zonder valse doorschieting
+PASS reset/Tab wist veerpositie en veersnelheid
+PASS echte camera-sphere blijft buiten zijwand tijdens doorschieting
+PASS wand begrenst doorschieting direct en wist veerdruk: 0.014687m
+PASS alle zes nawerkingsinstellingen staan op de echte Character-root voor de Inspector
+PASS tweede Character behoudt eigen nawerkingsinstellingen
+PASS aangepaste rootuitslag verandert echte rigwerking
+PASS uitzetten op Character-root verwijdert extra remaccent
+PASS first-personaccent is bewust afzonderlijk inschakelbaar
+CAMERA INERTIA CHECKS failures=0
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS bewegend doel zelfde minimale camera-achterstand bij 30 fps: 0.051937m
+PASS bewegend doel zelfde minimale camera-achterstand bij 60 fps: 0.051937m
+PASS bewegend doel zelfde minimale camera-achterstand bij 144 fps: 0.051937m
+PASS positievolging onafhankelijk van renderframerate
+PASS hoge snelheid houdt extra achterstand binnen 12cm
+PASS first person heeft standaard geen extra positie-lag
+PASS muisrichting blijft direct en los van positievolging
+PASS sneak heeft eigen zachte FOV zonder oude sprintbonus: 68.000
+PASS kruipen heeft eigen zachte FOV zonder oude sprintbonus: 67.000
+PASS liggen heeft eigen zachte FOV zonder oude sprintbonus: 65.000
+PASS F4-uit schakelt ook houdings-FOV uit
+PASS lig-FOV gebruikt first-personbasis als bewust ingezoomd
+PASS lage houding blijft met zachte camera direct plafondveilig
+PASS kleine camera-achterstand stopt veilig voor zijmuur: -0.0644
+PASS reset/wisselen wist positiegeschiedenis zonder zwaai
+PASS camera heeft één render-schrijver, geen SpringArm physics-overschrijving
+CAMERA T005 CHECKS failures=0

@@ -96,7 +96,7 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 24.0
-offset_top = -96.0
+offset_top = -116.0
 offset_right = 1030.0
 offset_bottom = -24.0
 grow_vertical = 0
@@ -114,7 +114,7 @@ theme_override_constants/margin_bottom = 10
 [node name="Keys" type="Label" parent="UI/Help/Margin"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-text = "WASD bewegen   ·   Shift sprint   ·   Alt sneak   ·   Ctrl kruip aan/uit   ·   Z lig\nSpatie springen / één houding omhoog   ·   Scroll zoom   ·   Tab Character wisselen   ·   R terug naar start\nF3 richtingsdebug   ·   F4 dynamische FOV aan/uit   ·   Esc muis vrij"
+text = "WASD bewegen   ·   Shift sprint   ·   Alt sneak   ·   Ctrl kruip aan/uit   ·   Z lig\nCtrl tijdens sprong → slide bij landing   ·   S tegensturen remt in lucht / slide\nSpatie springen / één houding omhoog   ·   Scroll zoom   ·   Tab Character wisselen   ·   R terug naar start\nF3 richtingsdebug   ·   F4 dynamische FOV aan/uit   ·   Esc muis vrij"
 
 [node name="FPS" type="Label" parent="UI"]
 anchors_preset = 1
@@ -149,7 +149,7 @@ theme_override_colors/font_shadow_color = Color(0.04, 0.05, 0.07, 1)
 theme_override_constants/shadow_offset_x = 1
 theme_override_constants/shadow_offset_y = 1
 theme_override_font_sizes/font_size = 13
-text = "T-004 · lokale proef"
+text = "T-005 · lokale proef"
 horizontal_alignment = 2
 
 [node name="MouseHint" type="Label" parent="UI"]

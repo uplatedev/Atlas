@@ -81,7 +81,7 @@ enum Posture { STAND, CROUCH, PRONE }
 @export_range(0.0, 1.0, 0.01, "suffix:m") var sneak_step_height: float = 0.35
 
 @export_group("Kruipen")
-## Maximum vooruit in gebukte houding in m/s; Ctrl schakelt deze houding.
+## Maximum vooruit bij gewoon kruipen op de grond in m/s; een landingsslide behoudt eerst haar eigen aflopende vaart.
 @export_range(0.1, 20.0, 0.1, "suffix:m/s") var crouch_forward_speed: float = 3.0
 ## Zijwaartse kruipsnelheid als deel van vooruit; 0.8 betekent 80%.
 @export_range(0.05, 1.0, 0.01) var crouch_side_ratio: float = 0.8
@@ -107,15 +107,19 @@ enum Posture { STAND, CROUCH, PRONE }
 @export_range(0.0, 1.0, 0.01, "suffix:m") var crouch_step_height: float = 0.35
 ## Camerahoogte boven de voeten bij kruipen in meters; blijft binnen de vrije hoogte.
 @export_range(0.05, 3.0, 0.01, "suffix:m") var crouch_eye_height: float = 0.95
-## Deel van horizontale luchtsnelheid direct behouden bij handmatig kruipen; 0 stopt meteen, val/spronghoogte blijven gelijk.
-@export_range(0.0, 1.0, 0.05) var crouch_air_speed_retention: float = 0.0
-## Extra horizontale luchtremming in m/s² zolang je kruipt; hoger stopt resterende vaart sneller.
-@export_range(0.0, 150.0, 1.0, "suffix:m/s²") var crouch_air_deceleration: float = 60.0
-## Lichte kruipbijsturing in de lucht in m/s², binnen het oorspronkelijke afzetbudget en kruiplimiet.
+## Maximale slide na Ctrl-kruip tijdens een sprong in seconden; 0 schakelt slides uit. Gewoon kruipen op de grond geeft geen slide.
+@export_range(0.0, 2.0, 0.01, "suffix:s") var crouch_slide_duration: float = 0.45
+## Horizontale slidewrijving in m/s² vanaf de landing; hoger verliest sneller vaart zonder snelheidsbonus.
+@export_range(0.0, 100.0, 0.5, "suffix:m/s²") var crouch_slide_deceleration: float = 18.0
+## Maximale richtingsbijsturing tijdens de slide in graden/s; bewegen versnelt de slide niet.
+@export_range(0.0, 180.0, 1.0, "suffix:°/s") var crouch_slide_steering: float = 35.0
+## Onder deze horizontale snelheid in m/s eindigt de slide in gewone kruip; de ingestelde duur blijft de bovengrens.
+@export_range(0.0, 5.0, 0.1, "suffix:m/s") var crouch_slide_end_speed: float = 0.8
+## Lichte richtingsbijsturing bij luchtkruip in m/s²; bestaande afzetvaart blijft behouden, binnen hetzelfde afzetbudget.
 @export_range(0.0, 10.0, 0.05, "suffix:m/s²") var crouch_air_acceleration: float = 0.75
 
 @export_group("Liggen")
-## Maximum vooruit in lig in m/s; de horizontale capsule heeft een lange voetafdruk.
+## Maximum vooruit op de grond in lig in m/s; vanaf de landing geldt dit budget voor de horizontale capsule.
 @export_range(0.1, 20.0, 0.1, "suffix:m/s") var prone_forward_speed: float = 2.0
 ## Zijwaartse ligsnelheid als deel van vooruit; 0.8 betekent 80%.
 @export_range(0.05, 1.0, 0.01) var prone_side_ratio: float = 0.8
@@ -141,11 +145,7 @@ enum Posture { STAND, CROUCH, PRONE }
 @export_range(0.0, 1.0, 0.01, "suffix:m") var prone_step_height: float = 0.35
 ## Camerahoogte boven de voeten bij liggen in meters; moet onder het plafond passen.
 @export_range(0.05, 3.0, 0.01, "suffix:m") var prone_eye_height: float = 0.55
-## Deel van horizontale luchtsnelheid direct behouden bij handmatig liggen; 0 geeft een precisieduik zonder de verticale baan te veranderen.
-@export_range(0.0, 1.0, 0.05) var prone_air_speed_retention: float = 0.0
-## Extra horizontale luchtremming in m/s² zolang je ligt; hoger stopt resterende vaart sneller.
-@export_range(0.0, 150.0, 1.0, "suffix:m/s²") var prone_air_deceleration: float = 90.0
-## Lichte ligbijsturing in de lucht in m/s², binnen het oorspronkelijke afzetbudget en liglimiet.
+## Lichte richtingsbijsturing bij luchtlig in m/s²; afzetvaart blijft behouden en liggen geeft geen landingsslide.
 @export_range(0.0, 10.0, 0.05, "suffix:m/s²") var prone_air_acceleration: float = 0.5
 
 @export_group("Draaien en tegensturen")
@@ -175,6 +175,8 @@ enum Posture { STAND, CROUCH, PRONE }
 @export_range(0.0, 15.0, 0.1, "suffix:m/s") var sprint_jump_boost: float = 1.5
 ## Bijstuurversnelling in de lucht in m/s², binnen de vaste totale afzetlimiet.
 @export_range(0.0, 30.0, 0.1, "suffix:m/s²") var air_acceleration: float = 3.5
+## Geleidelijke horizontale luchtrem in m/s² bij input tegen de werkelijke vaart; ook extra rem tijdens een slide, zonder hoogte te veranderen.
+@export_range(0.0, 40.0, 0.25, "suffix:m/s²") var air_brake_acceleration: float = 8.0
 ## Klein luchtstuur-budget in m/s bij bijna stilstaande afzet of na een wandstop; geeft geen sprint en herstelt verloren sprintmomentum niet.
 @export_range(0.0, 3.0, 0.05, "suffix:m/s") var air_min_control_speed: float = 0.8
 ## Verticale versnelling in m/s²; hoger verkort de vlucht bij dezelfde spronghoogte.
@@ -277,8 +279,22 @@ enum Posture { STAND, CROUCH, PRONE }
 @export_range(0.0, 0.1, 0.001, "suffix:s") var camera_follow_half_life: float = 0.018
 ## Extra horizontale volgverzachting in first person, in seconden; standaard 0 voorkomt extra vertraging in de ogen.
 @export_range(0.0, 0.1, 0.001, "suffix:s") var camera_first_person_follow_half_life: float = 0.0
-## Grootste horizontale camera-achterstand in meters; 0 schakelt extra volgvertraging uit. Botsingen kunnen de achterstand verder verkleinen.
+## Grootste totale horizontale camera-afwijking in meters, voor volgvertraging en nawerking samen; 0 schakelt beide uit. Botsingen kunnen deze grens verkleinen.
 @export_range(0.0, 0.3, 0.01, "suffix:m") var camera_follow_max_lag: float = 0.12
+
+@export_group("Camera: subtiele nawerking")
+## Laat de camera na stevig horizontaal afremmen heel kort enkele centimeters doorgaan; kijkrichting blijft direct.
+@export var camera_inertia_enabled: bool = true
+## Maximale extra veeruitslag in meters. 0,035 is 3,5 cm; de zichtbare doorschieting bij normaal sprintafremmen is kleiner. De totale afwijking blijft ook binnen Camera Follow Max Lag.
+@export_range(0.0, 0.08, 0.001, "suffix:m") var camera_inertia_amount: float = 0.035
+## Ongeveer de tijd in seconden waarin het remaccent grotendeels tot rust komt. Kleine waarden corrigeren sneller, zonder herhaald heen-en-weer veren.
+@export_range(0.05, 2.0, 0.01, "suffix:s") var camera_inertia_recovery_time: float = 0.32
+## Onder deze horizontale snelheid in meters per seconde geeft afremmen geen extra nawerking; langzaam bewegen blijft rustig.
+@export_range(0.0, 20.0, 0.1, "suffix:m/s") var camera_inertia_min_speed: float = 3.0
+## Horizontale snelheid in meters per seconde waarop het remaccent zijn volle sterkte bereikt. Tussen de minimum- en deze snelheid neemt de sterkte geleidelijk toe.
+@export_range(0.1, 30.0, 0.1, "suffix:m/s") var camera_inertia_full_speed: float = 9.0
+## Gebruik dit extra remaccent ook wanneer bewust naar first person is ingezoomd. Standaard uit voor een stabiel gezichtspunt.
+@export var camera_first_person_inertia_enabled: bool = false
 
 @export_group("Camera: beeldhoek")
 ## Verticale third-personbeeldhoek in graden; hoger toont meer omgeving. Dit is geen horizontale FOV.
@@ -332,6 +348,12 @@ var _idle_realigning: bool = false
 var _air_speed_cap: float = 0.0
 var _air_fov_mix: float = 0.0
 var _air_min_control_active: bool = false
+var _air_braking: bool = false
+var _slide_requested_this_frame: bool = false
+var _slide_pending: bool = false
+var _slide_active: bool = false
+var _slide_time_left: float = 0.0
+var _slide_ground_exit_pending: bool = false
 var _jump_profile: String = "geen"
 var _jump_height: float = 0.0
 var _launch_speed: float = 0.0
@@ -501,6 +523,10 @@ func reset_to_spawn() -> void:
 	_air_speed_cap = 0.0
 	_air_fov_mix = 0.0
 	_air_min_control_active = false
+	_air_braking = false
+	_slide_requested_this_frame = false
+	_cancel_slide()
+	_slide_ground_exit_pending = false
 	_idle_realigning = false
 	_jump_profile = "geen"
 	_jump_height = 0.0
@@ -613,6 +639,9 @@ func get_posture() -> int:
 ## Vraag een veilige handmatige houding. Expliciet liggen mag rechtstreeks; hoger worden gaat één stap tegelijk.
 func request_posture(posture: int) -> void:
 	_manual_posture = clampi(posture, Posture.STAND, Posture.PRONE)
+	if _manual_posture != Posture.CROUCH:
+		_slide_ground_exit_pending = _slide_active and get_camera_grounded()
+		_cancel_slide()
 	_auto_posture_demand = _manual_posture
 	_auto_probe_distance = 0.0
 	_manual_changed_this_frame = true
@@ -623,7 +652,9 @@ func _read_posture_input(input_allowed: bool) -> void:
 	if not input_allowed:
 		return
 	if InputMap.has_action("crouch") and Input.is_action_just_pressed("crouch"):
-		request_posture(Posture.STAND if _manual_posture == Posture.CROUCH and _posture != Posture.PRONE else Posture.CROUCH)
+		var target := Posture.STAND if _manual_posture == Posture.CROUCH and _posture != Posture.PRONE else Posture.CROUCH
+		request_posture(target)
+		_slide_requested_this_frame = target == Posture.CROUCH and not get_camera_grounded()
 	elif InputMap.has_action("prone") and Input.is_action_just_pressed("prone"):
 		request_posture(Posture.PRONE)
 	elif Input.is_action_just_pressed("jump") and _posture > Posture.STAND:
@@ -656,19 +687,24 @@ func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 		_restore_clear_time = 0.0
 	if _posture == _manual_posture and _auto_posture_demand == _manual_posture:
 		_auto_probe_distance = 0.0
+	if _slide_ground_exit_pending:
+		if get_camera_grounded():
+			_limit_ground_velocity()
+		_slide_ground_exit_pending = false
+	# Ctrl mag ook een reeds automatisch lage, veilige capsule handmatig kiezen.
+	# Alleen deze nieuwe druk in echte vlucht armt; een later passende vorm niet.
+	if _slide_requested_this_frame and not get_camera_grounded() and _posture == Posture.CROUCH and _manual_posture == Posture.CROUCH and _shape_fits(Posture.CROUCH, global_transform):
+		_slide_pending = crouch_slide_duration > 0.0
 	_manual_changed_this_frame = false
+	_slide_requested_this_frame = false
 
 
 func _apply_posture(posture: int) -> void:
 	assert(absi(posture - _posture) == 1 or (posture == Posture.PRONE and _manual_posture == Posture.PRONE))
-	if posture > _posture and _manual_changed_this_frame and not get_camera_grounded():
-		var retention := prone_air_speed_retention if posture == Posture.PRONE else crouch_air_speed_retention
-		velocity.x *= retention
-		velocity.z *= retention
-		var local_input := global_basis.inverse() * _input_direction
-		var state := "liggen" if posture == Posture.PRONE else "kruipen"
-		var retained_speed := Vector2(velocity.x, velocity.z).length()
-		_air_speed_cap = minf(_air_speed_cap, maxf(retained_speed, direction_speed_limit_for_state(Vector2(local_input.x, local_input.z), state)))
+	if posture != Posture.CROUCH:
+		_slide_ground_exit_pending = _slide_ground_exit_pending or (_slide_active and get_camera_grounded())
+		_cancel_slide()
+	if posture != Posture.STAND:
 		_air_fov_mix = 0.0
 	_posture = posture
 	_posture_changed_this_frame = true
@@ -918,6 +954,20 @@ func _physics_process(delta: float) -> void:
 	var real_horizontal := Vector3(travel.x, 0.0, travel.z) / delta
 	_actual_speed = real_horizontal.length()
 	_movement_direction = real_horizontal.normalized()
+	if _slide_active and (not get_camera_grounded() or _actual_speed < 0.02):
+		_cancel_slide()
+	if _slide_pending and not was_grounded and is_on_floor():
+		_slide_pending = false
+		if _posture == Posture.CROUCH and _manual_posture == Posture.CROUCH:
+			var landing_velocity := Vector3(velocity.x, 0.0, velocity.z).limit_length(_air_speed_cap)
+			velocity.x = landing_velocity.x
+			velocity.z = landing_velocity.z
+			_slide_active = landing_velocity.length() > crouch_slide_end_speed and crouch_slide_duration > 0.0
+			_slide_time_left = crouch_slide_duration if _slide_active else 0.0
+	if not was_grounded and is_on_floor() and _posture != Posture.STAND and not _slide_active:
+		# Een lage landing zonder Ctrl-slide geeft geen verborgen lange glijfase.
+		# Pas het grondbudget pas bij contact toe, nooit op de afzetvaart in vlucht.
+		_limit_ground_velocity()
 	_jumped_last_frame = jumped
 	_update_debug_arrows()
 	if global_position.y < -20.0:
@@ -943,6 +993,10 @@ func _update_jump_timing(input_allowed: bool, grounded: bool, real_grounded: boo
 
 
 func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float) -> void:
+	_air_braking = false
+	if grounded and _slide_active:
+		_update_slide(input, delta)
+		return
 	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
 	var state := _movement_state()
 	var profile := _movement_profile(state)
@@ -965,36 +1019,92 @@ func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float) -
 		_air_min_control_active = horizontal.length() < air_min_control_speed
 		_air_fov_mix = 0.0 if _posture != Posture.STAND or _sneak_requested else _sprint_mix(horizontal)
 	else:
-		if _posture != Posture.STAND:
-			var low_limit := minf(_air_speed_cap, direction_speed_limit_for_state(input, state))
-			target = _input_direction.normalized() * low_limit * minf(input.length(), 1.0)
-			var acceleration := prone_air_acceleration if _posture == Posture.PRONE else crouch_air_acceleration
-			var deceleration := prone_air_deceleration if _posture == Posture.PRONE else crouch_air_deceleration
-			var slowing := target.length_squared() < horizontal.length_squared() or horizontal.dot(target) < 0.0
-			horizontal = horizontal.move_toward(target, (deceleration if slowing else acceleration) * delta)
-			_air_speed_cap = minf(_air_speed_cap, maxf(horizontal.length(), low_limit))
-		elif not input.is_zero_approx():
+		if not input.is_zero_approx():
+			var acceleration := air_acceleration
+			if _posture == Posture.CROUCH:
+				acceleration = crouch_air_acceleration
+			elif _posture == Posture.PRONE:
+				acceleration = prone_air_acceleration
 			if horizontal.is_zero_approx() and not _air_min_control_active:
 				# Na een frontale wandstop blijft lichte zijsturing mogelijk;
 				# het verloren sprintmomentum mag daarbij niet terugkomen.
 				_air_speed_cap = minf(_air_speed_cap, air_min_control_speed)
 				_air_min_control_active = true
-			target = _input_direction.normalized() * _air_speed_cap * minf(input.length(), 1.0)
-			if _air_min_control_active:
-				horizontal = horizontal.move_toward(target, air_acceleration * delta)
+			var desired := _input_direction.normalized()
+			var opposition := _input_opposition(horizontal, desired)
+			if opposition > 0.01 and air_brake_acceleration > 0.0:
+				_air_braking = true
+				var heading := horizontal.normalized()
+				var speed := maxf(horizontal.length() - air_brake_acceleration * opposition * minf(input.length(), 1.0) * delta, 0.0)
+				horizontal = heading * speed
+				# Afgebouwde vaart kan niet via W opnieuw naar de oude bonus groeien.
+				_air_speed_cap = minf(_air_speed_cap, maxf(speed, air_min_control_speed))
+				var lateral := desired.slide(heading)
+				if not lateral.is_zero_approx() and speed > 0.0:
+					horizontal = _steer_horizontal(horizontal, lateral, acceleration / speed * delta)
+			elif _air_min_control_active:
+				target = desired * _air_speed_cap * minf(input.length(), 1.0)
+				horizontal = horizontal.move_toward(target, acceleration * delta)
 			elif not horizontal.is_zero_approx():
 				# Richting veranderen zonder het afzetbudget naar een sprintdoel op te trekken.
-				var speed := horizontal.length()
-				var heading := atan2(-horizontal.x, -horizontal.z)
-				var desired := atan2(-target.x, -target.z)
-				var turn := clampf(wrapf(desired - heading, -PI, PI), -air_acceleration / speed * delta, air_acceleration / speed * delta)
-				horizontal = -Basis(Vector3.UP, heading + turn).z * speed
+				horizontal = _steer_horizontal(horizontal, desired, acceleration / horizontal.length() * delta)
 		horizontal = horizontal.limit_length(_air_speed_cap)
 	velocity.x = horizontal.x
 	velocity.z = horizontal.z
 
 
+func _input_opposition(horizontal: Vector3, desired: Vector3) -> float:
+	return 0.0 if horizontal.is_zero_approx() else maxf(-horizontal.normalized().dot(desired.normalized()), 0.0)
+
+
+func _steer_horizontal(horizontal: Vector3, desired: Vector3, maximum_angle: float) -> Vector3:
+	if horizontal.is_zero_approx() or desired.is_zero_approx():
+		return horizontal
+	var heading := atan2(-horizontal.x, -horizontal.z)
+	var target := atan2(-desired.x, -desired.z)
+	var turn := clampf(wrapf(target - heading, -PI, PI), -maximum_angle, maximum_angle)
+	return -Basis(Vector3.UP, heading + turn).z * horizontal.length()
+
+
+func _update_slide(input: Vector2, delta: float) -> void:
+	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
+	var heading := horizontal.normalized()
+	var desired := _input_direction.normalized()
+	var opposition := _input_opposition(horizontal, desired) * minf(input.length(), 1.0)
+	var deceleration := crouch_slide_deceleration + air_brake_acceleration * opposition
+	horizontal = heading * maxf(horizontal.length() - deceleration * delta, 0.0)
+	if not input.is_zero_approx():
+		if opposition > 0.01:
+			desired = desired.slide(heading)
+		horizontal = _steer_horizontal(horizontal, desired, deg_to_rad(crouch_slide_steering) * delta)
+	velocity.x = horizontal.x
+	velocity.z = horizontal.z
+	_air_speed_cap = minf(_air_speed_cap, horizontal.length())
+	_slide_time_left = maxf(_slide_time_left - delta, 0.0)
+	if _slide_time_left <= 0.00001 or horizontal.length() <= crouch_slide_end_speed:
+		_slide_active = false
+		_slide_time_left = 0.0
+		_limit_ground_velocity()
+
+
+func _limit_ground_velocity() -> void:
+	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
+	var local := global_basis.inverse() * horizontal
+	var limit := direction_speed_limit_for_state(Vector2(local.x, local.z), _movement_state())
+	horizontal = horizontal.limit_length(limit)
+	velocity.x = horizontal.x
+	velocity.z = horizontal.z
+	_air_speed_cap = minf(_air_speed_cap, horizontal.length())
+
+
+func _cancel_slide() -> void:
+	_slide_pending = false
+	_slide_active = false
+	_slide_time_left = 0.0
+
+
 func _start_jump() -> void:
+	_cancel_slide()
 	_step_support_remaining = 0.0
 	_jump_buffer_remaining = 0.0
 	_coyote_remaining = 0.0
@@ -1040,7 +1150,10 @@ func _step_plan(horizontal_motion: Vector3, posture: int, minimum_probe_distance
 	var extent := dimensions.x
 	if posture == Posture.PRONE:
 		extent += maxf(dimensions.y * 0.5 - dimensions.x, 0.0) * absf(local.z)
-	var probe_distance := maxf(maxf(horizontal_motion.length(), extent + 0.04), minimum_probe_distance)
+	# De fysieke aanrijframe kan de capsulerand al tegen een trede brengen
+	# voordat de voeten dichtbij staan. Een expliciete lookahead bevat dit al.
+	var frame_reach := horizontal_motion.length() if minimum_probe_distance <= 0.0 else 0.0
+	var probe_distance := maxf(maxf(horizontal_motion.length(), extent + frame_reach + 0.04), minimum_probe_distance)
 	var contact_normal := _shape_collision_normal(posture, global_transform, direction * maxf(probe_distance, 1.5))
 	var flat_normal := Vector3(contact_normal.x, 0.0, contact_normal.z).normalized()
 	if not flat_normal.is_zero_approx():
@@ -1049,7 +1162,7 @@ func _step_plan(horizontal_motion: Vector3, posture: int, minimum_probe_distance
 			plane_extent += maxf(dimensions.y * 0.5 - dimensions.x, 0.0) * absf((-global_basis.z).dot(flat_normal))
 		# Een schuine aanloop moet verder langs zijn richting om dezelfde
 		# trederand te bereiken; radius+.04 alleen mist de bovenkant bij 30/45°.
-		probe_distance = maxf(probe_distance, minf((plane_extent + 0.04) / maxf(absf(direction.dot(flat_normal)), 0.15), 2.0))
+		probe_distance = maxf(probe_distance, minf((plane_extent + 0.04) / maxf(absf(direction.dot(flat_normal)), 0.15) + frame_reach, 2.0))
 	var probe_motion := direction * probe_distance
 	var ray_from := global_position + probe_motion + Vector3.UP * (limit + 0.03)
 	var ray_to := global_position + probe_motion - Vector3.UP * 0.03
@@ -1218,12 +1331,15 @@ func _update_arrow(arrow: Node3D, world_direction: Vector3) -> void:
 
 func get_debug_state() -> Dictionary:
 	var motion := _movement_state()
-	if not is_on_floor() and _step_support_remaining <= 0.0:
+	if _slide_active:
+		motion = "slide"
+	elif not is_on_floor() and _step_support_remaining <= 0.0:
 		motion = "lucht"
 	elif _actual_speed < 0.02:
 		motion = "stilstand"
 	var local_input := global_basis.inverse() * _input_direction
 	var state := {"display_name": display_name, "speed": _actual_speed, "motion_mode": motion, "posture": _posture_name(_posture), "posture_index": _posture, "manual_posture": _posture_name(_manual_posture), "input_direction": _input_direction, "movement_direction": _movement_direction, "facing_direction": -global_basis.z, "body_direction": -global_basis.z, "body_yaw": rad_to_deg(global_rotation.y), "turn_rate": _turn_rate, "body_turn_blocked": _body_turn_blocked, "speed_limit": direction_speed_limit_for_state(Vector2(local_input.x, local_input.z), _movement_state()), "jump_profile": _jump_profile, "jump_height": _jump_height, "launch_speed": _launch_speed, "jump_boost": _jump_boost, "air_speed_cap": _air_speed_cap, "fatigue": _fatigue, "fatigue_recovery_time": _fatigue_recovery_duration, "coyote_remaining": _coyote_remaining, "jump_buffer_remaining": _jump_buffer_remaining, "ground_jump_available": _ground_jump_available, "camera_distance": _camera_distance, "camera_actual_distance": _camera_arm.get_hit_length(), "first_person": _camera_distance == 0.0, "step_height": _step_limit_for_posture(_posture), "last_step_height": _last_step_height, "debug_enabled": debug_enabled}
+	state.merge({"air_braking": _air_braking, "slide_pending": _slide_pending, "slide_active": _slide_active, "slide_time_left": _slide_time_left, "slide_speed": Vector2(velocity.x, velocity.z).length() if _slide_active else 0.0})
 	if _camera_pivot.has_method("get_state"):
 		state.merge(_camera_pivot.call("get_state"), true)
 	return state

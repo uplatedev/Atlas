@@ -87,7 +87,7 @@ func _process(delta: float) -> void:
 		"aan" if speed_fov == true else "uit",
 	]
 	debug_label.visible = debug_visible
-	debug_label.text = "Hoofd  %s\nLichaam  %s\nInput  %s\nBeweging  %s\nHoofd t.o.v. lichaam  %+.1f° / ±%.0f°\nSprong %s · %.2f m hoog · cap %.2f m/s\nVermoeidheid %.0f%%" % [
+	debug_label.text = "Hoofd  %s\nLichaam  %s\nInput  %s\nBeweging  %s\nHoofd t.o.v. lichaam  %+.1f° / ±%.0f°\nSprong %s · %.2f m hoog · cap %.2f m/s\nSlide %s · %.2f s · luchtrem %s\nVermoeidheid %.0f%%" % [
 		_direction_text(state.get("head_direction", state.get("facing_direction", Vector3.FORWARD))),
 		_direction_text(state.get("body_direction", state.get("facing_direction", Vector3.FORWARD))),
 		_direction_text(state.get("input_direction", Vector3.ZERO)),
@@ -97,6 +97,9 @@ func _process(delta: float) -> void:
 		str(state.get("jump_profile", "—")),
 		float(state.get("jump_height", 0.0)),
 		float(state.get("air_speed_cap", 0.0)),
+		"actief" if state.get("slide_active", false) else ("klaar" if state.get("slide_pending", false) else "uit"),
+		float(state.get("slide_time_left", 0.0)),
+		"aan" if state.get("air_braking", false) else "uit",
 		clampf(float(state.get("fatigue", 0.0)), 0.0, 1.0) * 100.0,
 	]
 	mouse_hint.visible = Input.mouse_mode != Input.MOUSE_MODE_CAPTURED
