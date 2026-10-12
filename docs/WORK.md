@@ -18,6 +18,16 @@ T-009 is als afzonderlijke camera-/FOV-proef gepubliceerd op `9f75853c`; import/
 | T-007 | Camera-eigenaarschap scheiden, stap 1 | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T007-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-007-camera-scheiden` | Zelfde gevoel kort lokaal beoordelen; daarna contactaudio |
 | T-008 | Contactaudio, stap 2 | Gepubliceerd en lokaal klaar; luisterproef open | atlas-T008-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-008-contactaudio` | Klank/cadans/slide met F6 lokaal vergelijken |
 | T-009 | Camera-accenten, stap 3 | Gepubliceerd en lokaal klaar; camera-proef open | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Landing en lucht-/slide-FOV met F7/F9 lokaal vergelijken |
+| T-010 | Artemis-bronbestanden delen | Gereserveerd | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` | Originele FBX/GLB op main opnemen en verifiëren |
+
+## T-010 — Artemis-bronbestanden delen
+
+Reservering door `atlas-T010-20261012-01a12fd0`, STELLAR-FORGE (Windows), vanaf main `3041ffcb2da54c26a79eecf338b521f1e2ebf5c5`. De gebruiker vraagt de aangeleverde Artemis.fbx en Artemis.glb op main te bewaren zodat ze op de laptop beschikbaar zijn. Scope: byte-exacte bronkopieën, korte herkomst-/integriteitsnotitie en geverifieerde main-publicatie. Geen model-, rig-/animatie-integratie of wijziging aan de lokale speelproef.
+
+- **Gebouwd:** taak gereserveerd; bronbestanden worden na bewezen claimpublicatie gekopieerd.
+- **Technisch gecontroleerd:** beide aangeleverde bestanden bestaan; remote/identiteit en schone administratieve branch gecontroleerd.
+- **Door de gebruiker beoordeeld:** beide bestanden expliciet gekozen als toekomstige Character-bron; alleen opname op main gevraagd.
+- **Volgende stap:** bestanden met hashes in de repository opnemen en de gepubliceerde bytes opnieuw vergelijken.
 
 ## T-009 — Camera-accenten, stap 3
 
