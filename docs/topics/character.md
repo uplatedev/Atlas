@@ -1,8 +1,8 @@
 # Character en eerste proeflevel
 
-Bron: gebruikerswensen en vier beantwoorde besturingsvragen op 12 oktober 2026. Centraal beleid: [CONCEPT](../CONCEPT.md), [besluiten](../DECISIONS.md) en [AGENTS](../../AGENTS.md). Status en eigenaarschap staan uitsluitend in [WORK](../WORK.md); herhaalbare proeven staan in [TESTING](../TESTING.md#lokale-character-proef-nog-niet-gebouwd).
+Bron: gebruikerswensen en vier beantwoorde besturingsvragen op 12 oktober 2026. Centraal beleid: [CONCEPT](../CONCEPT.md), [besluiten](../DECISIONS.md) en [AGENTS](../../AGENTS.md). Status en eigenaarschap staan uitsluitend in [WORK](../WORK.md); herhaalbare proeven staan in [TESTING](../TESTING.md#lokale-character-proef).
 
-Dit is de gewenste eerste proef en de eenvoudige voorgestelde uitvoering. Er is nog geen Character-scene, bewegingscode of level gebouwd.
+Dit is de fundering en editorwerkwijze van de eerste lokale proef op de T-002-werkbranch. `game/characters/Character.tscn`, de bewegingscode, `game/levels/PrototypeLevel.tscn` en de hoofdscene zijn gebouwd. Technische resultaten en nog benodigd gebruikersoordeel staan in WORK; het speelgevoel is nog niet geaccepteerd voor main.
 
 ## Door de gebruiker bevestigd
 
@@ -23,13 +23,13 @@ Alle Character-instellingen moeten per instance kunnen verschillen. De afgesprok
 
 ## Eenvoudige uitvoering binnen deze fundering
 
-Eén plaatsbare `Character.tscn` als herkenbare ingang, met eenvoudige botsingsbesturing, capsulepresentatie, naamlabel, camera en debug. Een `CharacterBody3D` met capsulebotsing is hiervoor het technische voorstel; geen IK, klimsysteem of fysieke lichaamssimulatie. De capsule maakt bewegingsgedrag snel testbaar en kan later een andere visuele voorstelling krijgen.
+Eén plaatsbare `Character.tscn` als herkenbare ingang, met eenvoudige botsingsbesturing, capsulepresentatie, naamlabel, camera en debug. De eerste uitvoering gebruikt `CharacterBody3D` met capsulebotsing. De capsule maakt bewegingsgedrag snel testbaar en kan later een andere visuele voorstelling krijgen.
 
-Voorgestelde Inspectorgroepen:
+Inspectorgroepen op de Character-root:
 
 | Groep | Veilig te variëren instellingen |
 | --- | --- |
-| Naam | Weergavenaam, hoogte boven het hoofd, zichtbaarheid en leesbare labelgrootte |
+| Naam en uiterlijk | Weergavenaam, kleur, hoogte boven het hoofd, zichtbaarheid en leesbare labelgrootte |
 | Lopen | Voorwaartse snelheid, zijwaartse/achterwaartse verhouding, acceleratie en afremming |
 | Sprint | Eigen voorwaartse snelheid, zijwaartse/achterwaartse verhouding, acceleratie en afremming |
 | Springen | Hoogte voor stilstand/lopen/sprint, extra horizontale sprintimpuls en beperkte luchtsturing |
@@ -37,7 +37,17 @@ Voorgestelde Inspectorgroepen:
 | Camera | Beginafstand, maximale afstand, zoomstap, first-personovergang, ooghoogte, muisgevoeligheid en kijkgrenzen |
 | Debug | Richtingsweergave en bewegingswaarden aan/uit |
 
-Concrete waarden zijn afstelbare proefdefaults, geen door de gebruiker opgegeven getallen. Uitleg en eenheden moeten in de editor begrijpelijk zijn. De interne samenwerking en gedeelde assets mogen individuele instellingen niet ongemerkt koppelen.
+Concrete waarden zijn afstelbare proefdefaults, geen door de gebruiker opgegeven getallen. Instellingen hebben eenheden en korte Inspector-uitleg. Botsingsvorm, capsulemesh en materiaal krijgen per instance eigen Resources; naam- en kleurwijzigingen zijn direct in de editor zichtbaar.
+
+## Content maken in de editor
+
+Open `game/scenes/main.tscn`. Onder `Characters` staan `AtlasA` (rustig) en `AtlasB` (vlot), met verschillende naam, kleur, loop-/sprintwaarden en opstaphoogte. Selecteer de Character-root en wijzig de geëxporteerde groepen in de Inspector. Pas normale contentinstellingen hier aan; interne capsule-, label- en cameraonderdelen worden vanuit deze ingang bijgewerkt.
+
+Plaats `game/characters/Character.tscn` onder `Characters`, of dupliceer een bestaande instance. Geef hem een eigen naam, positie en instellingen. De hoofdscene verzamelt die directe Character-children; Tab wisselt automatisch tussen hen. F5 speelt deze hoofdscene. Een los geopende Character-scene heeft bewust geen proefvloer of eigen startmanager.
+
+De levelscene bevat gewone meshes, botsingsvormen, labels, twee lampen en een WorldEnvironment. Zie [de asset-/leveluitleg](https://github.com/uplatedev/Atlas/blob/Smyl3z/T-002-character-proef/game/assets/README.md#level-aanpassen-in-de-editor) voor afmetingen, texture-schaal en treden aanpassen. De hoofdscene instantieert level en Characters; er is geen losse netwerkhandeling nodig voor deze lokale proef.
+
+Beperkingen van deze eerste proef: de unieke renderlayers ondersteunen maximaal 19 Characters in één lokale scene. Capsule en naam blijven voor andere Character-camera's zichtbaar. LAN en Steam zijn nog niet uitgevoerd. De praktische hoofdscene bestuurt één Character tegelijk; Tab is de lokale testhulp.
 
 ### Beweging, richting en debug
 
@@ -63,14 +73,14 @@ De eerste levelopzet ondersteunt gericht meten: vlakke loopbanen, referentiemure
 
 Gebruik twee herkenbaar benoemde lampen: `EdgeLight` voor de rand/silhouet en `FillLight` om de schaduwzijde leesbaar te houden. De sunset komt uit de skybox; het voorstel voegt daarvoor geen derde zonlamp toe. Richt de edge-verlichting passend bij de sky. Kleur, intensiteit en plaatsing worden visueel beoordeeld.
 
-Assetselectie wordt bij implementatie uit de officiële bronnen opgehaald en gecontroleerd. Voorkeur: een bestaand texturebestand met prototypepatroon en een panoramische sunset-sky. Geen in code of geometrie opgebouwde strepen. Stel de UV-schaal zo in dat een duidelijk hoofdvak een echte bekende wereldafstand voorstelt, bijvoorbeeld 1 meter; een plaatje met raster is op zichzelf nog geen afstandsmeting. Controleer vloeren én muren op dezelfde schaal en voorkom uitrekking op verschillende vlakafmetingen.
+De assets zijn uit officiële bronnen opgehaald en gecontroleerd: bestaande texturebestanden met prototypepatroon en een panoramische sunset-sky. Geen in code of geometrie opgebouwde strepen. De UV-schaal geeft een duidelijk hoofdvak een bekende wereldafstand van 1 meter; een plaatje met raster is op zichzelf nog geen afstandsmeting. Vloeren en muren gebruiken dezelfde wereldschaal zodat verschillende vlakafmetingen geen uitrekking veroorzaken.
 
 Gecontroleerde kandidaten uit officiële bronnen (12-10-2026):
 
 - [Kenney — Prototype Textures](https://kenney.nl/assets/prototype-textures): bestaande prototype-gridtextures. De [officiële downloadpagina](https://kenney-assets.itch.io/prototype-textures) vermeldt 1024×1024 en CC0. Kies een rustige rastervariant en kalibreer de UV-schaal op echte wereldmaten; eventuele tekst/cijfers in het plaatje bewijzen de schaal niet.
 - [Poly Haven — Belfast Sunset (Pure Sky)](https://polyhaven.com/a/belfast_sunset_puresky): sunset-panorama zonder gefotografeerd terrein in de achtergrond. HDR/EXR, onder de [CC0-licentie van Poly Haven](https://polyhaven.com/license). Voorstel: beginnen met 2K als skybox en alleen de twee afgesproken lampen gebruiken.
 
-Definitieve assetbestanden, gebruikte varianten, licentie en bron worden bij import samen vastgelegd. In deze documentatiestap zijn nog geen textures of skybestanden gedownload of geïmporteerd.
+Deze bronnen zijn nu geïmporteerd: drie ongewijzigde Kenney `texture_02`-varianten en het 2K Belfast Sunset HDR-panorama. Bestanden, volledige bronlinks, licentieteksten, hashes en schaal staan in [game/assets/README.md](https://github.com/uplatedev/Atlas/blob/Smyl3z/T-002-character-proef/game/assets/README.md). De volledige gridtile herhaalt iedere 2 meter; twee hoofdvakken per tile maken elk hoofdvak 1 meter en de kleinste vakken 0.25 meter.
 
 ## Volgorde van de proeven
 
