@@ -35,3 +35,7 @@ Vertel een agent gewoon wat je wilt ervaren, bouwen of veranderen. Je hoeft geen
 [GitHub: uplatedev/Atlas](https://github.com/uplatedev/Atlas) is de gedeelde toestand. `main` bevat het gepubliceerde geheugen en geïntegreerde resultaten. Nog te beoordelen proeven staan op de in WORK genoemde gepushte werkbranch; een lokale wijziging is nog niet gedeeld. Bekijk de bronversie met `git log -1 --oneline` en de toestand met `git status --short --branch`.
 
 Op een tweede computer: clone de repo, stel daar het eigen enginepad in en voer Check-Atlas uit. Voor een bestaande checkout eerst lokale wijzigingen controleren en bewaren, daarna fetch en uitsluitend een passende fast-forward-update. Werk nooit stilzwijgend over lopend werk heen. Taakreservering en gelijktijdig schrijven volgen het protocol in AGENTS.
+
+## Characterbronbestanden
+
+De aangeleverde Artemis-exports staan ongewijzigd op main in [source_assets/characters/Artemis](source_assets/characters/Artemis/README.md). De bronnotitie bevat bestandsnamen, hashes en de laptop-overdracht.

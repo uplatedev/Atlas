@@ -18,16 +18,16 @@ T-009 is als afzonderlijke camera-/FOV-proef gepubliceerd op `9f75853c`; import/
 | T-007 | Camera-eigenaarschap scheiden, stap 1 | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T007-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-007-camera-scheiden` | Zelfde gevoel kort lokaal beoordelen; daarna contactaudio |
 | T-008 | Contactaudio, stap 2 | Gepubliceerd en lokaal klaar; luisterproef open | atlas-T008-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-008-contactaudio` | Klank/cadans/slide met F6 lokaal vergelijken |
 | T-009 | Camera-accenten, stap 3 | Gepubliceerd en lokaal klaar; camera-proef open | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Landing en lucht-/slide-FOV met F7/F9 lokaal vergelijken |
-| T-010 | Artemis-bronbestanden delen | Gereserveerd | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` | Originele FBX/GLB op main opnemen en verifiëren |
+| T-010 | Artemis-bronbestanden delen | Afgerond; originele bestanden op main | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` (resultaat op main) | Laptop: main ophalen, source_assets/characters/Artemis openen |
 
 ## T-010 — Artemis-bronbestanden delen
 
 Reservering door `atlas-T010-20261012-01a12fd0`, STELLAR-FORGE (Windows), vanaf main `3041ffcb2da54c26a79eecf338b521f1e2ebf5c5`. De gebruiker vraagt de aangeleverde Artemis.fbx en Artemis.glb op main te bewaren zodat ze op de laptop beschikbaar zijn. Scope: byte-exacte bronkopieën, korte herkomst-/integriteitsnotitie en geverifieerde main-publicatie. Geen model-, rig-/animatie-integratie of wijziging aan de lokale speelproef.
 
-- **Gebouwd:** taak gereserveerd; bronbestanden worden na bewezen claimpublicatie gekopieerd.
-- **Technisch gecontroleerd:** beide aangeleverde bestanden bestaan; remote/identiteit en schone administratieve branch gecontroleerd.
+- **Gebouwd:** originele [Artemis.fbx en Artemis.glb](../source_assets/characters/Artemis/README.md), buiten game, met korte herkomstnotitie en expliciete binary-attributen. Gewone Git-bestanden, geen LFS. Claim gepubliceerd op main in `f0ae6ab89abefd595eda4f0427f2b4567cf6bced` vóór bestandsopname.
+- **Technisch gecontroleerd:** lokale kopieën en originelen hebben exact gelijke SHA256 en grootte (FBX131884 / GLB134140 bytes). Beide op GitHub aangemaakte blobhashes zijn exact gelijk aan native Git (`6016e8f535d4886c1a9c3ce63411ff77945a7fe7` / `f430859745fcd99bdfea3ade184e050c2bc00093`). GLBv2-header/lengte en interne buffer gecontroleerd; geen externe image-/bufferverwijzingen. FBXbinary7400, geen textureverwijzingen aangetroffen. Geen Godot-/Blenderimport of animatieproef nodig voor ongewijzigde bronopname.
 - **Door de gebruiker beoordeeld:** beide bestanden expliciet gekozen als toekomstige Character-bron; alleen opname op main gevraagd.
-- **Volgende stap:** bestanden met hashes in de repository opnemen en de gepubliceerde bytes opnieuw vergelijken.
+- **Volgende stap:** op de laptop actuele main ophalen; beide bestanden staan in `source_assets/characters/Artemis/`. Model-/rig-/animatie-integratie is een volgende nog niet opgedragen stap. De bestaande lokale T-009-speelproef blijft op `9f75853c`.
 
 ## T-009 — Camera-accenten, stap 3
 

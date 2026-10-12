@@ -62,4 +62,6 @@ De gebruiker heeft na stap 1 gevraagd verder te gaan. [T-008](work/T-008.md) voe
 
 [T-009](work/T-009.md) voert na de volgende doorgaan-opdracht de afzonderlijke camera-accenten uit: een kleine instelbare TP-landingsreactie (FP standaard nul), één veilig begrensde renderpose en een FOV-variant die afgebouwde luchtvaart en behouden slidevaart volgt. De camera blijft enige uitvoerder; gameplay en contactaudio blijven behouden. De effecten zijn afzonderlijk vergelijkbaar en de nieuwe waarden blijven een menselijke speelproef vragen.
 
+De gebruiker heeft Artemis.fbx en Artemis.glb aangeleverd als toekomstige Character-bron. Beide originele exports worden in [source_assets/characters/Artemis](../source_assets/characters/Artemis/README.md) op main bewaard voor verder werken op de laptop. Deze bestandsopname kiest nog geen model-/rig-/animatie-integratie en verandert de bestaande capsuleproef niet.
+
 De verdere spelwereld en mechanics staan open. De exacte waarden en het gevoel van de afgesproken beweging, sprongen en camera worden met een kleine lokale proef afgestemd. Eigenaarschap, spawnen en precieze synchronisatie moeten vóór de LAN-implementatie expliciet worden afgesproken. De eerste proef blijft daarom lokaal. Voortgang en afhankelijkheden staan in [WORK](WORK.md); voorstellen voor latere systemen worden niet stilzwijgend besluiten.
