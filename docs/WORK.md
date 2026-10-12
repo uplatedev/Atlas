@@ -9,7 +9,7 @@ De gecontroleerde lege basis is gereed voor gebruik. De volgende inhoudelijke st
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
 | T-000 | Projectbasis opzetten | Afgerond in deze main-integratie | atlas-bootstrap-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-000-projectbasis` (geïntegreerd; opruiming zie hieronder) | Geen inhoudelijk bootstrapwerk meer; T-001 bespreken |
-| T-001 | Character-fundering bespreken | Klaar voor bespreking; implementatie niet vrijgegeven | Niet geclaimd | Nog niet van toepassing | Nog niet aangemaakt | Antwoorden bespreken en eenvoudigste proef ter bevestiging voorstellen |
+| T-001 | Character-fundering bespreken | Gereserveerd voor documentatie en bespreking; implementatie niet vrijgegeven | atlas-character-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-001-character-fundering` | Nieuwe wensen vastleggen en open keuzes bespreken |
 
 ## T-000 — Projectbasis opzetten
 
