@@ -15,6 +15,16 @@ De nieuwste Character-proef blijft lokaal klaar op `69a8d9d7`; het gevoel wacht 
 | T-004 | Movement, camera, hoofd en houdingen implementeren | Gespeeld; feedback wordt in T-005 verwerkt | atlas-T004-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-004-character-movement` | Historische proef bewaren; gevoel niet geaccepteerd |
 | T-005 | Charactergevoel en houdingknoppen verfijnen | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T005-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-005-character-verfijnen` | Slidesprong, directe lig-terugkeer en automatische route lokaal spelen |
 | T-006 | Juice inventariseren en onderzoeken | Onderzoek afgerond; voorstel beschikbaar | atlas-T006-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-006-juice-onderzoek` | Eerste vergelijkingsproef kiezen: camera-eigenaarschap, daarna contactaudio |
+| T-007 | Camera-eigenaarschap scheiden, stap 1 | Gereserveerd; uitvoering gestart | atlas-T007-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-007-camera-scheiden` | Gelijk gedrag bewijzen en lokaal testcheckpoint klaarzetten |
+
+## T-007 — Camera-eigenaarschap scheiden, stap 1
+
+Reservering door `atlas-T007-20261012-01a12fd0`, STELLAR-FORGE (Windows), vanaf main `80f3e5094baa85e1ec2963dfb5b5931f8375206a`. Gebruiker vraagt op 12 oktober 2026 het T-006-voorstel stapsgewijs uit te voeren. Eerste stap: resterende camera-uitvoering/geheugen uit Character halen, expliciete logische kijkrichting als movementinvoer en camera-eigen viewmask. De bestaande Inspector-ingang, overrides, camera- en gameplaywaarden blijven behouden. Basis speelbron `69a8d9d7`. Geen contactaudio, nieuwe camera-accenten/FOV-mapping, gameplaytuning of capsulepolish in deze stap.
+
+- **Gebouwd:** nog geen nieuwe code; claim voor werkbranch `Smyl3z/T-007-camera-scheiden`.
+- **Technisch gecontroleerd:** actuele remote, schone speelbron en GitHub-schrijfidentiteit gecontroleerd; bestaande suites vormen de regressiebasis.
+- **Door de gebruiker beoordeeld:** stapsgewijze uitvoering gevraagd. Gelijkblijvend gevoel wordt na technische controle lokaal beoordeeld; T-005-oordeel blijft open.
+- **Volgende stap:** camera-uitvoering scheiden, gerichte parity-/ownershipchecks en bestaande physicsuites, publiceren en vaste lokale proef bijwerken. Daarna contactaudio als afzonderlijke stap.
 
 ## T-006 — Juice inventariseren en onderzoeken
 
