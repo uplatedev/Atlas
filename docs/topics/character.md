@@ -8,26 +8,27 @@ WASD beweegt op de grond relatief aan de werkelijk bereikte lichaamsrichting. Bi
 
 Ctrl kiest kruip en schakelt vanuit kruip terug naar staan; vanuit lig kiest Ctrl kruip. Z kiest lig, ook rechtstreeks vanuit staan; nogmaals Z bewaart lig. Spatie richt precies één houding op: lig → kruip → staan. Die druk veroorzaakt geen sprong; opnieuw spatie terwijl je staat springt. Een onpassende hogere vorm blijft geblokkeerd. Alt vasthouden is sneak en Shift vasthouden sprint; Alt heeft staand voorrang. De latere keuze tussen Ctrl vasthouden en aan/uit blijft vervolgwerk; voor deze proef is aan/uit bevestigd.
 
-Kruip is een verticale capsule van 1.10 m; lig een horizontale capsule van 1.80 m lang en 0.70 m hoog. Automatisch verlagen vanuit handmatig staan kiest maximaal kruip. Alleen handmatig kruip geeft toestemming voor automatische lig bij een doorgang. Na voldoende vrije ruimte herstelt de eigen gewenste houding. Botsing begrenst ook de lange ligcapsule tijdens draaien. Kruip/lig hebben geen sprong; spatie richt op. Sneak heeft een lage sprong van 0.45 m, met een instelbare minimumhoogte.
+Kruip is een verticale capsule van 1.10 m; lig een horizontale capsule van 1.80 m lang en 0.70 m hoog. Automatisch verlagen gaat staan → kruip → lig, ook wanneer kruip automatisch is gekozen. Rechtstreeks automatisch staan → lig blijft uitgesloten. Na voldoende vrije ruimte herstelt de hoogste veilige houding, met behoud van een eigen handmatige lage voorkeur. Botsing begrenst ook de lange ligcapsule tijdens draaien. Kruip/lig hebben geen sprong; spatie richt op. Sneak heeft een lage sprong van 0.45 m, met een instelbare minimumhoogte.
 
 Instellingen blijven op de Character-root, met eigen Nederlandse uitleg per veld:
 
 | Groep | Zelf af te stellen |
 | --- | --- |
 | Lopen / Sprint / Sneak | Snelheid, zij-/achterwaartse verhoudingen, acceleratie, afremming en draaisnelheid |
-| Kruipen / Liggen | Eigen beweging, opstap, capsulehoogte/-lengte, radius en ooghoogte |
+| Kruipen / Liggen | Eigen beweging, opstap, capsulehoogte/-lengte, radius en ooghoogte; kruip-slidewrijving, duur, sturing en einddrempel |
 | Draaien en tegensturen | Stilstand-/luchtdraai, start-/stophoek voor noodzakelijk bijdraaien en extra remmen bij tegengestelde input |
-| Springen | Vier hoogteprofielen, extra sprintbonus, onafhankelijke luchtacceleratie, zwaartekracht, randtolerantie en landingsbuffer |
+| Springen | Vier hoogteprofielen, extra sprintbonus, beperkte luchtacceleratie/-rem, minimumstuur-budget, zwaartekracht, randtolerantie en landingsbuffer |
 | Sprongvermoeidheid | Aan/uit, kosten, grondherstel en minimumkracht per sprongtype |
 | Botsing en automatisch herstellen | Staande capsule, opstap, vrije-ruimtemarge en herstelstabiliteit |
 | Camera: kijken en hoofd | X/Y-gevoeligheid, hoofd-yawgrens, zachte zones, verticale grenzen en beginkijkhoek |
 | Camera: zoom en botsing | Afstanden, zoomstap, first-personovergang, camera-volume en veilige volgingstijden |
 | Camera: positievolging | Subtiele positievolging voor beide views en maximale achterstand; 0 schakelt de extra vertraging uit |
+| Camera: subtiele nawerking | Aan/uit, maximale veeruitslag, hersteltijd, snelheidsdrempels en afzonderlijk first-persongebruik |
 | Camera: beeldhoek | Verticale FOV voor beide views, sprintbonus, offsets voor sneak/kruip/lig en overgangstijden |
 
 De gedeelde vermoeidheid wordt groter na geslaagde sprongen en herstelt uitsluitend op de grond. Herhaald springen geeft lagere sprongen en minder extra sprintafstand. Gewone loopsnelheid blijft gelijk. Een sprongbonus kan ook met vermoeidheid uit nooit opnieuw op de vorige bonus stapelen. De debug toont krachtverlies en het vastgelegde snelheidsbudget.
 
-F4 schakelt de dynamische FOV van de actieve instance aan/uit voor vergelijking; F3 schakelt debug. De camera bewaart gewenste zoom los van muurbotsing. Positievolging is subtiel en instelbaar; kijken reageert direct. First person verbergt alleen de eigen capsule/naam; andere instances blijven zichtbaar.
+F4 schakelt de dynamische FOV van de actieve instance aan/uit voor vergelijking; F3 schakelt debug, inclusief slide en luchtrem. De FPS-teller staat rechtsboven. De camera bewaart gewenste zoom los van muurbotsing. Positievolging is subtiel en instelbaar; kijken reageert direct. Snelle rembewegingen geven een heel klein instelbaar doorschietaccent: bij normale sprintstop circa 1,2 cm. First person heeft dat accent standaard uit en verbergt alleen de eigen capsule/naam; andere instances blijven zichtbaar.
 
 De nieuwe `PostureTestArea` staat als normale levelinstance in `PrototypeLevel.tscn`. Route 1 rond x=-6 heeft een kruipopstap en opvolgende ligdoorgang; route 2 rond x=-12 een directe lage ingang; rechts staan een onmogelijke doorgang, smalle ligbocht en rembaan. Selecteer gewone blokken/CollisionShape3D in de editor om afmetingen samen te veranderen. De bestaande metertextures, twee lampen en sky blijven onderdeel van de arena.
 
@@ -41,7 +42,7 @@ De stand-, kruip- en ligcapsules houden hun voetzool als grondanker. Totale caps
 
 Vooruit > zijwaarts > achteruit is de standaardvolgorde voor iedere beweging. Twee inputs tellen geen snelheden op. Alle houdingen starten met opstapgrens 0.35 m; een eigen lagere grens kan een anders geldige trede voor die houding blokkeren. Opstappen is geen automatisch klimmen over hoge muren.
 
-Een stilstaande sprong gaat hoog, een lopende middelhoog en een sprint laag maar extra ver. Werkelijke afzetsnelheid bepaalt het profiel, ook wanneer Shift net is losgelaten; een korte aanloop geeft minder afstand. Luchtinput bouwt geen volle sprint op vanuit een trage afzet. A/D en camerahoek sturen licht binnen het oorspronkelijke snelheidsbudget. De aanvullende uitvoering bewaart bij handmatig kruip/lig kiezen de vluchtvaart; tegeninput (S bij voorwaartse vlucht) remt geleidelijk. Alleen Ctrl-kruip tijdens een sprong start bij landing een korte slide met wrijving, duur en beperkte sturing, zonder boost. Z-lig en Ctrl op de grond geven geen slide. Na de slide blijft de gekozen kruiphouding. Dit vervangt de eerste T-005-luchtstop; de actuele bouwstatus staat in WORK. Sneak is een eigen lage sprong. Kosten en minimumkracht van sprongvermoeidheid staan als factoren: 0.25 is 25 procentpunten. Hersteltijd is grondtijd vanaf 100% vermoeidheid; een kleinere schuld herstelt evenredig sneller. Een nog niet herstelde reeks bewaart haar langzaamste herstelinstelling.
+Een stilstaande sprong gaat hoog, een lopende middelhoog en een sprint laag maar extra ver. Werkelijke afzetsnelheid bepaalt het profiel, ook wanneer Shift net is losgelaten; een korte aanloop geeft minder afstand. Luchtinput bouwt geen volle sprint op vanuit een trage afzet. A/D en camerahoek sturen licht binnen het oorspronkelijke snelheidsbudget. Handmatig kruip/lig kiezen bewaart de vluchtvaart; tegeninput (S bij voorwaartse vlucht) remt geleidelijk en verlaagt ook het resterende snelheidsbudget. Alleen Ctrl tijdens een sprong start bij landing een slide met wrijving, duur en beperkte sturing, zonder boost. Z-lig en Ctrl op de grond geven geen slide. Na slide automatisch staan als dat veilig past; onder een laag plafond blijft de capsule automatisch kruipen en richt later veilig op. De slide legt geen blijvende handmatige kruipvoorkeur vast. Een lage landing zonder slide gebruikt meteen de eigen kruip-/liglimiet. Wrijving, duur, sturing en einddrempel zijn onafhankelijk instelbaar; de nieuwste proef verlaagt wrijving en verlengt duur. Tegeninputrem staat op 8 m/s². Dit vervangt de eerste T-005-luchtstop. Sneak is een eigen lage sprong. Kosten en minimumkracht van sprongvermoeidheid staan als factoren: 0.25 is 25 procentpunten. Hersteltijd is grondtijd vanaf 100% vermoeidheid; een kleinere schuld herstelt evenredig sneller. Een nog niet herstelde reeks bewaart haar langzaamste herstelinstelling.
 
 ## Level en assets
 
