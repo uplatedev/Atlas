@@ -64,6 +64,16 @@ func _unhandled_input(event: InputEvent) -> void:
 					var character := characters[active_index]
 					character.feedback_enabled = not character.feedback_enabled
 				get_viewport().set_input_as_handled()
+			KEY_F7:
+				if not characters.is_empty():
+					var character := characters[active_index]
+					character.camera_landing_enabled = not character.camera_landing_enabled
+				get_viewport().set_input_as_handled()
+			KEY_F9:
+				if not characters.is_empty():
+					var character := characters[active_index]
+					character.camera_fov_refinement_enabled = not character.camera_fov_refinement_enabled
+				get_viewport().set_input_as_handled()
 			KEY_ESCAPE:
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
@@ -82,7 +92,7 @@ func _process(delta: float) -> void:
 	var head_limit: Variant = character.get("head_max_yaw")
 	character_label.text = "%s  ·  %d / %d" % [character.display_name, active_index + 1, characters.size()]
 	var speed_fov: Variant = character.get("camera_speed_fov_enabled")
-	values_label.text = "%s · %s · %.2f m/s\nZoom %.1f / vrij %.1f m · FOV %.1f° · snelheid %s · audio %s" % [
+	values_label.text = "%s · %s · %.2f m/s\nZoom %.1f / vrij %.1f m · FOV %.1f°\nF4 snelheid %s · F6 audio %s · F7 landing %s · F9 vaart-FOV %s" % [
 		str(state.get("posture", "staan")),
 		str(state.get("motion_mode", "lopen")),
 		float(state.get("speed", 0.0)),
@@ -91,6 +101,8 @@ func _process(delta: float) -> void:
 		float(state.get("fov", 75.0)),
 		"aan" if speed_fov == true else "uit",
 		"aan" if character.feedback_enabled else "uit",
+		"aan" if character.camera_landing_enabled else "uit",
+		"aan" if character.camera_fov_refinement_enabled else "uit",
 	]
 	debug_label.visible = debug_visible
 	debug_label.text = "Hoofd  %s\nLichaam  %s\nInput  %s\nBeweging  %s\nHoofd t.o.v. lichaam  %+.1f° / ±%.0f°\nSprong %s · %.2f m hoog · cap %.2f m/s\nSlide %s · %.2f s · luchtrem %s\nVermoeidheid %.0f%%" % [

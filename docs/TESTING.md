@@ -2,6 +2,10 @@
 
 Controle-instructies staan hier; resultaten per bronversie staan bij de taak in [WORK](WORK.md). Een geslaagde headless-start bewijst geen speelgevoel, beeldkwaliteit of multiplayerwerking.
 
+## Camera-accenten vergelijken
+
+De T-009-werkbranch heeft een afzonderlijke [landings-/FOV-proef](work/T-009.md#vergelijking-voor-de-gebruiker). F7 schakelt alleen het landingsaccent; F9 schakelt de nieuwe mapping voor lucht-/slidevaart, met behoud van bestaande houdings-FOV. F4 blijft alle dynamische FOV aan/uit schakelen. De HUD toont de schakelaars voor de actieve Character. Vergelijk dezelfde routes in TP en FP; FP heeft standaard nul landingsdip. De historische camera-eigenaarschapsuite draait de nieuwe effecten expliciet uit voor pariteit; de nieuwe camera-accentensuite toetst de toegevoegde mapping en begrenzing apart.
+
 ## Toolchain
 
 [tools/toolchain.json](../tools/toolchain.json) bevat de exacte vereiste `--version`-uitvoer: `4.7.2.stable.official.ed1daf0bf`, Godot Standard voor Windows x86_64. De bestaande portable installatie is gecontroleerd tegen de [officiële 4.7.2-release](https://godotengine.org/download/archive/4.7.2-stable/). Een latere versie overstappen vraagt een expliciete toolchainwijziging en nieuwe controles.

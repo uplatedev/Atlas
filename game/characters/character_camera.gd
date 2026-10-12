@@ -26,9 +26,18 @@ var _inertia_offset: Vector3 = Vector3.ZERO
 var _inertia_velocity: Vector3 = Vector3.ZERO
 var _inertia_reference_speed: float = 0.0
 var _inertia_brake_time: float = 0.0
+var _landing_seen_support: bool = false
+var _landing_elapsed: float = 0.0
+var _landing_start: float = 0.0
+var _landing_peak: float = 0.0
+var _landing_amount: float = 0.0
+var _accent_offset: Vector3 = Vector3.ZERO
+var _total_pose_offset: Vector3 = Vector3.ZERO
 var _fov: float = 70.0
 var _target_fov: float = 70.0
 var _air_fov_mix: float = 0.0
+var _air_walk_limit: float = 5.0
+var _air_sprint_limit: float = 9.0
 var _initialized: bool = false
 var _camera_shape: SphereShape3D = SphereShape3D.new()
 
@@ -109,6 +118,7 @@ func reset_follow_history() -> void:
 	_previous_follow_target = _follow_position
 	_follow_lag = 0.0
 	_clear_inertia_history()
+	_clear_landing_history(false)
 	reset_physics_interpolation()
 	_camera.reset_physics_interpolation()
 	_refresh_transform(0.0, true)
@@ -121,6 +131,9 @@ func reset_view(reset_motion_history: bool = false) -> void:
 	_pitch = _clamp_pitch(deg_to_rad(_value("camera_start_pitch", -12.0)))
 	if reset_motion_history:
 		_air_fov_mix = 0.0
+		_air_walk_limit = 5.0
+		_air_sprint_limit = 9.0
+		_clear_landing_history()
 	set_distance(_value("camera_start_distance", 4.0))
 	_zoom_distance = _requested_distance
 	_actual_distance = _requested_distance
@@ -252,6 +265,14 @@ func get_state() -> Dictionary:
 		"camera_follow_lag": _follow_lag,
 		"camera_inertia_offset": _inertia_offset,
 		"camera_inertia_amount": _inertia_offset.length(),
+		"camera_landing_offset": Vector3.DOWN * _landing_amount,
+		"camera_landing_amount": _landing_amount,
+		"camera_accent_offset": _accent_offset,
+		"camera_total_pose_offset": _total_pose_offset,
+		"camera_air_launch_mix": _air_fov_mix,
+		"camera_air_fov_mix": get_fov_speed_mix() if not _motion.grounded else 0.0,
+		"camera_slide_fov_mix": _slide_fov_mix(),
+		"camera_slide_fov_offset": _slide_fov_offset(),
 	}
 
 
@@ -285,7 +306,10 @@ func _required_camera_radius() -> float:
 	var aspect := size.x / maxf(size.y, 1.0)
 	var maximum_fov := maxf(_value("camera_fov_third_person", 70.0), _value("camera_fov_first_person", 75.0))
 	var maximum_offset := maxf(0.0, maxf(_value("camera_sneak_fov_offset", -2.0), maxf(_value("camera_crouch_fov_offset", -3.0), _value("camera_prone_fov_offset", -5.0))))
-	maximum_fov = clampf(maximum_fov + maximum_offset + float(_value("camera_sprint_fov_bonus", 6.0)), 30.0, 110.0)
+	var slide_bonus := 0.0
+	if _value("camera_fov_refinement_enabled", true):
+		slide_bonus = maxf(_value("camera_slide_fov_bonus", 3.0), _value("camera_first_person_slide_fov_bonus", 1.5))
+	maximum_fov = clampf(maxf(_fov, maximum_fov + maximum_offset + float(_value("camera_sprint_fov_bonus", 6.0)) + maxf(slide_bonus, 0.0)), 30.0, 110.0)
 	var near_height := _camera.near * tan(deg_to_rad(maximum_fov) * 0.5)
 	var near_width := near_height * aspect
 	return sqrt(_camera.near * _camera.near + near_height * near_height + near_width * near_width) + 0.01
@@ -327,20 +351,27 @@ func _refresh_transform(delta: float, immediate: bool = false) -> void:
 	_camera_shape.radius = radius
 	var target := Vector3(interpolated.origin.x, 0.0, interpolated.origin.z)
 	_update_follow_position(target, delta, immediate)
+	_update_landing(delta, immediate)
 	var eye_y := minf(_feet_height + _eye_height, maximum_y)
 	var target_eye := Vector3(target.x, eye_y, target.z)
-	# Het remaccent verandert de gewone volgfilter niet. Beide samen blijven
-	# binnen dezelfde absolute afwijking en hetzelfde gecontroleerde volume.
+	# Remveer en landingsdip delen één 3D-accentbudget. Samen met de gewone
+	# volglag volgen ze één renderpose en dezelfde volledige volumecontrole.
 	var maximum_lag: float = maxf(0.0, _value("camera_follow_max_lag", 0.12))
-	var followed := target + (_follow_position - target + _inertia_offset).limit_length(maximum_lag)
-	var followed_eye := Vector3(followed.x, eye_y, followed.z)
+	var maximum_accent := clampf(_value("camera_accent_max_offset", 0.04), 0.0, 0.1)
+	_accent_offset = _inertia_offset + Vector3.DOWN * _landing_amount
+	if _value("camera_landing_enabled", true):
+		_accent_offset = _accent_offset.limit_length(maximum_accent)
+	var followed_eye := target_eye + (_follow_position - target + _accent_offset).limit_length(maximum_lag)
 	global_position = _safe_follow_anchor(target_eye, followed_eye)
+	_total_pose_offset = global_position - target_eye
 	if global_position.distance_squared_to(followed_eye) > 0.00000001:
 		# Een wand stopt ook de veer direct; er blijft geen opgebouwde druk over
 		# die de camera later alsnog tegen of door die wand zou duwen.
 		_follow_position = Vector3(global_position.x, 0.0, global_position.z)
 		_inertia_offset = Vector3.ZERO
 		_inertia_velocity = Vector3.ZERO
+		_clear_landing_history(false)
+		_accent_offset = Vector3.ZERO
 	_follow_lag = Vector3(global_position.x, 0.0, global_position.z).distance_to(target)
 	_refresh_rotation()
 	_zoom_distance = lerpf(_zoom_distance, _requested_distance, _blend(delta, _value("camera_zoom_half_life", 0.06))) if not immediate else _requested_distance
@@ -370,6 +401,7 @@ func _update_follow_position(target: Vector3, delta: float, immediate: bool) -> 
 		_follow_position = target
 		_previous_follow_target = target
 		_clear_inertia_history()
+		_clear_landing_history(teleported)
 		return
 	var target_velocity := displacement / delta
 	_update_inertia(target_velocity, delta)
@@ -392,6 +424,62 @@ func _clear_inertia_history() -> void:
 	_inertia_velocity = Vector3.ZERO
 	_inertia_reference_speed = 0.0
 	_inertia_brake_time = 0.0
+
+
+func _clear_landing_history(clear_support: bool = true) -> void:
+	_landing_elapsed = 0.0
+	_landing_start = 0.0
+	_landing_peak = 0.0
+	_landing_amount = 0.0
+	if clear_support:
+		_landing_seen_support = false
+
+
+func _maximum_landing_dip() -> float:
+	var amount: float = _value("camera_first_person_landing_max_dip", 0.0) if _requested_distance == 0.0 else _value("camera_landing_max_dip", 0.01)
+	return clampf(amount, 0.0, 0.05)
+
+
+## Echte post-move impact, onafhankelijk van contactaudio of zijn volumevelden.
+func capture_contact(frame: AtlasCharacterContactFrame) -> void:
+	var primed := _landing_seen_support
+	if frame.supported or frame.jumped:
+		_landing_seen_support = true
+	if not _value("camera_landing_enabled", true) or not primed or not frame.landed or frame.jumped or not frame.real_grounded:
+		return
+	var minimum: float = maxf(0.0, _value("camera_landing_min_speed", 0.75))
+	var impact := maxf(0.0, -frame.incoming_velocity.y)
+	if impact < minimum:
+		return
+	var full: float = maxf(minimum + 0.01, _value("camera_landing_full_speed", 8.0))
+	var amount := _maximum_landing_dip() * clampf((impact - minimum) / (full - minimum), 0.0, 1.0)
+	if amount <= 0.0:
+		return
+	# Een volgende impact begint vanaf de huidige uitslag, zonder impulsen op te tellen.
+	_landing_start = minf(_landing_amount, _maximum_landing_dip())
+	_landing_peak = minf(maxf(_landing_start, amount), _maximum_landing_dip())
+	_landing_elapsed = 0.0
+
+
+func _update_landing(delta: float, immediate: bool) -> void:
+	var maximum := _maximum_landing_dip()
+	if immediate or not _value("camera_landing_enabled", true) or maximum <= 0.0:
+		_clear_landing_history(false)
+		return
+	if _landing_peak <= 0.0:
+		return
+	_landing_start = minf(_landing_start, maximum)
+	_landing_peak = minf(_landing_peak, maximum)
+	_landing_elapsed += maxf(delta, 0.0)
+	var attack: float = maxf(0.0, _value("camera_landing_attack_time", 0.045))
+	var recovery: float = maxf(0.01, _value("camera_landing_recovery_time", 0.20))
+	if attack > 0.0 and _landing_elapsed < attack:
+		_landing_amount = lerpf(_landing_start, _landing_peak, smoothstep(0.0, attack, _landing_elapsed))
+	else:
+		var phase := clampf((_landing_elapsed - attack) / recovery, 0.0, 1.0)
+		_landing_amount = _landing_peak * (1.0 - smoothstep(0.0, 1.0, phase))
+		if phase >= 1.0:
+			_clear_landing_history(false)
 
 
 func _update_inertia(target_velocity: Vector3, delta: float) -> void:
@@ -499,16 +587,20 @@ func _speed_mix(horizontal: Vector3, walk_limit: float, sprint_limit: float) -> 
 	return clampf((horizontal.length() - walk_limit) / (sprint_limit - walk_limit), 0.0, 1.0)
 
 
-## Geaccepteerde afzet bevat de vaart vóór sprongbonus; het vluchtbeeld blijft
-## bewust gelijk aan de eerdere camera, ook tijdens S-luchtremmen.
+## Geaccepteerde afzet bevat de vaart vóór sprongbonus. Haar mix is de bovengrens:
+## luchtrem mag alleen terugnemen; uitgeschakelde refinement bewaart de oude mapping.
 func capture_jump(horizontal: Vector3, walk_limit: float, sprint_limit: float, sneaking: bool) -> void:
 	_air_fov_mix = 0.0 if sneaking else _speed_mix(horizontal, walk_limit, sprint_limit)
+	_air_walk_limit = walk_limit
+	_air_sprint_limit = sprint_limit
 
 
 ## De grondvaart vóór move_and_slide bewaart ook bij gewoon van een rand lopen
 ## exact hetzelfde vluchtbeeld. Grond-FOV zelf gebruikt de echte afgelegde vaart.
 func capture_ground_motion(horizontal: Vector3, walk_limit: float, sprint_limit: float, low_or_sneaking: bool) -> void:
 	_air_fov_mix = 0.0 if low_or_sneaking else _speed_mix(horizontal, walk_limit, sprint_limit)
+	_air_walk_limit = walk_limit
+	_air_sprint_limit = sprint_limit
 
 
 func capture_posture(posture: String) -> void:
@@ -521,6 +613,8 @@ func get_fov_speed_mix() -> float:
 	if _motion_profile() in ["sneak", "kruipen", "crouch", "liggen", "prone"]:
 		return 0.0
 	if not _motion.grounded:
+		if _value("camera_fov_refinement_enabled", true):
+			return minf(_air_fov_mix, _speed_mix(_motion.horizontal_velocity, _air_walk_limit, _air_sprint_limit))
 		return _air_fov_mix
 	return _speed_mix(_motion.actual_horizontal_velocity, _motion.walk_speed_limit, _motion.sprint_speed_limit)
 
@@ -538,11 +632,23 @@ func _profile_fov_offset() -> float:
 	return 0.0
 
 
+func _slide_fov_mix() -> float:
+	if not _value("camera_speed_fov_enabled", true) or not _value("camera_fov_refinement_enabled", true) or not _motion.sliding or not _motion.grounded:
+		return 0.0
+	var reference: float = maxf(0.1, _value("camera_slide_fov_reference_speed", 9.0))
+	return clampf(_motion.actual_horizontal_velocity.length() / reference, 0.0, 1.0)
+
+
+func _slide_fov_offset() -> float:
+	var bonus: float = _value("camera_first_person_slide_fov_bonus", 1.5) if _requested_distance == 0.0 else _value("camera_slide_fov_bonus", 3.0)
+	return _slide_fov_mix() * clampf(bonus, 0.0, 10.0)
+
+
 func _refresh_fov(delta: float, immediate: bool) -> void:
 	var mix := clampf(get_fov_speed_mix(), 0.0, 1.0)
 	if _motion_profile() in ["sneak", "kruipen", "crouch", "liggen", "prone"]:
 		mix = 0.0
-	var target := _base_fov() + _profile_fov_offset()
+	var target := _base_fov() + _profile_fov_offset() + _slide_fov_offset()
 	if _value("camera_speed_fov_enabled", true):
 		target += mix * float(_value("camera_sprint_fov_bonus", 6.0))
 	target = clampf(target, 30.0, 110.0)

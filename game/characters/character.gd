@@ -301,6 +301,24 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 ## Gebruik dit extra remaccent ook wanneer bewust naar first person is ingezoomd. Standaard uit voor een stabiel gezichtspunt.
 @export var camera_first_person_inertia_enabled: bool = false
 
+@export_group("Camera: landingsaccent")
+## Kleine reactie op echte impactlandingen met gedeeld accentbudget; uit bewaart de eerdere remveer exact. Audio staat hier los van.
+@export var camera_landing_enabled: bool = true
+## Grootste third-persondip in meters; 0 geeft geen positieaccent bij landen.
+@export_range(0.0, 0.05, 0.001, "suffix:m") var camera_landing_max_dip: float = 0.01
+## Grootste first-persondip in meters; standaard 0 houdt het eigen zicht rustig.
+@export_range(0.0, 0.05, 0.001, "suffix:m") var camera_first_person_landing_max_dip: float = 0.0
+## Minimale neerwaartse impactsnelheid voor een dip in m/s; normale opstappen tellen niet mee.
+@export_range(0.0, 10.0, 0.1, "suffix:m/s") var camera_landing_min_speed: float = 0.75
+## Impactsnelheid in m/s waarbij de dip zijn maximum bereikt; hogere impact stapelt geen extra uitslag.
+@export_range(0.1, 30.0, 0.1, "suffix:m/s") var camera_landing_full_speed: float = 8.0
+## Tijd tot de laagste camerapositie in seconden; een korte zachte aanloop voorkomt een positieklap.
+@export_range(0.0, 0.2, 0.005, "suffix:s") var camera_landing_attack_time: float = 0.045
+## Volledige terugkeertijd na de dip in seconden; keert eenmaal rustig terug zonder nawippen.
+@export_range(0.01, 1.0, 0.01, "suffix:s") var camera_landing_recovery_time: float = 0.20
+## Gedeelde 3D-uitslag van remveer en landing in meters wanneer Landing Enabled aan staat; met volglag ook begrensd door Follow Max Lag.
+@export_range(0.0, 0.1, 0.001, "suffix:m") var camera_accent_max_offset: float = 0.04
+
 @export_group("Camera: beeldhoek")
 ## Verticale third-personbeeldhoek in graden; hoger toont meer omgeving. Dit is geen horizontale FOV.
 @export_range(30.0, 100.0, 1.0, "suffix:° verticaal") var camera_fov_third_person: float = 70.0
@@ -320,6 +338,16 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.0, 1.0, 0.01, "suffix:s") var camera_fov_rise_half_life: float = 0.10
 ## Seconden om de helft van de FOV-terugkeer weg te werken; hoger maakt afremmen visueel rustiger.
 @export_range(0.0, 1.0, 0.01, "suffix:s") var camera_fov_return_half_life: float = 0.18
+
+@export_group("Camera: lucht- en slidebeeldhoek")
+## Verfijn FOV met resterende luchtvaart en actieve slide; uit herstelt de eerdere FOV-mapping exact.
+@export var camera_fov_refinement_enabled: bool = true
+## Extra verticale third-personbeeldhoek bij volle slidevaart, boven de kruipbasis.
+@export_range(0.0, 10.0, 0.25, "suffix:°") var camera_slide_fov_bonus: float = 3.0
+## Extra verticale first-personbeeldhoek bij volle slidevaart; kleiner houdt het eigen zicht rustiger.
+@export_range(0.0, 10.0, 0.25, "suffix:°") var camera_first_person_slide_fov_bonus: float = 1.5
+## Werkelijke ondersteunde slidesnelheid in m/s voor de volle bijdrage; stilstand of alleen input geeft geen bonus.
+@export_range(0.1, 30.0, 0.1, "suffix:m/s") var camera_slide_fov_reference_speed: float = 9.0
 
 @export_group("Debug")
 ## Toon lichaams-/hoofd-/input-/bewegingspijlen en de waarden voor afstelling.
@@ -473,6 +501,7 @@ func _ready() -> void:
 	ground_motion_updated.connect(_camera_pivot.capture_ground_motion)
 	posture_changed.connect(_camera_pivot.capture_posture)
 	_camera_pivot.initialize(self)
+	contact_frame_ready.connect(_camera_pivot.capture_contact)
 	_feedback.initialize(self)
 	_feedback.set_controlled(_controlled)
 	jump_accepted.connect(_feedback.capture_jump)
@@ -562,6 +591,7 @@ func get_camera_motion_sample() -> AtlasCharacterCameraMotion:
 	_camera_motion.body_yaw = global_rotation.y
 	_camera_motion.motion_profile = _movement_state()
 	_camera_motion.grounded = get_camera_grounded()
+	_camera_motion.sliding = _slide_active
 	_camera_motion.eye_height = get_eye_height()
 	_camera_motion.clearance_height = _posture_vertical_height(_posture)
 	_camera_motion.horizontal_velocity = Vector3(velocity.x, 0.0, velocity.z)

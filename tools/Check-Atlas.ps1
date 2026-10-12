@@ -25,6 +25,8 @@ try {
 		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/camera_ownership_checks.gd', '--', ('--compare=' + $cameraBaseline), '--require-separation'))
 		Write-Host 'Contactaudio, echte grondafstand en audio/physics-scheiding controleren...'
 		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/feedback_checks.gd'))
+		Write-Host 'Camera-accenten, veilige ruimte en effecten/physics-scheiding controleren...'
+		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/camera_accent_checks.gd'))
 	}
     Write-Host 'Atlas: versie, import en headless-start geslaagd.'
     exit 0

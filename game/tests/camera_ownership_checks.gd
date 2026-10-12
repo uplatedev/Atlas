@@ -5,6 +5,7 @@ extends SceneTree
 
 const CHARACTER = preload("res://characters/Character.tscn")
 const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
+const NEW_CAMERA_FIELDS = ["camera_landing_enabled", "camera_landing_max_dip", "camera_first_person_landing_max_dip", "camera_landing_min_speed", "camera_landing_full_speed", "camera_landing_attack_time", "camera_landing_recovery_time", "camera_accent_max_offset", "camera_fov_refinement_enabled", "camera_slide_fov_bonus", "camera_first_person_slide_fov_bonus", "camera_slide_fov_reference_speed"]
 const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var trace: Dictionary = {}
@@ -25,6 +26,7 @@ func _run() -> void:
 	root.add_child(world)
 	floor_body = _box(Vector3(0, -0.1, 0), Vector3(400, 0.2, 400))
 	actor = CHARACTER.instantiate() as AtlasCharacter
+	_legacy_camera(actor)
 	actor.position = Vector3(0, 0.05, 0)
 	world.add_child(actor)
 	actor.set_controlled(true)
@@ -57,10 +59,11 @@ func _test_instances_and_zoom() -> void:
 	var exports: Dictionary = {}
 	for property in actor.get_property_list():
 		var name := String(property.name)
-		if int(property.usage) & PROPERTY_USAGE_EDITOR and (name.begins_with("camera_") or name.begins_with("look_sensitivity") or name.begins_with("head_") or name in ["first_person_threshold", "crouch_eye_height", "prone_eye_height"]):
+		if name not in NEW_CAMERA_FIELDS and int(property.usage) & PROPERTY_USAGE_EDITOR and (name.begins_with("camera_") or name.begins_with("look_sensitivity") or name.begins_with("head_") or name in ["first_person_threshold", "crouch_eye_height", "prone_eye_height"]):
 			exports[name] = {"type": int(property.type), "hint": String(property.hint_string), "value": actor.get(name)}
 	trace["root_camera_exports"] = exports
 	var other: AtlasCharacter = CHARACTER.instantiate()
+	_legacy_camera(other)
 	other.position = Vector3(8, 0.05, 0)
 	other.camera_start_distance = 6.0
 	other.camera_fov_third_person = 72.0
@@ -131,6 +134,7 @@ func _test_head_render_and_logical_input() -> void:
 	actor.set_physics_process(true)
 	await _reset()
 	var twin: AtlasCharacter = CHARACTER.instantiate()
+	_legacy_camera(twin)
 	twin.position = Vector3(20, 0.05, 0)
 	world.add_child(twin)
 	twin.set_controlled(true)
@@ -322,6 +326,8 @@ func _test_render_rates() -> void:
 
 func _test_main_controls() -> void:
 	var main: Node = load("res://scenes/main.tscn").instantiate()
+	for body in main.get_node("Characters").get_children():
+		_legacy_camera(body)
 	main.set("capture_mouse_on_start", false)
 	root.add_child(main)
 	await _frames(8)
@@ -413,6 +419,13 @@ func _reset() -> void:
 	actor.camera_speed_fov_enabled = true
 	actor.set_controlled(true)
 	await _frames(10)
+
+
+func _legacy_camera(body: Node) -> void:
+	# Historische 69a8-trace blijft exact; de nieuwe varianten hebben hun eigen suite.
+	for property in body.get_property_list():
+		if String(property.name) in ["camera_landing_enabled", "camera_fov_refinement_enabled"]:
+			body.set(String(property.name), false)
 
 
 func _frames(count: int) -> void:

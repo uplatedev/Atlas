@@ -28,7 +28,8 @@ Instellingen blijven op de Character-root, met eigen Nederlandse uitleg per veld
 | Camera: zoom en botsing | Afstanden, zoomstap, first-personovergang, camera-volume en veilige volgingstijden |
 | Camera: positievolging | Subtiele positievolging voor beide views en maximale achterstand; 0 schakelt de extra vertraging uit |
 | Camera: subtiele nawerking | Aan/uit, maximale veeruitslag, hersteltijd, snelheidsdrempels en afzonderlijk first-persongebruik |
-| Camera: beeldhoek | Verticale FOV voor beide views, sprintbonus, offsets voor sneak/kruip/lig en overgangstijden |
+| Camera: beeldhoek | Verticale FOV voor beide views, sprintbonus, offsets voor sneak/kruip/lig, lucht-/slidevariant en overgangstijden |
+| Camera: landing | Aan/uit, eigen TP-/FP-dip, impactsnelheden, aanzet-/hersteltijd en gezamenlijk budget voor remveer en landing |
 
 De gedeelde vermoeidheid wordt groter na geslaagde sprongen en herstelt uitsluitend op de grond. Herhaald springen geeft lagere sprongen en minder extra sprintafstand. Gewone loopsnelheid blijft gelijk. Een sprongbonus kan ook met vermoeidheid uit nooit opnieuw op de vorige bonus stapelen. De debug toont krachtverlies en het vastgelegde snelheidsbudget.
 
@@ -47,6 +48,14 @@ De stand-, kruip- en ligcapsules houden hun voetzool als grondanker. Totale caps
 Vooruit > zijwaarts > achteruit is de standaardvolgorde voor iedere beweging. Twee inputs tellen geen snelheden op. Alle houdingen starten met opstapgrens 0.35 m; een eigen lagere grens kan een anders geldige trede voor die houding blokkeren. Opstappen is geen automatisch klimmen over hoge muren.
 
 Een stilstaande sprong gaat hoog, een lopende middelhoog en een sprint laag maar extra ver. Werkelijke afzetsnelheid bepaalt het profiel, ook wanneer Shift net is losgelaten; een korte aanloop geeft minder afstand. Luchtinput bouwt geen volle sprint op vanuit een trage afzet. A/D en camerahoek sturen licht binnen het oorspronkelijke snelheidsbudget. Handmatig kruip/lig kiezen bewaart de vluchtvaart; tegeninput (S bij voorwaartse vlucht) remt geleidelijk en verlaagt ook het resterende snelheidsbudget. Alleen Ctrl tijdens een sprong start bij landing een slide met wrijving, duur en beperkte sturing, zonder boost. Z-lig en Ctrl op de grond geven geen slide. Na slide automatisch staan als dat veilig past; onder een laag plafond blijft de capsule automatisch kruipen en richt later veilig op. De slide legt geen blijvende handmatige kruipvoorkeur vast. Een lage landing zonder slide gebruikt meteen de eigen kruip-/liglimiet. Wrijving, duur, sturing en einddrempel zijn onafhankelijk instelbaar; de nieuwste proef verlaagt wrijving en verlengt duur. Tegeninputrem staat op 8 m/s². Dit vervangt de eerste T-005-luchtstop. Sneak is een eigen lage sprong. Kosten en minimumkracht van sprongvermoeidheid staan als factoren: 0.25 is 25 procentpunten. Hersteltijd is grondtijd vanaf 100% vermoeidheid; een kleinere schuld herstelt evenredig sneller. Een nog niet herstelde reeks bewaart haar langzaamste herstelinstelling.
+
+## Camera-accenten en vergelijking
+
+[T-009](../work/T-009.md) voegt een kleine contactreactie en een afzonderlijke lucht-/slide-FOV-variant toe. F7 schakelt de landing van de actieve instance; F9 vergelijkt alleen de nieuwe FOV-mapping. F4 behoudt de eerdere vergelijking van alle dynamische FOV. De HUD toont de actieve keuzes. CameraRig bezit de effecten; fysieke contactdata sturen ze onafhankelijk van audio.
+
+TP heeft maximaal 1 cm landingsdip, FP standaard 0. Het is één kort neerwaarts accent met rustig herstel, samen met de bestaande remveer begrensd tot 4 cm en met alle volglag binnen de bestaande totale 12 cm. De veilige camerasphere kan het effect verder beperken. Een geldige opstap en eerste spawncontact geven geen dip. De Inspector heeft eigen sterktes, impactdrempels, tijden en een schakelaar; nul sterkte schakelt verplaatsing eveneens uit.
+
+Tijdens staan in de lucht blijft de oorspronkelijke afzetmix de bovengrens; afgenomen vaart neemt de FOV rustig terug, zonder nieuwe bijdrage uit de sprongbonus of cameradraaien. Actieve slides krijgen maximaal +3° TP / +1,5° FP boven kruipbasis, bij 9 m/s of meer. Onder die referentie neemt de bijdrage met de echte slidevaart af. Gewone kruip krijgt geen slidebonus. De bestaande FOV-overgangstijden blijven gelden; de refinement-schakelaar uit geeft de vroegere lucht-/slidemapping terug. Dit zijn afstelbare proefdefaults, nog geen beoordeeld ideaal gevoel.
 
 ## Contactaudio en vergelijking
 

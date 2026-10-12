@@ -7,6 +7,7 @@ extends RefCounted
 var body_yaw: float = 0.0
 var motion_profile: String = "lopen"
 var grounded: bool = false
+var sliding: bool = false
 var eye_height: float = 1.62
 var clearance_height: float = 1.8
 var horizontal_velocity: Vector3 = Vector3.ZERO
