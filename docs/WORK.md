@@ -4,7 +4,7 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
-De nieuwste Character-proef blijft lokaal klaar op `69a8d9d7`; het gevoel wacht op verdere beoordeling. Vóór verder bouwen is T-006 uitgevoerd: juice-inventaris, primaire bronnen en voorstel voor contactaudio, kleine camera-accenten, gerichte FOV-afstemming en separation of concerns. De tijdelijke capsule is buiten de polishbeoordeling gelaten. Kleine gameplaytuning is afzonderlijk voorgesteld; geen gameplay of camera is in dit onderzoek veranderd. LAN en Steam volgen na afzonderlijke afstemming over eigenaarschap en synchronisatie.
+T-007 voert de eerste stap van het T-006-voorstel uit: camera-uitvoering en runtimegeheugen scheiden met behoud van het bestaande speelgedrag en de Inspector-ingang. Checkpoint `9d9500a1` is gepubliceerd en staat schoon in de vaste Atlas-map; import/start, vier suites en vóór/na-pariteit slagen ook op die werkelijke testlocatie. Contactaudio en aanvullende camera-accenten worden afzonderlijke volgende stappen. De tijdelijke capsule valt buiten polish. T-005-gevoel blijft te beoordelen; LAN en Steam vereisen nog afzonderlijke afstemming.
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -14,17 +14,20 @@ De nieuwste Character-proef blijft lokaal klaar op `69a8d9d7`; het gevoel wacht 
 | T-003 | Movement, camera en houdingen onderzoeken | Afgerond; voorstel bevestigd voor uitvoering | atlas-T003-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-003-movement-camera-onderzoek` (documentatiecheckpoint; geheugen op main) | Geen onderzoekafhankelijkheid meer; uitvoering in T-004 |
 | T-004 | Movement, camera, hoofd en houdingen implementeren | Gespeeld; feedback wordt in T-005 verwerkt | atlas-T004-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-004-character-movement` | Historische proef bewaren; gevoel niet geaccepteerd |
 | T-005 | Charactergevoel en houdingknoppen verfijnen | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T005-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-005-character-verfijnen` | Slidesprong, directe lig-terugkeer en automatische route lokaal spelen |
-| T-006 | Juice inventariseren en onderzoeken | Onderzoek afgerond; voorstel beschikbaar | atlas-T006-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-006-juice-onderzoek` | Eerste vergelijkingsproef kiezen: camera-eigenaarschap, daarna contactaudio |
-| T-007 | Camera-eigenaarschap scheiden, stap 1 | Gereserveerd; uitvoering gestart | atlas-T007-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-007-camera-scheiden` | Gelijk gedrag bewijzen en lokaal testcheckpoint klaarzetten |
+| T-006 | Juice inventariseren en onderzoeken | Onderzoek afgerond; voorstel beschikbaar | atlas-T006-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-006-juice-onderzoek` | Onderzoek klaar; camera-uitvoering volgt in T-007, daarna contactaudio |
+| T-007 | Camera-eigenaarschap scheiden, stap 1 | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T007-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-007-camera-scheiden` | Zelfde gevoel kort lokaal beoordelen; daarna contactaudio |
 
 ## T-007 — Camera-eigenaarschap scheiden, stap 1
 
 Reservering door `atlas-T007-20261012-01a12fd0`, STELLAR-FORGE (Windows), vanaf main `80f3e5094baa85e1ec2963dfb5b5931f8375206a`. Gebruiker vraagt op 12 oktober 2026 het T-006-voorstel stapsgewijs uit te voeren. Eerste stap: resterende camera-uitvoering/geheugen uit Character halen, expliciete logische kijkrichting als movementinvoer en camera-eigen viewmask. De bestaande Inspector-ingang, overrides, camera- en gameplaywaarden blijven behouden. Basis speelbron `69a8d9d7`. Geen contactaudio, nieuwe camera-accenten/FOV-mapping, gameplaytuning of capsulepolish in deze stap.
 
-- **Gebouwd:** nog geen nieuwe code; claim voor werkbranch `Smyl3z/T-007-camera-scheiden`.
-- **Technisch gecontroleerd:** actuele remote, schone speelbron en GitHub-schrijfidentiteit gecontroleerd; bestaande suites vormen de regressiebasis.
+- **Gebouwd:** CameraRig als enige view-eigenaar, typed fysieke motiondata, logische kijkinput, geaccepteerde controller-gebeurtenissen en eigen hoofddebug. Alle 124 Inspector-velden/defaults/beschrijvingen en scene-overrides behouden. Geen nieuwe effecten of gameplaytuning. Details in [work/T-007.md](work/T-007.md).
+- **Technisch gecontroleerd:** Godot 4.7.2 import/start en alle vier suites slagen. De 69a8-baseline is tweemaal stabiel; nieuwe bron vergelijkt 5.611 numerieke waarden met grootste gemeten afwijking 0.00000000. Werkelijk FP-eigen zicht, render-/physicskoppeling, live settings, twee instances en vroege scene-aanroepen gecontroleerd; review-randen opgelost. Bewijs en herhaalroute bij de taak.
 - **Door de gebruiker beoordeeld:** stapsgewijze uitvoering gevraagd. Gelijkblijvend gevoel wordt na technische controle lokaal beoordeeld; T-005-oordeel blijft open.
-- **Volgende stap:** camera-uitvoering scheiden, gerichte parity-/ownershipchecks en bestaande physicsuites, publiceren en vaste lokale proef bijwerken. Daarna contactaudio als afzonderlijke stap.
+- **Volgende stap:** speel dezelfde routes kort in TP/FP; deze refactor hoort hetzelfde aan te voelen. Daarna contactaudio als afzonderlijke stap toevoegen en beoordelen.
+
+
+Gepubliceerd checkpoint [`9d9500a1ab552561be73daf2ec1ac4758e6940b4`](https://github.com/uplatedev/Atlas/commit/9d9500a1ab552561be73daf2ec1ac4758e6940b4), exacte bronboom `c47725fc59c9b73f918b4172c057e8ab801a58fd` gelijk aan het gecontroleerde ontwikkelcheckpoint. De vaste Atlas-map staat schoon op exact die commit via `Smyl3z/lokaal-testen-T007`. Daar zijn import/start en alle vier suites [opnieuw geslaagd](work/T-007/local-validation.txt), exitcode0, 5.611 numerieke vergelijkingen met grootste afwijking 0.00000000. Lokale HUD-metadata toont `9d9500a1`. Project-/InputEventKey-instellingen, scene-overrides en lokale engineconfig behouden; geen Godot-proces open bij overdracht en geen andere pc bijgewerkt. Main bevat dit gedeelde geheugen; gameplay blijft op de werkbranch tot noodzakelijke beoordeling.
 
 ## T-006 — Juice inventariseren en onderzoeken
 
@@ -33,7 +36,7 @@ Reservering door `atlas-T006-20261012-01a12fd0`, STELLAR-FORGE (Windows), gepubl
 - **Gebouwd:** [onderzoeksverslag T-006](work/T-006.md) met bestaande camera-/wereldfeedback, ontbrekende contactaudio/actiefeedback, twee concrete FOV-mappings, kleine tuningopties en bronmatige architectureaudit. Voorstel: camera als enige eigenaar, controller met physicsregels, afzonderlijke feedback en één begrijpelijke scene/Inspector-ingang.
 - **Technisch gecontroleerd:** read-only audit met `git show`/getrackte inventaris/searches op exact `69a8d9d7`; drie onafhankelijke audits en primaire GDC-slides/sessiebeschrijvingen plus engine-documentatie. Geen audio-assets/AudioStreamPlayer/contactpartikels in de gamebron. Camera kent al echte uitvoering, Character heeft dubbele afstand/threshold/fallbacks en camera-specifiek vluchtgeheugen. Nieuwe code-/engine-/luisterproeven waren niet onderdeel van dit onderzoek; code en tools blijven ongewijzigd.
 - **Door de gebruiker beoordeeld:** onderzoek, lichte tuningruimte, uitsluiting van capsulepolish en separation of concerns expliciet gevraagd. Effecten, proefwaarden en Resource-migratie zijn voorstellen, geen geaccepteerde of geïmplementeerde nieuwe defaults. Bestaand positief cameraoordeel blijft bewaard.
-- **Volgende stap:** kies de eerste uitvoering/proef. Aanbevolen: camerarestlogica gecontroleerd scheiden met gelijk gedrag, vervolgens contactaudio, daarna een kleine landings-/FOV-vergelijking. Nieuwe feedback wordt apart beoordeeld; geen afhankelijk multiplayerwerk gestart.
+- **Volgende stap:** stapsgewijze uitvoering gevraagd; camera-eigenaarschap eerst in T-007, daarna contactaudio en een afzonderlijke landings-/FOV-vergelijking. Nieuwe feedback wordt apart beoordeeld; geen afhankelijk multiplayerwerk gestart.
 
 ## T-005 — Charactergevoel en houdingknoppen verfijnen
 
