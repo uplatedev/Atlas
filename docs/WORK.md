@@ -14,6 +14,11 @@ De gebruiker heeft T-004 gespeeld en concrete feedback gegeven; de eerste T-005-
 | T-003 | Movement, camera en houdingen onderzoeken | Afgerond; voorstel bevestigd voor uitvoering | atlas-T003-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-003-movement-camera-onderzoek` (documentatiecheckpoint; geheugen op main) | Geen onderzoekafhankelijkheid meer; uitvoering in T-004 |
 | T-004 | Movement, camera, hoofd en houdingen implementeren | Gespeeld; feedback wordt in T-005 verwerkt | atlas-T004-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-004-character-movement` | Historische proef bewaren; gevoel niet geaccepteerd |
 | T-005 | Charactergevoel en houdingknoppen verfijnen | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T005-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-005-character-verfijnen` | Slidesprong, directe lig-terugkeer en automatische route lokaal spelen |
+| T-006 | Juice inventariseren en onderzoeken | Gereserveerd; onderzoek | atlas-T006-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-006-juice-onderzoek` | Bestaande feedback inventariseren en concreet voorstel onderbouwen |
+
+## T-006 — Juice inventariseren en onderzoeken
+
+Reservering door `atlas-T006-20261012-01a12fd0`, STELLAR-FORGE (Windows), beoogde werkbranch `Smyl3z/T-006-juice-onderzoek`. Gebruikersopdracht 12 oktober 2026: vóór verder bouwen onderzoeken welke juice aanwezig is, waar feedback ontbreekt en hoe de huidige Character-proef beter kan voelen. De gebruiker staat bij dit onderzoek ook kleine verbeteringen aan snelheid, sprongen, botsing of besturing toe als die iets toevoegen; onderscheid zulke voorstellen van presentatie. Scope: broninventaris van `69a8d9d7`, primaire bronnen, prioriteiten en korte vergelijkingsproef. Geen implementatie in deze onderzoekstaak; vaste lokale speelversie behouden. T-005-beoordeling blijft open.
 
 ## T-005 — Charactergevoel en houdingknoppen verfijnen
 
