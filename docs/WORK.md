@@ -12,6 +12,7 @@ De eerste lokale Character-/editorproef staat op de T-002-werkbranch en in de va
 | T-001 | Character-fundering bespreken | Besproken en vastgelegd; afgerond | atlas-character-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-001-character-fundering` (lokale documentatiebranch; geheugen op main) | Uitvoering en beoordeling volgen in T-002 |
 | T-002 | Lokale Character- en levelproef | Feedback ontvangen; bunnyhopfout bevestigd, acceptatie open | atlas-T002-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-002-character-proef` | Vervolgfundering uit T-003 beoordelen; huidige proef behouden |
 | T-003 | Movement, camera en houdingen onderzoeken | Onderzoek afgerond; voorstel ter beoordeling, geen gameplaywijzigingen | atlas-T003-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-003-movement-camera-onderzoek` (documentatiecheckpoint; geheugen op main) | Aanpak beoordelen, daarna implementatieclaim en lokale speelproef |
+| T-004 | Movement, camera, hoofd en houdingen implementeren | Gereserveerd; goedgekeurd voorstel uitvoeren | atlas-T004-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-004-character-movement` | T-003 uitvoeren met afzonderlijke begrensde hoofdrichting en camera-afremming aan de hoofdgrens; gecontroleerd checkpoint lokaal klaarzetten |
 
 ## T-000 — Projectbasis opzetten
 
