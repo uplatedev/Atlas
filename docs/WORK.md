@@ -11,6 +11,7 @@ De eerste lokale Character-/editorproef is gebouwd en technisch gecontroleerd op
 | T-000 | Projectbasis opzetten | Afgerond | atlas-bootstrap-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-000-projectbasis` (geïntegreerd; opruiming zie hieronder) | Geen inhoudelijk bootstrapwerk meer; vervolg in T-002 |
 | T-001 | Character-fundering bespreken | Besproken en vastgelegd; afgerond | atlas-character-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-001-character-fundering` (lokale documentatiebranch; geheugen op main) | Uitvoering en beoordeling volgen in T-002 |
 | T-002 | Lokale Character- en levelproef | Gepubliceerd en lokaal klaar; gebruikersproef en acceptatie open | atlas-T002-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-002-character-proef` | Gevoel en editorbediening laten beoordelen |
+| T-003 | Movement, camera en houdingen onderzoeken | Gereserveerd; onderzoek en voorstel vóór gameplaywijzigingen | atlas-T003-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-003-movement-camera-onderzoek` | Primaire bronnen onderzoeken, bunnyhop reproduceren en concrete voorstellen voorleggen |
 
 ## T-000 — Projectbasis opzetten
 
