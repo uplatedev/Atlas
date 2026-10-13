@@ -22,6 +22,7 @@ func _run() -> void:
 	root.add_child(world)
 	_box(Vector3(0, -0.1, 0), Vector3(400, 0.2, 400))
 	actor = CHARACTER.instantiate() as AtlasCharacter
+	actor.procedural_enabled = false
 	actor.position = Vector3(0, 0.05, 0)
 	world.add_child(actor)
 	actor.set_controlled(true)
@@ -194,7 +195,13 @@ func _test_ground_slide_feedback() -> void:
 	await _pulse("crouch")
 	await _frames(3)
 	_expect(_flag("slide_active") and bool(_state().get("slide_loop_active", false)) and bool(_state().get("slide_audio_playing", false)), "sprintgrondslide start een echte schuurlaag zonder voorafgaande sprong")
-	await _frames(12)
+	Input.action_press("crouch")
+	var uninterrupted := true
+	for frame in 12:
+		await _frames(1)
+		uninterrupted = uninterrupted and _flag("slide_active") and bool(_state().get("slide_loop_active", false)) and bool(_state().get("slide_audio_playing", false))
+	Input.action_release("crouch")
+	_expect(uninterrupted and str(actor.get_debug_state().manual_posture) == "kruipen", "C tijdens actieve slide laat de echte schuurloop onafgebroken doorspelen")
 	var false_landing := false
 	for index in range(contact_before, contacts.size()):
 		false_landing = false_landing or bool(contacts[index].landed)
@@ -210,6 +217,7 @@ func _test_routing_and_instances() -> void:
 	actor.set("feedback_volume_variation_db", 0.0)
 	await _reset()
 	var other: AtlasCharacter = CHARACTER.instantiate()
+	other.procedural_enabled = false
 	other.position = Vector3(20, 0.05, 0)
 	other.walk_step_distance = actor.walk_step_distance * 2.0
 	world.add_child(other)
@@ -306,6 +314,8 @@ func _sprint_jump() -> void:
 
 func _test_main_tab() -> void:
 	var main: Node = load("res://scenes/main.tscn").instantiate()
+	for body in main.get_node("Characters").get_children():
+		body.procedural_enabled = false
 	main.set("capture_mouse_on_start", false)
 	root.add_child(main)
 	await _frames(8)

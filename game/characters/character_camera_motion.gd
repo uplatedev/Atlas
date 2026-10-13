@@ -19,3 +19,6 @@ var body_shape_transform: Transform3D = Transform3D.IDENTITY
 var excluded_body: RID
 var presentation_layer: int = 0
 var standing_radius: float = 0.35
+
+var air_kind: String = "none"
+var stride_offset_y: float = 0.0

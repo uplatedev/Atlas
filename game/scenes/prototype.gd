@@ -48,6 +48,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				for character in characters:
 					character.reset_to_spawn()
 				get_viewport().set_input_as_handled()
+			KEY_I:
+				if not characters.is_empty():
+					# Dezelfde impuls in wereldrichting voor de drie massa's.
+					characters[active_index].apply_impulse(Vector3(450.0, 180.0, 0.0))
+				get_viewport().set_input_as_handled()
 			KEY_F3:
 				debug_visible = not debug_visible
 				for character in characters:
@@ -120,6 +125,7 @@ func _process(delta: float) -> void:
 		"aan" if state.get("air_braking", false) else "uit",
 		clampf(float(state.get("fatigue", 0.0)), 0.0, 1.0) * 100.0,
 	]
+	debug_label.text += "\nLucht %s · pas %d · massa %.0f kg\nI: dezelfde zijwaartse testimpuls" % [str(state.get("air_kind", "none")), int(state.get("step_index", 0)), character.body_profile.mass_kg]
 	mouse_hint.visible = Input.mouse_mode != Input.MOUSE_MODE_CAPTURED
 
 

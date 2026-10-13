@@ -18,6 +18,7 @@ func _run() -> void:
 	root.add_child(world)
 	_add_box(Vector3(0, -0.1, 0), Vector3(120, 0.2, 120))
 	character = CHARACTER.instantiate() as AtlasCharacter
+	character.procedural_enabled = false
 	character.position = Vector3(0, 0.05, 0)
 	world.add_child(character)
 	character.set_controlled(true)

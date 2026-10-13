@@ -27,6 +27,10 @@ try {
 		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/feedback_checks.gd'))
 		Write-Host 'Camera-accenten, veilige ruimte en effecten/physics-scheiding controleren...'
 		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/camera_accent_checks.gd'))
+		foreach ($suite in @('procedural_motor_checks', 'procedural_presentation_checks', 'procedural_integration_checks', 'procedural_terrain_checks', 'procedural_knee_checks')) {
+			Write-Host "Procedurele Character-proef: $suite..."
+			Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', "res://tests/$suite.gd"))
+		}
 	}
     Write-Host 'Atlas: versie, import en headless-start geslaagd.'
     exit 0

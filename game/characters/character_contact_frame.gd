@@ -15,3 +15,17 @@ var sliding: bool = false
 var jumped: bool = false
 var landed: bool = false
 var world_position: Vector3 = Vector3.ZERO
+
+## Procedurele pasgegevens; steun blijft de werkelijke collisionuitkomst.
+var procedural_enabled: bool = false
+var air_kind: String = "none"
+var stride_started: bool = false
+var stride_landed: bool = false
+## Gesteunde voetwissel wanneer plafond of curve de pasvlucht verhindert.
+var ground_step: bool = false
+var step_index: int = 0
+var gait_phase: float = 0.0
+var body_velocity: Vector3 = Vector3.ZERO
+var body_transform: Transform3D = Transform3D.IDENTITY
+## Presentatie voegt echte voetcontacten toe vóór audio/camera dit frame lezen.
+var foot_contacts: Array[Vector3] = []

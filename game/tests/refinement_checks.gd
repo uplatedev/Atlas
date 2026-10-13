@@ -19,6 +19,7 @@ func _run() -> void:
 	root.add_child(world)
 	_add_box(Vector3(0, -0.1, 0), Vector3(400, 0.2, 400))
 	character = CHARACTER.instantiate() as AtlasCharacter
+	character.procedural_enabled = false
 	character.position = Vector3(0, 0.05, 0)
 	world.add_child(character)
 	character.set_controlled(true)
@@ -37,8 +38,12 @@ func _run() -> void:
 	await _test_slide_default_range()
 	await _test_slide_step_boundary(true)
 	await _test_slide_safe_restore(true)
+	await _test_slide_c_preference()
+	await _test_slide_c_preference(true)
 	await _test_slide_jump()
 	await _test_slide_jump(true)
+	await _test_slide_jump(false, true)
+	await _test_slide_jump(true, true)
 	await _test_slide_jump_negative_cases()
 	await _test_repeated_slide_jumps()
 	await _test_explicit_posture_controls()
@@ -533,53 +538,95 @@ func _test_slide_safe_restore(ground_entry: bool = false) -> void:
 		premature_stand = premature_stand or character.get_posture() == 0
 	await _frames(15)
 	_expect(not premature_stand and not _flag("slide_active") and character.get_posture() == 1 and str(character.get_debug_state().get("manual_posture", "")) == "staan", "slide-einde onder 1.20m plafond blijft veilig automatisch kruip met voorkeur staan")
+	var saw_prone := false
+	var retriggered := false
+	for i in 700:
+		await _frames(1)
+		saw_prone = saw_prone or character.get_posture() == 2
+		retriggered = retriggered or _flag("slide_pending") or _flag("slide_active")
+	_expect(not saw_prone and character.position.z > landing.z - 16.9, "staande voorkeur blokkeert de ligingang ook na automatisch kruipherstel uit een slide")
+	_expect(not retriggered and str(character.get_debug_state().get("manual_posture", "")) == "staan", "de geblokkeerde herstelroute bewaart staan en maakt geen tweede slide")
+	await _pulse("crouch")
 	var transitions: Array[int] = [character.get_posture()]
 	var adjacent := true
-	var retriggered := false
-	for i in 850:
+	for i in 600:
 		await _frames(1)
 		retriggered = retriggered or _flag("slide_pending") or _flag("slide_active")
 		if transitions[-1] != character.get_posture():
 			adjacent = adjacent and absi(transitions[-1] - character.get_posture()) == 1
 			transitions.append(character.get_posture())
-		if character.position.z < landing.z - 24.2 and character.get_posture() == 0:
+		if character.position.z < landing.z - 24.2 and character.get_posture() == 1:
 			break
-	_expect(transitions.has(2) and adjacent and character.position.z < landing.z - 24.2 and character.get_posture() == 0, "na een lage slide-uitgang volgt automatisch kruip-lig-kruip-staan zonder handmatige druk")
-	_expect(not retriggered and str(character.get_debug_state().get("manual_posture", "")) == "staan", "herstelroute verandert de staande voorkeur niet en maakt geen tweede slide")
-	print("MEASURE: low slide exit postures %s; adjacent %s; relative z %.3f" % [str(transitions), adjacent, character.position.z - landing.z])
+	_expect(transitions.has(2) and adjacent and character.position.z < landing.z - 24.2 and character.get_posture() == 1, "expliciete C na slideherstel geeft veilige kruip-lig-kruip doorgang")
+	_expect(not retriggered and str(character.get_debug_state().get("manual_posture", "")) == "kruipen", "expliciete lage herstelroute bewaart kruip zonder tweede slide")
 	crouch_roof.queue_free()
 	prone_roof.queue_free()
 	await _frames(3)
-	# De skill forceert tijdelijk kruip, maar mag een nog lager geldig pad niet
-	# blokkeren. Automatisch lig annuleert de kruipslide en gebruikt het ligbudget.
-	await _begin_slide(ground_entry)
-	landing = character.position
-	var slide_prone_roof := _add_box(landing + Vector3(0, 0.9, -3), Vector3(8, 0.2, 4))
-	var saw_prone := false
-	var prone_skill := false
-	var safe_prone_budget := true
-	for i in 320:
-		await _frames(1)
-		if character.get_posture() == 2:
-			saw_prone = true
-			prone_skill = prone_skill or _flag("slide_pending") or _flag("slide_active")
-			safe_prone_budget = safe_prone_budget and _speed() <= _ground_speed_limit("liggen") + 0.03
-		if character.position.z < landing.z - 6.1 and character.get_posture() == 0:
-			break
-	_expect(saw_prone and not prone_skill and safe_prone_budget, "een ligingang tijdens actieve kruipslide verlaagt veilig, annuleert de skill en laat geen ligslide of overvaart achter")
-	_expect(character.position.z < landing.z - 6.1 and character.get_posture() == 0 and str(character.get_debug_state().get("manual_posture", "")) == "staan", "ook een ligingang tijdens de skill herstelt daarna veilig de staande voorkeur")
-	print("MEASURE: active slide prone entry %s; lingering skill %s; legal speed %s; relative z %.3f" % [saw_prone, prone_skill, safe_prone_budget, character.position.z - landing.z])
-	slide_prone_roof.queue_free()
-	await _frames(3)
-	for cancel_action in ["crouch", "prone"]:
+	# Dezelfde lage ingang tijdens de skill: alleen expliciete kruip geeft lig vrij.
+	for choose_manual_crouch in [false, true]:
 		await _begin_slide(ground_entry)
-		_expect(_flag("slide_active"), "expliciete houdingkeuze wordt tijdens een echte slide getoetst")
-		await _pulse(cancel_action)
-		await _frames(45)
-		var expected_posture := 1 if cancel_action == "crouch" else 2
-		var expected_manual := "kruipen" if cancel_action == "crouch" else "liggen"
-		_expect(not _flag("slide_pending") and not _flag("slide_active") and character.get_posture() == expected_posture and str(character.get_debug_state().get("manual_posture", "")) == expected_manual, "%s tijdens de skill annuleert en bewaart de expliciete houding in plaats van later automatisch op te richten" % cancel_action)
+		if choose_manual_crouch:
+			await _pulse("crouch")
+			_expect(_flag("slide_active"), "C bewaart de actieve skill vóór de lagere ingang")
+		landing = character.position
+		var slide_prone_roof := _add_box(landing + Vector3(0, 0.9, -3), Vector3(8, 0.2, 4))
+		saw_prone = false
+		var prone_skill := false
+		var safe_prone_budget := true
+		for i in 400:
+			await _frames(1)
+			if character.get_posture() == 2:
+				saw_prone = true
+				prone_skill = prone_skill or _flag("slide_pending") or _flag("slide_active")
+				safe_prone_budget = safe_prone_budget and _speed() <= _ground_speed_limit("liggen") + 0.03
+			if character.position.z < landing.z - 6.1 and character.get_posture() == 1:
+				break
+		if choose_manual_crouch:
+			_expect(saw_prone and not prone_skill and safe_prone_budget, "handmatige kruip laat de slide veilig overgaan in lig zonder ligslide of overvaart")
+			_expect(character.position.z < landing.z - 6.1 and character.get_posture() == 1 and str(character.get_debug_state().get("manual_posture", "")) == "kruipen", "lage ingang na C tijdens slide herstelt de gekozen kruipvoorkeur")
+		else:
+			_expect(not saw_prone and character.position.z > landing.z - 0.9 and str(character.get_debug_state().get("manual_posture", "")) == "staan", "actieve slide met staande voorkeur blokkeert de lagere ingang zonder automatisch lig")
+		slide_prone_roof.queue_free()
+		await _frames(3)
+	await _begin_slide(ground_entry)
+	await _pulse("prone")
+	_expect(not _flag("slide_pending") and not _flag("slide_active") and character.get_posture() == 2 and str(character.get_debug_state().get("manual_posture", "")) == "liggen", "Z annuleert de actieve slide direct en bewaart expliciete lig")
 
+
+func _test_slide_c_preference(ground_entry: bool = false) -> void:
+	# Twee echte gelijke trajecten: alleen C verschilt. Dit detecteert ook een
+	# timerrestart, een kort remdipje of een verborgen boost tijdens de skill.
+	var reference: Array[Dictionary] = []
+	for choose_crouch in [false, true]:
+		await _begin_slide(ground_entry)
+		var start := character.position
+		var ended := false
+		for frame in 100:
+			if choose_crouch:
+				if frame in [2, 6, 10]:
+					Input.action_press("crouch")
+				elif frame == 3:
+					Input.action_release("crouch")
+			await _frames(1)
+			var sample := {"active": _flag("slide_active"), "time": float(character.get_debug_state().slide_time_left), "speed": _speed(), "position": character.position - start}
+			if not choose_crouch:
+				reference.append(sample)
+			else:
+				_expect(frame < reference.size(), "C verlengt de echte slide niet")
+				if frame < reference.size():
+					var expected: Dictionary = reference[frame]
+					_expect(sample.active == expected.active and absf(sample.time - expected.time) < 0.00001, "nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject")
+					if sample.active:
+						_expect(absf(sample.speed - expected.speed) < 0.0001 and sample.position.distance_to(expected.position) < 0.0001, "C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost")
+				if frame >= 2:
+					_expect(str(character.get_debug_state().manual_posture) == "kruipen", "C tijdens slide bewaart kruip als voorkeur na afloop")
+			if not sample.active:
+				ended = true
+				break
+		_expect(ended, "slide eindigt binnen haar begrensde duur, ook met vastgehouden C")
+		await _frames(25)
+		_expect(not _flag("slide_active") and not _flag("slide_pending") and character.get_posture() == (1 if choose_crouch else 0), "natuurlijk slide-einde volgt de gekozen voorkeur zonder herstart door held-C")
+		Input.action_release("crouch")
 
 func _test_slide_default_range() -> void:
 	var duration := _setting("crouch_slide_duration", 0.75)
@@ -611,8 +658,11 @@ func _coast_slide_range() -> Dictionary:
 	return {"frames": frames, "travel": Vector2(character.position.x - start.x, character.position.z - start.z).length(), "launch": launch, "max_speed": max_speed}
 
 
-func _test_slide_jump(ground_entry: bool = false) -> void:
+func _test_slide_jump(ground_entry: bool = false, choose_crouch: bool = false) -> void:
 	await _active_slide(ground_entry)
+	if choose_crouch:
+		await _pulse("crouch")
+		_expect(_flag("slide_active") and str(character.get_debug_state().manual_posture) == "kruipen", "slide-sprong wordt ook getest na C-voorkeur tijdens de skill")
 	var horizontal := Vector3(character.velocity.x, 0, character.velocity.z)
 	var speed_before := horizontal.length()
 	var fatigue_before := float(character.get_debug_state().get("fatigue", 0.0))
@@ -873,8 +923,8 @@ func _test_automatic_posture_policy() -> void:
 			transitions.append(character.get_posture())
 		if character.position.z < -6.1 and character.get_posture() == 0:
 			break
-	_expect(transitions.has(1) and transitions.has(2) and adjacent and character.position.z < -6.1, "automatisch staan bereikt een ligingang via een werkelijk gemeten kruipframe, nooit rechtstreeks staan naar lig")
-	_expect(character.get_posture() == 0 and str(character.get_debug_state().get("manual_posture", "")) == "staan", "na een automatische ligingang herstelt de hoogste veilige houding zonder handmatige voorkeur te wijzigen")
+	_expect(not transitions.has(2) and adjacent and character.position.z > -0.9, "staande voorkeur blokkeert een ligingang en verlaagt nooit automatisch tot lig")
+	_expect(str(character.get_debug_state().get("manual_posture", "")) == "staan", "de geblokkeerde ligingang verandert de handmatige staande voorkeur niet")
 	_expect(not unexpected_slide, "automatisch kruip en lig voorbereiden of starten geen slide")
 	print("MEASURE: auto direct low passage postures %s; adjacent %s; z %.3f" % [str(transitions), adjacent, character.position.z])
 	_release_inputs()
@@ -907,7 +957,10 @@ func _test_automatic_posture_policy() -> void:
 			if character.position.z < -8.1 and character.get_posture() == (1 if choose_manual_crouch else 0):
 				restored = true
 				break
-		_expect(transitions.has(2) and adjacent and restored, "getrapte kruip-naar-ligdoorgang passeert en herstelt %s via veilige tussenhoudingen" % ("handmatige kruip" if choose_manual_crouch else "automatisch staan"))
+		if choose_manual_crouch:
+			_expect(transitions.has(2) and adjacent and restored, "expliciete C tijdens automatisch kruip geeft toegang tot ligruimte en herstelt kruip")
+		else:
+			_expect(not transitions.has(2) and adjacent and not restored and character.position.z > -4.9, "automatisch kruip met staande voorkeur geeft geen sluiproute naar automatisch lig")
 		_expect(str(character.get_debug_state().get("manual_posture", "")) == ("kruipen" if choose_manual_crouch else "staan") and not unexpected_slide, "lage route bewaart de gekozen voorkeur zonder slide-skill")
 		print("MEASURE: stepped low route manualC %s; postures %s; z %.3f; restored %s" % [choose_manual_crouch, str(transitions), character.position.z, restored])
 		_release_inputs()

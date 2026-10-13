@@ -18,6 +18,7 @@ func _run() -> void:
 	root.add_child(world)
 	_add_box(Vector3(0, -0.1, 0), Vector3(300, 0.2, 300))
 	character = CHARACTER.instantiate() as AtlasCharacter
+	character.procedural_enabled = false
 	character.position = Vector3(0, 0.05, 0)
 	world.add_child(character)
 	character.set_controlled(true)
@@ -220,8 +221,8 @@ func _test_low_passages() -> void:
 		previous_posture = current
 		saw_crouch = saw_crouch or current == 1
 		saw_prone = saw_prone or current == 2
-	_expect(saw_crouch and saw_prone and adjacent and character.position.z < -5.9, "staande voorkeur passeert een ligingang automatisch via een echte kruiptussenhouding")
-	_expect(character.get_posture() == 0 and str(character.get_debug_state().get("manual_posture", "")) == "staan", "automatische ligingang herstelt de hoogste veilige staande voorkeur")
+	_expect(not saw_prone and adjacent and character.position.z > -0.9, "staande voorkeur blokkeert vóór de ligingang zonder automatisch te gaan liggen")
+	_expect(str(character.get_debug_state().get("manual_posture", "")) == "staan", "de geblokkeerde ligingang bewaart de staande voorkeur")
 	await _reset()
 	character.request_posture(1)
 	await _frames(3)
@@ -334,6 +335,8 @@ func _test_camera() -> void:
 func _test_main_arena() -> void:
 	for choose_manual_crouch in [false, true]:
 		var main = load("res://scenes/main.tscn").instantiate()
+		for body in main.get_node("Characters").get_children():
+			body.procedural_enabled = false
 		main.capture_mouse_on_start = false
 		root.add_child(main)
 		var actor = main.get_node("Characters/AtlasA")
@@ -368,7 +371,10 @@ func _test_main_arena() -> void:
 				break
 		Input.action_release("move_forward")
 		await _frames(30)
-		_expect(saw_crouch and saw_prone and adjacent and actor.global_position.z < -13.4 and actor.get_posture() == (1 if choose_manual_crouch else 0), "werkelijke arena: kruip-ligroute herstelt %s" % ("handmatige kruip" if choose_manual_crouch else "automatisch staan zonder handmatige injectie"))
+		if choose_manual_crouch:
+			_expect(saw_crouch and saw_prone and adjacent and actor.global_position.z < -13.4 and actor.get_posture() == 1, "werkelijke arena: expliciete kruip passeert de ligroute en herstelt kruip")
+		else:
+			_expect(saw_crouch and not saw_prone and adjacent and actor.global_position.z > -8.0 and actor.global_position.z < -6.5, "werkelijke arena: staande voorkeur passeert kruipruimte maar blokkeert vóór ligruimte")
 		_expect(not unexpected_slide and str(actor.get_debug_state().get("manual_posture", "")) == ("kruipen" if choose_manual_crouch else "staan"), "arena-route bewaart de houdingvoorkeur en geeft geen slide")
 		print("MEASURE: actual arena R1 manualC %s final %s; postures %s; adjacent %s" % [choose_manual_crouch, str(actor.global_position), str(transitions), adjacent])
 		main.queue_free()

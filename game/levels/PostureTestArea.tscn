@@ -222,7 +222,7 @@ modulate = Color(0.96, 0.71, 0.39, 1)
 [node name="EntrySign" type="Label3D" parent="AdjacentPostureRoute"]
 position = Vector3(0, 2.65, 0.1)
 billboard = 1
-text = "1 / HOUDINGSROUTE\n+0.30 m → auto kruip · 1.20 m vrij\n+0.20 m → auto lig · 0.80 m vrij"
+text = "1 / HOUDINGSROUTE\n+0.30 m → auto kruip · 1.20 m vrij\nKies zelf C voor auto lig · 0.80 m vrij"
 font_size = 29
 pixel_size = 0.006
 outline_size = 6
@@ -241,7 +241,7 @@ outline_modulate = Color(0.035, 0.04, 0.055, 1)
 
 [node name="DirectLowEntrance" type="Node3D" parent="."]
 position = Vector3(-12, 0, -6)
-metadata/proef = "0.80 m vrije hoogte: automatisch eerst kruip, daarna lig zodra het volledige vervolgvolume past. Nooit rechtstreeks automatisch staan naar lig. Z kiest handmatig lig."
+metadata/proef = "0.80 m vrije hoogte: staande voorkeur blokkeert. Bewust C-kruip mag automatisch lig worden zodra het volledige volume past. Z kiest direct handmatig lig."
 
 [node name="LowRoof080m" type="StaticBody3D" parent="DirectLowEntrance"]
 position = Vector3(0, 0.9, -3)
@@ -276,7 +276,7 @@ shape = SubResource("Shape_6")
 [node name="EntrySign" type="Label3D" parent="DirectLowEntrance"]
 position = Vector3(0, 2.55, 0.15)
 billboard = 1
-text = "2 / LAGE INGANG\n0.80 m vrij\nAuto kruip → auto lig / Z lig"
+text = "2 / LAGE INGANG\n0.80 m vrij\nKies C voor auto lig / Z direct lig"
 font_size = 28
 pixel_size = 0.006
 outline_size = 6

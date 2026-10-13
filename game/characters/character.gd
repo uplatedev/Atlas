@@ -9,9 +9,21 @@ enum Posture { STAND, CROUCH, PRONE }
 signal jump_accepted(horizontal_velocity: Vector3, walk_limit: float, sprint_limit: float, sneaking: bool)
 signal ground_motion_updated(horizontal_velocity: Vector3, walk_limit: float, sprint_limit: float, low_or_sneaking: bool)
 signal posture_changed(posture: String)
+signal procedural_frame_ready(frame: AtlasCharacterContactFrame)
 signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 
 @export_category("Character")
+@export_group("Procedurele beweging")
+## Echte kleine pasvluchten en de procedurele lichaamspresentatie; uit bewaart de capsuleproef.
+@export var procedural_enabled: bool = false:
+	set(value):
+		procedural_enabled = value
+		_refresh_if_ready()
+## Eigen lichaamsprofiel per instance, met massa, botkoppelingen en twee onafhankelijke pascurves.
+@export var body_profile: AtlasCharacterBodyProfile = AtlasCharacterBodyProfile.new():
+	set(value):
+		body_profile = value.make_instance_unique() if value != null else AtlasCharacterBodyProfile.new()
+		_refresh_if_ready()
 @export_group("Naam en uiterlijk")
 ## Tekst boven alleen dit Character; pas vrij aan per instance.
 @export var display_name: String = "Character":
@@ -301,6 +313,8 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 ## Gebruik dit extra remaccent ook wanneer bewust naar first person is ingezoomd. Standaard uit voor een stabiel gezichtspunt.
 @export var camera_first_person_inertia_enabled: bool = false
 
+## Aandeel van de echte pasvluchthoogte dat de camera volgt: 0 houdt haar rustig, 1 volgt het lichaam volledig.
+@export_range(0.0, 1.0, 0.05) var camera_stride_follow_ratio: float = 0.1
 @export_group("Camera: landingsaccent")
 ## Kleine reactie op echte impactlandingen met gedeeld accentbudget; uit bewaart de eerdere remveer exact. Audio staat hier los van.
 @export var camera_landing_enabled: bool = true
@@ -432,6 +446,15 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 
 static var _used_presentation_layers: Dictionary = {}
 
+var _external_intent: AtlasCharacterIntent
+var _stride: AtlasStrideScheduler = AtlasStrideScheduler.new()
+var _procedural_leg_length: float = 0.673775
+var _air_kind: String = "none"
+var _stride_jump_available: bool = false
+var _queued_impulse: Vector3 = Vector3.ZERO
+var _external_speed_allowance: float = 0.0
+var _stride_probe_count: int = 0
+var _ground_step_requested: bool = false
 var _controlled: bool = false
 var _spawn_transform: Transform3D
 var _look_input: Vector2 = Vector2.ZERO
@@ -483,6 +506,9 @@ var _step_support_direction: Vector3 = Vector3.ZERO
 @onready var _camera_pivot: AtlasCharacterCamera = $CameraPivot
 @onready var _head_debug: AtlasCharacterHeadDebug = $DebugArrows/HeadArrow
 @onready var _feedback: AtlasCharacterFeedback = $Feedback
+@onready var _procedural_visual: AtlasCharacterPresentation = $Presentation/ProceduralBody
+var _observed_body_profile: AtlasCharacterBodyProfile
+var _body_rig_signature: Array = []
 @onready var _debug_arrows: Node3D = $DebugArrows
 @onready var _input_arrow: Node3D = $DebugArrows/InputArrow
 @onready var _movement_arrow: Node3D = $DebugArrows/MovementArrow
@@ -490,17 +516,20 @@ var _step_support_direction: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	_spawn_transform = global_transform
+	if not Engine.is_editor_hint():
+		_allocate_presentation_layer()
 	_refresh_presentation()
 	if Engine.is_editor_hint():
 		set_physics_process(false)
 		return
-	_allocate_presentation_layer()
+	procedural_frame_ready.connect(_consume_procedural_frame)
 	_head_debug.initialize(self)
 	_camera_pivot.look_direction_changed.connect(set_look_input)
 	jump_accepted.connect(_camera_pivot.capture_jump)
 	ground_motion_updated.connect(_camera_pivot.capture_ground_motion)
 	posture_changed.connect(_camera_pivot.capture_posture)
 	_camera_pivot.initialize(self)
+	_camera_pivot.player_look_enabled = _external_intent == null
 	contact_frame_ready.connect(_camera_pivot.capture_contact)
 	_feedback.initialize(self)
 	_feedback.set_controlled(_controlled)
@@ -543,6 +572,38 @@ func _refresh_presentation() -> void:
 	_name_label.font_size = name_font_size
 	_name_label.visible = name_visible
 	_debug_arrows.visible = debug_enabled
+	_refresh_procedural_body()
+
+
+func _refresh_procedural_body(force: bool = false) -> void:
+	if not is_instance_valid(_procedural_visual):
+		return
+	_capsule.visible = not procedural_enabled
+	_procedural_visual.visible = procedural_enabled
+	_procedural_visual.process_mode = Node.PROCESS_MODE_INHERIT if procedural_enabled else Node.PROCESS_MODE_DISABLED
+	if not procedural_enabled:
+		return
+	if body_profile != _observed_body_profile:
+		if _observed_body_profile != null and _observed_body_profile.changed.is_connected(_on_body_profile_changed):
+			_observed_body_profile.changed.disconnect(_on_body_profile_changed)
+		_observed_body_profile = body_profile
+		body_profile.changed.connect(_on_body_profile_changed)
+		force = true
+	var signature := body_profile.rig_signature()
+	if force or signature != _body_rig_signature:
+		_body_rig_signature = signature
+		_procedural_visual.setup(self, body_profile)
+
+
+func _on_body_profile_changed() -> void:
+	# Een Inspector-edit kan meerdere velden tegelijk zetten. Eén verversing
+	# vergelijkt de rigvelden; gewone pas-/curvewaarden worden direct gelezen.
+	call_deferred("_refresh_procedural_body")
+
+
+func _consume_procedural_frame(frame: AtlasCharacterContactFrame) -> void:
+	if procedural_enabled:
+		_procedural_visual.consume_frame(frame)
 
 
 func _allocate_presentation_layer() -> void:
@@ -592,6 +653,8 @@ func get_camera_motion_sample() -> AtlasCharacterCameraMotion:
 	_camera_motion.motion_profile = _movement_state()
 	_camera_motion.grounded = get_camera_grounded()
 	_camera_motion.sliding = _slide_active
+	_camera_motion.air_kind = _air_kind
+	_camera_motion.stride_offset_y = maxf(global_position.y - _stride.takeoff_y, 0.0) if _air_kind == "stride" else 0.0
 	_camera_motion.eye_height = get_eye_height()
 	_camera_motion.clearance_height = _posture_vertical_height(_posture)
 	_camera_motion.horizontal_velocity = Vector3(velocity.x, 0.0, velocity.z)
@@ -639,6 +702,14 @@ func is_controlled() -> bool:
 
 
 func reset_to_spawn() -> void:
+	_stride.reset()
+	_air_kind = "none"
+	_stride_jump_available = false
+	_queued_impulse = Vector3.ZERO
+	_external_speed_allowance = 0.0
+	_stride_probe_count = 0
+	if _external_intent != null:
+		_external_intent.clear_edges()
 	global_transform = _spawn_transform
 	velocity = Vector3.ZERO
 	_input_direction = Vector3.ZERO
@@ -675,6 +746,7 @@ func reset_to_spawn() -> void:
 	reset_physics_interpolation()
 	_camera_pivot.reset_view(true)
 	_feedback.reset()
+	_procedural_visual.reset_pose()
 	_update_debug_arrows()
 
 
@@ -758,11 +830,13 @@ func request_posture(posture: int) -> void:
 	_restore_clear_time = 0.0
 
 
-func _read_posture_input(input_allowed: bool) -> void:
-	if not input_allowed:
-		return
-	if InputMap.has_action("crouch") and Input.is_action_just_pressed("crouch"):
-		var interrupted_slide := _slide_pending or _slide_active
+func _read_posture_input(intent: AtlasCharacterIntent) -> void:
+	if intent.crouch_pressed:
+		if _slide_active:
+			# C tijdens slide bewaart de slide en kiest alleen de houding erna.
+			_manual_posture = Posture.CROUCH
+			return
+		var interrupted_slide := _slide_pending
 		# Beoordeel sprint en vaart vóór C de handmatige houding verandert.
 		# Wanddruk, een lage houding en alleen Shift leveren geen slidestart op.
 		var ground_slide_requested := (
@@ -773,13 +847,13 @@ func _read_posture_input(input_allowed: bool) -> void:
 		)
 		var target := Posture.CROUCH if interrupted_slide else (Posture.STAND if _manual_posture == Posture.CROUCH and _posture != Posture.PRONE else Posture.CROUCH)
 		request_posture(target)
-		_slide_requested_this_frame = not interrupted_slide and target == Posture.CROUCH and (not get_camera_grounded() or ground_slide_requested)
-	elif InputMap.has_action("prone") and Input.is_action_just_pressed("prone"):
+		_slide_requested_this_frame = not interrupted_slide and target == Posture.CROUCH and ((not get_camera_grounded() and (_air_kind != "stride" or _sprint_requested)) or ground_slide_requested)
+	elif intent.prone_pressed:
 		if _posture == Posture.PRONE and _manual_posture == Posture.PRONE:
 			_return_from_manual_prone()
 		else:
 			request_posture(Posture.PRONE)
-	elif Input.is_action_just_pressed("jump") and _posture > Posture.STAND:
+	elif intent.jump_pressed and _posture > Posture.STAND:
 		if _posture == Posture.PRONE and _manual_posture == Posture.PRONE:
 			_return_from_manual_prone()
 		elif not _slide_active:
@@ -1057,23 +1131,161 @@ func jump_parameters(horizontal_velocity: Vector3) -> Dictionary:
 	return {"profile": profile, "height": height, "vertical_speed": sqrt(2.0 * gravity_strength * height), "horizontal_boost": boost, "launch_speed": speed + boost, "walk_weight": walk_weight, "sprint_weight": sprint_weight, "fatigue_cost": cost, "recovery_time": recovery}
 
 
+## AI en proefbesturing leveren dezelfde intent als de toetsenbordadapter.
+## Vastgehouden beweging blijft gelden; afzonderlijke actie-edges worden eenmaal verbruikt.
+func submit_intent(intent: AtlasCharacterIntent) -> void:
+	if intent == null:
+		use_player_input()
+		return
+	var next := intent.copy()
+	if _external_intent != null:
+		next.jump_pressed = next.jump_pressed or _external_intent.jump_pressed
+		next.crouch_pressed = next.crouch_pressed or _external_intent.crouch_pressed
+		next.prone_pressed = next.prone_pressed or _external_intent.prone_pressed
+	_external_intent = next
+	if is_node_ready():
+		_camera_pivot.player_look_enabled = false
+
+
+func use_player_input() -> void:
+	_external_intent = null
+	if is_node_ready():
+		_camera_pivot.player_look_enabled = true
+
+
+func set_procedural_leg_length(value: float) -> void:
+	if is_finite(value):
+		_procedural_leg_length = maxf(value, 0.05)
+
+
+## Wereldimpuls in kg*m/s; massa verandert uitsluitend de ontvangen snelheidsverandering.
+## De eerstvolgende physicstick verwerkt samengevoegde impulsen één keer.
+func apply_impulse(world_impulse: Vector3) -> void:
+	if world_impulse.is_finite():
+		_queued_impulse += world_impulse
+
+
+func _consume_intent() -> AtlasCharacterIntent:
+	var intent: AtlasCharacterIntent
+	if _external_intent != null:
+		intent = _external_intent.copy()
+		_external_intent.clear_edges()
+	else:
+		intent = AtlasCharacterIntent.new()
+		var allowed := _controlled and (Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or DisplayServer.get_name() == "headless")
+		if allowed:
+			intent.movement = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+			intent.sprint = Input.is_action_pressed("sprint")
+			intent.sneak = InputMap.has_action("sneak") and Input.is_action_pressed("sneak")
+			intent.jump_pressed = Input.is_action_just_pressed("jump")
+			intent.crouch_pressed = InputMap.has_action("crouch") and Input.is_action_just_pressed("crouch")
+			intent.prone_pressed = InputMap.has_action("prone") and Input.is_action_just_pressed("prone")
+	if intent.has_look_direction:
+		_camera_pivot.set_look_direction(intent.look_direction)
+	return intent
+
+
+func _consume_impulse() -> bool:
+	if _queued_impulse.is_zero_approx():
+		return false
+	var change := _queued_impulse / maxf(body_profile.mass_kg, 0.01)
+	_queued_impulse = Vector3.ZERO
+	var before := Vector2(velocity.x, velocity.z).length()
+	velocity += change
+	var after := Vector2(velocity.x, velocity.z).length()
+	_external_speed_allowance = maxf(0.0, _external_speed_allowance + after - before)
+	_air_speed_cap = maxf(_air_speed_cap, after)
+	_air_min_control_active = false
+	if _air_kind == "stride":
+		_lose_stride_privilege()
+	if change.y > 0.0:
+		_air_kind = "fall"
+		_step_support_remaining = 0.0
+		_ground_jump_available = false
+		_coyote_remaining = 0.0
+		return true
+	return false
+
+
+func _lose_stride_privilege() -> void:
+	_air_kind = "fall"
+	_stride_jump_available = false
+	_ground_jump_available = false
+	_coyote_remaining = 0.0
+	_stride.cancel()
+
+
+func _stride_has_local_support(before_takeoff: bool = false) -> bool:
+	_stride_probe_count += 1
+	var depth := 0.08 if before_takeoff else clampf(_stride.height * 2.0 + 0.08, 0.08, 0.5)
+	var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.025, global_position - Vector3.UP * depth, collision_mask, [get_rid()])
+	query.collide_with_areas = false
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty() or Vector3(hit.normal).dot(Vector3.UP) < cos(floor_max_angle):
+		return false
+	# Een verre vloer onder een rand geeft geen oneindig pas-sprongticket.
+	return before_takeoff or Vector3(hit.position).y >= _stride.takeoff_y - 0.08
+
+
+func _try_start_stride(delta: float, supported: bool) -> bool:
+	if not procedural_enabled:
+		return false
+	if _air_kind == "stride":
+		return false
+	if not supported or _posture != Posture.STAND or _slide_active or _slide_pending:
+		_stride.cancel()
+		return false
+	var speed := Vector2(velocity.x, velocity.z).length()
+	var moving := speed > 0.10 and _actual_speed > 0.10
+	var duration := body_profile.get_support_duration(speed, _procedural_leg_length, _sneak_requested)
+	if not _stride.support_tick(delta, duration, moving):
+		return false
+	var height := body_profile.get_flight_height(speed / maxf(body_profile.reference_speed, 0.1), _procedural_leg_length, _sneak_requested)
+	if height <= 0.000001:
+		_ground_step_requested = true
+		return false
+	if not _stride_has_local_support(true):
+		_stride.cancel()
+		return false
+	# Ook een heel kleine ingestelde pas krijgt bij 60 Hz een echte luchtframe.
+	height = maxf(height, 0.5 * gravity_strength * delta * delta)
+	if not _shape_sweep_clear(Posture.STAND, global_transform, Vector3.UP * (height + 0.003)):
+		_ground_step_requested = true
+		return false
+	# Gebruik de gemiddelde verticale snelheid van de eerste integratiestap.
+	# Zo meet de curve echte hoogte in plaats van een extra Euler-afzetframe.
+	velocity.y = _stride.take_off(global_position.y, height, gravity_strength) - 0.5 * gravity_strength * delta
+	_air_kind = "stride"
+	_stride_jump_available = true
+	_ground_jump_available = false
+	_coyote_remaining = 0.0
+	_step_support_remaining = 0.0
+	_air_speed_cap = maxf(speed, air_min_control_speed)
+	_air_min_control_active = speed < air_min_control_speed
+	return true
+
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
-	var input := Vector2.ZERO
-	var input_allowed := _controlled and (Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or DisplayServer.get_name() == "headless")
-	if input_allowed:
-		input = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-	_sneak_requested = input_allowed and InputMap.has_action("sneak") and Input.is_action_pressed("sneak")
-	_sprint_requested = input_allowed and Input.is_action_pressed("sprint") and not _sneak_requested
-	var real_grounded := is_on_floor() and not _jumped_last_frame
-	var was_grounded := real_grounded or (_step_support_remaining > 0.0 and not _jumped_last_frame)
-	var slide_jump_requested := input_allowed and _slide_active and Input.is_action_just_pressed("jump")
-	_update_jump_timing(input_allowed, was_grounded, real_grounded, delta)
-	_read_posture_input(input_allowed)
-	_turn_body(was_grounded, delta, input)
+	_stride_probe_count = 0
+	_ground_step_requested = false
+	var intent := _consume_intent()
+	var input := intent.movement
+	_sneak_requested = intent.sneak
+	_sprint_requested = intent.sprint and not _sneak_requested
+	var external_lift := _consume_impulse()
+	if _air_kind == "stride":
+		if not procedural_enabled or is_on_ceiling() or not _stride_has_local_support():
+			_lose_stride_privilege()
+	var real_grounded := is_on_floor() and not _jumped_last_frame and not external_lift
+	var was_grounded := real_grounded or (_step_support_remaining > 0.0 and not _jumped_last_frame and not external_lift)
+	var slide_jump_requested := _slide_active and intent.jump_pressed
+	_update_jump_timing(intent.jump_pressed, was_grounded, real_grounded, delta)
+	_read_posture_input(intent)
+	var stride_control := _air_kind == "stride" and _stride_jump_available and _posture == Posture.STAND
+	_turn_body(was_grounded or stride_control, delta, input)
 	var input_basis := global_basis
-	if not was_grounded:
+	if not was_grounded and not stride_control:
 		input_basis = Basis(Vector3.UP, _look_input.x)
 	_input_direction = input_basis * Vector3(input.x, 0.0, input.y)
 	if was_grounded:
@@ -1081,25 +1293,46 @@ func _physics_process(delta: float) -> void:
 	else:
 		_auto_posture_demand = _manual_posture
 	_update_posture(input, was_grounded, delta)
+	if _posture != Posture.STAND:
+		_stride_jump_available = false
+		stride_control = false
 	var jumped := slide_jump_requested and _try_slide_jump(delta)
 	if not jumped:
-		_update_horizontal_velocity(input, was_grounded, delta)
-		if _posture == Posture.STAND and _jump_buffer_remaining > 0.0 and _ground_jump_available and (was_grounded or _coyote_remaining > 0.0):
+		_update_horizontal_velocity(input, was_grounded, delta, stride_control)
+		var jump_support := (_ground_jump_available and (was_grounded or _coyote_remaining > 0.0)) or (_air_kind == "stride" and _stride_jump_available)
+		if _posture == Posture.STAND and _jump_buffer_remaining > 0.0 and jump_support:
 			_start_jump()
 			jumped = true
 		elif was_grounded:
 			velocity.y = -0.1
 		else:
 			velocity.y -= gravity_strength * delta
+	var stride_started := not jumped and not external_lift and _try_start_stride(delta, was_grounded)
 	var before := global_position
 	_last_step_height = 0.0
 	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
-	var stepped := was_grounded and not jumped and _try_step_up(horizontal * delta)
+	# Een geldige pasvlucht behoudt dezelfde veilige opstapmogelijkheid.
+	# Zonder dit pad wist de wandcollision eerst alle horizontale pasvaart.
+	var stride_step := _air_kind == "stride" and _stride_jump_available and _posture == Posture.STAND
+	var maximum_step_floor := _stride.takeoff_y + _step_limit_for_posture(_posture) + 0.003 if stride_step else INF
+	var stepped := (was_grounded or stride_step) and not jumped and _try_step_up(horizontal * delta, maximum_step_floor, velocity * delta if stride_step else horizontal * delta)
 	if stepped:
+		if stride_step:
+			stride_started = false
+			_stride.cancel()
+			_stride_jump_available = false
+			_air_kind = "none"
+			_ground_step_requested = true
+			velocity.y = -0.1
 		velocity.x = 0.0
 		velocity.z = 0.0
 	var incoming_velocity := velocity
+	var snap := floor_snap_length
+	if _air_kind == "stride":
+		# De kleine pasvlucht eindigt door echt vloercontact, niet door afstandsnap.
+		floor_snap_length = 0.0
 	move_and_slide()
+	floor_snap_length = snap
 	if stepped:
 		velocity.x = horizontal.x
 		velocity.z = horizontal.z
@@ -1107,6 +1340,32 @@ func _physics_process(delta: float) -> void:
 	var real_horizontal := Vector3(travel.x, 0.0, travel.z) / delta
 	_actual_speed = real_horizontal.length()
 	_movement_direction = real_horizontal.normalized()
+	_external_speed_allowance = minf(_external_speed_allowance, Vector2(velocity.x, velocity.z).length())
+	var stride_landed := false
+	if _air_kind == "stride":
+		_stride.flight_tick(delta)
+		if is_on_ceiling():
+			_lose_stride_privilege()
+		elif is_on_floor():
+			if stride_started:
+				# Een helling kan de opwaartse stap direct weer opvangen.
+				# Dan was er geen echte vlucht en publiceren we die ook niet.
+				stride_started = false
+				_ground_step_requested = true
+			else:
+				stride_landed = true
+				_stride.touch_down()
+			_stride_jump_available = false
+			_air_kind = "none"
+	elif get_camera_grounded() and not jumped and not external_lift:
+		_air_kind = "none"
+	elif _air_kind == "none":
+		_air_kind = "fall"
+	var ground_step := _ground_step_requested and get_camera_grounded() and _actual_speed > 0.10
+	if ground_step:
+		_stride.supported_step()
+	elif _ground_step_requested:
+		_stride.cancel()
 	if _slide_active and (not get_camera_grounded() or _actual_speed < 0.02):
 		_finish_slide()
 	if _slide_pending and not was_grounded and is_on_floor():
@@ -1121,29 +1380,37 @@ func _physics_process(delta: float) -> void:
 		# Een lage landing zonder C-slide geeft geen verborgen lange glijfase.
 		# Pas het grondbudget pas bij contact toe, nooit op de afzetvaart in vlucht.
 		_limit_ground_velocity()
-	# Feedback ontvangt uitsluitend de definitieve fysieke uitkomst, na slide- en
-	# lage landingscaps. De inkomende snelheid is vóór botsingsafhandeling bewaard.
 	var contact := AtlasCharacterContactFrame.new()
 	contact.delta = delta
 	contact.horizontal_travel = Vector3(travel.x, 0.0, travel.z)
 	contact.horizontal_speed = _actual_speed
 	contact.incoming_velocity = incoming_velocity
-	contact.supported = get_camera_grounded() and not jumped
-	contact.real_grounded = is_on_floor() and not jumped
+	contact.supported = get_camera_grounded() and not jumped and not stride_started and not external_lift
+	contact.real_grounded = is_on_floor() and not jumped and not stride_started and not external_lift
 	contact.motion_profile = _movement_state()
 	contact.posture = _posture_name(_posture)
 	contact.sliding = _slide_active
 	contact.jumped = jumped
-	contact.landed = not was_grounded and is_on_floor() and not jumped and not stepped
+	contact.landed = not was_grounded and is_on_floor() and not jumped and not stepped and not stride_landed
 	contact.world_position = global_position
+	contact.procedural_enabled = procedural_enabled
+	contact.air_kind = _air_kind
+	contact.stride_started = stride_started
+	contact.stride_landed = stride_landed
+	contact.ground_step = ground_step
+	contact.step_index = _stride.step_index
+	contact.gait_phase = _stride.phase
+	contact.body_velocity = velocity
+	contact.body_transform = global_transform
+	# Eén pose-eigenaar kan hier voetcontacten toevoegen voordat audio ze leest.
+	procedural_frame_ready.emit(contact)
 	contact_frame_ready.emit(contact)
-	_jumped_last_frame = jumped
+	_jumped_last_frame = jumped or stride_started or external_lift
 	_update_debug_arrows()
 	if global_position.y < -20.0:
 		reset_to_spawn()
 
-
-func _update_jump_timing(input_allowed: bool, grounded: bool, real_grounded: bool, delta: float) -> void:
+func _update_jump_timing(jump_pressed: bool, grounded: bool, real_grounded: bool, delta: float) -> void:
 	_jump_buffer_remaining = maxf(_jump_buffer_remaining - delta, 0.0)
 	if grounded:
 		_ground_jump_available = true
@@ -1152,7 +1419,7 @@ func _update_jump_timing(input_allowed: bool, grounded: bool, real_grounded: boo
 		_coyote_remaining = maxf(_coyote_remaining - delta, 0.0)
 		if _coyote_remaining <= 0.0:
 			_ground_jump_available = false
-	if input_allowed and Input.is_action_just_pressed("jump"):
+	if jump_pressed:
 		_jump_buffer_remaining = maxf(jump_buffer_time, delta) if _posture == Posture.STAND else 0.0
 	if real_grounded and _fatigue > 0.0:
 		_fatigue = maxf(_fatigue - delta / maxf(_fatigue_recovery_duration, 0.01), 0.0)
@@ -1161,7 +1428,7 @@ func _update_jump_timing(input_allowed: bool, grounded: bool, real_grounded: boo
 			_fatigue_recovery_duration = 0.0
 
 
-func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float) -> void:
+func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float, stride_control: bool = false) -> void:
 	_air_braking = false
 	if grounded and _slide_active:
 		_update_slide(input, delta)
@@ -1172,8 +1439,9 @@ func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float) -
 	var target := Vector3.ZERO
 	if not input.is_zero_approx():
 		target = _input_direction.normalized() * direction_speed_limit_for_state(input, state) * minf(input.length(), 1.0)
-	if grounded:
+	if grounded or stride_control:
 		var brake_profile := profile
+
 		if input.is_zero_approx() and _posture == Posture.STAND and not _sneak_requested:
 			brake_profile = _movement_profile(_last_ground_state)
 		elif not input.is_zero_approx():
@@ -1188,7 +1456,10 @@ func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float) -
 		_air_min_control_active = horizontal.length() < air_min_control_speed
 		var local_ground := global_basis.inverse() * horizontal
 		var ground_direction := Vector2(local_ground.x, local_ground.z)
-		ground_motion_updated.emit(horizontal, direction_speed_limit(ground_direction, false), direction_speed_limit(ground_direction, true), _posture != Posture.STAND or _sneak_requested)
+		var sprint_limit := direction_speed_limit(ground_direction, true)
+		_external_speed_allowance = minf(_external_speed_allowance, maxf(horizontal.length() - sprint_limit, 0.0))
+		if grounded:
+			ground_motion_updated.emit(horizontal, direction_speed_limit(ground_direction, false), sprint_limit, _posture != Posture.STAND or _sneak_requested)
 	else:
 		if not input.is_zero_approx():
 			var acceleration := air_acceleration
@@ -1260,7 +1531,7 @@ func _update_slide(input: Vector2, delta: float) -> void:
 func _limit_ground_velocity() -> void:
 	var horizontal := Vector3(velocity.x, 0.0, velocity.z)
 	var local := global_basis.inverse() * horizontal
-	var limit := direction_speed_limit_for_state(Vector2(local.x, local.z), _movement_state())
+	var limit := direction_speed_limit_for_state(Vector2(local.x, local.z), _movement_state()) + _external_speed_allowance
 	horizontal = horizontal.limit_length(limit)
 	velocity.x = horizontal.x
 	velocity.z = horizontal.z
@@ -1302,6 +1573,9 @@ func _try_slide_jump(delta: float) -> bool:
 
 
 func _start_jump(preserve_slide_momentum: bool = false) -> void:
+	_stride.cancel()
+	_stride_jump_available = false
+	_air_kind = "jump"
 	_cancel_slide()
 	_slide_ground_exit_pending = false
 	_step_support_remaining = 0.0
@@ -1314,7 +1588,7 @@ func _start_jump(preserve_slide_momentum: bool = false) -> void:
 	# Gewone grondafzet verwijdert de oude bonus vóór het profiel. Vanuit slide
 	# blijft alleen de echte resterende vaart behouden, zonder een nieuwe bonus.
 	var ground_limit := direction_speed_limit_for_state(direction, "sneak" if _sneak_requested else "sprint")
-	horizontal = horizontal.limit_length(_air_speed_cap if preserve_slide_momentum else ground_limit)
+	horizontal = horizontal.limit_length(_air_speed_cap if preserve_slide_momentum else ground_limit + _external_speed_allowance)
 	var parameters := jump_parameters(horizontal)
 	_jump_profile = parameters.profile
 	_jump_height = parameters.height
@@ -1395,18 +1669,32 @@ func _step_plan(horizontal_motion: Vector3, posture: int, minimum_probe_distance
 	return {}
 
 
-func _try_step_up(horizontal_motion: Vector3) -> bool:
+func _try_step_up(horizontal_motion: Vector3, maximum_floor_y: float = INF, collision_motion: Vector3 = Vector3.ZERO) -> bool:
 	if _step_limit_for_posture(_posture) <= 0.0 or horizontal_motion.is_zero_approx():
 		_step_support_remaining = 0.0
 		return false
 	if _step_support_remaining > 0.0:
 		return _continue_step(horizontal_motion)
 	var collision := KinematicCollision3D.new()
-	if not test_move(global_transform, horizontal_motion, collision) or collision.get_normal().dot(Vector3.UP) >= cos(floor_max_angle):
+	# Dalende pasvlucht kan de afgeronde trederand raken terwijl de horizontale
+	# straal er nog net bovenlangs gaat. Toets daarom haar echte framebeweging.
+	var blocked := test_move(global_transform, horizontal_motion, collision) and collision.get_normal().dot(Vector3.UP) < cos(floor_max_angle)
+	if not blocked and not collision_motion.is_zero_approx() and not collision_motion.is_equal_approx(horizontal_motion):
+		var diagonal_hit := test_move(global_transform, collision_motion, collision)
+		blocked = diagonal_hit and collision.get_normal().dot(Vector3.UP) < cos(floor_max_angle)
+		if diagonal_hit and not blocked and collision_motion.y < 0.0:
+			# Dezelfde tick kan eerst landen en daarna de trede raken. Toets één
+			# overblijvende horizontale sweep vanaf dat bewezen vloercontact.
+			var landed_transform := global_transform
+			landed_transform.origin += collision.get_travel()
+			var remainder := collision.get_remainder()
+			remainder.y = 0.0
+			blocked = not remainder.is_zero_approx() and test_move(landed_transform, remainder, collision) and collision.get_normal().dot(Vector3.UP) < cos(floor_max_angle)
+	if not blocked:
 		return false
 	for option in _clearance_motion_options(_posture, horizontal_motion, false):
 		var plan := _step_plan(option, _posture)
-		if plan.is_empty():
+		if plan.is_empty() or Vector3(plan.destination).y > maximum_floor_y:
 			continue
 		global_position = plan.destination
 		_step_support_point = plan.support
@@ -1494,7 +1782,9 @@ func _update_auto_posture_demand(input: Vector2, delta: float) -> void:
 	var approach := direction * probe_distance
 	var previous := _auto_posture_demand
 	_auto_posture_demand = _manual_posture
-	for candidate in range(_manual_posture, Posture.PRONE + 1):
+	# Alleen eigen kruipkeuze geeft toestemming om automatisch verder te liggen.
+	var lowest := Posture.PRONE if _manual_posture == Posture.CROUCH else Posture.CROUCH
+	for candidate in range(_manual_posture, lowest + 1):
 		for option in _clearance_motion_options(candidate, approach):
 			if not _clearance_path_passable(candidate, option):
 				continue
@@ -1536,6 +1826,7 @@ func get_debug_state() -> Dictionary:
 	var local_input := global_basis.inverse() * _input_direction
 	var state := {"display_name": display_name, "speed": _actual_speed, "motion_mode": motion, "posture": _posture_name(_posture), "posture_index": _posture, "manual_posture": _posture_name(_manual_posture), "input_direction": _input_direction, "movement_direction": _movement_direction, "facing_direction": -global_basis.z, "body_direction": -global_basis.z, "body_yaw": rad_to_deg(global_rotation.y), "turn_rate": _turn_rate, "body_turn_blocked": _body_turn_blocked, "speed_limit": direction_speed_limit_for_state(Vector2(local_input.x, local_input.z), _movement_state()), "jump_profile": _jump_profile, "jump_height": _jump_height, "launch_speed": _launch_speed, "jump_boost": _jump_boost, "air_speed_cap": _air_speed_cap, "fatigue": _fatigue, "fatigue_recovery_time": _fatigue_recovery_duration, "coyote_remaining": _coyote_remaining, "jump_buffer_remaining": _jump_buffer_remaining, "ground_jump_available": _ground_jump_available, "step_height": _step_limit_for_posture(_posture), "last_step_height": _last_step_height, "debug_enabled": debug_enabled}
 	state.merge({"air_braking": _air_braking, "slide_pending": _slide_pending, "slide_active": _slide_active, "slide_time_left": _slide_time_left, "slide_speed": Vector2(velocity.x, velocity.z).length() if _slide_active else 0.0, "prone_return_posture": _posture_name(_prone_return_posture)})
+	state.merge({"air_kind": _air_kind, "gait_phase": _stride.phase, "step_index": _stride.step_index, "stride_jump_available": _stride_jump_available, "stride_probe_count": _stride_probe_count, "external_speed_allowance": _external_speed_allowance, "mass_kg": body_profile.mass_kg})
 	state.merge(_camera_pivot.get_state(), true)
 	return state
 

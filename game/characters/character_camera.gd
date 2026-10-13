@@ -11,6 +11,7 @@ var _motion_source: Callable
 var _motion: AtlasCharacterCameraMotion = AtlasCharacterCameraMotion.new()
 var _property_names: Dictionary = {}
 var _controlled: bool = false
+var player_look_enabled: bool = true
 var _look_yaw: float = 0.0
 var _pitch: float = 0.0
 var _requested_distance: float = 4.0
@@ -18,6 +19,7 @@ var _zoom_distance: float = 4.0
 var _actual_distance: float = 4.0
 var _eye_height: float = 1.62
 var _feet_height: float = 0.0
+var _stride_view_offset: float = 0.0
 var _follow_position: Vector3 = Vector3.ZERO
 var _previous_follow_target: Vector3 = Vector3.ZERO
 var _follow_lag: float = 0.0
@@ -113,6 +115,7 @@ func reset_follow_history() -> void:
 		return
 	_refresh_motion_sample()
 	_feet_height = _character.global_position.y
+	_stride_view_offset = 0.0
 	_eye_height = _safe_eye_height()
 	_follow_position = Vector3(_character.global_position.x, 0.0, _character.global_position.z)
 	_previous_follow_target = _follow_position
@@ -171,7 +174,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## Hetzelfde pad als muisinvoer, publiek voor herhaalbare hoofdgrensproeven.
 func apply_look_delta(screen_pixels: Vector2) -> void:
-	if not _initialized or not is_instance_valid(_character):
+	if not player_look_enabled or not _initialized or not is_instance_valid(_character):
 		return
 	var old_sensitivity: float = _value("look_sensitivity", 0.12)
 	var yaw_delta := deg_to_rad(-screen_pixels.x * float(_value("look_sensitivity_x", old_sensitivity)))
@@ -200,6 +203,17 @@ func apply_look_delta(screen_pixels: Vector2) -> void:
 		relative_yaw = clampf(relative * direction, -max_yaw, max_yaw)
 	_look_yaw = wrapf(body_yaw + relative_yaw, -PI, PI)
 	_pitch = _advance_pitch(_pitch, pitch_delta)
+	_refresh_rotation()
+
+
+## Absolute AI-kijkwens door dezelfde grenzen en bewaarde kijkhoek als de muis.
+## Daardoor kan een renderupdate geen oudere hoek terugschrijven naar de motor.
+func set_look_direction(direction: Vector2) -> void:
+	if not _initialized or not direction.is_finite():
+		return
+	var body_yaw := _body_yaw()
+	_look_yaw = wrapf(body_yaw + clampf(wrapf(direction.x - body_yaw, -PI, PI), -_max_head_yaw(), _max_head_yaw()), -PI, PI)
+	_pitch = _clamp_pitch(direction.y)
 	_refresh_rotation()
 
 
@@ -335,19 +349,33 @@ func _refresh_transform(delta: float, immediate: bool = false) -> void:
 	# Ook tijdens vallen gebruikt hoogte dezelfde renderpose. Een ruwe physics-Y
 	# zou de camera anders steeds één tick omlaag trekken en tussen ticks stilzetten.
 	var maximum_y := actor_floor + maxf(clearance * 0.5, clearance - radius - 0.01)
+	# De motor levert alleen de echte pashoogte. Trek die af van dezelfde ruwe
+	# physicspositie om een stabiele vloerbasis te vinden; ruwe lift van de
+	# geïnterpoleerde renderpositie aftrekken zou juist zichtbare jitter geven.
+	if _motion.air_kind == "stride":
+		var stride_floor := _character.global_position.y - _motion.stride_offset_y
+		var follow: float = clampf(_value("camera_stride_follow_ratio", 0.1), 0.0, 1.0)
+		_stride_view_offset = maxf(0.0, actor_floor - stride_floor) * (1.0 - follow)
+	elif immediate:
+		_stride_view_offset = 0.0
+	else:
+		# Spatie en echt steunverlies blijven direct volgen; alleen de resterende
+		# kleine pascorrectie verdwijnt zacht bij die overgang.
+		_stride_view_offset = lerpf(_stride_view_offset, 0.0, _blend(delta, 0.05))
+	var followed_floor := actor_floor - _stride_view_offset
 	if immediate:
 		_eye_height = eye
-		_feet_height = _character.global_position.y
+		_feet_height = _character.global_position.y - _stride_view_offset
 	else:
 		# Neerwaartse vormwissel wordt direct veilig; omhoog volgt zacht.
 		_eye_height = eye if eye < _eye_height else lerpf(_eye_height, eye, _blend(delta, _value("camera_eye_half_life", 0.08)))
 		var feet_half_life: float = _value("camera_step_half_life", 0.07)
 		# Vlucht/val volgen zonder extra cameravertraging; kleine vloeropstapjes mogen zacht.
 		var grounded := _motion.grounded
-		if absf(actor_floor - _feet_height) > 0.6 or not grounded:
-			_feet_height = actor_floor
+		if absf(followed_floor - _feet_height) > 0.6 or not grounded:
+			_feet_height = followed_floor
 		else:
-			_feet_height = lerpf(_feet_height, actor_floor, _blend(delta, feet_half_life))
+			_feet_height = lerpf(_feet_height, followed_floor, _blend(delta, feet_half_life))
 	_camera_shape.radius = radius
 	var target := Vector3(interpolated.origin.x, 0.0, interpolated.origin.z)
 	_update_follow_position(target, delta, immediate)

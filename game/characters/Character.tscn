@@ -1,9 +1,11 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://characters/character.gd" id="1_character"]
 [ext_resource type="Script" path="res://characters/character_camera.gd" id="2_camera"]
 [ext_resource type="Script" path="res://characters/character_head_debug.gd" id="3_head_debug"]
 [ext_resource type="Script" path="res://characters/character_feedback.gd" id="4_feedback"]
+[ext_resource type="Script" path="res://characters/procedural/presentation.gd" id="5_procedural"]
+[ext_resource type="Resource" path="res://characters/procedural/profiles/artemis.tres" id="6_body"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape"]
 resource_local_to_scene = true
@@ -70,12 +72,17 @@ floor_constant_speed = true
 floor_snap_length = 0.15
 safe_margin = 0.001
 script = ExtResource("1_character")
+procedural_enabled = true
+body_profile = ExtResource("6_body")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(0, 0.9, 0)
 shape = SubResource("CapsuleShape")
 
 [node name="Presentation" type="Node3D" parent="."]
+
+[node name="ProceduralBody" type="Node3D" parent="Presentation"]
+script = ExtResource("5_procedural")
 
 [node name="Feedback" type="Node3D" parent="."]
 script = ExtResource("4_feedback")

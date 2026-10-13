@@ -148,7 +148,15 @@ func consume_contact(frame: AtlasCharacterContactFrame) -> void:
 	if frame.supported:
 		_ever_supported = true
 	var step_minimum: float = maxf(0.0, float(_value("feedback_step_min_speed", 0.10)))
-	if frame.supported and not accepted_jump and not frame.landed and not frame.sliding and frame.horizontal_speed > step_minimum and frame.delta > 0.0 and frame.delta <= 0.25:
+	var may_step := frame.supported and not accepted_jump and not frame.landed and not frame.sliding and frame.horizontal_speed > step_minimum and frame.delta > 0.0 and frame.delta <= 0.25
+	if frame.procedural_enabled and frame.posture == "staan":
+		# De stapplanner bewaart echte voetcontacten. Afstandscadans zou bij iedere
+		# pasvlucht opnieuw beginnen en kan geen betrouwbare voetplaatsing volgen.
+		_distance = 0.0
+		if may_step:
+			for contact in frame.foot_contacts.slice(0, 2):
+				_request_cue("step", "feedback_footstep_samples", float(_value("feedback_step_volume_db", -2.0)) + float(profile.gain), contact)
+	elif may_step:
 		_distance += frame.horizontal_travel.length()
 		var stride: float = maxf(0.2, float(profile.distance))
 		if _distance >= stride:

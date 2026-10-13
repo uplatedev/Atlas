@@ -4,3 +4,4 @@
 # Character model sources stay byte-exact.
 *.fbx binary
 *.glb binary
+*.blend binary

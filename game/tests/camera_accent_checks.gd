@@ -21,6 +21,7 @@ func _run() -> void:
 	root.add_child(world)
 	_box(Vector3(0, -0.1, 0), Vector3(400, 0.2, 400))
 	actor = CHARACTER.instantiate() as AtlasCharacter
+	actor.procedural_enabled = false
 	actor.position = Vector3(0, 0.05, 0)
 	world.add_child(actor)
 	actor.set_controlled(true)
@@ -258,9 +259,17 @@ func _test_ground_slide_view() -> void:
 	var initial_offset := float(_state().camera_slide_fov_offset)
 	_expect(_flag("slide_active") and initial_offset > 0.1 and initial_offset <= float(actor.get("camera_slide_fov_bonus")) + 0.001, "sprintgrondslide gebruikt direct dezelfde begrensde vaart-FOV")
 	var peak := 0.0
+	var previous_offset := initial_offset
+	var continuous := true
+	Input.action_press("crouch")
 	for frame in 12:
 		await _frames(1)
 		peak = maxf(peak, float(_state().camera_landing_amount))
+		var current_offset := float(_state().camera_slide_fov_offset)
+		continuous = continuous and _flag("slide_active") and current_offset > 0.0 and current_offset <= previous_offset + 0.00001
+		previous_offset = current_offset
+	Input.action_release("crouch")
+	_expect(continuous and str(actor.get_debug_state().manual_posture) == "kruipen", "C tijdens slide bewaart onafgebroken aflopende vaart-FOV zonder nieuwe puls")
 	_expect(_flag("slide_active") and float(_state().camera_slide_fov_offset) < initial_offset, "grondslide-FOV neemt af met de werkelijke geremde vaart")
 	_expect(peak < 0.000001, "grondslide vanuit blijvende steun geeft geen valse camera-landingsdip")
 
@@ -305,6 +314,7 @@ func _test_collision_volume() -> void:
 func _test_history_and_instances() -> void:
 	await _reset()
 	var other: AtlasCharacter = CHARACTER.instantiate()
+	other.procedural_enabled = false
 	other.position = Vector3(20, 0.05, 0)
 	other.set("camera_landing_max_dip", 0.007)
 	world.add_child(other)
@@ -329,6 +339,7 @@ func _test_saved_overrides() -> void:
 	var holder := Node3D.new()
 	for index in 2:
 		var child: AtlasCharacter = CHARACTER.instantiate()
+		child.procedural_enabled = false
 		child.name = "Actor%d" % index
 		holder.add_child(child)
 		child.owner = holder
@@ -395,6 +406,8 @@ func _physics_trace(enabled: bool) -> Array:
 
 func _test_main_toggles() -> void:
 	var main: Node = load("res://scenes/main.tscn").instantiate()
+	for body in main.get_node("Characters").get_children():
+		body.procedural_enabled = false
 	main.set("capture_mouse_on_start", false)
 	root.add_child(main)
 	await _frames(8)
@@ -404,8 +417,9 @@ func _test_main_toggles() -> void:
 	_expect(not first.is_on_floor(), "echte Tab-proef begint met een vliegend eerste Character")
 	_key(KEY_TAB)
 	await _frames(2)
-	_key(KEY_TAB)
-	await _frames(1)
+	for index in main.get_node("Characters").get_child_count() - 1:
+		_key(KEY_TAB)
+		await _frames(1)
 	for frame in 180:
 		await _frames(1)
 		if first.is_on_floor():

@@ -1,0 +1,16 @@
+{
+	"144": {
+		"changed_pairs": 179,
+		"render_samples": 180,
+		"same_physics_tick_pairs": 104,
+		"skin_changed_same_tick": 104,
+		"wall_seconds": 1.249095
+	},
+	"60": {
+		"changed_pairs": 179,
+		"render_samples": 180,
+		"same_physics_tick_pairs": 2,
+		"skin_changed_same_tick": 2,
+		"wall_seconds": 2.955314
+	}
+}

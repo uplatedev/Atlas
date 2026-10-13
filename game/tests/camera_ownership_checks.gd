@@ -5,7 +5,7 @@ extends SceneTree
 
 const CHARACTER = preload("res://characters/Character.tscn")
 const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
-const NEW_CAMERA_FIELDS = ["camera_landing_enabled", "camera_landing_max_dip", "camera_first_person_landing_max_dip", "camera_landing_min_speed", "camera_landing_full_speed", "camera_landing_attack_time", "camera_landing_recovery_time", "camera_accent_max_offset", "camera_fov_refinement_enabled", "camera_slide_fov_bonus", "camera_first_person_slide_fov_bonus", "camera_slide_fov_reference_speed"]
+const NEW_CAMERA_FIELDS = ["camera_landing_enabled", "camera_landing_max_dip", "camera_first_person_landing_max_dip", "camera_landing_min_speed", "camera_landing_full_speed", "camera_landing_attack_time", "camera_landing_recovery_time", "camera_accent_max_offset", "camera_fov_refinement_enabled", "camera_slide_fov_bonus", "camera_first_person_slide_fov_bonus", "camera_slide_fov_reference_speed", "camera_stride_follow_ratio"]
 const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var trace: Dictionary = {}
@@ -26,6 +26,7 @@ func _run() -> void:
 	root.add_child(world)
 	floor_body = _box(Vector3(0, -0.1, 0), Vector3(400, 0.2, 400))
 	actor = CHARACTER.instantiate() as AtlasCharacter
+	actor.procedural_enabled = false
 	_legacy_camera(actor)
 	actor.position = Vector3(0, 0.05, 0)
 	world.add_child(actor)
@@ -63,6 +64,7 @@ func _test_instances_and_zoom() -> void:
 			exports[name] = {"type": int(property.type), "hint": String(property.hint_string), "value": actor.get(name)}
 	trace["root_camera_exports"] = exports
 	var other: AtlasCharacter = CHARACTER.instantiate()
+	other.procedural_enabled = false
 	_legacy_camera(other)
 	other.position = Vector3(8, 0.05, 0)
 	other.camera_start_distance = 6.0
@@ -134,6 +136,7 @@ func _test_head_render_and_logical_input() -> void:
 	actor.set_physics_process(true)
 	await _reset()
 	var twin: AtlasCharacter = CHARACTER.instantiate()
+	twin.procedural_enabled = false
 	_legacy_camera(twin)
 	twin.position = Vector3(20, 0.05, 0)
 	world.add_child(twin)
@@ -289,12 +292,27 @@ func _test_posture_route() -> void:
 			route.append(_snapshot())
 		if frame % 30 == 29:
 			route.append(_snapshot())
-	_expect(visited == [0, 1, 2, 1, 0], "automatische route behoudt echte opeenvolgende houdingen en veilig herstel")
+	_expect(visited == [0, 1] and actor.position.z > -4.9 and str(actor.get_debug_state().manual_posture) == "staan", "staande voorkeur kruipt automatisch maar blokkeert vóór de ligruimte")
+	var blocked_height := _rig().global_position.y - actor.global_position.y
+	_expect(blocked_height > 0.7 and blocked_height < 1.3, "geblokkeerde route houdt de camera op kruiphoogte zonder valse ligstand")
+	Input.action_press("crouch")
+	await _frames(1)
+	Input.action_release("crouch")
+	for frame in 400:
+		await _frames(1)
+		var posture := actor.get_posture()
+		if posture != visited[-1]:
+			visited.append(posture)
+			route.append(_snapshot())
+		if actor.position.z < -8.1 and posture == 1:
+			break
+	_expect(visited == [0, 1, 2, 1] and actor.position.z < -8.1 and str(actor.get_debug_state().manual_posture) == "kruipen", "nieuwe C opent de ligroute en herstelt handmatige kruip via echte tussenhoudingen")
+	await _frames(30)
+	_expect(_rig().global_position.y - actor.global_position.y > 0.7, "camera herstelt na de ligruimte naar kruiphoogte")
 	trace["low_route"] = route
 	first.queue_free()
 	second.queue_free()
 	await _frames(2)
-
 
 func _test_render_rates() -> void:
 	# Dezelfde opgelegde renderdoelbaan, zonder physics/inputverandering. Dit is
@@ -327,6 +345,7 @@ func _test_render_rates() -> void:
 func _test_main_controls() -> void:
 	var main: Node = load("res://scenes/main.tscn").instantiate()
 	for body in main.get_node("Characters").get_children():
+		body.procedural_enabled = false
 		_legacy_camera(body)
 	main.set("capture_mouse_on_start", false)
 	root.add_child(main)
@@ -384,6 +403,10 @@ func _handle_trace() -> void:
 
 
 func _compare(actual: Variant, expected: Variant, path: String) -> void:
+	# T-011 wijzigt uitsluitend deze route: staan mag niet meer automatisch lig.
+	# _test_posture_route bewijst de nieuwe grens; alle andere traces blijven exact.
+	if path == "trace.low_route":
+		return
 	if actual is Dictionary and expected is Dictionary:
 		_expect(actual.size() == expected.size(), "pariteit sleutelset: " + path)
 		for key in expected:
