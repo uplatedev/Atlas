@@ -72,7 +72,7 @@ func _head_then_body() -> void:
 	await _ticks(20)
 	var state := presentation.get_debug_state()
 	_expect(absf(actor.rotation.y) < 0.001 and int(state.turn_step_index) == 0, "kleine blik draait eerst hoofd/romp zonder capsule of voeten")
-	_expect(float(state.turn_torso_yaw) > deg_to_rad(3.0) and float(state.turn_torso_yaw) < deg_to_rad(16.1), "romp heeft een kleine begrensde voorsprong")
+	_expect(float(state.turn_torso_yaw) > deg_to_rad(12.0) and float(state.turn_torso_yaw) < deg_to_rad(22.0), "romp benut merkbare maar begrensde rotatie vóór bijstappen")
 	_expect(absf(float(presentation.get("_head_yaw")) - deg_to_rad(30.0)) < 0.001, "hoofd behoudt gevraagde blik")
 	_send(deg_to_rad(100.0))
 	await _ticks(90)

@@ -37,3 +37,11 @@ Nieuwe content maak je door `game/characters/Character.tscn` onder `Characters` 
 `tools/Check-Atlas.ps1 -CharacterChecks` importeert en controleert de bestaande besturing/camera/audio en de procedurele motor, presentatie, integratie en terreinen. De afzonderlijke rigproef gebruikt een echte renderer om meshvervorming te bakken. [Rig](rig.md), [motor](motor.md) en [presentatie](presentation.md) beschrijven hun beperkte deelbewijs.
 
 De motor bezit capsule en snelheid. De planner doet hoogstens twee lokale voetmetingen per tick; IK stuurt alleen botten. Impulsen schalen met massa. Klimmen, tijdelijke ragdoll, zwemmen, balanceren, vaulten, ziplines, bouncepads en LAN/Steam volgen de eerder vastgelegde aparte proeven na beoordeling van deze grondbeweging.
+
+## Gerichte vervolgproef na d1196064
+
+De gebruiker vindt de run op die versie goed. Beoordeel de nieuwe correctie daarom apart: kijk stilstaand langzaam én plotseling opzij en let op de borst vóór de eerste voetverplaatsing. Loop daarna vanuit stilstand vooruit, links en rechts, keer van links naar rechts om en stop. De borst mag eerst meedraaien, de benen mogen zijwaarts niet kruisen, het lichaam mag bij weglopen niet plots naar beneden zakken en de voeten horen bij lopen en stoppen dichter bijeen te komen. Vergelijk via Tab de andere beenverhoudingen. Controleer aansluitend dat de vertrouwde renstijl behouden voelt. De technische referentievergelijking bewijst geen volledige acceptatie van dit gevoel.
+
+Voor de torsovolgorde staan onder **Body Profile > Bijstappen** ook **Turn Torso Max Degrees** en **Turn Torso Before Step Degrees**. De eerste bepaalt hoeveel de borst mag draaien; de tweede hoeveel daarvan vóór de eerste bijstap wordt benut. Een onhaalbare combinatie wordt veilig begrensd. Probeer dit op één instance en controleer dat de andere gelijk blijft.
+
+De rustigere voetbreedte is instelbaar met **Walking Stance Ratio** en **Idle Stance Ratio**. **Walk Start Support Ratio** verkort alleen de eerste gewone steun bij starten, hervatten en omkeren; sprint behoudt zijn cadans. Kleine waarden laten de volgende stap eerder beginnen. Probeer ook schuin lopen, omkeren en stoppen terwijl je omkijkt.

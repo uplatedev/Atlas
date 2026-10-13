@@ -1,0 +1,36 @@
+VOOR — gecombineerde bron07d8159: herplaatsing omzeilt onterecht borstreserve.
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+STOP REPLANT neutral_contacts=3 yaw_while_waiting=116.502057613169
+STOP LOOK direction=-1.0 delay=0 neutral_steps=1 turning_steps=2 first_turn_chest=4.88339728419617 violations=1
+STOP LOOK direction=-1.0 delay=3 neutral_steps=0 turning_steps=3 first_turn_chest=4.88693017253559 violations=1
+STOP LOOK direction=-1.0 delay=6 neutral_steps=0 turning_steps=4 first_turn_chest=4.88822699764183 violations=1
+STOP LOOK direction=-1.0 delay=9 neutral_steps=1 turning_steps=3 first_turn_chest=25.9287858323109 violations=0
+STOP LOOK direction=-1.0 delay=12 neutral_steps=1 turning_steps=3 first_turn_chest=20.7719251761488 violations=1
+STOP LOOK direction=1.0 delay=0 neutral_steps=0 turning_steps=2 first_turn_chest=4.88339582587388 violations=1
+STOP LOOK direction=1.0 delay=3 neutral_steps=0 turning_steps=3 first_turn_chest=4.88693942427955 violations=1
+STOP LOOK direction=1.0 delay=6 neutral_steps=0 turning_steps=4 first_turn_chest=4.88823285150668 violations=1
+STOP LOOK direction=1.0 delay=9 neutral_steps=1 turning_steps=3 first_turn_chest=25.9288218164295 violations=0
+STOP LOOK direction=1.0 delay=12 neutral_steps=1 turning_steps=3 first_turn_chest=20.7719089569086 violations=1
+FAIL: neutrale herplaatsing geeft geen toestemming voor een draaibijstap
+FAIL: stoppen plus grote blik bewaart borstreserve vóór de eerste nieuwe draaibijstap
+PROCEDURAL STOP TURN: FAIL
+
+
+NA — neutrale herplaatsdoelen blijven op huidige yaw; echte motor-yaw blijft bijgehouden.
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+STOP REPLANT neutral_contacts=1 yaw_while_waiting=0.0
+STOP LOOK direction=-1.0 delay=0 neutral_steps=1 turning_steps=2 first_turn_chest=28.2797034580109 violations=0
+STOP LOOK direction=-1.0 delay=3 neutral_steps=1 turning_steps=2 first_turn_chest=28.2803335666736 violations=0
+STOP LOOK direction=-1.0 delay=6 neutral_steps=1 turning_steps=3 first_turn_chest=28.2805246046617 violations=0
+STOP LOOK direction=-1.0 delay=9 neutral_steps=1 turning_steps=3 first_turn_chest=25.9287858323109 violations=0
+STOP LOOK direction=-1.0 delay=12 neutral_steps=2 turning_steps=3 first_turn_chest=31.8249453277732 violations=0
+STOP LOOK direction=1.0 delay=0 neutral_steps=1 turning_steps=2 first_turn_chest=28.2797027625405 violations=0
+STOP LOOK direction=1.0 delay=3 neutral_steps=1 turning_steps=2 first_turn_chest=28.2803338762183 violations=0
+STOP LOOK direction=1.0 delay=6 neutral_steps=1 turning_steps=3 first_turn_chest=28.2805540565781 violations=0
+STOP LOOK direction=1.0 delay=9 neutral_steps=1 turning_steps=3 first_turn_chest=25.9288218164295 violations=0
+STOP LOOK direction=1.0 delay=12 neutral_steps=2 turning_steps=3 first_turn_chest=31.8249750820906 violations=0
+PROCEDURAL STOP TURN: PASS

@@ -1,0 +1,23 @@
+VOOR — bestaande bron9ca0c5c; nieuwe torso-eis faalt zoals verwacht.
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TORSO direction=-1.0 abrupt=false first_tick=61 chest_before_step=15.4117537440629 head_before_step=60.9999980864597 max_neck=47.667153687413 max_look_error=0.00001997398146
+TORSO direction=-1.0 abrupt=true first_tick=1 chest_before_step=4.1469120970805 head_before_step=84.9999978882114 max_neck=82.7713295456093 max_look_error=33.4855951036132
+TORSO direction=1.0 abrupt=false first_tick=61 chest_before_step=15.4117563046786 head_before_step=61.0000116897668 max_neck=47.6671474764589 max_look_error=0.00001997398146
+TORSO direction=1.0 abrupt=true first_tick=1 chest_before_step=4.1469186881376 head_before_step=85.0000004397857 max_neck=82.7713211575491 max_look_error=33.4856095854963
+PROCEDURAL TORSO: FAIL
+FAIL: borst draait merkbaar minstens24graden vóór eerste bijstap
+
+
+NA — torsoafstelling in dezelfde werkbranch.
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TORSO direction=-1.0 abrupt=false first_tick=61 chest_before_step=33.6250509342877 head_before_step=60.9999995799142 max_neck=28.8182003859382 max_look_error=0.0000171962431
+TORSO direction=-1.0 abrupt=true first_tick=7 chest_before_step=24.4582008847418 head_before_step=109.458193154214 max_neck=85.0000186218563 max_look_error=19.208414498441
+TORSO direction=1.0 abrupt=false first_tick=61 chest_before_step=33.6250583160372 head_before_step=61.0000040602778 max_neck=28.8182265330935 max_look_error=0.00001400005573
+TORSO direction=1.0 abrupt=true first_tick=7 chest_before_step=24.458232301277 head_before_step=109.458191544194 max_neck=85.0000059474154 max_look_error=19.208405472264
+TORSO EDITOR live_chest=19.8950585374055 max=20 threshold=40; independent/live/no-rebuild/completes PASS
+TORSO EDITOR maximum0/1 with threshold40: completes PASS
+PROCEDURAL TORSO: PASS

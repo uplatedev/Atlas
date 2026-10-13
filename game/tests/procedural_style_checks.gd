@@ -71,7 +71,7 @@ func _run() -> void:
 	unique.walking_stance_ratio=0.62
 	unique.body_roll_degrees=1.5
 	unique.slide_knee_clearance_ratio=0.15
-	_expect(profile.walking_stance_ratio==0.75 and profile.body_roll_degrees==3.0 and profile.slide_knee_clearance_ratio==0.09,"nieuwe stijlvelden blijven per profiel onafhankelijk")
+	_expect(profile.walking_stance_ratio==0.50 and profile.body_roll_degrees==3.0 and profile.slide_knee_clearance_ratio==0.09,"nieuwe stijlvelden blijven per profiel onafhankelijk")
 	_expect(unique.rig_signature()==signature,"nieuwe stijlvelden herbouwen de rig niet")
 	var file:=FileAccess.open("user://t011_style_metrics.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"walk":records[0],"run":records[1],"slide":slide},"\t"))

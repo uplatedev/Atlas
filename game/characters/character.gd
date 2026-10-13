@@ -1238,7 +1238,8 @@ func _try_start_stride(delta: float, supported: bool) -> bool:
 	var speed := Vector2(velocity.x, velocity.z).length()
 	var moving := speed > 0.10 and _actual_speed > 0.10
 	var duration := body_profile.get_support_duration(speed, _procedural_leg_length, _sneak_requested)
-	if not _stride.support_tick(delta, duration, moving):
+	var first_support_ratio := 1.0 if _sprint_requested else body_profile.walk_start_support_ratio
+	if not _stride.support_tick(delta, duration, moving, first_support_ratio, Vector2(velocity.x, velocity.z)):
 		return false
 	var height := body_profile.get_flight_height(speed / maxf(body_profile.reference_speed, 0.1), _procedural_leg_length, _sneak_requested)
 	if height <= 0.000001:

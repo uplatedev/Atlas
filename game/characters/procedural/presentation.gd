@@ -61,6 +61,7 @@ var _pose_current: Array[Transform3D] = []
 var _turn_planner := TurnStepPlanner.new()
 var _turn_body_offset: float = 0.0
 var _turn_torso_yaw: float = 0.0
+var _turn_torso_ready: bool = false
 var _turn_foot_yaws: Array[float] = [0.0, 0.0]
 var _turn_release_remaining: float = 0.0
 
@@ -136,6 +137,7 @@ func reset_pose() -> void:
 	_turn_planner.reset(_character.global_rotation.y if _character != null else 0.0)
 	_turn_body_offset = 0.0
 	_turn_torso_yaw = 0.0
+	_turn_torso_ready = false
 	_turn_release_remaining = 0.0
 	_pose_previous.clear()
 	_pose_current.clear()
@@ -164,7 +166,9 @@ func reset_pose() -> void:
 		_skeleton.reset_bone_poses()
 		_body_transform = _character.global_transform
 		for side in range(2):
-			_targets[side] = _body_transform * _rest_feet[side]
+			var rest := _rest_feet[side]
+			rest.x *= _profile.get_stance_width_scale(0.0)
+			_targets[side] = _body_transform * rest
 			_contacts[side] = _targets[side] - Vector3.UP * _ankle_height
 			_swing_from[side] = _body_transform.affine_inverse() * _targets[side]
 
@@ -211,7 +215,7 @@ func consume_frame(frame: Variant) -> void:
 		if (was_jump and supported) or changed_step:
 			_swing_from[side] = _body_transform.affine_inverse() * _targets[side]
 		var rest := _rest_feet[side]
-		rest.x *= _profile.stance_width_ratio * lerpf(1.0, lerpf(_profile.walking_stance_ratio, _profile.running_stance_ratio, running), clampf(_speed / 0.6, 0.0, 1.0))
+		rest.x *= _profile.get_stance_width_scale(_speed, standing)
 		var base := _body_transform * Vector3(rest.x, 0.0, 0.0)
 		var ahead := _direction * length * 0.48
 		var destination := base + ahead if moving_stride else base
@@ -253,7 +257,11 @@ func consume_frame(frame: Variant) -> void:
 			var progress := clampf(_phase, 0.0, 1.0) if side != stance else clampf((_phase - 0.5) * 2.0, 0.0, 1.0)
 			var speed_mix := clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)
 			var heel_height := _measured_leg_length * _profile.heel_recovery_ratio * lerpf(_profile.walking_lift_ratio * 0.12, 1.0, running) * speed_mix
-			var next_target := ankle if side != stance else base - ahead * 0.6 + Vector3.UP * (_ankle_height + heel_height)
+			var lateral_ahead := _body_transform.basis.x * ahead.dot(_body_transform.basis.x)
+			# Zijdelings herstel blijft in de toekomstige voetbaan; achteruit zwaaien
+			# over de andere baan zou de benen tijdens strafing laten kruisen.
+			var recovery := base - ahead * 0.6 + lateral_ahead * 1.6
+			var next_target := ankle if side != stance else recovery + Vector3.UP * (_ankle_height + heel_height)
 			# Losse voeten reizen met het lichaam. Een oud wereldcontact hier vasthouden
 			# rekt het been tijdens pasvlucht uit en laat het bij de voetwissel terugspringen.
 			var from_world := _body_transform * _swing_from[side]
@@ -278,7 +286,7 @@ func consume_frame(frame: Variant) -> void:
 				# Laat de begrenzing pas los wanneer het gewone zwaaidoel is ingehaald.
 				_turn_release_remaining = maxf(_turn_release_remaining, frame.delta * 2.0)
 				_targets[side] = previous_target.move_toward(_targets[side], travel_limit)
-	if _turn_release_remaining > 0.0 and standing and moving_stride:
+	if standing and moving_stride and (_turn_release_remaining > 0.0 or absf(_direction.dot(_body_transform.basis.x)) > 0.1):
 		_keep_turn_feet_separated()
 	_initialized_pose = true
 	_update_compression(frame, was_jump)
@@ -288,7 +296,7 @@ func consume_frame(frame: Variant) -> void:
 
 func _keep_turn_feet_separated() -> void:
 	# Bij snelle loopinvoer draait de capsule al terwijl de oude steunvoet vast
-	# blijft. Laat alleen de vrije voet buiten die steunvoet om aansluiten.
+	# blijft. Dit geldt ook voor zijwaartse passen; verplaats alleen vrije voeten.
 	var right := _body_transform.basis.x
 	var gap := (_targets[1] - _targets[0]).dot(right)
 	var correction := _measured_leg_length * 0.16 - gap
@@ -352,7 +360,7 @@ func _update_turn_plan(frame: Variant, allowed: bool) -> void:
 	var motor_yaw: float = frame.body_transform.basis.get_euler().y
 	var rest: Array[Vector3] = []
 	for foot in _rest_feet:
-		rest.append(Vector3(foot.x * _profile.stance_width_ratio, 0.0, 0.0))
+		rest.append(Vector3(foot.x * _profile.get_stance_width_scale(0.0), 0.0, 0.0))
 	# Loopinvoer geeft de pose direct aan de loopplanner; de capsule wacht niet
 	# op een stilstaande bijstap. Voetdoelen nemen hun bereikte positie mee.
 	if allowed and not _turn_planner.enabled:
@@ -362,25 +370,38 @@ func _update_turn_plan(frame: Variant, allowed: bool) -> void:
 				_contacts[side] = _targets[side] - Vector3.UP * _ankle_height
 				_turn_planner.request_replant(side)
 	var use_turn: bool = allowed and _initialized_pose
+	var look: Vector2 = _character.get_look_input() if _character.has_method("get_look_input") else Vector2(motor_yaw, 0.0)
+	var relative_look := wrapf(look.x - _turn_planner.pose_yaw, -PI, PI)
+	var torso_limit := deg_to_rad(clampf(_profile.turn_torso_max_degrees, 0.0, 50.0))
+	var torso_target := clampf(relative_look * 0.65, -torso_limit, torso_limit) if allowed else 0.0
+	_turn_torso_yaw = lerpf(_turn_torso_yaw, torso_target, 1.0 - exp(-frame.delta * 9.0))
+	# Eerst hoofd en borst, dan voeten. Een begonnen draai blijft afwerken,
+	# ook wanneer de borst tijdens het bijhalen alweer dichter bij neutraal komt.
+	if not use_turn or (_turn_planner.active_side < 0 and absf(wrapf(motor_yaw - _turn_planner.pose_yaw, -PI, PI)) < 0.01):
+		_turn_torso_ready = false
+	var torso_before_step := minf(deg_to_rad(_profile.turn_torso_before_step_degrees), torso_limit * 0.85)
+	if use_turn and absf(_turn_torso_yaw) >= torso_before_step:
+		_turn_torso_ready = true
 	if _turn_planner.enabled and not use_turn and (_turn_planner.active_side >= 0 or absf(_turn_body_offset) > 0.01):
 		# Begeleid de eerste aansluitende passen; daarna alleen zolang een vrij doel nog wordt ingehaald.
 		_turn_release_remaining = 0.4
 	else:
 		_turn_release_remaining = maxf(0.0, _turn_release_remaining - frame.delta)
-	_turn_planner.advance(frame.delta, motor_yaw, use_turn, frame.body_transform.origin, rest, _contacts)
+	_turn_planner.advance(frame.delta, motor_yaw, use_turn, frame.body_transform.origin, rest, _contacts, _turn_torso_ready)
 	_turn_body_offset = wrapf(_turn_planner.pose_yaw - motor_yaw, -PI, PI)
 	_body_transform.basis = Basis(Vector3.UP, _turn_planner.pose_yaw)
 	_turn_foot_yaws.assign(_turn_planner.foot_yaws)
-	var look: Vector2 = _character.get_look_input() if _character.has_method("get_look_input") else Vector2(motor_yaw, 0.0)
-	var relative_look := wrapf(look.x - _turn_planner.pose_yaw, -PI, PI)
+	relative_look = wrapf(look.x - _turn_planner.pose_yaw, -PI, PI)
 	var head_limit := deg_to_rad(float(_character.get("head_max_yaw"))) if "head_max_yaw" in _character else deg_to_rad(85.0)
-	_head_yaw = _turn_body_offset + clampf(relative_look, -head_limit, head_limit)
-	var torso_target := clampf(relative_look * 0.3, -deg_to_rad(16.0), deg_to_rad(16.0)) if allowed else 0.0
-	_turn_torso_yaw = lerpf(_turn_torso_yaw, torso_target, 1.0 - exp(-frame.delta * 9.0))
+	# Dezelfde nekgrens geldt ten opzichte van de daadwerkelijk gedraaide borst.
+	_head_yaw = _turn_body_offset + _turn_torso_yaw + clampf(relative_look - _turn_torso_yaw, -head_limit, head_limit)
 	frame.turn_step_landed = false
 	frame.turn_step_index = _turn_planner.step_index
 	if _turn_planner.started_side >= 0:
-		var hit := _ground_at(_turn_planner.destination())
+		var destination := _turn_planner.destination()
+		if absf(wrapf(_turn_planner.foot_yaws[0] - _turn_planner.foot_yaws[1], -PI, PI)) < 0.01:
+			destination = _separated_stop_target(_turn_planner.started_side, destination)
+		var hit := _ground_at(destination)
 		if hit.is_empty():
 			_turn_planner.reject_step()
 		else:
@@ -401,11 +422,23 @@ func _consume_turn_foot(frame: Variant, side: int) -> bool:
 	if _turn_planner.active_side == side:
 		_locked[side] = false
 		_targets[side] = _turn_planner.swing_position(_measured_leg_length * 0.09) + Vector3.UP * _ankle_height
+		if absf(wrapf(_turn_planner.foot_yaws[0] - _turn_planner.foot_yaws[1], -PI, PI)) < 0.01:
+			_targets[side] = _separated_stop_target(side, _targets[side])
 	else:
 		_locked[side] = true
 		_targets[side] = _contacts[side] + Vector3.UP * _ankle_height
 	_swing_from[side] = _body_transform.affine_inverse() * _targets[side]
 	return true
+
+func _separated_stop_target(side: int, target: Vector3) -> Vector3:
+	# Na zijwaarts stoppen kunnen beide voeten naast de capsule staan. De
+	# radiale bijstap mag dan niet door de andere, nog vaststaande voet gaan.
+	var right := _body_transform.basis.x
+	var rest_gap := (_rest_feet[1].x - _rest_feet[0].x) * _profile.get_stance_width_scale(0.0)
+	var gap := minf(_measured_leg_length * 0.16, rest_gap)
+	var sign_side := -1.0 if side == 0 else 1.0
+	var separation := (target - _contacts[1-side]).dot(right) * sign_side
+	return target + right * sign_side * maxf(0.0, gap - separation)
 
 func _cache_physics_pose() -> void:
 	# Eén IK-berekening per motorframe; renderframes mengen alleen lokale botposes.

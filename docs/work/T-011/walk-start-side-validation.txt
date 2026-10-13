@@ -1,0 +1,15 @@
+Bron: 884e91a (vanaf 9ca0c5c)
+Godot: 4.7.2.stable.official.ed1daf0bf
+Headless, physics60, --fixed-fps 60; geen prestatiemeting.
+PASS procedural_walk_contacts_checks (4 lichamen, start, beide zijrichtingen/omkeringen, stop, nulcurve, plafond)
+PASS procedural_style_checks
+PASS procedural_turn_checks
+PASS procedural_knee_checks
+PASS procedural_motor_checks
+PASS procedural_terrain_checks
+PASS procedural_contact_release_checks
+PASS procedural_compression_checks
+Renderer: D3D12 12_0 Forward+, NVIDIA GeForce RTX 5060 Ti, echte motorframes.
+PASS procedural_walk_contacts_preview; geen stderr.
+Beelden: user://t011_live_walk_contact_{idle,start,right,right_flight,reverse,left,stopping,stopped}.png
+Geen nieuwe performanceclaim; de solverstructuur en het querybudget blijven begrensd.

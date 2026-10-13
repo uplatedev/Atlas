@@ -42,8 +42,12 @@ extends Resource
 @export_range(0.0, 0.3, 0.01) var arm_forward_ratio: float = 0.12
 ## Voetspoorbreedte bij sprint als deel van rustbreedte; steunvoeten blijven op hun contactpunt.
 @export_range(0.5, 1.0, 0.01) var running_stance_ratio: float = 0.65
-## Voetspoorbreedte tijdens rustig lopen als deel van de rustbreedte; wordt geleidelijk smaller bij sprint.
-@export_range(0.5, 1.0, 0.01) var walking_stance_ratio: float = 0.75
+## Voetspoorbreedte tijdens rustig lopen als deel van de rustbreedte; gaat geleidelijk over naar de renbreedte.
+@export_range(0.5, 1.0, 0.01) var walking_stance_ratio: float = 0.50
+## Rustige standbreedte als deel van de rustvoeten; geldt ook voor stoppen en bijstappen.
+@export_range(0.35, 1.0, 0.01) var idle_stance_ratio: float = 0.50
+## Gewone looppas krijgt kortere steun bij starten, hervatten of omkeren; sprint behoudt zijn cadans.
+@export_range(0.25, 1.0, 0.05) var walk_start_support_ratio: float = 0.50
 ## Voet- en hielheffing bij rustig lopen als deel van de renstijl; houdt rustige passen dicht bij de grond.
 @export_range(0.1, 0.6, 0.01) var walking_lift_ratio: float = 0.25
 ## Zijwaartse bekkenrol bij lopen; de borst rolt tegengesteld en het hoofd blijft recht.
@@ -195,6 +199,10 @@ extends Resource
 		emit_changed()
 
 @export_group("Bijstappen")
+## Grootste borstrotatie ten opzichte van het bekken bij stilstaand kijken; 0 schakelt de borstreserve uit.
+@export_range(0.0, 50.0, 1.0, "suffix:°") var turn_torso_max_degrees: float = 35.0
+## De eerste bijstap wacht tot de borst deze hoek benut. Wordt veilig begrensd onder de maximale borstrotatie.
+@export_range(5.0, 40.0, 1.0, "suffix:°") var turn_torso_before_step_degrees: float = 24.0
 ## Duur van één vrije bijstap bij draaien in seconden; lager draait sneller, zonder de capsule te sturen.
 @export_range(0.08, 0.4, 0.01, "suffix:s") var turn_step_duration: float = 0.15
 ## Grootste richtingsverschil tussen de twee voeten tijdens bijdraaien; lager geeft meer, kleinere stappen.
@@ -225,6 +233,14 @@ func get_flight_height(normalized_speed: float, leg_length: float, sneaking: boo
 	var curve := stride_flight_curve
 	var ratio := curve.sample_baked(clampf(normalized_speed, 0.0, 1.0)) if curve != null else 0.12 * clampf(normalized_speed, 0.0, 1.0)
 	return clampf(ratio, 0.0, 0.22) * maxf(leg_length, 0.05) * (0.1 if sneaking else 1.0)
+
+func get_stance_width_scale(speed: float, standing: bool = true) -> float:
+	var normalized := clampf(speed / maxf(reference_speed, 0.1), 0.0, 1.0)
+	var running := smoothstep(0.50, 0.90, normalized)
+	# Lage houdingen behouden hun eerder afgestemde sporen; deze wijziging betreft staan/lopen.
+	var idle_width := idle_stance_ratio if standing else 1.0
+	var walk_width := walking_stance_ratio if standing else 0.75
+	return stance_width_ratio * lerpf(idle_width, lerpf(walk_width, running_stance_ratio, running), clampf(speed / 0.6, 0.0, 1.0))
 
 func get_support_duration(speed: float, leg_length: float, sneaking: bool) -> float:
 	return clampf(maxf(leg_length, 0.05) * step_length_ratio / maxf(speed, 0.2), 0.035, 0.34) * (1.3 if sneaking else 1.0)

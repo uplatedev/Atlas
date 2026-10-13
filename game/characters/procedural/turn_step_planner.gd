@@ -46,7 +46,7 @@ func request_replant(side: int) -> void:
 	_aligning = true
 	_force_next = true
 
-func advance(delta: float, desired_yaw: float, allowed: bool, origin: Vector3, rest: Array[Vector3], contacts: Array[Vector3]) -> void:
+func advance(delta: float, desired_yaw: float, allowed: bool, origin: Vector3, rest: Array[Vector3], contacts: Array[Vector3], allow_turn_start: bool = true) -> void:
 	if not initialized:
 		reset(desired_yaw)
 	started_side = -1
@@ -71,18 +71,21 @@ func advance(delta: float, desired_yaw: float, allowed: bool, origin: Vector3, r
 			step_index += 1
 			_next_side = 1 - landed_side
 		return
-	var error := wrapf(desired_yaw - pose_yaw, -PI, PI)
+	# Herplaatsen na lopen is geen toestemming voor een nieuwe draai. Zolang
+	# de borst wacht blijft het doel neutraal in de bestaande voetoriëntatie.
+	var goal_yaw := desired_yaw if allow_turn_start else pose_yaw
+	var error := wrapf(goal_yaw - pose_yaw, -PI, PI)
 	var position_errors: Array[float] = []
 	for side in range(2):
-		var destination := origin + Basis(Vector3.UP, desired_yaw) * Vector3(rest[side].x, 0.0, 0.0)
+		var destination := origin + Basis(Vector3.UP, goal_yaw) * Vector3(rest[side].x, 0.0, 0.0)
 		position_errors.append(Vector2(destination.x - contacts[side].x, destination.z - contacts[side].z).length())
 	if not _aligning and absf(error) < START_ANGLE and maxf(position_errors[0], position_errors[1]) < 0.075:
 		return
 	_aligning = true
 	var side := _next_side
-	if not _force_next and absf(wrapf(desired_yaw - foot_yaws[side], -PI, PI)) < 0.005 and position_errors[side] < 0.01:
+	if not _force_next and absf(wrapf(goal_yaw - foot_yaws[side], -PI, PI)) < 0.005 and position_errors[side] < 0.01:
 		side = 1 - side
-	if not _force_next and absf(wrapf(desired_yaw - foot_yaws[side], -PI, PI)) < 0.005 and position_errors[side] < 0.01:
+	if not _force_next and absf(wrapf(goal_yaw - foot_yaws[side], -PI, PI)) < 0.005 and position_errors[side] < 0.01:
 		_aligning = false
 		return
 	_force_next = false
@@ -93,7 +96,7 @@ func advance(delta: float, desired_yaw: float, allowed: bool, origin: Vector3, r
 	_from = contacts[side]
 	_from_yaw = foot_yaws[side]
 	var planted_yaw := foot_yaws[1 - side]
-	_target_yaw = planted_yaw + clampf(wrapf(desired_yaw - planted_yaw, -PI, PI), -max_pair_angle, max_pair_angle)
+	_target_yaw = planted_yaw + clampf(wrapf(goal_yaw - planted_yaw, -PI, PI), -max_pair_angle, max_pair_angle)
 	_target = origin + Basis(Vector3.UP, _target_yaw) * Vector3(rest[side].x, 0.0, 0.0)
 	_target.y = contacts[side].y
 
