@@ -138,7 +138,7 @@ func _direction_text(value: Variant) -> String:
 
 
 func _version_text() -> String:
-	var version := "T-005 · lokale proef"
+	var version := "T-011 · procedurele grondproef"
 	var path := "res://test-version.local.json"
 	if FileAccess.file_exists(path):
 		var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))

@@ -39,6 +39,7 @@ func _run() -> void:
 	await _test_jump_and_contact()
 	await _test_slide_and_virtual_support()
 	await _test_ground_slide_feedback()
+	await _test_turn_contact_feedback()
 	await _test_routing_and_instances()
 	await _test_physics_independence()
 	_release_inputs()
@@ -53,6 +54,37 @@ func _run() -> void:
 		for failure in failures:
 			printerr("FAIL: ", failure)
 		quit(1)
+
+
+func _test_turn_contact_feedback() -> void:
+	await _reset()
+	var frame := AtlasCharacterContactFrame.new()
+	frame.delta = 1.0 / 60.0
+	frame.procedural_enabled = true
+	frame.supported = true
+	frame.turn_step_landed = true
+	frame.turn_step_index = 1
+	frame.foot_contacts.append(actor.global_position)
+	var before := _count("step")
+	feedback.consume_contact(frame)
+	_expect(_count("step") == before + 1, "echt bijstapcontact klinkt eenmaal bij nul capsulesnelheid")
+	feedback.consume_contact(frame)
+	_expect(_count("step") == before + 1, "hetzelfde bijstapcontactnummer wordt niet herhaald")
+	frame.turn_step_index += 1
+	frame.foot_contacts.clear()
+	feedback.consume_contact(frame)
+	_expect(_count("step") == before + 1, "bijstap zonder gevonden voetcontact blijft stil")
+	frame.foot_contacts.append(actor.global_position)
+	for blocked in ["supported", "sliding", "jumped", "landed"]:
+		frame.turn_step_index += 1
+		frame.set(blocked, blocked != "supported")
+		feedback.consume_contact(frame)
+		frame.set(blocked, blocked == "supported")
+	_expect(_count("step") == before + 1, "vlucht, slide, sprong en zware landing krijgen geen extra bijstapgeluid")
+	frame.turn_step_index += 1
+	feedback.consume_contact(frame)
+	_expect(_count("step") == before + 2, "volgende veilige bijstap mag opnieuw klinken")
+	await _reset()
 
 
 func _test_silence() -> void:

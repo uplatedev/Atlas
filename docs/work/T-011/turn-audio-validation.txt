@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+MEASURE: walk afstand 12.150 m, stappen 6, instelling 1.800 m/stap.
+MEASURE: sprint afstand 21.017 m, stappen 8, instelling 2.400 m/stap.
+MEASURE: sneak afstand 4.905 m, stappen 3, instelling 1.300 m/stap.
+MEASURE: crouch afstand 7.075 m, stappen 5, instelling 1.200 m/stap.
+MEASURE: prone afstand 4.683 m, stappen 4, instelling 1.000 m/stap.
+MEASURE: slide-volume piek/eind -9.307/-10.936 dB; vaart begin/eind 10.333/5.333 m/s.
+MEASURE: audio aan/uit 180 physicsframes; grootste verschil 0.00000000.
+PASS: contactaudio voor echte afstand/afzet/impact/slide, routing, reset en ongewijzigde physics.

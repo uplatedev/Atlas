@@ -1,0 +1,278 @@
+extends SceneTree
+## Echte capsule, kijkinvoer en meshbijstappen; geen gesimuleerde contactframes.
+const CHARACTER = preload("res://characters/Character.tscn")
+const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
+const DT := 1.0 / 60.0
+var world: Node3D
+var actor: AtlasCharacter
+var presentation: AtlasCharacterPresentation
+var failures: Array[String] = []
+var frames: Array[AtlasCharacterContactFrame] = []
+var previous_targets: Array = []
+var previous_locks: Array = []
+var max_foot_delta: float = 0.0
+var min_separation: float = INF
+var max_lift: float = 0.0
+var crossing_frames: int = 0
+var lock_drift: float = 0.0
+var max_queries: int = 0
+var stationary_check: bool = true
+var serials: Array[int] = []
+var sides: Array[int] = []
+
+func _initialize() -> void:
+	call_deferred("_run")
+
+func _run() -> void:
+	world = Node3D.new()
+	root.add_child(world)
+	var floor_body := StaticBody3D.new()
+	var collision := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = Vector3(200, 0.2, 200)
+	collision.shape = shape
+	floor_body.position.y = -0.1
+	floor_body.add_child(collision)
+	world.add_child(floor_body)
+	actor = CHARACTER.instantiate() as AtlasCharacter
+	actor.position = Vector3(0, 0.05, 0)
+	world.add_child(actor)
+	actor.set_controlled(true)
+	presentation = actor.get_node("Presentation/ProceduralBody")
+	actor.contact_frame_ready.connect(_capture)
+	await _ticks(12)
+	await _head_then_body()
+	await _head_pitch_during_turn()
+	for target in [PI * 0.5, -PI * 0.5, PI, -PI]:
+		await _turn_to(target)
+	for direction in [-1.0, 1.0]:
+		await _continuous_turn(direction, TAU)
+		await _continuous_turn(direction, TAU * 2.0)
+	await _reverse()
+	await _walk_transition()
+	await _walk_start_alignment()
+	for body in range(3):
+		var profile := AtlasCharacterBodyProfile.new()
+		profile.test_body = body
+		actor.body_profile = profile
+		await _ticks(3)
+		await _turn_to(PI)
+	_expect(max_queries <= 2, "bijstappen gebruikt hoogstens de twee bestaande lokale voetmetingen")
+	print("TURN METRICS maximum queries=", max_queries)
+	world.queue_free()
+	await AUDIO_SHUTDOWN.drain(self)
+	for failure in failures:
+		printerr("FAIL: ", failure)
+	print("PROCEDURAL TURN: ", "PASS" if failures.is_empty() else "FAIL")
+	quit(0 if failures.is_empty() else 1)
+
+func _head_then_body() -> void:
+	await _reset()
+	_send(deg_to_rad(30.0))
+	await _ticks(20)
+	var state := presentation.get_debug_state()
+	_expect(absf(actor.rotation.y) < 0.001 and int(state.turn_step_index) == 0, "kleine blik draait eerst hoofd/romp zonder capsule of voeten")
+	_expect(float(state.turn_torso_yaw) > deg_to_rad(3.0) and float(state.turn_torso_yaw) < deg_to_rad(16.1), "romp heeft een kleine begrensde voorsprong")
+	_expect(absf(float(presentation.get("_head_yaw")) - deg_to_rad(30.0)) < 0.001, "hoofd behoudt gevraagde blik")
+	_send(deg_to_rad(100.0))
+	await _ticks(90)
+	_expect(int(presentation.get_debug_state().turn_step_index) >= 2, "grotere blik volgt met echte afwisselende bijstappen")
+	_check_stationary("head-body-foot sequence")
+
+func _head_pitch_during_turn() -> void:
+	var max_error := 0.0
+	var max_offset := 0.0
+	for pitch in [deg_to_rad(25.0), deg_to_rad(-25.0)]:
+		await _reset()
+		_send(deg_to_rad(150.0), Vector2.ZERO, false, pitch)
+		for tick in 36:
+			await _ticks(1)
+			var skeleton: Skeleton3D = presentation.get("_skeleton")
+			var head: int = presentation.get("_head")
+			presentation.apply_skeleton_pose(skeleton)
+			var actual := (skeleton.global_basis * skeleton.get_bone_global_pose(head).basis * skeleton.get_bone_global_rest(head).basis.inverse()).orthonormalized()
+			var yaw: float = actor.rotation.y + float(presentation.get("_head_yaw"))
+			var expected := Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, actor.get_look_input().y)
+			max_error = maxf(max_error, actual.get_rotation_quaternion().angle_to(expected.get_rotation_quaternion()))
+			max_offset = maxf(max_offset, absf(float(presentation.get_debug_state().turn_body_offset)))
+	_expect(max_offset > deg_to_rad(45.0), "hoofdbasisproef bevat echte grote achterstand tijdens bijstappen")
+	_expect(max_error < deg_to_rad(0.2), "op/neer kijken blijft pitch zonder scheef hoofd tijdens bijstappen")
+	print("HEAD TURN basis error degrees=", rad_to_deg(max_error), " maximum body offset=", rad_to_deg(max_offset))
+
+
+func _turn_to(target: float) -> void:
+	await _reset()
+	_send(target)
+	await _ticks(130)
+	_check_stationary("turn %.0f" % rad_to_deg(target))
+	var state := presentation.get_debug_state()
+	_expect(absf(float(state.turn_body_offset)) < 0.01 and int(state.turn_active_side) == -1, "bijstappen lossen visuele draai volledig op")
+	_expect(absf(wrapf(actor.get_look_input().x - target, -PI, PI)) < 0.001, "turnplanner verandert geen logische kijkinvoer")
+
+func _continuous_turn(direction: float, amount: float) -> void:
+	await _reset()
+	var count := ceili(amount / deg_to_rad(120.0) / DT)
+	for tick in count:
+		_send(direction * amount * float(tick + 1) / count)
+		await _ticks(1)
+	await _ticks(140)
+	_check_stationary("continuous %.0f" % rad_to_deg(direction * amount))
+	var state := presentation.get_debug_state()
+	_expect(absf(float(state.turn_body_offset)) < 0.01 and absf(float(state.turn_pose_yaw)) <= PI + 0.001, "360/720 graden bewaren geen opgetelde draai-offset")
+	var completed := int(state.turn_step_index)
+	await _ticks(40)
+	_expect(int(presentation.get_debug_state().turn_step_index) == completed, "stoppen laat geen wachtrij van oude bijstappen doorlopen")
+
+func _reverse() -> void:
+	await _reset()
+	_send(PI * 0.85)
+	await _ticks(8)
+	_send(-PI * 0.65)
+	await _ticks(130)
+	_check_stationary("abrupt reversal")
+	_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < 0.01, "plots tegenrichting voltooit begrensde huidige voet en volgt laatste wens")
+
+func _walk_transition() -> void:
+	for delay in [2, 7, 12]:
+		await _reset()
+		_send(PI * 0.8)
+		await _ticks(delay)
+		stationary_check = false
+		max_foot_delta = 0.0
+		_send(PI * 0.8, Vector2(0, -1), true)
+		for tick in 65:
+			await _ticks(1)
+			if tick == 0:
+				_expect(max_foot_delta < 0.10, "startlopen tijdens bijstap plant geen verre voetvoorspelling")
+		var state := presentation.get_debug_state()
+		_expect(absf(float(state.turn_body_offset)) < 0.01 and int(state.turn_active_side) == -1, "lopen uit bijstap ruimt visuele draai op")
+		_expect(Vector2(actor.velocity.x, actor.velocity.z).length() > 8.0, "bijstappen verandert sprintmotor niet")
+		print("TURN WALK delay=", delay, " largest foot delta=", max_foot_delta)
+		max_foot_delta = 0.0
+		_send(PI * 0.8)
+		await _ticks(100)
+		_expect(max_foot_delta < 0.30, "stoppen gebruikt actuele voetposities en geen oude contactteleport")
+		print("TURN STOP delay=", delay, " largest foot delta=", max_foot_delta)
+		stationary_check = true
+		previous_targets.clear()
+		previous_locks.clear()
+		await _ticks(60)
+		_expect(int(presentation.get_debug_state().turn_active_side) == -1, "stoppen na lopen laat bijstappen uitrusten")
+
+func _walk_start_alignment() -> void:
+	for degrees in [120.0, -120.0, 180.0, -180.0]:
+		for delay in [2, 6, 12]:
+			await _reset()
+			_send(deg_to_rad(degrees))
+			await _ticks(delay)
+			stationary_check = false
+			max_foot_delta = 0.0
+			var smallest_gap := INF
+			var smallest_bone_gap := INF
+			var lag_after_nine := 0.0
+			var planted_drift := 0.0
+			_send(deg_to_rad(degrees), Vector2(0, -1))
+			for tick in 30:
+				var before: Dictionary = presentation.get_debug_state()
+				await _ticks(1)
+				var state := presentation.get_debug_state()
+				var right := Basis(Vector3.UP, float(state.turn_pose_yaw)).x
+				var gap := (Vector3(state.foot_targets[1]) - Vector3(state.foot_targets[0])).dot(right)
+				smallest_gap = minf(smallest_gap, gap)
+				var skeleton: Skeleton3D = presentation.get("_skeleton")
+				presentation.apply_skeleton_pose(skeleton)
+				var legs: Array = presentation.get("_legs")
+				var left := skeleton.global_transform * skeleton.get_bone_global_pose(legs[0][2]).origin
+				var right_ankle := skeleton.global_transform * skeleton.get_bone_global_pose(legs[1][2]).origin
+				smallest_bone_gap = minf(smallest_bone_gap, (right_ankle - left).dot(right))
+				skeleton.reset_bone_poses()
+				if tick == 0:
+					_expect(max_foot_delta < 0.10, "eerste loopframe plant bijstapvoet zonder verre sprong")
+				if tick == 8:
+					lag_after_nine = absf(rad_to_deg(float(state.turn_body_offset)))
+					_expect(lag_after_nine < 5.0, "bekken sluit binnen negen loopframes aan na grote draai")
+				if tick > 0 and frames[-1].foot_contacts.is_empty():
+					for side in range(2):
+						if before.locked_feet[side] and state.locked_feet[side]:
+							planted_drift = maxf(planted_drift, Vector3(before.foot_targets[side]).distance_to(state.foot_targets[side]))
+			_expect(smallest_gap > 0.015 and smallest_bone_gap > 0.015, "vrije voet en werkelijk enkelbot kruisen steunbeen niet bij loopoverdracht")
+			_expect(planted_drift < 0.0001, "overdracht corrigeert alleen vrije voeten en bewaart bestaand steuncontact")
+			_expect(max_foot_delta < 0.25, "hele loopoverdracht houdt voetverplaatsing begrensd")
+			_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < 0.001, "overdracht bewaart geen blijvende visuele draai")
+			print("TURN START degrees=", degrees, " delay=", delay, " lag9=", lag_after_nine, " target_gap=", smallest_gap, " ankle_gap=", smallest_bone_gap, " planted_drift=", planted_drift, " foot_delta=", max_foot_delta)
+			await _ticks(30)
+			_expect(float(presentation.get("_turn_release_remaining")) == 0.0, "loopoverdracht eindigt en laat de gewone pasplanner volledig vrij")
+func _check_stationary(label: String) -> void:
+	var state := presentation.get_debug_state()
+	_expect(crossing_frames == 0, "voeten kruisen niet tijdens " + label)
+	_expect(lock_drift < 0.0001, "geplante steunvoet blijft wereldvast tijdens " + label)
+	_expect(max_foot_delta < 0.10, "bijstap heeft geen zichtbare doelteleport tijdens " + label)
+	_expect(max_lift > 0.02 and serials.size() >= 2, "bijstap heft en plant voeten aantoonbaar tijdens " + label)
+	_expect(actor.position.distance_to(Vector3(0, actor.position.y, 0)) < 0.001 and actor.is_on_floor(), "stationaire draai verplaatst de capsule niet")
+	_expect(float(state.max_planted_error) < 0.01, "werkelijke steunvoet blijft binnen bereik bij " + label)
+	for index in range(1, serials.size()):
+		_expect(serials[index] == serials[index - 1] + 1, "bijstapcontact heeft één eigen oplopend serienummer")
+		_expect(sides[index] != sides[index - 1], "bijstap wisselt links/rechts af")
+	print("TURN ", label, " steps=", serials.size(), " crossing=", crossing_frames, " min_side=", min_separation, " foot_delta=", max_foot_delta, " lift=", max_lift, " lock_drift=", lock_drift, " offset=", state.turn_body_offset)
+
+func _capture(frame: AtlasCharacterContactFrame) -> void:
+	frames.append(frame)
+	var state := presentation.get_debug_state()
+	max_queries = maxi(max_queries, int(state.rays_last_frame))
+	var targets: Array = state.foot_targets
+	var locks: Array = state.locked_feet
+	if stationary_check and frame.supported and frame.horizontal_speed < 0.1:
+		var inverse := Basis(Vector3.UP, float(state.turn_pose_yaw)).inverse()
+		for side in range(2):
+			var relative: Vector3 = inverse * (Vector3(targets[side]) - actor.position)
+			var signed_x := relative.x * (-1.0 if side == 0 else 1.0)
+			min_separation = minf(min_separation, signed_x)
+			crossing_frames += 1 if signed_x < 0.01 else 0
+			max_lift = maxf(max_lift, Vector3(targets[side]).y - float(presentation.get("_ankle_height")))
+		_expect(locks[0] or locks[1], "bijstap bewaart altijd minstens één echte steunvoet")
+	if previous_targets.size() == 2:
+		for side in range(2):
+			max_foot_delta = maxf(max_foot_delta, Vector3(targets[side]).distance_to(previous_targets[side]))
+
+			if stationary_check and bool(locks[side]) and bool(previous_locks[side]) and not frame.turn_step_landed:
+				lock_drift = maxf(lock_drift, Vector3(targets[side]).distance_to(previous_targets[side]))
+	previous_targets = targets.duplicate()
+	previous_locks = locks.duplicate()
+	if frame.turn_step_landed:
+		_expect(frame.supported and frame.foot_contacts.size() == 1 and not frame.stride_landed and not frame.jumped, "bijstap cue volgt één geaccepteerd gesteund voetcontact")
+		serials.append(frame.turn_step_index)
+		sides.append(int(presentation.get("_turn_planner").landed_side))
+
+func _reset() -> void:
+	_send(0.0)
+	actor.reset_to_spawn()
+	actor.set_look_input(0.0, 0.0)
+	await _ticks(15)
+	frames.clear()
+	serials.clear()
+	sides.clear()
+	previous_targets.clear()
+	previous_locks.clear()
+	max_foot_delta = 0.0
+	min_separation = INF
+	max_lift = 0.0
+	crossing_frames = 0
+	lock_drift = 0.0
+	stationary_check = true
+
+func _send(yaw: float, movement: Vector2 = Vector2.ZERO, sprint: bool = false, pitch: float = 0.0) -> void:
+	var intent := AtlasCharacterIntent.new()
+	intent.movement = movement
+	intent.sprint = sprint
+	intent.has_look_direction = true
+	intent.look_direction = Vector2(yaw, pitch)
+	actor.submit_intent(intent)
+
+func _ticks(count: int) -> void:
+	for tick in count:
+		await physics_frame
+		await process_frame
+
+func _expect(condition: bool, message: String) -> void:
+	if not condition and not failures.has(message):
+		failures.append(message)

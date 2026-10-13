@@ -8,7 +8,7 @@ var step_index: int = 0
 var takeoff_y: float = 0.0
 var height: float = 0.0
 var _support_only: bool = false
-var _support_elapsed: float = 0.0
+var _support_progress: float = 0.0
 var _flight_elapsed: float = 0.0
 var _flight_duration: float = 0.0
 
@@ -21,7 +21,7 @@ func reset() -> void:
 
 func cancel() -> void:
 	_support_only = false
-	_support_elapsed = 0.0
+	_support_progress = 0.0
 	_flight_elapsed = 0.0
 	_flight_duration = 0.0
 	height = 0.0
@@ -30,19 +30,21 @@ func cancel() -> void:
 
 func support_tick(delta: float, duration: float, moving: bool) -> bool:
 	if not moving:
-		_support_elapsed = 0.0
+		_support_progress = 0.0
 		phase = 0.0
 		return false
-	_support_elapsed += delta
-	phase = (1.0 if _support_only else 0.5) * clampf(_support_elapsed / maxf(duration, delta), 0.0, 1.0)
-	return _support_elapsed + 0.000001 >= duration
+	# Snelheid verandert de verdere pascadans, niet de al afgelegde fase.
+	# Verstreken tijd delen door een groeiende duur liet de voet achteruit zwaaien.
+	_support_progress += maxf(delta, 0.0) / maxf(duration, maxf(delta, 0.000001))
+	phase = (1.0 if _support_only else 0.5) * clampf(_support_progress, 0.0, 1.0)
+	return _support_progress + 0.000001 >= 1.0
 
 
 func take_off(at_y: float, flight_height: float, gravity: float) -> float:
 	_support_only = false
 	takeoff_y = at_y
 	height = flight_height
-	_support_elapsed = 0.0
+	_support_progress = 0.0
 	_flight_elapsed = 0.0
 	var launch := sqrt(2.0 * gravity * height)
 	_flight_duration = 2.0 * launch / gravity

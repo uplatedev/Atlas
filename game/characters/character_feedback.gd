@@ -29,6 +29,7 @@ var _slide_target: float = 0.0
 var _slide_volume_db: float = SILENT_DB
 var _distance: float = 0.0
 var _ever_supported: bool = false
+var _last_turn_step_index: int = -1
 var _pending_jump: bool = false
 var _pending_sneak_jump: bool = false
 var _cue_counts: Dictionary = {"step": 0, "jump": 0, "landing": 0, "slide_landing": 0}
@@ -111,6 +112,7 @@ func reset() -> void:
 	_stop_slide()
 	_distance = 0.0
 	_ever_supported = false
+	_last_turn_step_index = -1
 	_pending_jump = false
 	_pending_sneak_jump = false
 	_cue_counts = {"step": 0, "jump": 0, "landing": 0, "slide_landing": 0}
@@ -148,14 +150,22 @@ func consume_contact(frame: AtlasCharacterContactFrame) -> void:
 	if frame.supported:
 		_ever_supported = true
 	var step_minimum: float = maxf(0.0, float(_value("feedback_step_min_speed", 0.10)))
-	var may_step := frame.supported and not accepted_jump and not frame.landed and not frame.sliding and frame.horizontal_speed > step_minimum and frame.delta > 0.0 and frame.delta <= 0.25
+	var may_contact := frame.supported and not accepted_jump and not frame.landed and not frame.sliding and frame.delta > 0.0 and frame.delta <= 0.25
+	var may_step := may_contact and frame.horizontal_speed > step_minimum
+	var new_turn_contact := frame.turn_step_landed and frame.turn_step_index != _last_turn_step_index
+	if frame.turn_step_landed:
+		_last_turn_step_index = frame.turn_step_index
 	if frame.procedural_enabled and frame.posture == "staan":
 		# De stapplanner bewaart echte voetcontacten. Afstandscadans zou bij iedere
 		# pasvlucht opnieuw beginnen en kan geen betrouwbare voetplaatsing volgen.
 		_distance = 0.0
-		if may_step:
+		# Bijstappen verplaatsen een voet terwijl de capsule stilstaat. Hun eigen
+		# contactnummer voorkomt herhaling zonder een kunstmatige loopsnelheid.
+		var may_procedural_step := may_contact and new_turn_contact if frame.turn_step_landed else may_step
+		if may_procedural_step:
+			var turn_gain := -4.0 if frame.turn_step_landed else 0.0
 			for contact in frame.foot_contacts.slice(0, 2):
-				_request_cue("step", "feedback_footstep_samples", float(_value("feedback_step_volume_db", -2.0)) + float(profile.gain), contact)
+				_request_cue("step", "feedback_footstep_samples", float(_value("feedback_step_volume_db", -2.0)) + float(profile.gain) + turn_gain, contact)
 	elif may_step:
 		_distance += frame.horizontal_travel.length()
 		var stride: float = maxf(0.2, float(profile.distance))

@@ -29,3 +29,6 @@ var body_velocity: Vector3 = Vector3.ZERO
 var body_transform: Transform3D = Transform3D.IDENTITY
 ## Presentatie voegt echte voetcontacten toe vóór audio/camera dit frame lezen.
 var foot_contacts: Array[Vector3] = []
+## Alleen presentatie: gesteunde bijstap bij draaien, onafhankelijk van motorpasindex.
+var turn_step_landed: bool = false
+var turn_step_index: int = 0

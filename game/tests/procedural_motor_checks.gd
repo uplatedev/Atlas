@@ -30,6 +30,7 @@ func _run() -> void:
 	await _frames(8)
 	await _test_intent_parity()
 	await _test_gait()
+	await _test_deceleration_phase()
 	await _test_jump_phases()
 	await _test_posture_and_slide()
 	await _test_slide_preference_and_low_route()
@@ -94,6 +95,35 @@ func _test_gait() -> void:
 	_send(Vector2.ZERO)
 	await _frames(100)
 	_expect(_count("stride_started") == 0, "stilstand start geen kunstmatige pasvlucht")
+
+
+func _test_deceleration_phase() -> void:
+	var comparisons := 0
+	var backwards := 0
+	for supported_only in [false, true]:
+		var original_curve := actor.body_profile.stride_flight_curve
+		if supported_only:
+			var curve := Curve.new()
+			curve.add_point(Vector2.ZERO)
+			curve.add_point(Vector2(1.0, 0.0))
+			actor.body_profile.stride_flight_curve = curve
+		for delay in range(0, 18, 3):
+			await _reset()
+			_send(Vector2(0, -1), true)
+			await _frames(90 + delay)
+			_send(Vector2.ZERO)
+			var previous: AtlasCharacterContactFrame = contacts[-1]
+			for tick in 60:
+				await _frames(1)
+				var current: AtlasCharacterContactFrame = contacts[-1]
+				if current.horizontal_speed > 0.1 and current.step_index == previous.step_index:
+					comparisons += 1
+					if current.gait_phase + 0.000001 < previous.gait_phase:
+						backwards += 1
+				previous = current
+		actor.body_profile.stride_flight_curve = original_curve
+	_expect(comparisons > 50 and backwards == 0, "uitrollen op verschillende pasmomenten draait de vrije voetfase nooit achteruit")
+	print("MEASURE: deceleration phase comparisons %d, backwards %d" % [comparisons, backwards])
 
 
 func _gait_sample(sprint: bool) -> Dictionary:

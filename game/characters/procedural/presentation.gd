@@ -5,6 +5,7 @@ extends Node3D
 
 const TestHumanoid = preload("res://characters/procedural/test_humanoid.gd")
 const PoseModifier = preload("res://characters/procedural/pose_modifier.gd")
+const TurnStepPlanner = preload("res://characters/procedural/turn_step_planner.gd")
 
 var _character: Node3D
 var _profile: AtlasCharacterBodyProfile
@@ -39,7 +40,11 @@ var _direction: Vector3 = Vector3.FORWARD
 var _previous_velocity: Vector3 = Vector3.ZERO
 var _lean: float = 0.0
 var _jump_pose: float = 0.0
-var _landing_pose: float = 0.0
+var _compression: float = 0.0
+var _compression_velocity: float = 0.0
+var _last_compression_step: int = -1
+var _last_turn_compression_step: int = -1
+var _compression_events: int = 0
 var _head_yaw: float = 0.0
 var _head_pitch: float = 0.0
 var _initialized_pose: bool = false
@@ -53,6 +58,11 @@ var _max_frame_usec: int = 0
 var _driven_bones: PackedInt32Array = []
 var _pose_previous: Array[Transform3D] = []
 var _pose_current: Array[Transform3D] = []
+var _turn_planner := TurnStepPlanner.new()
+var _turn_body_offset: float = 0.0
+var _turn_torso_yaw: float = 0.0
+var _turn_foot_yaws: Array[float] = [0.0, 0.0]
+var _turn_release_remaining: float = 0.0
 
 func setup(character: Node3D, profile: AtlasCharacterBodyProfile) -> void:
 	_character = character
@@ -123,6 +133,10 @@ func get_leg_length() -> float:
 	return _measured_leg_length
 
 func reset_pose() -> void:
+	_turn_planner.reset(_character.global_rotation.y if _character != null else 0.0)
+	_turn_body_offset = 0.0
+	_turn_torso_yaw = 0.0
+	_turn_release_remaining = 0.0
 	_pose_previous.clear()
 	_pose_current.clear()
 	_locked = [false, false]
@@ -136,7 +150,11 @@ func reset_pose() -> void:
 	_previous_velocity = Vector3.ZERO
 	_lean = 0.0
 	_jump_pose = 0.0
-	_landing_pose = 0.0
+	_compression = 0.0
+	_compression_velocity = 0.0
+	_last_compression_step = -1
+	_last_turn_compression_step = -1
+	_compression_events = 0
 	_head_yaw = 0.0
 	_head_pitch = 0.0
 	_max_reach_error = 0.0
@@ -162,9 +180,6 @@ func consume_frame(frame: Variant) -> void:
 	_step_index = frame.step_index
 	var was_jump := _air_kind in ["jump", "fall"]
 	_air_kind = frame.air_kind
-	if was_jump and frame.supported:
-		_landing_pose = 1.0
-	_landing_pose = move_toward(_landing_pose, 0.0, frame.delta * 6.0)
 	_jump_pose = move_toward(_jump_pose, 1.0 if _air_kind in ["jump", "fall"] else 0.0, frame.delta * 9.0)
 	if _character.has_method("get_look_input"):
 		var look: Vector2 = _character.get_look_input()
@@ -183,17 +198,27 @@ func consume_frame(frame: Variant) -> void:
 	var supported: bool = frame.supported
 	var stance := posmod(_step_index, 2)
 	var stationary := _speed < 0.10
+	var turn_was_releasing := _turn_release_remaining > 0.0
+	_update_turn_plan(frame, standing and stationary and supported and not was_jump and not frame.stride_landed)
 	var moving_stride := standing and not stationary and _air_kind in ["none", "stride"]
 	var length := minf(_measured_leg_length * _profile.step_length_ratio, _measured_leg_length * 0.85)
-	var lift := _profile.foot_lift_ratio * _measured_leg_length * lerpf(0.25, 1.0, clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0))
+	var running := _running_blend()
+	var lift := _profile.foot_lift_ratio * _measured_leg_length * lerpf(_profile.walking_lift_ratio, 1.0, running)
 	for side in range(2):
+		var previous_target := _targets[side]
+		if _consume_turn_foot(frame, side):
+			continue
 		if (was_jump and supported) or changed_step:
 			_swing_from[side] = _body_transform.affine_inverse() * _targets[side]
 		var rest := _rest_feet[side]
-		rest.x *= _profile.stance_width_ratio * lerpf(1.0, _profile.running_stance_ratio, smoothstep(0.1, 1.0, clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)))
+		rest.x *= _profile.stance_width_ratio * lerpf(1.0, lerpf(_profile.walking_stance_ratio, _profile.running_stance_ratio, running), clampf(_speed / 0.6, 0.0, 1.0))
 		var base := _body_transform * Vector3(rest.x, 0.0, 0.0)
 		var ahead := _direction * length * 0.48
 		var destination := base + ahead if moving_stride else base
+		if _turn_release_remaining > 0.0 and supported and side == stance and (frame.stride_landed or not _locked[side]):
+			# Eerste loopcontact mag de afgeronde bijstap niet naar een verre voorspelling verplaatsen.
+			var reached := previous_target - Vector3.UP * _ankle_height
+			destination = reached.move_toward(destination, _measured_leg_length * 0.08)
 		var hit: Dictionary = {"position": _contacts[side], "normal": _normals[side]} if stationary and _locked[side] and supported and _initialized_pose else _ground_at(destination)
 		var has_ground := not hit.is_empty()
 		var ground := Vector3(hit.position) if has_ground else base - Vector3.UP * maxf(0.0, _body_transform.origin.y - _contacts[side].y)
@@ -203,7 +228,9 @@ func consume_frame(frame: Variant) -> void:
 		var may_plant := supported and standing and (stationary or side == stance)
 		# Bij een externe verplaatsing buiten fysiek beenbereik wordt contact expliciet
 		# losgelaten. Tijdens gewone steun blijft het wereldpunt onveranderd.
-		var overreach := _locked[side] and Vector2(_contacts[side].x - base.x, _contacts[side].z - base.z).length() > _measured_leg_length * 0.9
+		# Een gewone afzet/voetwissel mag niet als bereiknoodloslating meetellen:
+		# de oude lock is hier nog zichtbaar, maar deze voet heeft al geen steunrecht meer.
+		var overreach := may_plant and _locked[side] and Vector2(_contacts[side].x - base.x, _contacts[side].z - base.z).length() > _measured_leg_length * 0.9
 		if overreach:
 			may_plant = false
 			_released_overreach += 1
@@ -225,7 +252,7 @@ func consume_frame(frame: Variant) -> void:
 		elif moving_stride:
 			var progress := clampf(_phase, 0.0, 1.0) if side != stance else clampf((_phase - 0.5) * 2.0, 0.0, 1.0)
 			var speed_mix := clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)
-			var heel_height := _measured_leg_length * _profile.heel_recovery_ratio * speed_mix * speed_mix
+			var heel_height := _measured_leg_length * _profile.heel_recovery_ratio * lerpf(_profile.walking_lift_ratio * 0.12, 1.0, running) * speed_mix
 			var next_target := ankle if side != stance else base - ahead * 0.6 + Vector3.UP * (_ankle_height + heel_height)
 			# Losse voeten reizen met het lichaam. Een oud wereldcontact hier vasthouden
 			# rekt het been tijdens pasvlucht uit en laat het bij de voetwissel terugspringen.
@@ -240,11 +267,145 @@ func consume_frame(frame: Variant) -> void:
 			_targets[side] = ankle
 		if not standing:
 			_locked[side] = false
-			_targets[side] = _body_transform * Vector3(rest.x * 1.3, _ankle_height, -_measured_leg_length * 0.55 if _sliding else (_measured_leg_length * 0.6 if _posture in ["liggen", "prone"] else 0.04))
+			if _sliding:
+				# Knieslide: schenen en enkels liggen achter de lage knie, niet vóór de romp.
+				_targets[side] = _body_transform * Vector3(rest.x * 1.12, _ankle_height, _leg_lengths[side].y * 0.94)
+			else:
+				_targets[side] = _body_transform * Vector3(rest.x * 1.3, _ankle_height, _measured_leg_length * 0.6 if _posture in ["liggen", "prone"] else 0.04)
+		if (_turn_release_remaining > 0.0 or turn_was_releasing) and not _locked[side] and standing:
+			var travel_limit: float = _speed * frame.delta + _measured_leg_length * frame.delta * 5.0
+			if previous_target.distance_to(_targets[side]) > travel_limit:
+				# Laat de begrenzing pas los wanneer het gewone zwaaidoel is ingehaald.
+				_turn_release_remaining = maxf(_turn_release_remaining, frame.delta * 2.0)
+				_targets[side] = previous_target.move_toward(_targets[side], travel_limit)
+	if _turn_release_remaining > 0.0 and standing and moving_stride:
+		_keep_turn_feet_separated()
 	_initialized_pose = true
+	_update_compression(frame, was_jump)
 	_cache_physics_pose()
 	_frame_usec = Time.get_ticks_usec() - started
 	_max_frame_usec = maxi(_max_frame_usec, _frame_usec)
+
+func _keep_turn_feet_separated() -> void:
+	# Bij snelle loopinvoer draait de capsule al terwijl de oude steunvoet vast
+	# blijft. Laat alleen de vrije voet buiten die steunvoet om aansluiten.
+	var right := _body_transform.basis.x
+	var gap := (_targets[1] - _targets[0]).dot(right)
+	var correction := _measured_leg_length * 0.16 - gap
+	if correction <= 0.0:
+		return
+	if not _locked[0] and not _locked[1]:
+		_targets[0] -= right * correction * 0.5
+		_targets[1] += right * correction * 0.5
+	elif not _locked[0]:
+		_targets[0] -= right * correction
+	elif not _locked[1]:
+		_targets[1] += right * correction
+	for side in range(2):
+		if not _locked[side]:
+			_swing_from[side] = _body_transform.affine_inverse() * _targets[side]
+
+func _running_blend() -> float:
+	return smoothstep(0.50, 0.90, clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0))
+
+func _update_compression(frame: Variant, was_jump: bool) -> void:
+	if _posture not in ["staan", "stand"] or _sliding:
+		_compression = 0.0
+		_compression_velocity = 0.0
+		return
+	var amplitude := 0.0
+	if frame.supported and was_jump:
+		var incoming: Variant = frame.get("incoming_velocity")
+		var impact := maxf(0.0, -incoming.y) if incoming is Vector3 else 0.0
+		amplitude = _measured_leg_length * _profile.landing_compression_ratio * clampf(impact / 8.0, 0.25, 1.0)
+	elif frame.supported and frame.turn_step_landed and not frame.foot_contacts.is_empty() and frame.turn_step_index != _last_turn_compression_step:
+		_last_turn_compression_step = frame.turn_step_index
+		amplitude = _measured_leg_length * _profile.step_compression_ratio * 0.4
+	elif frame.supported and (frame.stride_landed or frame.ground_step) and not frame.foot_contacts.is_empty() and _step_index != _last_compression_step:
+		_last_compression_step = _step_index
+		var speed_mix := clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)
+		amplitude = _measured_leg_length * _profile.step_compression_ratio * lerpf(0.4, 1.0, speed_mix)
+	var omega := 1.0 / maxf(_profile.compression_peak_time, 0.01)
+	if amplitude > 0.0:
+		_compression_events += 1
+		# Een impuls bereikt na 1/omega zijn piek. Niet opstapelen bij snelle contacten.
+		var remaining := maxf(0.0, amplitude - _compression)
+		_compression_velocity = maxf(_compression_velocity, remaining * omega * exp(1.0))
+	# Exacte kritisch gedempte veer: één gesloten berekening, geen iteratieve solver,
+	# geen nieuwe motorveer en geen eigen klok die voetcontacten voorspelt.
+	var delta: float = maxf(frame.delta, 0.0)
+	var combined := _compression_velocity + omega * _compression
+	var decay := exp(-omega * delta)
+	_compression = maxf(0.0, (_compression + combined * delta) * decay)
+	_compression_velocity = (_compression_velocity - omega * combined * delta) * decay
+	var limit := _measured_leg_length * 0.18
+	if _compression > limit:
+		_compression = limit
+		_compression_velocity = minf(_compression_velocity, 0.0)
+	if _compression < 0.000001 and absf(_compression_velocity) < 0.00001:
+		_compression = 0.0
+		_compression_velocity = 0.0
+
+func _update_turn_plan(frame: Variant, allowed: bool) -> void:
+	_turn_planner.step_duration = _profile.turn_step_duration
+	_turn_planner.max_pair_angle = deg_to_rad(clampf(_profile.turn_step_angle_degrees, 20.0, 70.0))
+	var motor_yaw: float = frame.body_transform.basis.get_euler().y
+	var rest: Array[Vector3] = []
+	for foot in _rest_feet:
+		rest.append(Vector3(foot.x * _profile.stance_width_ratio, 0.0, 0.0))
+	# Loopinvoer geeft de pose direct aan de loopplanner; de capsule wacht niet
+	# op een stilstaande bijstap. Voetdoelen nemen hun bereikte positie mee.
+	if allowed and not _turn_planner.enabled:
+		for side in range(2):
+			if not _locked[side]:
+				# Een uitlopende vrije voet begint waar hij nu is, nooit op een oud contact.
+				_contacts[side] = _targets[side] - Vector3.UP * _ankle_height
+				_turn_planner.request_replant(side)
+	var use_turn: bool = allowed and _initialized_pose
+	if _turn_planner.enabled and not use_turn and (_turn_planner.active_side >= 0 or absf(_turn_body_offset) > 0.01):
+		# Begeleid de eerste aansluitende passen; daarna alleen zolang een vrij doel nog wordt ingehaald.
+		_turn_release_remaining = 0.4
+	else:
+		_turn_release_remaining = maxf(0.0, _turn_release_remaining - frame.delta)
+	_turn_planner.advance(frame.delta, motor_yaw, use_turn, frame.body_transform.origin, rest, _contacts)
+	_turn_body_offset = wrapf(_turn_planner.pose_yaw - motor_yaw, -PI, PI)
+	_body_transform.basis = Basis(Vector3.UP, _turn_planner.pose_yaw)
+	_turn_foot_yaws.assign(_turn_planner.foot_yaws)
+	var look: Vector2 = _character.get_look_input() if _character.has_method("get_look_input") else Vector2(motor_yaw, 0.0)
+	var relative_look := wrapf(look.x - _turn_planner.pose_yaw, -PI, PI)
+	var head_limit := deg_to_rad(float(_character.get("head_max_yaw"))) if "head_max_yaw" in _character else deg_to_rad(85.0)
+	_head_yaw = _turn_body_offset + clampf(relative_look, -head_limit, head_limit)
+	var torso_target := clampf(relative_look * 0.3, -deg_to_rad(16.0), deg_to_rad(16.0)) if allowed else 0.0
+	_turn_torso_yaw = lerpf(_turn_torso_yaw, torso_target, 1.0 - exp(-frame.delta * 9.0))
+	frame.turn_step_landed = false
+	frame.turn_step_index = _turn_planner.step_index
+	if _turn_planner.started_side >= 0:
+		var hit := _ground_at(_turn_planner.destination())
+		if hit.is_empty():
+			_turn_planner.reject_step()
+		else:
+			_turn_planner.place_destination(hit.position)
+			_normals[_turn_planner.started_side] = hit.normal
+			_locked[_turn_planner.started_side] = false
+
+func _consume_turn_foot(frame: Variant, side: int) -> bool:
+	if not _turn_planner.enabled:
+		return false
+	if _turn_planner.landed_side == side:
+		# Eén bekende vrije zwaai eindigt op de lokaal gemeten vloer.
+		_contacts[side] = _turn_planner.destination()
+		_locked[side] = true
+		frame.foot_contacts.append(_contacts[side])
+		frame.turn_step_landed = true
+		frame.turn_step_index = _turn_planner.step_index
+	if _turn_planner.active_side == side:
+		_locked[side] = false
+		_targets[side] = _turn_planner.swing_position(_measured_leg_length * 0.09) + Vector3.UP * _ankle_height
+	else:
+		_locked[side] = true
+		_targets[side] = _contacts[side] + Vector3.UP * _ankle_height
+	_swing_from[side] = _body_transform.affine_inverse() * _targets[side]
+	return true
 
 func _cache_physics_pose() -> void:
 	# Eén IK-berekening per motorframe; renderframes mengen alleen lokale botposes.
@@ -291,9 +452,14 @@ func apply_skeleton_pose(skeleton: Skeleton3D) -> void:
 	var prone := _posture in ["liggen", "prone"]
 	var body_up := (skeleton.global_basis.inverse() * Vector3.UP).normalized()
 	var body_right := (skeleton.global_basis.inverse() * _body_transform.basis.x).normalized()
-	var speed_mix := clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)
-	var twist := -cos((float(_step_index) + _phase) * PI) * deg_to_rad(_profile.body_twist_degrees) * speed_mix if not low and not prone and not _sliding and _air_kind in ["none", "stride"] else 0.0
-	_rotate_global(_pelvis, body_up, twist)
+	var gait_active := not low and not prone and not _sliding and _air_kind in ["none", "stride"]
+	var gait_wave := cos((float(_step_index) + _phase) * PI) * clampf(_speed / 0.6, 0.0, 1.0) if gait_active else 0.0
+	var running := _running_blend()
+	var twist := -gait_wave * deg_to_rad(_profile.body_twist_degrees) * lerpf(0.25, 1.0, running)
+	var roll := gait_wave * deg_to_rad(_profile.body_roll_degrees) * lerpf(1.0, 0.45, running)
+	var body_forward := (skeleton.global_basis.inverse() * -_body_transform.basis.z).normalized()
+	_rotate_global(_pelvis, body_up, twist + _turn_body_offset)
+	_rotate_global(_pelvis, body_forward, roll)
 	var drop := _measured_leg_length * (0.47 if low else 0.0)
 	if not low and not prone and not _sliding:
 		# Verlaag het bekken binnen bereik van de actuele beenhouding, ook vlak na afzet.
@@ -307,22 +473,32 @@ func apply_skeleton_pose(skeleton: Skeleton3D) -> void:
 			var reach := (_leg_lengths[side].x + _leg_lengths[side].y) * 0.995
 			var vertical_reach := sqrt(maxf(0.001, reach * reach - horizontal_distance * horizontal_distance))
 			drop = maxf(drop, hip.y - _targets[side].y - vertical_reach)
-		drop = clampf(drop, 0.0, _measured_leg_length * 0.36)
-	if prone or _sliding:
+		# Bij uitrollen kan een vaste steunvoet verder achter het lichaam blijven.
+		# Behoud dan het contact via begrensd bekkenbereik, zonder stille herplaatsing.
+		drop = clampf(drop, 0.0, _measured_leg_length * 0.50)
+	if prone:
 		drop = _hip_height - _ankle_height - 0.17
-	drop += _measured_leg_length * 0.045 * _landing_pose if not low and not prone and not _sliding else 0.0
+	elif _sliding:
+		var hip_rest_y := ((_rest_world(_legs[0][0]).y + _rest_world(_legs[1][0]).y) * 0.5) - _body_transform.origin.y
+		drop = hip_rest_y - ((_leg_lengths[0].x + _leg_lengths[1].x) * 0.5 * 0.87 + _measured_leg_length * _profile.slide_knee_clearance_ratio)
+	drop += _compression if not low and not prone and not _sliding else 0.0
 	var pelvis_rest := skeleton.get_bone_rest(_pelvis)
-	skeleton.set_bone_pose_position(_pelvis, pelvis_rest.origin + Vector3.DOWN * drop / maxf(skeleton.global_basis.get_scale().y, 0.001))
+	var weight_shift := -gait_wave * _measured_leg_length * _profile.weight_shift_ratio * (1.0 - running * 0.7)
+	var slide_sit_back := ((_leg_lengths[0].x + _leg_lengths[1].x) * 0.5 * 0.42) if _sliding else 0.0
+	skeleton.set_bone_pose_position(_pelvis, pelvis_rest.origin + Vector3.DOWN * drop / maxf(skeleton.global_basis.get_scale().y, 0.001) + body_right * weight_shift - body_forward * slide_sit_back)
 	if _spine >= 0:
-		_rotate_global(_spine, body_up, -2.0 * twist)
-		_rotate_global(_spine, body_right, -0.60 if low else -_lean)
+		_rotate_global(_spine, body_up, -2.0 * twist + _turn_torso_yaw)
+		_rotate_global(_spine, body_forward, -2.0 * roll)
+		_rotate_global(_spine, body_right, -0.35 if _sliding else (-0.60 if low else -_lean))
 	if prone:
 		_rotate_global(_pelvis, Vector3.RIGHT, -PI * 0.48)
 	elif _sliding:
-		_rotate_global(_pelvis, Vector3.RIGHT, PI * 0.20)
+		_rotate_global(_pelvis, body_right, 0.12)
 	if _head >= 0:
 		var up_axis := (skeleton.global_basis.inverse() * Vector3.UP).normalized()
-		var right_axis := (skeleton.global_basis.inverse() * _body_transform.basis.x).normalized()
+		# Pitch begint om de motor-rustas; de volledige hoofd-yaw draait die daarna.
+		# De al bijgedraaide visuele as zou pitch tijdens bijstappen dubbel draaien.
+		var right_axis := (skeleton.global_basis.inverse() * _character.global_basis.x).normalized()
 		# Het hoofd volgt de besturingsblik, onafhankelijk van schouder-/bekkendraai.
 		var head_rotation := skeleton.get_bone_global_rest(_head).basis.get_rotation_quaternion()
 		_set_global_rotation(_head, Quaternion(up_axis, _head_yaw) * Quaternion(right_axis, _head_pitch) * head_rotation)
@@ -335,7 +511,8 @@ func apply_skeleton_pose(skeleton: Skeleton3D) -> void:
 			# Bewaar de anatomische importrust: voetbot +Y is niet per definitie
 			# horizontaal. Grondbasis plus fasepitch werkt voor beide lichaamszijden.
 			var normal := _normals[side].normalized()
-			var forward_on_ground := (-_body_transform.basis.z).slide(normal).normalized()
+			var foot_forward := -Basis(Vector3.UP, _turn_foot_yaws[side]).z if _turn_planner.enabled else -_body_transform.basis.z
+			var forward_on_ground := foot_forward.slide(normal).normalized()
 			var ground_basis := Basis(forward_on_ground.cross(normal).normalized(), normal, -forward_on_ground)
 			var desired := skeleton.global_basis.inverse() * ground_basis * Basis(Vector3.RIGHT, _foot_pitch(side)) * _rest_foot_basis[side]
 			_set_global_rotation(foot, desired.orthonormalized().get_rotation_quaternion())
@@ -345,6 +522,8 @@ func apply_skeleton_pose(skeleton: Skeleton3D) -> void:
 		_pose_arm(side, low, prone)
 
 func _foot_pitch(side: int) -> float:
+	if _sliding:
+		return _limit_ankle(side, deg_to_rad(-135.0))
 	if _locked[side] or _speed < 0.1 or _posture not in ["staan", "stand"] or _sliding or _air_kind in ["jump", "fall"]:
 		return 0.0
 	var speed_mix := clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)
@@ -382,10 +561,10 @@ func _pose_arm(side: int, low: bool, prone: bool) -> void:
 	var offset := Basis(Vector3.RIGHT, swing * amplitude) * Vector3(side_sign * length * 0.08, -length * reach, 0.0)
 	offset.z -= length * _profile.arm_forward_ratio
 	offset.x -= side_sign * length * _profile.arm_inward_ratio * maxf(swing, 0.0) * speed_mix
-	if prone or low:
+	if _sliding:
+		offset = Vector3(side_sign * length * 0.22, -length * 0.62, -length * 0.35)
+	elif prone or low:
 		offset = Vector3(side_sign * length * 0.18, -length * 0.45, -length * 0.65)
-	elif _sliding:
-		offset = Vector3(side_sign * length * 0.25, -length * 0.55, length * 0.45)
 	var jump_offset := Vector3(side_sign * length * 0.22, -length * 0.45, -length * 0.65)
 	if not low and not prone and not _sliding:
 		offset = offset.lerp(jump_offset, _jump_pose)
@@ -470,7 +649,7 @@ func _set_layers(node: Node, layer: int) -> void:
 		_set_layers(child, layer)
 
 func get_debug_state() -> Dictionary:
-	return {"leg_length": _measured_leg_length, "leg_segments": _leg_lengths, "arm_segments": _arm_lengths, "rays_last_frame": _rays_last_frame, "rays_total": _rays_total, "max_reach_error": _max_reach_error, "max_planted_error": _max_planted_error, "released_overreach": _released_overreach, "locked_feet": _locked.duplicate(), "foot_targets": _targets.duplicate(), "max_planner_usec": _max_frame_usec}
+	return {"turn_body_offset": _turn_body_offset, "turn_torso_yaw": _turn_torso_yaw, "turn_pose_yaw": _turn_planner.pose_yaw, "turn_active_side": _turn_planner.active_side, "turn_step_index": _turn_planner.step_index, "turn_foot_yaws": _turn_foot_yaws.duplicate(), "leg_length": _measured_leg_length, "leg_segments": _leg_lengths, "arm_segments": _arm_lengths, "rays_last_frame": _rays_last_frame, "rays_total": _rays_total, "max_reach_error": _max_reach_error, "max_planted_error": _max_planted_error, "released_overreach": _released_overreach, "locked_feet": _locked.duplicate(), "foot_targets": _targets.duplicate(), "max_planner_usec": _max_frame_usec, "compression": _compression, "compression_velocity": _compression_velocity, "compression_events": _compression_events}
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()

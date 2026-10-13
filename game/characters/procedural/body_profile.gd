@@ -42,10 +42,26 @@ extends Resource
 @export_range(0.0, 0.3, 0.01) var arm_forward_ratio: float = 0.12
 ## Voetspoorbreedte bij sprint als deel van rustbreedte; steunvoeten blijven op hun contactpunt.
 @export_range(0.5, 1.0, 0.01) var running_stance_ratio: float = 0.65
+## Voetspoorbreedte tijdens rustig lopen als deel van de rustbreedte; wordt geleidelijk smaller bij sprint.
+@export_range(0.5, 1.0, 0.01) var walking_stance_ratio: float = 0.75
+## Voet- en hielheffing bij rustig lopen als deel van de renstijl; houdt rustige passen dicht bij de grond.
+@export_range(0.1, 0.6, 0.01) var walking_lift_ratio: float = 0.25
+## Zijwaartse bekkenrol bij lopen; de borst rolt tegengesteld en het hoofd blijft recht.
+@export_range(0.0, 6.0, 0.5, "suffix:°") var body_roll_degrees: float = 3.0
+## Kleine gewichtsverplaatsing naar het steunbeen, als deel van beenlengte; alleen zichtbaar lichaam.
+@export_range(0.0, 0.05, 0.001) var weight_shift_ratio: float = 0.015
 ## Mediale beweging van alleen de voorwaarts zwaaiende hand, als deel van armlengte.
 @export_range(0.0, 0.3, 0.01) var arm_inward_ratio: float = 0.20
 ## Tegengestelde bekken-/schouderdraai bij sprint; het hoofd behoudt de gevraagde blik.
-@export_range(0.0, 4.0, 0.5, "suffix:°") var body_twist_degrees: float = 4.0
+@export_range(0.0, 14.0, 0.5, "suffix:°") var body_twist_degrees: float = 8.0
+## Ruimte voor knievolume bij de knieslide als deel van beenlengte; helpt bij andere modeldiktes.
+@export_range(0.04, 0.18, 0.005) var slide_knee_clearance_ratio: float = 0.09
+## Kleine bekken-/kniecompressie per werkelijk voetcontact, als deel van beenlengte; nul zet het pasaccent uit.
+@export_range(0.0, 0.06, 0.001) var step_compression_ratio: float = 0.025
+## Grootste extra compressie bij een bewuste sprong/val; de echte impactsnelheid schaalt de sterkte.
+@export_range(0.0, 0.18, 0.005) var landing_compression_ratio: float = 0.12
+## Tijd tot de piek van de gedempte presentatieveer; korter reageert steviger, langer zachter.
+@export_range(0.025, 0.12, 0.005, "suffix:s") var compression_peak_time: float = 0.055
 ## Maximale teenhef ten opzichte van het onderbeen tijdens de vrije zwaai.
 @export_range(5.0, 35.0, 1.0, "suffix:°") var ankle_dorsiflex_degrees: float = 20.0
 ## Maximale strekking van de voet ten opzichte van het onderbeen tijdens de vrije zwaai.
@@ -177,6 +193,12 @@ extends Resource
 			return
 		right_hand_bone = value
 		emit_changed()
+
+@export_group("Bijstappen")
+## Duur van één vrije bijstap bij draaien in seconden; lager draait sneller, zonder de capsule te sturen.
+@export_range(0.08, 0.4, 0.01, "suffix:s") var turn_step_duration: float = 0.15
+## Grootste richtingsverschil tussen de twee voeten tijdens bijdraaien; lager geeft meer, kleinere stappen.
+@export_range(20.0, 70.0, 1.0, "suffix:°") var turn_step_angle_degrees: float = 54.0
 
 func _init() -> void:
 	resource_local_to_scene = true

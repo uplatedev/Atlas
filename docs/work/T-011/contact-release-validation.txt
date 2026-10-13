@@ -1,0 +1,46 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+RELEASE_NORMAL liftoffs=8 pin_drift=0.0 planted_error=0.00000027486485 forced_releases=0
+RELEASE_EXTERNAL supported=true forced_releases=1 locks=[false, false]
+CONTACT RELEASE CHECKS: PASS
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TERRAIN: direction (0.0, -1.0) sprint=false speed=5.000 planted_error=0.0000 releases=0
+TERRAIN: direction (1.0, 0.0) sprint=false speed=4.000 planted_error=0.0000 releases=0
+TERRAIN: direction (0.0, 1.0) sprint=false speed=2.750 planted_error=0.0000 releases=0
+TERRAIN: direction (-0.707107, -0.707107) sprint=false speed=4.417 planted_error=0.0000 releases=0
+TERRAIN: direction (0.0, -1.0) sprint=true speed=9.000 planted_error=0.0000 releases=0
+TERRAIN: direction (1.0, 0.0) sprint=true speed=7.200 planted_error=0.0000 releases=0
+TERRAIN: direction (0.0, 1.0) sprint=true speed=4.950 planted_error=0.0000 releases=0
+TERRAIN: direction (-0.707107, -0.707107) sprint=true speed=7.951 planted_error=0.0000 releases=0
+TERRAIN: step 0.30 sprint=false offset=0.00 z=-7.07 y=0.301 minimum_speed=5.000 step_rise=0.274
+TERRAIN: step 0.30 sprint=false offset=0.13 z=-7.02 y=0.301 minimum_speed=5.000 step_rise=0.270
+TERRAIN: step 0.30 sprint=false offset=0.31 z=-7.01 y=0.301 minimum_speed=5.000 step_rise=0.277
+TERRAIN: step 0.30 sprint=true offset=0.00 z=-7.07 y=0.300 minimum_speed=9.000 step_rise=0.220
+TERRAIN: step 0.30 sprint=true offset=0.13 z=-7.09 y=0.301 minimum_speed=9.000 step_rise=0.220
+TERRAIN: step 0.30 sprint=true offset=0.31 z=-7.06 y=0.300 minimum_speed=9.000 step_rise=0.238
+TERRAIN: step 0.45 sprint=false offset=0.00 z=-7.07 y=0.450 minimum_speed=5.000 step_rise=0.434
+TERRAIN: step 0.45 sprint=false offset=0.13 z=-7.02 y=0.451 minimum_speed=5.000 step_rise=0.420
+TERRAIN: step 0.45 sprint=false offset=0.31 z=-7.01 y=0.451 minimum_speed=5.000 step_rise=0.427
+TERRAIN: step 0.45 sprint=true offset=0.00 z=-7.07 y=0.451 minimum_speed=9.000 step_rise=0.369
+TERRAIN: step 0.45 sprint=true offset=0.13 z=-7.09 y=0.451 minimum_speed=9.000 step_rise=0.370
+TERRAIN: step 0.45 sprint=true offset=0.31 z=-7.06 y=0.451 minimum_speed=9.000 step_rise=0.376
+TERRAIN: blocked step 0.40 max_y=0.0806 max_step=0.0000 z=-4.649
+TERRAIN: blocked step 0.45 max_y=0.0806 max_step=0.0000 z=-4.649
+TERRAIN: step guard deliberate_jump=true airframes=53 artificial_steps=0
+TERRAIN: step guard deliberate_jump=false airframes=12 artificial_steps=0
+TERRAIN: slope sprint=false maximum_y=2.130 final_z=-0.963 planted_error=0.0000
+TERRAIN: slope sprint=true maximum_y=2.153 final_z=-0.949 planted_error=0.0000
+TERRAIN: roof offset=0.00 approachphase=0.155 max_y=0.0325 steps=10
+TERRAIN: roof offset=0.09 approachphase=0.309 max_y=0.0009 steps=10
+TERRAIN: roof offset=0.20 approachphase=0.464 max_y=0.0009 steps=11
+TERRAIN: roof offset=0.39 approachphase=0.546 max_y=0.0009 steps=11
+TERRAIN: roof offset=0.58 approachphase=0.593 max_y=0.0009 steps=11
+TERRAIN: slidejump prefer_crouch=false second_air_posture=staan manual=staan remaining_speed=8.833
+TERRAIN: slidejump prefer_crouch=true second_air_posture=kruipen manual=kruipen remaining_speed=8.667
+TERRAIN: momentum walk before=18.4000 after=17.7333 posture=staan air=stride
+TERRAIN: momentum crouch before=18.4000 after=18.4000 posture=kruipen air=stride
+TERRAIN: momentum slide before=18.4000 after=18.4000 posture=kruipen air=stride
+TERRAIN: momentum jump before=18.4000 after=19.3000 posture=staan air=jump
+TERRAIN QUERY MAX motor/feet 1/2
+PROCEDURAL TERRAIN: PASS

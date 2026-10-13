@@ -63,6 +63,8 @@ Tijdens staan in de lucht blijft de oorspronkelijke afzetmix de bovengrens; afge
 
 Selecteer dezelfde Character-root en open de Audio-groepen voor volume, vijf cadansen/profielsterktes, variatie, afzet/landing, slide en vervangbare samples. Eigen audio is onafhankelijk van camerazoom; anderen klinken ruimtelijk. F6 vergelijkt audio aan/uit voor de actieve instance en de HUD toont de keuze. Geluidsbestanden zijn gedeelde bronassets; de feedback maakt voor slide een eigen loopkopie. Settings, cadence en variatiegeheugen zijn per instance. Dit is een uniforme prototypeset zonder materiaalherkenning per vloer; nieuwe oppervlakken zijn nog geen systeem.
 
+Procedurele staande passen gebruiken inmiddels werkelijke voetcontacten uit de presentatie. Ook een bijstap tijdens stilstaand draaien klinkt eenmaal bij de geplaatste voet, 4 dB rustiger dan dezelfde gewone loopstap. De capsule hoeft daarvoor geen afstand af te leggen. Kruip/lig behouden de bestaande afstandscadans; de slide gebruikt zijn eigen schuurlaag.
+
 ## Level en assets
 
 `PrototypeLevel.tscn` en `PostureTestArea.tscn` gebruiken gewone editor-zichtbare meshes, CollisionShape3D en labels. Houd mesh- en botsingsmaten gelijk bij aanpassen. De hoofdscene instantieert het level en de Characters; daarvoor is geen netwerkhandeling nodig.

@@ -16,6 +16,10 @@ Vergelijk vooral de zijaanzichten met de [aangeleverde rencyclus](../../../sourc
 
 Bekijk ook de [voor- en achterreferentie](../../../source_assets/characters/references/running-front-back.jpg): beoordeel voetbreedte tijdens rennen, armen langs de romp, kleine tegengestelde schouder-/bekkendraai en hoofdbeweging. De visuele afstelling blijft afzonderlijk van motorpositie en camera.
 
+Extra gerichte proef na feedback: blijf staan en kijk langzaam links/rechts, draai vervolgens verder en keer plots om. Eerst hoort het hoofd te volgen, dan de torso, daarna verplaatsen de voeten zich met bijstappen. De benen mogen niet kruisen. Begin daarna te lopen. Vergelijk lopen en rennen op stapbreedte, rustiger loopbeen, zachte voetlanding en lichte tegengestelde kanteling van heupen/borst. Gebruik de extra [loopreferentie](../../../source_assets/characters/references/walk-hips-chest.jpg) en [hoogtevergelijking](../../../source_assets/characters/references/walk-run-height.avif).
+
+Bekijk de renpas ook schuin van voren en achteren: de borst hoort tegengesteld aan het bekken te draaien, zodat schouders afwisselend voor- en achteruit komen. Start vervolgens sprint + C: de slide steunt op de knieën, met voeten achter je. Nogmaals C laat dezelfde slide uitlopen en houdt je daarna gekruipt. Herhaal met de andere lichaamsverhoudingen via Tab.
+
 ## Eén editoringang
 
 Selecteer `Characters/AtlasA` in de hoofdscene. De Character-root bevat de groep voor procedureel lichaam en het lichaamsprofiel. Klap dat profiel open: model/botkoppelingen, massa, pasverhoudingen, armzwaai en gewrichtsgrenzen horen bij dit lichaam. Bewegingssnelheid, botsingscapsule en camera blijven rootinstellingen. Een ander model moet een humanoïde Skeleton3D met passende botnamen hebben; lengtes komen uit zijn rusthouding. Gebruik uniforme objectscale. De botsingscapsule verandert niet automatisch met een ander uiterlijk: controleer de passende rootvorm zelf.
@@ -23,6 +27,8 @@ Selecteer `Characters/AtlasA` in de hoofdscene. De Character-root bevat de groep
 De twee Curve-velden zijn gewone Godot-curves. Bij de voetcurve is X de voortgang van de zwaai en Y de relatieve voetheffing; de uiteinden blijven op contacthoogte. Bij de pasvluchtcurve is X snelheid gedeeld door referentiesnelheid en Y hoogte als deel van de gemeten beenlengte. Duur volgt uit die hoogte en zwaartekracht. Nulhoogte gebruikt gesteunde passen. Een plafond kan vlucht eveneens verhinderen.
 
 Kleine echte editorproef: dupliceer een Character, wijzig alleen diens massa, voetcurve en pasvluchtcurve, sla de hoofdscene op en heropen hem. Controleer dat het andere Character dezelfde waarden heeft als daarvoor; speel daarna de twee verschillende gangen. Profiel en beide curves worden per instance gekopieerd. Model-/botwijzigingen vernieuwen de rustmeting; stijl-/curvewijzigingen bouwen het skelet niet opnieuw. Scripts controleren opslaan/herladen, maar de begrijpelijkheid van deze handelingen vraagt menselijke beoordeling.
+
+Voor de nieuwe stijl staan in hetzelfde profiel loop-/renbreedte, loophefhoogte, borst-/heupdraai en kanteling, contactcompressie en kniemarge bij de slide. De groep **Bijstappen** bevat pasduur en maximale voetdraaihoek. Verander één waarde op één Character en vergelijk via Tab. De kleine contactveer en deze posewaarden veranderen de capsulebesturing niet; de pasvluchtcurve doet dat bewust wel. Bij een ander model moet de kniemarge bij zijn zichtbare meshdikte passen.
 
 Nieuwe content maak je door `game/characters/Character.tscn` onder `Characters` te plaatsen of een instance te dupliceren. Tab neemt directe Character-children automatisch mee. Voor AI gebruikt dezelfde motor `submit_intent(AtlasCharacterIntent)`; de intentie bevat bewegingswens en eenmalige actieknoppen. Dat is geen editorhandeling voor gewoon plaatsen of variëren.
 
