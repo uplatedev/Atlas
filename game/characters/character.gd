@@ -53,7 +53,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 
 @export_group("Joggen", "walk_")
 ## Maximum vooruit in m/s; gecombineerde input krijgt één limiet.
-@export_range(0.1, 20.0, 0.1, "suffix:m/s") var walk_forward_speed: float = 5.0
+@export_range(0.1, 20.0, 0.1, "suffix:m/s") var walk_forward_speed: float = 3.0
 ## Zijwaartse snelheid als deel van vooruit; 0.8 betekent 80%.
 @export_range(0.05, 1.0, 0.01) var walk_side_ratio: float = 0.8
 ## Achterwaartse snelheid als deel van vooruit; 0.55 betekent 55%.
@@ -63,7 +63,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 ## Snelheidsafname in m/s²; hoger stopt sneller.
 @export_range(0.1, 80.0, 0.5, "suffix:m/s²") var walk_deceleration: float = 40.0
 ## Maximale lichaamsdraai tijdens lopen in graden/s; hoger volgt sneller.
-@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var walk_turn_speed: float = 540.0
+@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var walk_turn_speed: float = 360.0
 
 @export_group("Sprint")
 ## Maximum vooruit in m/s; sprint werkt ook op lagere richtingssnelheden.
@@ -77,13 +77,13 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 ## Afremmen vanuit sprint in m/s²; hoger verkort de stopafstand.
 @export_range(0.1, 80.0, 0.5, "suffix:m/s²") var sprint_deceleration: float = 36.0
 ## Maximale lichaamsdraai bij volle sprint in graden/s; lager geeft ruimere bochten.
-@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var sprint_turn_speed: float = 300.0
+@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var sprint_turn_speed: float = 240.0
 ## Maximale automatische sprintopstap in meters; geen klimhoogte.
 @export_range(0.0, 1.0, 0.01, "suffix:m") var sprint_step_height: float = 0.35
 
 @export_group("Wandelen (Alt)", "sneak_")
 ## Ontspannen wandelen met Alt in m/s; houdt de staande botsingsvorm en opgeslagen instancewaarde.
-@export_range(0.1, 20.0, 0.1, "suffix:m/s") var sneak_forward_speed: float = 2.0
+@export_range(0.1, 20.0, 0.1, "suffix:m/s") var sneak_forward_speed: float = 1.4
 ## Zijwaartse wandelsnelheid als deel van vooruit; 0.8 betekent 80%.
 @export_range(0.05, 1.0, 0.01) var sneak_side_ratio: float = 0.8
 ## Achterwaartse wandelsnelheid als deel van vooruit; 0.55 betekent 55%.
@@ -93,7 +93,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 ## Wandelafremming in m/s²; hoger stopt sneller.
 @export_range(0.1, 80.0, 0.5, "suffix:m/s²") var sneak_deceleration: float = 28.0
 ## Maximale lichaamsdraai bij wandelen in graden/s; hoger volgt sneller.
-@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var sneak_turn_speed: float = 420.0
+@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var sneak_turn_speed: float = 240.0
 ## Maximale automatische wandelopstap in meters; de vorm moet volledig passen.
 @export_range(0.0, 1.0, 0.01, "suffix:m") var sneak_step_height: float = 0.35
 
@@ -794,6 +794,22 @@ func _movement_state() -> String:
 	return "sprint" if _sprint_requested else "lopen"
 
 
+## Besturing kiest de gewenste snelheid; het pasritme wacht op haalbare wandelvaart.
+func _gait_motion_profile(local_velocity: Vector3) -> String:
+	var requested := _movement_state()
+	if requested != "sneak":
+		return requested
+	var direction := Vector2(local_velocity.x, local_velocity.z)
+	var walking_limit := direction_speed_limit_for_state(direction, "sneak")
+	if direction.length() > walking_limit + 0.01:
+		return "lopen"
+	# Een lopende vluchtcyclus wordt bij werkelijk contact overgedragen. Zo krijgt
+	# dezelfde halve steunfase niet plots de volle wandelfase als Alt wordt gedrukt.
+	if AtlasGaitStyle.side_amount(local_velocity) <= 0.5 and not _stride.is_supported_cycle() and _stride.phase > 0.000001:
+		return "lopen"
+	return "sneak"
+
+
 func _posture_name(posture: int) -> String:
 	return ["staan", "kruipen", "liggen"][clampi(posture, 0, 2)]
 
@@ -1239,13 +1255,16 @@ func _try_start_stride(delta: float, supported: bool) -> bool:
 	var moving := speed > 0.10 and _actual_speed > 0.10
 	var local_velocity := global_basis.inverse() * Vector3(velocity.x, 0.0, velocity.z)
 	var side_hop := AtlasGaitStyle.side_amount(local_velocity) > 0.5
-	var grounded_walk := _sneak_requested and not side_hop
-	var duration := body_profile.get_support_duration(speed, _procedural_leg_length, grounded_walk)
+	var gait_profile := _gait_motion_profile(local_velocity)
+	var grounded_walk := gait_profile == "sneak" and not side_hop
+	var timing := body_profile.get_gait_timing(speed, _procedural_leg_length, gravity_strength, gait_profile, 1.0 if side_hop else 0.0)
+	_stride.configure_timing(timing.x, timing.y, body_profile.walking_double_support_ratio if grounded_walk else 0.0)
+	var duration := timing.x
 	var first_support_ratio := 1.0 if _sprint_requested and not side_hop else body_profile.walk_start_support_ratio
 	if not _stride.support_tick(delta, duration, moving, first_support_ratio, Vector2(velocity.x, velocity.z), grounded_walk, not _input_direction.is_zero_approx()):
 		return false
 	# Alt wandelt met grondsteun. Zijwaartse hup, jog en sprint gebruiken de echte boog.
-	var height := 0.0 if grounded_walk else body_profile.get_flight_height(speed / maxf(body_profile.reference_speed, 0.1), _procedural_leg_length, false)
+	var height := timing.z
 	if height <= 0.000001:
 		_ground_step_requested = true
 		return false
@@ -1374,6 +1393,17 @@ func _physics_process(delta: float) -> void:
 		_stride.supported_step(Vector2(velocity.x, velocity.z))
 	elif _ground_step_requested:
 		_stride.cancel()
+	if stride_landed or ground_step:
+		# Plaatsing gebruikt de komende steun, ook na versnellen of stijlwissel in vlucht.
+		var contact_speed := Vector2(velocity.x, velocity.z).length()
+		var contact_local_velocity := global_basis.inverse() * Vector3(velocity.x, 0.0, velocity.z)
+		var contact_side := AtlasGaitStyle.side_amount(contact_local_velocity)
+		var contact_profile := _gait_motion_profile(contact_local_velocity)
+		var contact_walk := contact_profile == "sneak" and contact_side <= 0.5
+		var contact_timing := body_profile.get_gait_timing(contact_speed, _procedural_leg_length, gravity_strength, contact_profile, contact_side)
+		_stride.configure_timing(contact_timing.x, contact_timing.y, body_profile.walking_double_support_ratio if contact_walk else 0.0)
+		if contact_walk:
+			_stride.begin_supported_cycle()
 	if _slide_active and (not get_camera_grounded() or _actual_speed < 0.02):
 		_finish_slide()
 	if _slide_pending and not was_grounded and is_on_floor():
@@ -1396,7 +1426,7 @@ func _physics_process(delta: float) -> void:
 	contact.incoming_velocity = incoming_velocity
 	contact.supported = get_camera_grounded() and not jumped and not stride_started and not external_lift
 	contact.real_grounded = is_on_floor() and not jumped and not stride_started and not external_lift
-	contact.motion_profile = _movement_state()
+	contact.motion_profile = _gait_motion_profile(global_basis.inverse() * Vector3(velocity.x, 0.0, velocity.z))
 	contact.posture = _posture_name(_posture)
 	contact.sliding = _slide_active
 	contact.jumped = jumped
@@ -1409,6 +1439,10 @@ func _physics_process(delta: float) -> void:
 	contact.ground_step = ground_step
 	contact.step_index = _stride.step_index
 	contact.gait_phase = _stride.phase
+	contact.support_fraction = _stride.get_support_fraction()
+	contact.step_duration = _stride.get_step_duration()
+	contact.double_support_ratio = _stride.double_support_ratio
+	contact.gait_supported_cycle = _stride.is_supported_cycle()
 	contact.body_velocity = velocity
 	contact.body_transform = global_transform
 	# Eén pose-eigenaar kan hier voetcontacten toevoegen voordat audio ze leest.
@@ -1835,7 +1869,7 @@ func get_debug_state() -> Dictionary:
 	var local_input := global_basis.inverse() * _input_direction
 	var state := {"display_name": display_name, "speed": _actual_speed, "motion_mode": motion, "posture": _posture_name(_posture), "posture_index": _posture, "manual_posture": _posture_name(_manual_posture), "input_direction": _input_direction, "movement_direction": _movement_direction, "facing_direction": -global_basis.z, "body_direction": -global_basis.z, "body_yaw": rad_to_deg(global_rotation.y), "turn_rate": _turn_rate, "body_turn_blocked": _body_turn_blocked, "speed_limit": direction_speed_limit_for_state(Vector2(local_input.x, local_input.z), _movement_state()), "jump_profile": _jump_profile, "jump_height": _jump_height, "launch_speed": _launch_speed, "jump_boost": _jump_boost, "air_speed_cap": _air_speed_cap, "fatigue": _fatigue, "fatigue_recovery_time": _fatigue_recovery_duration, "coyote_remaining": _coyote_remaining, "jump_buffer_remaining": _jump_buffer_remaining, "ground_jump_available": _ground_jump_available, "step_height": _step_limit_for_posture(_posture), "last_step_height": _last_step_height, "debug_enabled": debug_enabled}
 	state.merge({"air_braking": _air_braking, "slide_pending": _slide_pending, "slide_active": _slide_active, "slide_time_left": _slide_time_left, "slide_speed": Vector2(velocity.x, velocity.z).length() if _slide_active else 0.0, "prone_return_posture": _posture_name(_prone_return_posture)})
-	state.merge({"air_kind": _air_kind, "gait_phase": _stride.phase, "step_index": _stride.step_index, "stride_jump_available": _stride_jump_available, "stride_probe_count": _stride_probe_count, "external_speed_allowance": _external_speed_allowance, "mass_kg": body_profile.mass_kg})
+	state.merge({"air_kind": _air_kind, "gait_phase": _stride.phase, "support_fraction": _stride.get_support_fraction(), "step_duration": _stride.get_step_duration(), "double_support_ratio": _stride.double_support_ratio, "gait_supported_cycle": _stride.is_supported_cycle(), "step_index": _stride.step_index, "stride_jump_available": _stride_jump_available, "stride_probe_count": _stride_probe_count, "external_speed_allowance": _external_speed_allowance, "mass_kg": body_profile.mass_kg})
 	state.merge(_camera_pivot.get_state(), true)
 	return state
 

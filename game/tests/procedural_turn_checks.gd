@@ -211,9 +211,15 @@ func _walk_start_alignment() -> void:
 			var smallest_old_axis_gap := INF
 			var lag_after_nine := 0.0
 			var planted_drift := 0.0
+			var sole_error := 0.0
+			var sole_drift := 0.0
+			var rolling_samples := 0
+			var previous_soles: Array[Vector3] = []
+			var previous_pivots: Array[int] = []
 			_send(deg_to_rad(degrees), Vector2(0, -1))
 			for tick in 30:
 				var before: Dictionary = presentation.get_debug_state()
+				var before_contacts: Array = presentation._contacts.duplicate()
 				await _ticks(1)
 				var state := presentation.get_debug_state()
 				var old_right := Basis(Vector3.UP, float(state.turn_pose_yaw)).x
@@ -230,6 +236,27 @@ func _walk_start_alignment() -> void:
 				var left := skeleton.global_transform * skeleton.get_bone_global_pose(legs[0][2]).origin
 				var right_ankle := skeleton.global_transform * skeleton.get_bone_global_pose(legs[1][2]).origin
 				smallest_bone_gap = minf(smallest_bone_gap, (right_ankle - left).dot(right))
+				var soles: Array[Vector3] = []
+				var pivots: Array[int] = []
+				for side in 2:
+					var foot_pose := skeleton.get_bone_global_pose(legs[side][2])
+					var ankle := skeleton.global_transform * foot_pose.origin
+					var rolling := absf(presentation._foot_roll[side]) > 0.00001
+					var pivot := (1 if presentation._foot_roll[side] > 0.0 else -1) if rolling else 0
+					var pivot_z: float = presentation._toe_lengths[side] * (0.25 if pivot == 1 else -1.0) if rolling else 0.0
+					# De echte zool wordt uit het voetbot gereconstrueerd: de enkel mag om dit punt rollen.
+					var rest_offset: Vector3 = presentation._rest_foot_basis[side].inverse() * Vector3(0, -presentation._ankle_height, pivot_z)
+					var sole := ankle + skeleton.global_basis * foot_pose.basis * rest_offset
+					soles.append(sole)
+					pivots.append(pivot)
+					if state.locked_feet[side]:
+						var ground: Vector3 = presentation._foot_pivots[side] if rolling else presentation._contacts[side]
+						sole_error = maxf(sole_error, sole.distance_to(ground))
+						rolling_samples += 1 if rolling else 0
+						if before.locked_feet[side] and frames[-1].foot_contacts.is_empty() and not previous_soles.is_empty() and previous_pivots[side] == pivot:
+							sole_drift = maxf(sole_drift, sole.distance_to(previous_soles[side]))
+				previous_soles.assign(soles)
+				previous_pivots.assign(pivots)
 				skeleton.reset_bone_poses()
 				if tick == 0:
 					_expect(max_foot_delta < 0.10, "eerste loopframe plant bijstapvoet zonder verre sprong")
@@ -239,12 +266,13 @@ func _walk_start_alignment() -> void:
 				if tick > 0 and frames[-1].foot_contacts.is_empty():
 					for side in range(2):
 						if before.locked_feet[side] and state.locked_feet[side]:
-							planted_drift = maxf(planted_drift, Vector3(before.foot_targets[side]).distance_to(state.foot_targets[side]))
+							planted_drift = maxf(planted_drift, Vector3(before_contacts[side]).distance_to(presentation._contacts[side]))
 			_expect(smallest_gap > 0.015 and smallest_bone_gap > 0.015, "vrije voet en werkelijk enkelbot kruisen steunbeen niet bij loopoverdracht")
 			_expect(planted_drift < 0.0001, "overdracht corrigeert alleen vrije voeten en bewaart bestaand steuncontact")
+			_expect(rolling_samples > 0 and sole_error < 0.003 and sole_drift < 0.003, "echte zoolpivot blijft wereldvast tijdens afrol na bijstapoverdracht")
 			_expect(max_foot_delta < 0.25, "hele loopoverdracht houdt voetverplaatsing begrensd")
 			_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < 0.001, "overdracht bewaart geen blijvende visuele draai")
-			print("TURN START degrees=", degrees, " delay=", delay, " lag9=", lag_after_nine, " target_gap=", smallest_gap, " ankle_gap=", smallest_bone_gap, " old_axis_gap=", smallest_old_axis_gap, " planted_drift=", planted_drift, " foot_delta=", max_foot_delta)
+			print("TURN START degrees=", degrees, " delay=", delay, " lag9=", lag_after_nine, " target_gap=", smallest_gap, " ankle_gap=", smallest_bone_gap, " old_axis_gap=", smallest_old_axis_gap, " planted_drift=", planted_drift, " sole_error=", sole_error, " sole_drift=", sole_drift, " rolls=", rolling_samples, " foot_delta=", max_foot_delta)
 			await _ticks(30)
 			_expect(float(presentation.get("_turn_release_remaining")) == 0.0, "loopoverdracht eindigt en laat de gewone pasplanner volledig vrij")
 func _check_stationary(label: String) -> void:

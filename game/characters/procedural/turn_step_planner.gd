@@ -5,6 +5,10 @@ extends RefCounted
 const MAX_PAIR_ANGLE := PI * 0.375
 const STEP_TIME := 0.22
 var step_duration: float = STEP_TIME
+var fast_step_duration: float = 0.14
+var speed_adaptation: float = 1.0
+var filtered_yaw_speed: float = 0.0
+var active_step_duration: float = STEP_TIME
 var max_pair_angle: float = MAX_PAIR_ANGLE
 var initialized: bool = false
 var enabled: bool = false
@@ -30,6 +34,8 @@ func reset(yaw: float) -> void:
 	enabled = false
 	pose_yaw = yaw
 	_previous_desired_yaw = yaw
+	filtered_yaw_speed = 0.0
+	active_step_duration = clampf(step_duration, 0.08, 0.4)
 	foot_yaws = [yaw, yaw]
 	active_side = -1
 	landed_side = -1
@@ -53,6 +59,8 @@ func advance(delta: float, desired_yaw: float, allowed: bool, origin: Vector3, r
 	enabled = allowed
 	var previous_motor := _previous_desired_yaw
 	_previous_desired_yaw = desired_yaw
+	var measured_speed := minf(absf(wrapf(desired_yaw - previous_motor, -PI, PI)) / maxf(delta, 0.000001), TAU * 2.0)
+	filtered_yaw_speed = lerpf(filtered_yaw_speed, measured_speed, 1.0 - exp(-maxf(delta, 0.0) / 0.08)) if allowed else 0.0
 	if not allowed:
 		active_side = -1
 		_force_next = false
@@ -62,7 +70,7 @@ func advance(delta: float, desired_yaw: float, allowed: bool, origin: Vector3, r
 		foot_yaws = [pose_yaw, pose_yaw]
 		return
 	if active_side >= 0:
-		phase = minf(1.0, phase + delta / clampf(step_duration, 0.08, 0.4))
+		phase = minf(1.0, phase + delta / active_step_duration)
 		foot_yaws[active_side] = wrapf(lerp_angle(_from_yaw, _target_yaw, smoothstep(0.0, 1.0, phase)), -PI, PI)
 		pose_yaw = wrapf(lerp_angle(foot_yaws[0], foot_yaws[1], 0.5), -PI, PI)
 		if phase >= 1.0:
@@ -84,6 +92,8 @@ func advance(delta: float, desired_yaw: float, allowed: bool, origin: Vector3, r
 			side = 1 - side
 	active_side = side
 	started_side = side
+	# Eén vaste duur per vrije stap; een snelle blik verandert geen lopende fase.
+	active_step_duration = _duration_for_turn(error, _force_next)
 	phase = 0.0
 	_origin = origin
 	_from = contacts[side]
@@ -103,6 +113,19 @@ func advance(delta: float, desired_yaw: float, allowed: bool, origin: Vector3, r
 	_target.y = contacts[side].y
 	_force_next = false
 	_replant_point = null
+
+func _duration_for_turn(error: float, replant: bool) -> float:
+	var ordinary := clampf(step_duration, 0.08, 0.4)
+	if replant:
+		return ordinary
+	var fast := clampf(fast_step_duration, 0.08, ordinary)
+	# Een grote achterstand mag ook na het stoppen van de blik worden ingehaald.
+	# Kleine rustige blikjes houden de oude duur en de bestaande borstreserve.
+	var catchup_speed := maxf(filtered_yaw_speed, absf(error) / 0.5)
+	var speed_mix := smoothstep(deg_to_rad(90.0), deg_to_rad(360.0), catchup_speed)
+	var angle_mix := smoothstep(max_pair_angle * 0.38, max_pair_angle * 0.85, absf(error))
+	return lerpf(ordinary, fast, speed_mix * angle_mix * clampf(speed_adaptation, 0.0, 1.0))
+
 
 func destination() -> Vector3:
 	return _target

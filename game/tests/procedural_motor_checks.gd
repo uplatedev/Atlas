@@ -31,6 +31,7 @@ func _run() -> void:
 	await _test_intent_parity()
 	await _test_gait()
 	await _test_deceleration_phase()
+	await _test_walk_momentum_handoff()
 	await _test_jump_phases()
 	await _test_posture_and_slide()
 	await _test_slide_preference_and_low_route()
@@ -124,6 +125,57 @@ func _test_deceleration_phase() -> void:
 		actor.body_profile.stride_flight_curve = original_curve
 	_expect(comparisons > 50 and backwards == 0, "uitrollen op verschillende pasmomenten draait de vrije voetfase nooit achteruit")
 	print("MEASURE: deceleration phase comparisons %d, backwards %d" % [comparisons, backwards])
+
+
+func _test_walk_momentum_handoff() -> void:
+	var defaults := Vector3(actor.sneak_forward_speed,actor.walk_forward_speed,actor.sprint_forward_speed)
+	var cases := 0
+	var transitional_frames := 0
+	var max_speed_error := 0.0
+	for speeds in [defaults, Vector3(1.4,6.5,11.0), Vector3(2.1,6.5,11.0)]:
+		actor.sneak_forward_speed = speeds.x
+		actor.walk_forward_speed = speeds.y
+		actor.sprint_forward_speed = speeds.z
+		for direction in [Vector2(0,-1),Vector2(1,-1).normalized(),Vector2(0,1),Vector2(1,0)]:
+			for delay in [0,5]:
+				await _reset()
+				_send(direction,true)
+				await _frames(120+delay)
+				var intent := AtlasCharacterIntent.new()
+				intent.movement = direction
+				intent.sneak = true
+				actor.submit_intent(intent)
+				var previous: AtlasCharacterContactFrame = contacts[-1]
+				var limit := actor.direction_speed_limit_for_state(direction,"sneak")
+				var walking_frames := 0
+				for tick in 90:
+					var before_speed := Vector2(actor.velocity.x,actor.velocity.z).length()
+					await _frames(1)
+					var current: AtlasCharacterContactFrame = contacts[-1]
+					var speed := Vector2(actor.velocity.x,actor.velocity.z).length()
+					max_speed_error = maxf(max_speed_error,absf(speed-maxf(limit,before_speed-actor.sneak_deceleration*DT)))
+					_expect(speed <= before_speed+0.00001,"Alt-overdracht voegt geen vaart toe")
+					_expect(not current.jumped and not current.landed,"Alt-overdracht geeft geen sprong of impactcue")
+					if speed > limit+0.01:
+						transitional_frames += 1
+						_expect(current.motion_profile == "lopen","werkelijke overgangsvaart publiceert jog voor timing en pose")
+					if current.motion_profile == "sneak":
+						walking_frames += 1
+						_expect(speed <= limit+0.01001,"WALK begint pas binnen eigen richtingslimiet")
+						if direction != Vector2(1,0):
+							_expect(current.supported and current.gait_supported_cycle and current.support_fraction == 1.0,"WALK-contacten gebruiken coherente gesteunde timing")
+							if previous.motion_profile != "sneak":
+								_expect(current.ground_step or current.stride_landed or previous.gait_supported_cycle,"WALK neemt bestaande cyclus alleen bij contact over")
+					if current.step_index == previous.step_index:
+						_expect(current.gait_phase+0.000001 >= previous.gait_phase,"Alt-overgang draait motorfase niet terug")
+					previous = current
+				_expect(walking_frames > 20,"overdracht bereikt blijvend de eigen Alt-gang")
+				cases += 1
+	actor.sneak_forward_speed = defaults.x
+	actor.walk_forward_speed = defaults.y
+	actor.sprint_forward_speed = defaults.z
+	_expect(max_speed_error < 0.00002,"Alt-overdracht bewaart de bestaande exacte remwet")
+	print("MEASURE: momentum-to-WALK cases %d, transient JOG frames %d, brake error %.8f" % [cases,transitional_frames,max_speed_error])
 
 
 func _gait_sample(sprint: bool) -> Dictionary:

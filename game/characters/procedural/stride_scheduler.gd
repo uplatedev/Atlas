@@ -7,6 +7,10 @@ var phase: float = 0.0
 var step_index: int = 0
 var takeoff_y: float = 0.0
 var height: float = 0.0
+var double_support_ratio: float = 0.0
+var _support_duration: float = 0.0
+var _configured_support_duration: float = 0.0
+var _planned_flight_duration: float = 0.0
 var _support_only: bool = false
 var _next_step_has_flight: bool = false
 var _short_support: bool = true
@@ -34,6 +38,31 @@ func cancel() -> void:
 	phase = 0.0
 
 
+func configure_timing(support_seconds: float, flight_seconds: float, overlap: float) -> void:
+	_configured_support_duration = maxf(support_seconds, 0.0)
+	_support_duration = _configured_support_duration
+	_planned_flight_duration = maxf(flight_seconds, 0.0)
+	double_support_ratio = clampf(overlap, 0.0, 0.3)
+
+
+func get_step_duration() -> float:
+	return _support_duration + (0.0 if _support_only else _planned_flight_duration)
+
+
+func get_support_fraction() -> float:
+	return 1.0 if _support_only else _support_duration / maxf(get_step_duration(), 0.000001)
+
+
+func is_supported_cycle() -> bool:
+	return _support_only
+
+
+## Alleen een nieuwe, werkelijk gesteunde cyclus mag de volle 0..1-fase krijgen.
+func begin_supported_cycle() -> void:
+	if phase <= 0.000001:
+		_support_only = true
+
+
 func support_tick(delta: float, duration: float, moving: bool, first_support_ratio: float = 1.0, horizontal_velocity: Vector2 = Vector2.ZERO, continuous_support: bool = false, movement_requested: bool = false) -> bool:
 	if not moving:
 		# Nul snelheid bij omkeren is geen nieuwe stand. Alleen een echte stop
@@ -55,7 +84,8 @@ func support_tick(delta: float, duration: float, moving: bool, first_support_rat
 	# steunfase voorkomt een onbereikbare achterblijvende pin. Sprint geeft ratio 1.
 	if _short_support:
 		duration *= clampf(minf(first_support_ratio, 0.5) if reversing_support else first_support_ratio, 0.25, 1.0)
-	if continuous_support:
+	_support_duration = duration
+	if continuous_support and _support_progress <= 0.000001:
 		_support_only = true
 	# Snelheid verandert de verdere pascadans, niet de al afgelegde fase.
 	# Verstreken tijd delen door een groeiende duur liet de voet achteruit zwaaien.
@@ -73,6 +103,7 @@ func take_off(at_y: float, flight_height: float, gravity: float) -> float:
 	_flight_elapsed = 0.0
 	var launch := sqrt(2.0 * gravity * height)
 	_flight_duration = 2.0 * launch / gravity
+	_planned_flight_duration = _flight_duration
 	phase = 0.5
 	return launch
 
@@ -90,6 +121,8 @@ func touch_down(horizontal_velocity: Vector2 = Vector2.ZERO) -> void:
 	# zodat omkeren vlak na de landing ook als korte steun wordt herkend.
 	_support_direction = horizontal_velocity.normalized()
 	_short_support = false
+	# Het contactframe plant de volgende voet: verkorte startsteun is nu voorbij.
+	_support_duration = _configured_support_duration
 
 
 func defer_flight_until_next_step() -> bool:

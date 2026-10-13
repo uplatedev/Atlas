@@ -53,16 +53,16 @@ func _run() -> void:
 		presentation.apply_skeleton_pose(skeleton)
 		var lock: Array = presentation.get_debug_state().locked_feet
 		_expect(lock[0] and lock[1], "rustvoeten geplant %d" % variant)
-		var targets: Array = presentation.get_debug_state().foot_targets
+		var anchors: Array = presentation.get("_contacts").duplicate()
 		for tick in range(1, 9):
 			actor.position.z -= 0.01
 			frame = _frame(actor, 2.0, float(tick) / 20.0)
 			presentation.consume_frame(frame)
 			presentation.apply_skeleton_pose(skeleton)
 			var state: Dictionary = presentation.get_debug_state()
-			_expect(state.foot_targets[0].distance_to(targets[0]) < 0.00001, "standvoet blijft wereldvast %d/%d" % [variant, tick])
+			_expect(presentation.get("_contacts")[0].distance_to(anchors[0]) < 0.00001, "zoolanker blijft wereldvast terwijl enkel mag afrollen %d/%d" % [variant, tick])
 			_expect(state.rays_last_frame <= 2, "begrensde rays")
-			_expect(state.max_planted_error < 0.002, "werkelijke enkel bereikt geplant wereldpunt %d: %f" % [variant, state.max_planted_error])
+			_expect(state.max_planted_error < 0.002, "werkelijke enkel bereikt het actuele IK-doel %d: %f" % [variant, state.max_planted_error])
 		actor.position.y = 0.08
 		frame = _frame(actor, 8.0, 0.7)
 		frame.supported = false

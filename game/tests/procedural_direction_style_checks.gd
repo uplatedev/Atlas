@@ -1,5 +1,5 @@
 extends "res://tests/procedural_knee_checks.gd"
-## Werkelijke zijhup en voor-/achterdiagonale RUN op vier lichaamsverhoudingen.
+## Werkelijke open/sluit-zijpas en voor-/achterdiagonale RUN op vier lichaamsverhoudingen.
 func _run() -> void:
 	Engine.max_fps=144
 	var records:Array=[]
@@ -48,7 +48,7 @@ func _direction_sample(count:int,direction:Vector2,sprint:bool) -> Array:
 	var states:Array=[]
 	var previous:Array=[]
 	for index in range(4):
-		states.append({"max_target_error":0.0,"max_planted_error":0.0,"max_pin_drift":0.0,"max_head_error":0.0,"min_gap":INF,"max_side_lift":0.0,"height_min":INF,"height_max":-INF,"hop_air":0,"double_support":0,"rays":0,"releases":0,"last_yaw":0.0,"last_running":0.0,"worst":{}})
+		states.append({"max_target_error":0.0,"max_planted_error":0.0,"max_pin_drift":0.0,"max_head_error":0.0,"min_gap":INF,"max_side_lift":0.0,"height_min":INF,"height_max":-INF,"hop_air":0,"double_support":0,"lead_only":0,"trail_only":0,"contact_sides":[],"simultaneous_contacts":0,"rays":0,"releases":0,"last_yaw":0.0,"last_running":0.0,"worst":{}})
 		previous.append({})
 	for tick in range(count):
 		await _ticks(1)
@@ -83,6 +83,12 @@ func _direction_sample(count:int,direction:Vector2,sprint:bool) -> Array:
 				state.height_min=minf(state.height_min,actor.position.y)
 				state.height_max=maxf(state.height_max,actor.position.y)
 			if tick>50 and view._side_hop:
+				var lead:int=1 if direction.x>0.0 else 0
+				state.lead_only+=int(view._locked[lead] and not view._locked[1-lead])
+				state.trail_only+=int(view._locked[1-lead] and not view._locked[lead])
+				var contacts:Array=view.get_debug_state().foot_contact_sides
+				state.contact_sides.append_array(contacts)
+				state.simultaneous_contacts+=int(contacts.size()>1)
 				if frame.air_kind=="stride":
 					state.hop_air+=1
 					_expect(not view._locked[0] and not view._locked[1] and frame.foot_contacts.is_empty(),"echte zijhup heeft beide voeten los")
@@ -101,7 +107,10 @@ func _direction_sample(count:int,direction:Vector2,sprint:bool) -> Array:
 		_expect(state.max_head_error<0.002 and absf(actor.rotation.y)<0.00001,"visuele richting verandert geen hoofdblik of capsuleyaw")
 		_expect(state.rays<=2,"zij-/diagonaal gebruikt hoogstens twee voetmetingen")
 		if direction.y==0.0 and direction.x!=0.0:
-			_expect(state.hop_air>20 and state.double_support>10,"zijpas krijgt echte gezamenlijke vlucht en steun")
+			_expect(state.lead_only>2 and state.trail_only>2 and state.simultaneous_contacts==0,"zijpas heeft afzonderlijke leidende en volgende steun zonder dubbele landing")
+			_expect(state.contact_sides.size()>3,"zijpas publiceert voldoende afzonderlijke contacten")
+			for contact in range(1,state.contact_sides.size()):
+				_expect(state.contact_sides[contact]!=state.contact_sides[contact-1],"leidende en volgende voet wisselen hoorbare contacten af")
 			_expect(state.max_side_lift<view.get_leg_length()*0.12,"zijhup heeft bescheiden intrek zonder hoge renhiel")
 		else:
 			var expected:=AtlasGaitStyle.diagonal_yaw(Vector3(direction.x,0,direction.y),"sprint")

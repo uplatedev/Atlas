@@ -7,6 +7,13 @@ func _run() -> void:
 	var records:Array=[]
 	for sprint in [false,true]:
 		_intent(1.0,sprint)
+		if not sprint:
+			# Alt is de bevestigde wandeling; ongewijzigde invoer is nu een aparte jog.
+			for actor in actors:
+				var intent := AtlasCharacterIntent.new()
+				intent.movement = Vector2(0,-1)
+				intent.sneak = true
+				actor.submit_intent(intent)
 		await _ticks(50)
 		var samples:Array=[]
 		for index in range(4):

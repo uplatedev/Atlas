@@ -1,0 +1,464 @@
+{
+  "native_validation_source": "5077b719755d224119198bf6cbcd15d9a5c44605",
+  "character_subtree": "c97b9d5a66220d421a69c62a0d1c9415752c64cd",
+  "suites": [
+    {
+      "passed": true,
+      "seconds": 3.122592,
+      "name": "import"
+    },
+    {
+      "passed": true,
+      "seconds": 0.5899183,
+      "name": "main"
+    },
+    {
+      "passed": true,
+      "seconds": 1.9798449,
+      "name": "character_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 5.2218989,
+      "name": "movement_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 9.2962957,
+      "name": "refinement_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 1.8793474,
+      "name": "camera_ownership_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 2.065793,
+      "name": "feedback_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 1.7900711,
+      "name": "camera_accent_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 8.35881,
+      "name": "procedural_motor_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 0.4992246,
+      "name": "procedural_rhythm_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 6.4244787,
+      "name": "procedural_foot_roll_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 2.0683664,
+      "name": "procedural_shuffle_pose_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 16.1413379,
+      "name": "procedural_gait_biomechanics_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 0.3964996,
+      "name": "procedural_presentation_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 1.703584,
+      "name": "procedural_integration_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 5.9641786,
+      "name": "procedural_terrain_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 1.8823168,
+      "name": "procedural_knee_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 3.0940811,
+      "name": "procedural_compression_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 4.5784648,
+      "name": "procedural_turn_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 0.2166708,
+      "name": "procedural_turn_timing_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 3.6457961,
+      "name": "procedural_moving_turn_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 1.4191625,
+      "name": "procedural_torso_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 1.694553,
+      "name": "procedural_stop_turn_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 1.5063735,
+      "name": "procedural_style_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 0.7682668,
+      "name": "procedural_contact_release_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 15.3049327,
+      "name": "procedural_walk_contacts_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 2.4322119,
+      "name": "procedural_relaxed_gaits_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 10.9499823,
+      "name": "procedural_direction_style_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 0.3049966,
+      "name": "procedural_idle_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 2.0596615,
+      "name": "procedural_idle_pose_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 44.2601023,
+      "name": "procedural_gait_transition_checks"
+    },
+    {
+      "passed": true,
+      "seconds": 16.1392386,
+      "name": "procedural_free_target_checks"
+    }
+  ],
+  "artemis_actual_contact_cadence": [
+    {
+      "mode": "walk",
+      "direction": "(0.0, -1.0)",
+      "contacts_per_minute": 144.0,
+      "double_support_ticks": 95,
+      "air_ticks": 0
+    },
+    {
+      "mode": "walk",
+      "direction": "(1.0, 0.0)",
+      "contacts_per_minute": 211.764705882354,
+      "double_support_ticks": 154,
+      "air_ticks": 28
+    },
+    {
+      "mode": "walk",
+      "direction": "(-1.0, 0.0)",
+      "contacts_per_minute": 211.764705882354,
+      "double_support_ticks": 154,
+      "air_ticks": 28
+    },
+    {
+      "mode": "jog",
+      "direction": "(0.0, -1.0)",
+      "contacts_per_minute": 180.000000000001,
+      "double_support_ticks": 0,
+      "air_ticks": 144
+    },
+    {
+      "mode": "jog",
+      "direction": "(1.0, 0.0)",
+      "contacts_per_minute": 318.103448275863,
+      "double_support_ticks": 125,
+      "air_ticks": 126
+    },
+    {
+      "mode": "jog",
+      "direction": "(-1.0, 0.0)",
+      "contacts_per_minute": 318.103448275863,
+      "double_support_ticks": 125,
+      "air_ticks": 126
+    },
+    {
+      "mode": "sprint",
+      "direction": "(0.0, -1.0)",
+      "contacts_per_minute": 257.142857142858,
+      "double_support_ticks": 0,
+      "air_ticks": 343
+    },
+    {
+      "mode": "sprint",
+      "direction": "(1.0, 0.0)",
+      "contacts_per_minute": 520.950323974084,
+      "double_support_ticks": 68,
+      "air_ticks": 310
+    },
+    {
+      "mode": "sprint",
+      "direction": "(-1.0, 0.0)",
+      "contacts_per_minute": 520.950323974084,
+      "double_support_ticks": 68,
+      "air_ticks": 310
+    }
+  ],
+  "moving_turn_safety": [
+    {
+      "mode": "walk",
+      "max_free_cm": 30.7823538780212,
+      "max_contact_cm": 23.0902835726738,
+      "max_pin_m": 0.0,
+      "min_ankle_gap_m": 0.103637903928757,
+      "max_target_m": 1.5079650665939e-06,
+      "max_sole_marker_m": 1.43491388371331e-06,
+      "max_local_foot_queries": 2
+    },
+    {
+      "mode": "jog",
+      "max_free_cm": 17.843493819236798,
+      "max_contact_cm": 19.7724163532257,
+      "max_pin_m": 0.0,
+      "min_ankle_gap_m": 0.113599374890327,
+      "max_target_m": 1.12461816570431e-06,
+      "max_sole_marker_m": 1.43192721679952e-06,
+      "max_local_foot_queries": 2
+    },
+    {
+      "mode": "sprint",
+      "max_free_cm": 15.218192338943501,
+      "max_contact_cm": 2.41562370210886,
+      "max_pin_m": 0.0,
+      "min_ankle_gap_m": 0.113599516451359,
+      "max_target_m": 2.32997172133764e-06,
+      "max_sole_marker_m": 2.38754773818073e-06,
+      "max_local_foot_queries": 2
+    }
+  ],
+  "moving_turn_continuity": "OPEN: free/contact step maxima are measurements, not smoothness PASS",
+  "render_source": "173945ebc6d7029bd8160166cd162bd636dfdcf8",
+  "renders": [
+    {
+      "key": "walk_side",
+      "physics_ticks": 180,
+      "webp_frames": 180,
+      "duration_ms": 3000
+    },
+    {
+      "key": "walk_front",
+      "physics_ticks": 180,
+      "webp_frames": 180,
+      "duration_ms": 3000
+    },
+    {
+      "key": "jog_side",
+      "physics_ticks": 180,
+      "webp_frames": 180,
+      "duration_ms": 3000
+    },
+    {
+      "key": "jog_front",
+      "physics_ticks": 180,
+      "webp_frames": 180,
+      "duration_ms": 3000
+    },
+    {
+      "key": "sprint_side",
+      "physics_ticks": 180,
+      "webp_frames": 180,
+      "duration_ms": 3000
+    },
+    {
+      "key": "shuffle_front",
+      "physics_ticks": 180,
+      "webp_frames": 180,
+      "duration_ms": 3000
+    },
+    {
+      "key": "shuffle_sprint_front",
+      "physics_ticks": 180,
+      "webp_frames": 180,
+      "duration_ms": 3000
+    }
+  ],
+  "render_limit": "constant straight gaits only; subsequent yaw-cap-only change proves straight parity in turn-cap-comparison.json",
+  "performance_baseline_source": "458aa4091c138a76ebf378ed0722ab220a9afb87",
+  "performance_baseline": {
+    "1": {
+      "frame_ms": {
+        "max": 19.691,
+        "p50": 0.641,
+        "p95": 1.509
+      },
+      "physics_cpu_ms": {
+        "max": 1.276,
+        "p50": 0.906,
+        "p95": 1.104
+      },
+      "process_cpu_ms": {
+        "max": 18.653,
+        "p50": 9.528,
+        "p95": 15.911
+      },
+      "queries": 669,
+      "queries_per_second": 167.226755480988,
+      "render_frames": 4795,
+      "wall_seconds": 4.000556
+    },
+    "12": {
+      "frame_ms": {
+        "max": 12.682,
+        "p50": 2.363,
+        "p95": 6.704
+      },
+      "physics_cpu_ms": {
+        "max": 6.794,
+        "p50": 5.791,
+        "p95": 6.794
+      },
+      "process_cpu_ms": {
+        "max": 16.242,
+        "p50": 5.429,
+        "p95": 16.242
+      },
+      "queries": 8028,
+      "queries_per_second": 2005.47383441201,
+      "render_frames": 1260,
+      "wall_seconds": 4.003044
+    },
+    "4": {
+      "frame_ms": {
+        "max": 18.449,
+        "p50": 1.042,
+        "p95": 2.565
+      },
+      "physics_cpu_ms": {
+        "max": 3.082,
+        "p50": 2.103,
+        "p95": 2.114
+      },
+      "process_cpu_ms": {
+        "max": 16.365,
+        "p50": 10.189,
+        "p95": 16.365
+      },
+      "queries": 2676,
+      "queries_per_second": 668.956350598123,
+      "render_frames": 3065,
+      "wall_seconds": 4.000261
+    },
+    "environment": {
+      "adapter": "NVIDIA GeForce RTX 5060 Ti",
+      "fixed_fps": false,
+      "godot": "4.7.2-stable (official)",
+      "os": "Windows",
+      "physics_hz": 60,
+      "renderer": "forward_plus",
+      "sample_seconds": 4.0,
+      "vsync": false,
+      "warmup_seconds": 3.0
+    }
+  },
+  "performance_candidate": {
+    "1": {
+      "frame_ms": {
+        "max": 12.276,
+        "p50": 0.769,
+        "p95": 2.022
+      },
+      "physics_cpu_ms": {
+        "max": 1.633,
+        "p50": 1.529,
+        "p95": 1.633
+      },
+      "process_cpu_ms": {
+        "max": 11.257,
+        "p50": 10.109,
+        "p95": 10.982
+      },
+      "queries": 668,
+      "queries_per_second": 166.946743988668,
+      "render_frames": 4002,
+      "wall_seconds": 4.001276
+    },
+    "12": {
+      "frame_ms": {
+        "max": 16.24,
+        "p50": 2.965,
+        "p95": 9.03
+      },
+      "physics_cpu_ms": {
+        "max": 7.93,
+        "p50": 7.027,
+        "p95": 7.93
+      },
+      "process_cpu_ms": {
+        "max": 12.584,
+        "p50": 8.843,
+        "p95": 12.584
+      },
+      "queries": 8028,
+      "queries_per_second": 2004.18662302792,
+      "render_frames": 972,
+      "wall_seconds": 4.005615
+    },
+    "4": {
+      "frame_ms": {
+        "max": 14.305,
+        "p50": 1.332,
+        "p95": 3.85
+      },
+      "physics_cpu_ms": {
+        "max": 4.412,
+        "p50": 3.653,
+        "p95": 4.412
+      },
+      "process_cpu_ms": {
+        "max": 11.725,
+        "p50": 9.596,
+        "p95": 11.725
+      },
+      "queries": 2676,
+      "queries_per_second": 668.978759924372,
+      "render_frames": 2327,
+      "wall_seconds": 4.000127
+    },
+    "environment": {
+      "adapter": "NVIDIA GeForce RTX 5060 Ti",
+      "fixed_fps": false,
+      "godot": "4.7.2-stable (official)",
+      "os": "Windows",
+      "physics_hz": 60,
+      "renderer": "forward_plus",
+      "sample_seconds": 4.0,
+      "vsync": false,
+      "warmup_seconds": 3.0
+    }
+  },
+  "performance_limit": "one sequential real-renderer run per source; 3s warmup + 4s sample; TIME_PROCESS and TIME_PHYSICS_PROCESS sampled Godot monitors, not isolated CPU timings; query sum includes existing stride support probe plus local foot queries; no complete game/LAN guarantee"
+}

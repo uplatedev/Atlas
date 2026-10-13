@@ -76,3 +76,14 @@ De vloer en muren gebruiken echte Kenney Prototype Textures. De volledige tile h
 Dit is een lokale speel-/editorproef met één bestuurd Character tegelijk; Tab is de testhulp. Eigen camerarenderlayers ondersteunen voorlopig maximaal 19 Characters. Capsule en naam blijven zichtbaar voor andere Character-camera's. Artemis en eenvoudige proeflichamen gebruiken nu procedurele botposes; het hoofd volgt de afzonderlijke kijkrichting. LAN en Steam zijn nog niet gebouwd.
 
 Ligrotatie gebruikt een conservatieve controle langs het volledige draaipad. Bij vrijwel exact passende plafondhoogte kan die iets eerder blokkeren; de arena biedt 0.80 m vrije hoogte voor de 0.70 m ligvorm. Gevoel en editorbediening beoordeelt de gebruiker na de technische proef; zie WORK.
+
+## Pasritme en afrol na 458aa409
+
+Artemis gebruikt standaard Alt-wandelen 1,4 m/s, joggen 3 m/s en sprinten 9 m/s. Snelheden blijven rootinstellingen; bestaande instance-overrides blijven behouden. B heeft bewust zijn eerdere 6,5/11-variatie. Wandelen houdt grondsteun met korte overlap tussen beide voeten; joggen/sprinten hebben een echte capsulevlucht. Zijwaarts openen en aansluiten hebben afzonderlijke voetcontacten, ook wanneer tussen cycli korte vlucht zit. Diagonalen gebruiken de gekozen gang onder een hoek.
+
+Het lichaamsprofiel bevat nu de groep **Pasritme**: gewenste cadans voor wandelen/joggen/sprinten en een lichaamsgebonden steunafstand. Cadans telt beide voeten samen, niet volledige cycli van dezelfde voet. Beenlengte, snelheid, zwaartekracht en de vluchtcurve begrenzen het werkelijke ritme; een te hoge vluchtcurve kan daardoor een langere stap verlangen. Zet geen andere zwaartekracht in om een pose passend te maken. **Wandelen en joggen** bevat armstijl, dubbele steun, hielcontact en teenafzet; **Zijpas** bevat het latere contact van de leidende voet en het eerdere loskomen van de volgende voet. Defaults zijn speelproefwaarden die nog menselijk beoordeeld worden.
+
+Tijdens afrol blijft het actieve hiel-/voorvoetpunt wereldvast terwijl de enkel mag bewegen. De IK-reikwijdte blijft anatomisch begrensd. Eén motorfase stuurt de contactvolgorde en pose; presentatie verplaatst nooit de capsule. Resources blijven per instance onafhankelijk. [Referenties en reden](../work/T-011/gait-research.md), [gerichte herhaalproef](../work/T-011/ground-trial.md#gerichte-vervolgproef-na-458aa409).
+
+
+**Bijstappen** heeft naast de gewone duur ook **Turn Step Fast Duration** en **Turn Step Speed Adaptation**. Een grote snelle stilstaande lichaamsdraai of grote resterende draaihoek verkort de stap binnen die grens; kleine blikjes houden de hoofd-/borstreserve. Nul adaptation bewaart de gewone duur. De gekozen duur verandert niet midden in de stap. Iedere geplante zool bewaart ook bij vlak contact zijn oriëntatie. Tijdens voortbewegen blijft het fysieke pasritme leidend. [Onderzoek naar draaien](../work/T-011/turn-research.md).

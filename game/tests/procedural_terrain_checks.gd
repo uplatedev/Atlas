@@ -163,12 +163,19 @@ func _slope() -> void:
 				break
 		_expect(actor.position.z < -11.0 and max_y > 1.8, "15-gradenhelling wordt beklommen met sprint=%s" % sprint)
 		_send(Vector2(0, 1), sprint)
-		for tick in 320:
+		# De route is >10 m achteruit: 3 m/s jog geeft daar 1,65 m/s, geen oude 2,75.
+		# Budgetteer de routeafstand plus één seconde voor afremmen en omkeren.
+		var descent_start := actor.position.z
+		var descent_speed := actor.direction_speed_limit(Vector2(0, 1), sprint)
+		var descent_budget := ceili(((-1.0 - descent_start) / descent_speed + 1.0) / DT)
+		var descent_ticks := 0
+		for tick in descent_budget:
+			descent_ticks += 1
 			await _ticks(1)
 			if actor.position.z > -1.0:
 				break
 		_expect(actor.position.z > -1.0 and actor.position.y < 0.15, "hellingafdaling komt veilig op gewone vloer terug")
-		measurements.append("slope sprint=%s maximum_y=%.3f final_z=%.3f planted_error=%.4f" % [sprint, max_y, actor.position.z, actor.get_node("Presentation/ProceduralBody").get_debug_state().max_planted_error])
+		measurements.append("slope sprint=%s maximum_y=%.3f descent_start=%.3f backward_speed=%.3f descent_ticks=%d/%d final_z=%.3f planted_error=%.4f" % [sprint, max_y, descent_start, descent_speed, descent_ticks, descent_budget, actor.position.z, actor.get_node("Presentation/ProceduralBody").get_debug_state().max_planted_error])
 		await _clear_fixtures()
 
 func _roofs() -> void:

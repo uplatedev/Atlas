@@ -27,6 +27,10 @@ func _run() -> void:
 	floor_body = _box(Vector3(0, -0.1, 0), Vector3(400, 0.2, 400))
 	actor = CHARACTER.instantiate() as AtlasCharacter
 	actor.procedural_enabled = false
+	# Historische 69a8-cameraoracle gebruikt zijn oorspronkelijke snelheidsfixture.
+	# Nieuwe gameplaydefaults worden in de huidige motor-/gangproeven getoetst.
+	actor.walk_forward_speed = 5.0
+	actor.sneak_forward_speed = 2.0
 	_legacy_camera(actor)
 	actor.position = Vector3(0, 0.05, 0)
 	world.add_child(actor)
@@ -137,6 +141,9 @@ func _test_head_render_and_logical_input() -> void:
 	await _reset()
 	var twin: AtlasCharacter = CHARACTER.instantiate()
 	twin.procedural_enabled = false
+	# Beide kanten van de camera-isolatieproef gebruiken dezelfde historische motorfixture.
+	twin.walk_forward_speed = actor.walk_forward_speed
+	twin.sneak_forward_speed = actor.sneak_forward_speed
 	_legacy_camera(twin)
 	twin.position = Vector3(20, 0.05, 0)
 	world.add_child(twin)
@@ -151,6 +158,7 @@ func _test_head_render_and_logical_input() -> void:
 	Input.action_press("move_forward")
 	await _frames(12)
 	_expect(absf(wrapf(actor.global_rotation.y - twin.global_rotation.y, -PI, PI)) < 0.0001, "lichaamsdraai is onafhankelijk van decoratieve cameratransform")
+	_expect(actor.velocity.distance_to(twin.velocity) < 0.0001, "beide camera-isolatiefixtures bereiken dezelfde afzetvaart")
 	Input.action_press("jump")
 	await _frames(1)
 	Input.action_release("jump")
@@ -445,6 +453,10 @@ func _reset() -> void:
 
 
 func _legacy_camera(body: Node) -> void:
+	# Historische camera-oracle houdt de oorspronkelijke motorafstelling.
+	body.set("walk_turn_speed", 540.0)
+	body.set("sprint_turn_speed", 300.0)
+	body.set("sneak_turn_speed", 420.0)
 	# Historische 69a8-trace blijft exact; de nieuwe varianten hebben hun eigen suite.
 	for property in body.get_property_list():
 		if String(property.name) in ["camera_landing_enabled", "camera_fov_refinement_enabled"]:

@@ -1,37 +1,41 @@
 extends "res://tests/procedural_knee_checks.gd"
-## Eerste stap, beide zijrichtingen, omkeren en smal stoppen met echte motor en botten.
+## Eerste stap, beide zijrichtingen, omkeren en stoppen voor echte WALK en JOG.
+var _tested_style := "jog"
 func _run() -> void:
 	Engine.max_fps=144
 	var results:Dictionary={}
-	for direction in [Vector2(0,-1),Vector2(1,0),Vector2(-1,0),Vector2(1,-1).normalized(),Vector2(-1,-1).normalized()]:
-		_build(4,true)
-		await _ticks(30)
-		var initial:Array=[]
-		for actor in actors:
-			var view:AtlasCharacterPresentation=actor.get_node("Presentation/ProceduralBody")
-			initial.append((view._targets[1]-view._targets[0]).dot(actor.global_basis.x))
-		_send_walk(direction)
-		var start:=await _measure(180,true)
-		var reverse:Array=[]
-		if direction.x!=0.0:
-			_send_walk(-direction)
-			reverse=await _measure(180,false)
-		_send_walk(Vector2.ZERO)
-		var stop:=await _measure(150,false)
-		var widths:Array=[]
-		for index in range(4):
-			var actor:=actors[index]
-			var view:AtlasCharacterPresentation=actor.get_node("Presentation/ProceduralBody")
-			var expected:float=(view._rest_feet[1].x-view._rest_feet[0].x)*actor.body_profile.get_stance_width_scale(0.0)
-			var width:float=(view._targets[1]-view._targets[0]).dot(actor.global_basis.x)
-			widths.append({"initial":initial[index],"stopped":width,"expected":expected})
-			_expect(width>0.06 and width<view.get_leg_length()*0.6 and absf(initial[index]-expected)<0.003,"smalle beginstand en comfortabele asymmetrische stopstand %s/%s"%[direction,index])
-			_expect(view._locked[0] and view._locked[1],"beide voeten echt geplant na stoppen %s/%s"%[direction,index])
-		results[str(direction)]={"start":start,"reverse":reverse,"stop":stop,"widths":widths}
-		world.queue_free()
-		actors.clear()
-		frames.clear()
-		await _ticks(3)
+	for style in ["walk", "jog"]:
+		_tested_style=style
+		for direction in [Vector2(0,-1),Vector2(1,0),Vector2(-1,0),Vector2(1,-1).normalized(),Vector2(-1,-1).normalized()]:
+			_build(4,true)
+			await _ticks(30)
+			var initial:Array=[]
+			for actor in actors:
+				var view:AtlasCharacterPresentation=actor.get_node("Presentation/ProceduralBody")
+				initial.append((view._targets[1]-view._targets[0]).dot(actor.global_basis.x))
+			_send_walk(direction)
+			var start:=await _measure(180,true)
+			var reverse:Array=[]
+			if direction.x!=0.0:
+				_send_walk(-direction)
+				reverse=await _measure(180,false)
+			_send_walk(Vector2.ZERO)
+			var stop:=await _measure(150,false)
+			var widths:Array=[]
+			for index in range(4):
+				var actor:=actors[index]
+				var view:AtlasCharacterPresentation=actor.get_node("Presentation/ProceduralBody")
+				var expected:float=(view._rest_feet[1].x-view._rest_feet[0].x)*actor.body_profile.get_stance_width_scale(0.0)
+				var width:float=(view._targets[1]-view._targets[0]).dot(actor.global_basis.x)
+				widths.append({"initial":initial[index],"stopped":width,"expected":expected})
+				_expect(width>0.06 and width<view.get_leg_length()*0.6 and absf(initial[index]-expected)<0.003,"smalle beginstand en comfortabele asymmetrische stopstand %s/%s"%[direction,index])
+				_expect(view._locked[0] and view._locked[1],"beide voeten echt geplant na stoppen %s/%s"%[direction,index])
+			results[_tested_style+str(direction)]={"start":start,"reverse":reverse,"stop":stop,"widths":widths}
+			world.queue_free()
+			actors.clear()
+			frames.clear()
+			await _ticks(3)
+	_tested_style="jog"
 	for route in ["zero_height", "ceiling"]:
 		_build(4,true)
 		await _ticks(30)
@@ -87,6 +91,7 @@ func _send_walk(direction:Vector2) -> void:
 	for actor in actors:
 		var intent:=AtlasCharacterIntent.new()
 		intent.movement=direction
+		intent.sneak=_tested_style=="walk"
 		actor.submit_intent(intent)
 
 func _measure(count:int,starting:bool) -> Array:
@@ -148,5 +153,7 @@ func _measure(count:int,starting:bool) -> Array:
 		_expect(state.max_pin_drift<0.00001 and state.releases==0,"geplante contacten blijven vast %s"%index)
 		_expect(state.rays<=2,"hoogstens twee lokale voetmetingen %s"%index)
 		if starting:
-			_expect(state.max_start_drop<view.get_leg_length()*0.16 and state.max_start_drop<=state.max_steady_drop+0.015,"start zakt niet extra diep tegenover gewone pas %s"%index)
+			_expect(state.max_start_drop<=state.max_steady_drop+0.015,"start zakt niet extra diep tegenover gewone pas %s/%s"%[_tested_style,index])
+			if _tested_style=="walk":
+				_expect(state.max_start_drop<view.get_leg_length()*0.16,"ontspannen WALK houdt rustige heuphoogte %s"%index)
 	return states

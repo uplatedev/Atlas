@@ -59,7 +59,9 @@ func _test_movement() -> void:
 	_expect(opposing < 0.01, "tegengestelde inputs heffen elkaar op")
 	await _reset()
 	Input.action_press("move_forward")
-	await _frames(6)
+	# Twee ticks tonen de opbouw ook met de nieuwe 3 m/s-joglimiet;
+	# zes ticks bereikten die al volledig en bewezen geen onmiddellijke versnelling.
+	await _frames(2)
 	var accelerating := _horizontal_speed()
 	_expect(accelerating > 0.0 and accelerating < forward - 0.1, "acceleratie bouwt snelheid op")
 	_release_inputs()
