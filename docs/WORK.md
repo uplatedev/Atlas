@@ -19,7 +19,16 @@ T-009 is als afzonderlijke camera-/FOV-proef gepubliceerd op `9f75853c`; import/
 | T-008 | Contactaudio, stap 2 | Gepubliceerd en lokaal klaar; luisterproef open | atlas-T008-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-008-contactaudio` | Klank/cadans/slide met F6 lokaal vergelijken |
 | T-009 | Camera-accenten, stap 3 | Gepubliceerd en lokaal klaar; camera-proef open | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Landing en lucht-/slide-FOV met F7/F9 lokaal vergelijken |
 | T-010 | Artemis-bronbestanden delen | Afgerond; originele bestanden op main | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` (resultaat op main) | Laptop: main ophalen, source_assets/characters/Artemis openen |
+| T-011 | Grondslide en procedurele Characters | Gereserveerd; grondslide eerst | atlas-T011-20261013-01a1340e | STELLAR-FORGE (Windows) | `Smyl3z/T-011-procedurele-characters` | Grondslide bouwen en publiceren; daarna rig en procedurele grondproef |
 
+## T-011 — Grondslide en procedurele Characters
+
+Reservering door `atlas-T011-20261013-01a1340e`, STELLAR-FORGE (Windows), vanaf main `4244e31eb12ce1452aca54d7bac64743241a3a4b`. Gebruiker heeft op 13 oktober 2026 het besproken plan expliciet voor uitvoering bevestigd. Scope: eerst sprint + Ctrl op de grond als extra ingang naar dezelfde slide; afzonderlijk checkpoint. Daarna Artemis-werkkopie herstellen, lichaamsprofielen voor drie humanoïde verhoudingen, gedeelde procedurele stapplanner met echte pasvlucht, armzwaai, twee editorcurves, passende camera/audio en lokale controles/proeven. Eén capsulemotor blijft eigenaar; massa, momentum en onafhankelijke instance-instellingen horen bij de proef. Werkbranch `Smyl3z/T-011-procedurele-characters`; gelijktijdige schrijvers krijgen eigen fysieke worktrees onder deze claim. Klimmen/ragdoll/andere traversal en multiplayer blijven latere afzonderlijke proeven na beoordeling van grondbeweging. Speelbasis `9f75853c`; bestaand onbeoordeeld werk blijft bewaard.
+
+- **Gebouwd:** nog geen nieuwe code; uitsluitend deze reservering.
+- **Technisch gecontroleerd:** actuele main en lokale schone T-009-speelbron gelezen; GitHub-koppeling uplatedev met admin-/schrijfrecht geverifieerd. Godot-versie en lokale instellingen opnieuw gelezen.
+- **Door de gebruiker beoordeeld:** volledige uitvoering opgedragen; slidegevoel en toekomstige model-/pasvluchtproef blijven menselijk te beoordelen.
+- **Volgende stap:** reservering fast-forward publiceren en eigenaarschap verifiëren, dan grondslide in eigen werkworktree bouwen.
 ## T-010 — Artemis-bronbestanden delen
 
 Reservering door `atlas-T010-20261012-01a12fd0`, STELLAR-FORGE (Windows), vanaf main `3041ffcb2da54c26a79eecf338b521f1e2ebf5c5`. De gebruiker vraagt de aangeleverde Artemis.fbx en Artemis.glb op main te bewaren zodat ze op de laptop beschikbaar zijn. Scope: byte-exacte bronkopieën, korte herkomst-/integriteitsnotitie en geverifieerde main-publicatie. Geen model-, rig-/animatie-integratie of wijziging aan de lokale speelproef.
