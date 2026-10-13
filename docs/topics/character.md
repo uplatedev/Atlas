@@ -74,3 +74,9 @@ De vloer en muren gebruiken echte Kenney Prototype Textures. De volledige tile h
 Dit is een lokale speel-/editorproef met één bestuurd Character tegelijk; Tab is de testhulp. Eigen camerarenderlayers ondersteunen voorlopig maximaal 19 Characters. Capsule en naam blijven zichtbaar voor andere Character-camera's. LAN, Steam, modellen en animatie zijn nog niet gebouwd. Een echte hoofdjoint kan later de afzonderlijke hoofd-/lichaamsrichting gebruiken.
 
 Ligrotatie gebruikt een conservatieve controle langs het volledige draaipad. Bij vrijwel exact passende plafondhoogte kan die iets eerder blokkeren; de arena biedt 0.80 m vrije hoogte voor de 0.70 m ligvorm. Gevoel en editorbediening beoordeelt de gebruiker na de technische proef; zie WORK.
+
+## Actuele gang- en draaiproef
+
+Checkpoint64fcf41a vervangt de afgewezen458aa409-proef: Alt1,4/jog3/sprint9m/s, samenhangende fysieke contactfasen, vaste hiel-/voorvoetafrol, eigen wandel-/jogposes en openen/aansluiten bij zijpassen. De bestaande motorlimieten zijn proefmatig240/360/240°/s; hoofdscene-B bewaart eigen hogere overrides. Nieuwe **Turn Step Fast Duration** en **Turn Step Speed Adaptation** staan onder het profiel bij Bijstappen; snelle grote draai of achterstand haalt begrensd in, nul adaptation bewaart de gewone duur. Vaste zolen blijven richtingvast.
+
+[Actuele editor-/speelhandelingen](https://github.com/uplatedev/Atlas/blob/64fcf41a169eaad05b59f0d0672213db12a46038/docs/work/T-011/ground-trial.md#gerichte-vervolgproef-na-458aa409) en [technisch bewijs](../work/T-011/human-gaits.md). Volledige menselijke beoordeling blijft open. Abrupte vrije voet-/contactoverdracht en oudere achterwaartse teenpose zijn niet opgelost door een PASS op bereik/pins; nieuwe landingsbaan is nog voorstel.

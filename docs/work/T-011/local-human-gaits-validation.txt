@@ -1,0 +1,11 @@
+Werkelijke lokale validatiesamenvatting, 13 oktober 2026
+Gepubliceerde bron: 64fcf41a169eaad05b59f0d0672213db12a46038
+Bronboom: 5168a0d02c2e14cbbebe366a4d86942aad8de4a6
+Vaste testbranch: Smyl3z/lokaal-testen-T011
+Voor overdracht: git status --porcelain leeg; geen Godot-project/editorproces actief.
+Gewone git merge --ff-only geslaagd; lokale engine-instellingen behouden.
+HUD-metadata na publicatie gegenereerd met de gepubliceerde source_commit.
+Godot-versie: 4.7.2.stable.official.ed1daf0bf
+tools/Check-Atlas.ps1 op de werkelijke vaste testlocatie: import en hoofdscene-start geslaagd, exitcode0.
+Na controle: git HEAD gelijk aan bron en git status --short leeg.
+Geen andere pc bijgewerkt; geen gameplayintegratie op main.

@@ -1,0 +1,302 @@
+{
+  "source": "de26635c33155455083da130d8fc2ab2b23e5eed",
+  "scope": "parameter-only existing body yaw caps; identical moving_turn oracle; four bodies; no production modification by probe",
+  "caps_degrees_per_second": {
+    "baseline": [
+      420,
+      540,
+      300
+    ],
+    "moderate": [
+      240,
+      360,
+      240
+    ],
+    "calm": [
+      180,
+      300,
+      240
+    ]
+  },
+  "results": [
+    {
+      "case": "baseline",
+      "mode": "walk",
+      "parity": 0.0,
+      "max_free_cm": 31.8025588989258,
+      "max_contact_cm": 32.1532994508743,
+      "artemis_free_cm": 16.0434156656265,
+      "artemis_contact_cm": 17.8577765822411,
+      "min_foot_cm": 9.50237065553665,
+      "max_target_mm": 0.364406936569139,
+      "max_sole_mm": 0.231958445510827,
+      "max_contact_yaw_deg": 130.999985431569,
+      "min_turn_speed": 1.39998030662537,
+      "max_vector_delta": 0.300000011920929,
+      "acceleration_excess": 0.0,
+      "phase_regressions": 0.0,
+      "contacts": [
+        12,
+        11,
+        10,
+        12
+      ],
+      "airframes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_rate": 420.000298537397,
+      "heavy_landings": 0.0
+    },
+    {
+      "case": "baseline",
+      "mode": "jog",
+      "parity": 0.0,
+      "max_free_cm": 20.030440390109998,
+      "max_contact_cm": 19.0271690487862,
+      "artemis_free_cm": 15.8915430307388,
+      "artemis_contact_cm": 16.8752461671829,
+      "min_foot_cm": 10.780413448810599,
+      "max_target_mm": 0.0012157009905422501,
+      "max_sole_mm": 0.0010102064607053801,
+      "max_contact_yaw_deg": 108.000047628975,
+      "min_turn_speed": 2.9999794960022,
+      "max_vector_delta": 0.533333420753479,
+      "acceleration_excess": 0.0,
+      "phase_regressions": 0.0,
+      "contacts": [
+        15,
+        13,
+        13,
+        14
+      ],
+      "airframes": [
+        90,
+        98,
+        91,
+        84
+      ],
+      "max_rate": 540.000438480484,
+      "heavy_landings": 0.0
+    },
+    {
+      "case": "baseline",
+      "mode": "sprint",
+      "parity": 0.0,
+      "max_free_cm": 28.1268954277039,
+      "max_contact_cm": 63.1174147129059,
+      "artemis_free_cm": 28.1268954277039,
+      "artemis_contact_cm": 5.93551881611347,
+      "min_foot_cm": 10.7803918421268,
+      "max_target_mm": 0.0022992255708231797,
+      "max_sole_mm": 0.0021343539629015097,
+      "max_contact_yaw_deg": 23.303662881978,
+      "min_turn_speed": 5.51030111312866,
+      "max_vector_delta": 0.433333665132523,
+      "acceleration_excess": 0.0,
+      "phase_regressions": 0.0,
+      "contacts": [
+        22,
+        19,
+        20,
+        21
+      ],
+      "airframes": [
+        202,
+        203,
+        199,
+        205
+      ],
+      "max_rate": 358.701317849126,
+      "heavy_landings": 0.0
+    },
+    {
+      "case": "moderate",
+      "mode": "walk",
+      "parity": 5.32907051820075e-15,
+      "max_free_cm": 30.7823538780212,
+      "max_contact_cm": 23.0902835726738,
+      "artemis_free_cm": 15.3794571757317,
+      "artemis_contact_cm": 14.788830280304,
+      "min_foot_cm": 10.3637903928757,
+      "max_target_mm": 0.0015079650665939,
+      "max_sole_mm": 0.0014349138837133101,
+      "max_contact_yaw_deg": 104.000111266097,
+      "min_turn_speed": 1.39998292922974,
+      "max_vector_delta": 0.300000011920929,
+      "acceleration_excess": 0.0,
+      "phase_regressions": 0.0,
+      "contacts": [
+        12,
+        11,
+        10,
+        12
+      ],
+      "airframes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_rate": 240.000498434116,
+      "heavy_landings": 0.0
+    },
+    {
+      "case": "moderate",
+      "mode": "jog",
+      "parity": 5.32907051820075e-15,
+      "max_free_cm": 17.843493819236798,
+      "max_contact_cm": 19.7724163532257,
+      "artemis_free_cm": 11.7306925356388,
+      "artemis_contact_cm": 16.8752461671829,
+      "min_foot_cm": 11.3599374890327,
+      "max_target_mm": 0.0011246181657043098,
+      "max_sole_mm": 0.00143192721679952,
+      "max_contact_yaw_deg": 90.0000042120254,
+      "min_turn_speed": 2.99996829032898,
+      "max_vector_delta": 0.533333420753479,
+      "acceleration_excess": 0.0,
+      "phase_regressions": 0.0,
+      "contacts": [
+        15,
+        13,
+        13,
+        14
+      ],
+      "airframes": [
+        90,
+        96,
+        91,
+        84
+      ],
+      "max_rate": 360.000419829263,
+      "heavy_landings": 0.0
+    },
+    {
+      "case": "moderate",
+      "mode": "sprint",
+      "parity": 5.32907051820075e-15,
+      "max_free_cm": 15.218192338943501,
+      "max_contact_cm": 2.41562370210886,
+      "artemis_free_cm": 15.1497483253479,
+      "artemis_contact_cm": 2.17372011393309,
+      "min_foot_cm": 11.3599516451359,
+      "max_target_mm": 0.00232997172133764,
+      "max_sole_mm": 0.00238754773818073,
+      "max_contact_yaw_deg": 17.120231154663,
+      "min_turn_speed": 6.93112325668335,
+      "max_vector_delta": 0.600000023841858,
+      "acceleration_excess": 0.0,
+      "phase_regressions": 0.0,
+      "contacts": [
+        21,
+        19,
+        19,
+        20
+      ],
+      "airframes": [
+        206,
+        209,
+        204,
+        209
+      ],
+      "max_rate": 258.512278197444,
+      "heavy_landings": 0.0
+    },
+    {
+      "case": "calm",
+      "mode": "walk",
+      "parity": 5.32907051820075e-15,
+      "max_free_cm": 31.1500132083893,
+      "max_contact_cm": 18.996953964233402,
+      "artemis_free_cm": 20.277813076973,
+      "artemis_contact_cm": 14.788830280304,
+      "min_foot_cm": 9.56001728773117,
+      "max_target_mm": 0.387951964512467,
+      "max_sole_mm": 0.304884306387976,
+      "max_contact_yaw_deg": 104.999883393581,
+      "min_turn_speed": 1.39998292922974,
+      "max_vector_delta": 0.300000011920929,
+      "acceleration_excess": 0.0,
+      "phase_regressions": 0.0,
+      "contacts": [
+        12,
+        11,
+        10,
+        11
+      ],
+      "airframes": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "max_rate": 180.000209914631,
+      "heavy_landings": 0.0
+    },
+    {
+      "case": "calm",
+      "mode": "jog",
+      "parity": 5.32907051820075e-15,
+      "max_free_cm": 17.5185590982437,
+      "max_contact_cm": 18.9791560173035,
+      "artemis_free_cm": 12.1579207479954,
+      "artemis_contact_cm": 16.8752461671829,
+      "min_foot_cm": 10.833827406168,
+      "max_target_mm": 0.0012777039728462099,
+      "max_sole_mm": 0.00143223724080599,
+      "max_contact_yaw_deg": 74.9999969644233,
+      "min_turn_speed": 2.99998259544373,
+      "max_vector_delta": 0.533333420753479,
+      "acceleration_excess": 0.0,
+      "phase_regressions": 0.0,
+      "contacts": [
+        15,
+        13,
+        13,
+        14
+      ],
+      "airframes": [
+        90,
+        96,
+        91,
+        84
+      ],
+      "max_rate": 300.000349857719,
+      "heavy_landings": 0.0
+    },
+    {
+      "case": "calm",
+      "mode": "sprint",
+      "parity": 5.32907051820075e-15,
+      "max_free_cm": 16.2223398685455,
+      "max_contact_cm": 2.41505466401577,
+      "artemis_free_cm": 15.1498422026634,
+      "artemis_contact_cm": 2.17367149889469,
+      "min_foot_cm": 11.3599479198456,
+      "max_target_mm": 0.00240426447817299,
+      "max_sole_mm": 0.00238423240261909,
+      "max_contact_yaw_deg": 16.5494937174275,
+      "min_turn_speed": 6.9850025177002,
+      "max_vector_delta": 0.600000023841858,
+      "acceleration_excess": 0.0,
+      "phase_regressions": 0.0,
+      "contacts": [
+        21,
+        19,
+        19,
+        20
+      ],
+      "airframes": [
+        206,
+        209,
+        204,
+        209
+      ],
+      "max_rate": 249.043996762406,
+      "heavy_landings": 0.0
+    }
+  ]
+}
