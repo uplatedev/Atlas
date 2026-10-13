@@ -1,0 +1,9 @@
+Gepubliceerde bron: 458aa4091c138a76ebf378ed0722ab220a9afb87
+Vaste Atlas-testlocatie, branch Smyl3z/lokaal-testen-T011, schone bron.
+tools/Check-Atlas.ps1; import + hoofdscene 10 frames; exitcode 0.
+
+Godot-versie akkoord. Project importeren...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Hoofdscene headless starten (10 frames)...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Atlas: versie, import en headless-start geslaagd.
