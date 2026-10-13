@@ -37,6 +37,7 @@ func _run() -> void:
 	await _test_render_pulse_rates()
 	await _test_pulse_interruptions()
 	await _test_fov_profiles()
+	await _test_ground_slide_view()
 	await _test_collision_volume()
 	await _test_history_and_instances()
 	_test_saved_overrides()
@@ -244,6 +245,24 @@ func _test_fov_profiles() -> void:
 	actor.set_camera_distance(0.0)
 	await _frames(1)
 	_expect(float(_state().camera_slide_fov_offset) > 0.0 and float(_state().camera_slide_fov_offset) <= float(actor.get("camera_first_person_slide_fov_bonus")) + 0.001, "FP-slide heeft zijn eigen kleinere bonus")
+
+
+func _test_ground_slide_view() -> void:
+	await _reset()
+	actor.set_camera_distance(4.0)
+	Input.action_press("move_forward")
+	Input.action_press("sprint")
+	await _frames(80)
+	await _pulse("crouch")
+	await _frames(1)
+	var initial_offset := float(_state().camera_slide_fov_offset)
+	_expect(_flag("slide_active") and initial_offset > 0.1 and initial_offset <= float(actor.get("camera_slide_fov_bonus")) + 0.001, "sprintgrondslide gebruikt direct dezelfde begrensde vaart-FOV")
+	var peak := 0.0
+	for frame in 12:
+		await _frames(1)
+		peak = maxf(peak, float(_state().camera_landing_amount))
+	_expect(_flag("slide_active") and float(_state().camera_slide_fov_offset) < initial_offset, "grondslide-FOV neemt af met de werkelijke geremde vaart")
+	_expect(peak < 0.000001, "grondslide vanuit blijvende steun geeft geen valse camera-landingsdip")
 
 
 func _test_collision_volume() -> void:

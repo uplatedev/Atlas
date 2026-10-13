@@ -86,7 +86,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.0, 1.0, 0.01, "suffix:m") var sneak_step_height: float = 0.35
 
 @export_group("Kruipen")
-## Maximum vooruit bij gewoon kruipen op de grond in m/s; een landingsslide behoudt eerst haar eigen aflopende vaart.
+## Maximum vooruit bij gewoon kruipen op de grond in m/s; een slide behoudt eerst haar eigen aflopende vaart.
 @export_range(0.1, 20.0, 0.1, "suffix:m/s") var crouch_forward_speed: float = 3.0
 ## Zijwaartse kruipsnelheid als deel van vooruit; 0.8 betekent 80%.
 @export_range(0.05, 1.0, 0.01) var crouch_side_ratio: float = 0.8
@@ -112,9 +112,9 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.0, 1.0, 0.01, "suffix:m") var crouch_step_height: float = 0.35
 ## Camerahoogte boven de voeten bij kruipen in meters; blijft binnen de vrije hoogte.
 @export_range(0.05, 3.0, 0.01, "suffix:m") var crouch_eye_height: float = 0.95
-## Maximale slide na Ctrl tijdens een sprong in seconden; langer schuift verder. Daarna automatisch de hoogste veilige houding; spatie springt eruit als staan veilig past. 0 schakelt slides uit.
+## Maximale slide na Ctrl tijdens sprint op de grond of tijdens een sprong in seconden; langer schuift verder. Daarna automatisch de hoogste veilige houding; spatie springt eruit als staan veilig past. 0 schakelt slides uit.
 @export_range(0.0, 2.0, 0.01, "suffix:s") var crouch_slide_duration: float = 0.75
-## Horizontale slidewrijving in m/s² vanaf de landing; lager bewaart meer afzetvaart, zonder extra snelheid te geven.
+## Horizontale slidewrijving in m/s² vanaf de slidestart; lager bewaart meer opgebouwde vaart, zonder extra snelheid te geven.
 @export_range(0.0, 100.0, 0.5, "suffix:m/s²") var crouch_slide_deceleration: float = 10.0
 ## Maximale richtingsbijsturing tijdens de slide in graden/s; bewegen versnelt de slide niet.
 @export_range(0.0, 180.0, 1.0, "suffix:°/s") var crouch_slide_steering: float = 35.0
@@ -375,7 +375,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export var feedback_jump_samples: Array[AudioStream] = [preload("res://assets/audio/jump_soft_000.wav"), preload("res://assets/audio/jump_soft_001.wav")]
 ## Landingsvarianten; impact bepaalt sterkte. Slide-landing geeft één cue plus de schuurlaag.
 @export var feedback_landing_samples: Array[AudioStream] = [preload("res://assets/audio/landing_soft_000.wav"), preload("res://assets/audio/landing_soft_001.wav")]
-## Naadloos schuurfragment voor actieve landingsslide; de component maakt zijn eigen loopkopie.
+## Naadloos schuurfragment voor een actieve slide; de component maakt zijn eigen loopkopie.
 @export var feedback_slide_sample: AudioStream = preload("res://assets/audio/slide_scrape_loop.wav")
 
 @export_group("Audio: cadans en intensiteit")
@@ -763,9 +763,17 @@ func _read_posture_input(input_allowed: bool) -> void:
 		return
 	if InputMap.has_action("crouch") and Input.is_action_just_pressed("crouch"):
 		var interrupted_slide := _slide_pending or _slide_active
+		# Beoordeel sprint en vaart vóór Ctrl de handmatige houding verandert.
+		# Wanddruk, een lage houding en alleen Shift leveren geen slidestart op.
+		var ground_slide_requested := (
+			get_camera_grounded() and _posture == Posture.STAND and _manual_posture == Posture.STAND
+			and _sprint_requested and crouch_slide_duration > 0.0
+			and _actual_speed > crouch_slide_end_speed
+			and Vector2(velocity.x, velocity.z).length() > crouch_slide_end_speed
+		)
 		var target := Posture.CROUCH if interrupted_slide else (Posture.STAND if _manual_posture == Posture.CROUCH and _posture != Posture.PRONE else Posture.CROUCH)
 		request_posture(target)
-		_slide_requested_this_frame = not interrupted_slide and target == Posture.CROUCH and not get_camera_grounded()
+		_slide_requested_this_frame = not interrupted_slide and target == Posture.CROUCH and (not get_camera_grounded() or ground_slide_requested)
 	elif InputMap.has_action("prone") and Input.is_action_just_pressed("prone"):
 		request_posture(Posture.PRONE)
 	elif Input.is_action_just_pressed("jump") and _posture > Posture.STAND:
@@ -818,12 +826,22 @@ func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 		if get_camera_grounded():
 			_limit_ground_velocity()
 		_slide_ground_exit_pending = false
-	# Ctrl mag ook een reeds automatisch lage, veilige capsule handmatig kiezen.
-	# Alleen deze nieuwe druk in echte vlucht armt; een later passende vorm niet.
-	if _slide_requested_this_frame and not get_camera_grounded() and _posture == Posture.CROUCH and _manual_posture == Posture.CROUCH and _shape_fits(Posture.CROUCH, global_transform):
-		_slide_pending = crouch_slide_duration > 0.0
-		if _slide_pending:
-			# Lucht-Ctrl kiest een tijdelijke beweging, geen blijvende kruipvoorkeur.
+	# Alleen de nieuwe Ctrl-druk mag een veilige kruipvorm in een slide omzetten;
+	# een later passende vorm of later opgebouwde sprintvaart doet dat niet.
+	if _slide_requested_this_frame and _posture == Posture.CROUCH and _manual_posture == Posture.CROUCH and _shape_fits(Posture.CROUCH, global_transform):
+		if grounded:
+			# Dezelfde slide als na een landing, met uitsluitend de actuele vaart.
+			# De gewone slide-update past deze tick meteen wrijving toe.
+			_slide_active = true
+			_slide_time_left = crouch_slide_duration
+			_air_speed_cap = Vector2(velocity.x, velocity.z).length()
+			_air_min_control_active = false
+			# Gelijktijdig Ctrl/spatie kiest deze slide, zonder latere buffersprong.
+			_jump_buffer_remaining = 0.0
+		else:
+			_slide_pending = crouch_slide_duration > 0.0
+		if _slide_pending or _slide_active:
+			# Een slide kiest een tijdelijke beweging, geen blijvende kruipvoorkeur.
 			_manual_posture = Posture.STAND
 			_auto_posture_demand = Posture.STAND
 			_auto_probe_distance = 0.0

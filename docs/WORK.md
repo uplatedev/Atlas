@@ -4,7 +4,7 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
-T-009 voert de kleine camera-/FOV-proef uit als derde afzonderlijke stap van T-006. Contactaudio uit T-008 blijft behouden en nog te beluisteren. Beweging en tijdelijke capsulepolish blijven buiten deze stap. Nieuwe camera-effectwaarden vragen een lokale vergelijking; LAN/Steam blijven aparte afstemming.
+T-009 is als afzonderlijke camera-/FOV-proef gepubliceerd op `9f75853c`; import/start en alle zes suites slagen. Na bevestiging van opgeslagen/gesloten editorwerk staat de vaste Atlas-map schoon op exact `9f75853c`; import/start en alle zes suites slagen ook daar. Contactaudio uit T-008 blijft behouden en nog te beluisteren. Beweging en tijdelijke capsulepolish blijven buiten deze stap. Nieuwe camera-effectwaarden vragen een lokale vergelijking; LAN/Steam blijven aparte afstemming.
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -17,7 +17,26 @@ T-009 voert de kleine camera-/FOV-proef uit als derde afzonderlijke stap van T-0
 | T-006 | Juice inventariseren en onderzoeken | Onderzoek afgerond; voorstel beschikbaar | atlas-T006-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-006-juice-onderzoek` | Onderzoek klaar; camera-uitvoering volgt in T-007, daarna contactaudio |
 | T-007 | Camera-eigenaarschap scheiden, stap 1 | Gepubliceerd en lokaal klaar; gebruikersproef open | atlas-T007-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-007-camera-scheiden` | Zelfde gevoel kort lokaal beoordelen; daarna contactaudio |
 | T-008 | Contactaudio, stap 2 | Gepubliceerd en lokaal klaar; luisterproef open | atlas-T008-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-008-contactaudio` | Klank/cadans/slide met F6 lokaal vergelijken |
-| T-009 | Camera-accenten, stap 3 | Technisch gecontroleerd; publicatie en lokale overdracht volgen | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Kleine landing-/FOV-proef bouwen en lokaal vergelijken |
+| T-009 | Camera-accenten, stap 3 | Gepubliceerd en lokaal klaar; camera-proef open | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Landing en lucht-/slide-FOV met F7/F9 lokaal vergelijken |
+| T-010 | Artemis-bronbestanden delen | Afgerond; originele bestanden op main | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` (resultaat op main) | Laptop: main ophalen, source_assets/characters/Artemis openen |
+| T-011 | Grondslide en procedurele Characters | Grondslide technisch gereed; speelproef open | atlas-T011-20261013-01a1340e | STELLAR-FORGE (Windows) | `Smyl3z/T-011-procedurele-characters` | Grondslide publiceren/lokaal opleveren; daarna rig en procedurele grondproef |
+
+## T-011 — Grondslide en procedurele Characters
+
+Reservering door `atlas-T011-20261013-01a1340e`, STELLAR-FORGE (Windows), vanaf main `4244e31eb12ce1452aca54d7bac64743241a3a4b`. Gebruiker heeft op 13 oktober 2026 het besproken plan expliciet voor uitvoering bevestigd. Scope: eerst sprint + Ctrl op de grond als extra ingang naar dezelfde slide; afzonderlijk checkpoint. Daarna Artemis-werkkopie herstellen, lichaamsprofielen voor drie humanoïde verhoudingen, gedeelde procedurele stapplanner met echte pasvlucht, armzwaai, twee editorcurves, passende camera/audio en lokale controles/proeven. Eén capsulemotor blijft eigenaar; massa, momentum en onafhankelijke instance-instellingen horen bij de proef. Werkbranch `Smyl3z/T-011-procedurele-characters`; gelijktijdige schrijvers krijgen eigen fysieke worktrees onder deze claim. Klimmen/ragdoll/andere traversal en multiplayer blijven latere afzonderlijke proeven na beoordeling van grondbeweging. Speelbasis `9f75853c`; bestaand onbeoordeeld werk blijft bewaard.
+
+- **Gebouwd:** sprint + nieuwe Ctrl-druk op veilige grond/opstapsteun start dezelfde slide zonder boost. Bestaande lucht-/landingsingang en uitgangen behouden. Het volledige bevestigde ontwerp, inclusief eerdere aanvullingen, staat in [work/T-011.md](work/T-011.md).
+- **Technisch gecontroleerd:** Godot 4.7.2 import/start en alle zes suites geslaagd op geïntegreerde bron; acht richtingen, beide ingangen, korte aanloop, negatieve triggers, opstappen/plafonds, annulering en slidesprong. Geen valse landingscue/dip; 5.611 camera-getallen afwijking nul. Onafhankelijke review zonder concrete fouten. [Bewijs](work/T-011/slide-validation.txt).
+- **Door de gebruiker beoordeeld:** volledige uitvoering opgedragen; slidegevoel en toekomstige model-/pasvluchtproef blijven menselijk te beoordelen.
+- **Volgende stap:** technisch gecontroleerd slidecheckpoint publiceren en in de vaste testmap opleveren; daarna onafhankelijk Artemis-rigwerk. Gebruikersbeoordeling blijft apart van de technische controle.
+## T-010 — Artemis-bronbestanden delen
+
+Reservering door `atlas-T010-20261012-01a12fd0`, STELLAR-FORGE (Windows), vanaf main `3041ffcb2da54c26a79eecf338b521f1e2ebf5c5`. De gebruiker vraagt de aangeleverde Artemis.fbx en Artemis.glb op main te bewaren zodat ze op de laptop beschikbaar zijn. Scope: byte-exacte bronkopieën, korte herkomst-/integriteitsnotitie en geverifieerde main-publicatie. Geen model-, rig-/animatie-integratie of wijziging aan de lokale speelproef.
+
+- **Gebouwd:** originele [Artemis.fbx en Artemis.glb](../source_assets/characters/Artemis/README.md), buiten game, met korte herkomstnotitie en expliciete binary-attributen. Gewone Git-bestanden, geen LFS. Claim gepubliceerd op main in `f0ae6ab89abefd595eda4f0427f2b4567cf6bced` vóór bestandsopname.
+- **Technisch gecontroleerd:** lokale kopieën en originelen hebben exact gelijke SHA256 en grootte (FBX131884 / GLB134140 bytes). Beide op GitHub aangemaakte blobhashes zijn exact gelijk aan native Git (`6016e8f535d4886c1a9c3ce63411ff77945a7fe7` / `f430859745fcd99bdfea3ade184e050c2bc00093`). GLBv2-header/lengte en interne buffer gecontroleerd; geen externe image-/bufferverwijzingen. FBXbinary7400, geen textureverwijzingen aangetroffen. Geen Godot-/Blenderimport of animatieproef nodig voor ongewijzigde bronopname.
+- **Door de gebruiker beoordeeld:** beide bestanden expliciet gekozen als toekomstige Character-bron; alleen opname op main gevraagd.
+- **Volgende stap:** op de laptop actuele main ophalen; beide bestanden staan in `source_assets/characters/Artemis/`. Model-/rig-/animatie-integratie is een volgende nog niet opgedragen stap. De bestaande lokale T-009-speelproef blijft op `9f75853c`.
 
 ## T-009 — Camera-accenten, stap 3
 
@@ -25,8 +44,11 @@ Reservering door `atlas-T009-20261012-01a12fd0`, STELLAR-FORGE (Windows), vanaf 
 
 - **Gebouwd:** kleine camera-eigen landingspuls, begrensd gezamenlijk rem-/landingsbudget, werkelijke lucht-/slide-FOV en F7/F9-vergelijking. Twaalf nieuwe rootinstellingen met uitleg; alle 156 oude velden behouden. Details in [work/T-009.md](work/T-009.md).
 - **Technisch gecontroleerd:** Godot 4.7.2/Jolt: import/start en alle zes suites geslaagd. Echte TP-piek .009982 m, FP0, 30/60/144 dezelfde tijdcurve; 220-frame physics/kijkvergelijking en historische 5.611 camera-getallen met grootste afwijking0. Startup, virtuele step, reset/Tab in vlucht, teleport/disable, audio-onafhankelijkheid, werkelijke camerasphere en opgeslagen/herladen onafhankelijke overrides slagen. Windows HUD-render en bronreview gecontroleerd; diffcheck schoon.
-- **Door de gebruiker beoordeeld:** volgende stap expliciet opgedragen; T-008-luisterproef en nieuwe camera-effectwaarden nog open.
-- **Volgende stap:** checkpoint publiceren, vaste Atlas-map veilig bijwerken en landing/FOV daar met F7/F9 vergelijken. Nieuwe camerawaarden en T-008-klank blijven een menselijke proef vragen; geen gameplay-/netwerkfase gestart.
+- **Door de gebruiker beoordeeld:** volgende stap expliciet opgedragen; opgeslagen/gesloten editorwerk bevestigd en lokale overdracht uitgevoerd. T-008-luisterproef en nieuwe camera-effectwaarden nog open.
+- **Volgende stap:** open hetzelfde `game/project.godot`, speel met F5 en vergelijk landing met F7 en lucht-/slide-FOV met F9; F6 blijft de contactaudiovergelijking. Nieuwe camerawaarden en T-008-klank blijven een menselijke proef vragen; geen gameplay-/netwerkfase gestart.
+
+
+Gepubliceerd checkpoint [`9f75853c000589e465e5c8aad0b1124e352c8a89`](https://github.com/uplatedev/Atlas/commit/9f75853c000589e465e5c8aad0b1124e352c8a89), bronboom `94deb6c990614406c8ededf16e158b56644fd9d5` exact gelijk aan het gecontroleerde native checkpoint; gameboom `868ff1c09ee67a8d8634160cce5e5d644c4fa10b`. Geen main-gameplayintegratie vóór noodzakelijke beoordeling. Na gebruikersbevestiging en controle van gesloten Godot/schone bron is de vaste Atlas-map op exact `9f75853c` gezet via `Smyl3z/lokaal-testen-T009`. [Lokale import/start en alle zes suites](work/T-009/local-validation.txt) slagen, exitcode0, historische 5.611 camera-getallen en nieuwe 220-frame physics/kijkvergelijking met grootste afwijking0. HUD-metadata toont `9f75853c`; engineconfig, project-/InputEventKey-instellingen en instance-overrides behouden. Geen lopend editorwerk overschreven, geen open Godot bij overdracht en geen andere pc bijgewerkt.
 
 ## T-008 — Contactaudio, stap 2
 

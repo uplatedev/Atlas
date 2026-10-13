@@ -27,12 +27,18 @@ func _run() -> void:
 	await _test_air_wall_steering_recovery()
 	await _test_crouch_landing_slide()
 	await _test_air_braking()
+	await _test_ground_slide()
+	await _test_ground_slide_negative_cases()
 	await _test_slide_negative_cases()
 	await _test_slide_virtual_step_support()
+	await _test_slide_virtual_step_support(true)
 	await _test_slide_step_boundary()
 	await _test_slide_safe_restore()
 	await _test_slide_default_range()
+	await _test_slide_step_boundary(true)
+	await _test_slide_safe_restore(true)
 	await _test_slide_jump()
+	await _test_slide_jump(true)
 	await _test_slide_jump_negative_cases()
 	await _test_repeated_slide_jumps()
 	await _test_explicit_posture_controls()
@@ -44,7 +50,7 @@ func _run() -> void:
 	await process_frame
 	await AUDIO_SHUTDOWN.drain(self)
 	if failures.is_empty():
-		print("PASS: feedbackregressies voor sprongafstand, landingsslide, luchtrem, houdingknoppen, schuine doorgang en lichaamsdraai.")
+		print("PASS: feedbackregressies voor sprongafstand, grond-/landingsslide, luchtrem, houdingknoppen, schuine doorgang en lichaamsdraai.")
 		quit(0)
 	else:
 		for failure in failures:
@@ -241,14 +247,129 @@ func _test_air_braking() -> void:
 	print("MEASURE: slide S speed/travel %.3f/%.3f vs %.3f/%.3f without S" % [braked_slide.speed, braked_slide.travel, coast_slide.speed, coast_slide.travel])
 
 
-func _test_slide_negative_cases() -> void:
+func _test_ground_slide() -> void:
+	var directions := [["move_forward"], ["move_back"], ["move_left"], ["move_right"], ["move_forward", "move_left"], ["move_forward", "move_right"], ["move_back", "move_left"], ["move_back", "move_right"]]
+	for actions in directions:
+		await _ground_run(actions, 80)
+		await _check_ground_slide_entry(str(actions), false)
+	await _ground_run(["move_forward"], 6)
+	_expect(_speed() < character.sprint_forward_speed * 0.6, "korte grondslide-aanloop bereikt aantoonbaar geen volle sprintvaart")
+	await _check_ground_slide_entry("korte aanloop", true)
+
+
+func _check_ground_slide_entry(label: String, short_run: bool) -> void:
+	var before := Vector3(character.velocity.x, 0, character.velocity.z)
+	var friction := _setting("crouch_slide_deceleration", 10.0)
+	var duration := _setting("crouch_slide_duration", 0.75)
+	Input.action_press("crouch")
+	await _frames(1)
+	var after := Vector3(character.velocity.x, 0, character.velocity.z)
+	_expect(character.is_on_floor() and character.get_posture() == 1 and _flag("slide_active") and not _flag("slide_pending"), "%s: nieuwe Ctrl start direct een ondersteunde grondslide" % label)
+	_expect(str(character.get_debug_state().get("manual_posture", "")) == "staan", "%s: grondslide bewaart staan als handmatige voorkeur" % label)
+	_expect(absf(after.length() - maxf(before.length() - friction * PHYSICS_DELTA, 0.0)) < 0.03 and before.normalized().dot(after.normalized()) > 0.999, "%s: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving" % label)
+	var remaining := float(character.get_debug_state().get("slide_time_left", 0.0))
+	var previous_speed := after.length()
+	var monotonic := true
+	var elapsed := 1
+	while _flag("slide_active") and elapsed < ceili(duration / PHYSICS_DELTA) + 5:
+		await _frames(1)
+		elapsed += 1
+		var next_time := float(character.get_debug_state().get("slide_time_left", 0.0))
+		monotonic = monotonic and _speed() <= previous_speed + 0.03 and next_time <= remaining + 0.00001 and not _flag("slide_pending")
+		previous_speed = _speed()
+		remaining = next_time
+	_expect(monotonic and not _flag("slide_active") and elapsed <= ceili(duration / PHYSICS_DELTA) + 1, "%s: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd" % label)
+	if short_run:
+		_expect(elapsed < ceili(duration / PHYSICS_DELTA), "korte aanloop geeft een kortere slide op de werkelijke resterende vaart")
+	var retriggered := false
+	for frame in 60:
+		await _frames(1)
+		retriggered = retriggered or _flag("slide_active") or _flag("slide_pending")
+	_expect(not retriggered and character.get_posture() == 0 and character.is_on_floor(), "%s: natuurlijk einde richt veilig op; held-Ctrl start geen volgende slide" % label)
+	_expect(float(character.get_debug_state().get("fatigue", 1.0)) < 0.001, "%s: starten en eindigen van grondslide verbruiken geen sprong" % label)
+	print("MEASURE: groundslide %s %.3f -> %.3f m/s; %d frames; no boost/restart %s" % [label, before.length(), after.length(), elapsed, monotonic and not retriggered])
+
+
+func _test_ground_slide_negative_cases() -> void:
+	for actions in [[], ["sprint"], ["move_forward"], ["move_forward", "sprint", "sneak"]]:
+		await _reset()
+		for action in actions:
+			Input.action_press(action)
+		await _frames(80)
+		Input.action_press("crouch")
+		await _frames(1)
+		_expect(character.get_posture() == 1 and not _flag("slide_active") and not _flag("slide_pending"), "%s: zonder effectieve bewegende sprint blijft Ctrl gewone kruip" % str(actions))
+		Input.action_release("sneak")
+		Input.action_press("move_forward")
+		Input.action_press("sprint")
+		await _frames(80)
+		_expect(character.get_posture() == 1 and not _flag("slide_active") and not _flag("slide_pending"), "%s: later bewegen of sprinten verandert held-Ctrl niet in een vertraagde slide" % str(actions))
+	var duration := _setting("crouch_slide_duration", 0.75)
+	await _ground_run()
+	character.set("crouch_slide_duration", 0.0)
+	Input.action_press("crouch")
+	await _frames(2)
+	_expect(character.get_posture() == 1 and not _flag("slide_active") and not _flag("slide_pending"), "nul slideduur geeft gewone kruip zonder verborgen grondslide")
+	character.set("crouch_slide_duration", duration)
+	await _frames(45)
+	_expect(not _flag("slide_active") and not _flag("slide_pending"), "weer ingeschakelde slideduur voert een oude Ctrl niet alsnog uit")
+	await _ground_run()
+	var radius := character.crouch_capsule_radius
+	character.crouch_capsule_radius = 0.6
+	var left := _add_box(character.position + Vector3(-0.6, 2.5, -5), Vector3(0.2, 5, 40))
+	var right := _add_box(character.position + Vector3(0.6, 2.5, -5), Vector3(0.2, 5, 40))
+	await _frames(2)
+	Input.action_press("crouch")
+	await _frames(1)
+	_expect(character.get_posture() == 0 and not _flag("slide_active") and not _flag("slide_pending"), "geblokkeerde brede kruipvorm weigert de sprintgrondslide")
+	left.queue_free()
+	right.queue_free()
+	character.crouch_capsule_radius = radius
+	await _frames(12)
+	_expect(not _flag("slide_active") and not _flag("slide_pending"), "vrijkomende ruimte maakt geweigerde held-Ctrl geen vertraagde slide")
 	await _reset()
+	var wall := _add_box(Vector3(0, 2.5, -1), Vector3(8, 5, 0.2))
 	Input.action_press("move_forward")
 	Input.action_press("sprint")
 	await _frames(80)
-	await _pulse("crouch")
-	await _frames(10)
-	_expect(character.get_posture() == 1 and not _flag("slide_pending") and not _flag("slide_active"), "Ctrl op de grond is gewone kruip en start geen slide")
+	_expect(_speed() < 0.03, "wanddrukproef staat werkelijk stil tegen een hoge wand")
+	Input.action_press("crouch")
+	await _frames(1)
+	_expect(not _flag("slide_active") and not _flag("slide_pending"), "W en Shift tegen een wand starten zonder echte vaart geen slide")
+	wall.queue_free()
+	await _frames(3)
+	await _ground_run()
+	Input.action_press("crouch")
+	Input.action_press("jump")
+	await _frames(1)
+	_expect(_flag("slide_active") and character.get_posture() == 1 and character.is_on_floor(), "gelijktijdige grond-Ctrl en spatie starten alleen slide, zonder verborgen sprong")
+	var left_ground := false
+	for frame in 85:
+		await _frames(1)
+		left_ground = left_ground or not character.is_on_floor()
+	_expect(not left_ground and character.get_posture() == 0 and float(character.get_debug_state().get("jump_buffer_remaining", 1.0)) < 0.001 and float(character.get_debug_state().get("fatigue", 1.0)) < 0.001, "held-Ctrl plus held-spatie geven ook na grondslide-einde geen vertraagde afzet")
+
+
+func _ground_run(actions: Array = ["move_forward"], frames: int = 80) -> void:
+	await _reset()
+	for action in actions:
+		Input.action_press(action)
+	Input.action_press("sprint")
+	await _frames(frames)
+
+
+func _begin_slide(ground_entry: bool = false) -> void:
+	if ground_entry:
+		await _ground_run()
+		await _pulse("crouch")
+	else:
+		await _launch_sprint()
+		await _pulse("crouch")
+		await _wait_for_landing()
+	_expect(_flag("slide_active"), "proef begint met een echte %s" % ("sprintgrondslide" if ground_entry else "landingsslide"))
+
+
+func _test_slide_negative_cases() -> void:
 	await _launch_sprint()
 	character.request_posture(1)
 	await _frames(2)
@@ -323,16 +444,14 @@ func _launch_sprint(actions: Array = ["move_forward"]) -> Vector3:
 	return origin
 
 
-func _test_slide_virtual_step_support() -> void:
+func _test_slide_virtual_step_support(ground_entry: bool = false) -> void:
 	# Zonder Godot-vloersnap heeft de afgeronde voet even alleen de controller-
-	# steunroute. Dat mag een bestaande slide behouden, maar geen nieuwe starten.
+	# steunroute. Dat bewaart een bestaande slide zonder timerherstart.
 	var original_radius := character.crouch_capsule_radius
 	var original_snap := character.floor_snap_length
 	character.crouch_capsule_radius = 0.15
 	character.floor_snap_length = 0.0
-	await _launch_sprint()
-	await _pulse("crouch")
-	await _wait_for_landing()
+	await _begin_slide(ground_entry)
 	var step := _add_box(character.position + Vector3(0, 0.15, -2.6), Vector3(8, 0.3, 4))
 	var saw_virtual_only := false
 	var continued := true
@@ -352,12 +471,10 @@ func _test_slide_virtual_step_support() -> void:
 	await _frames(3)
 
 
-func _test_slide_step_boundary() -> void:
+func _test_slide_step_boundary(ground_entry: bool = false) -> void:
 	# Met de default radius raakt een slide een rand al door radius + één
 	# bewegingsframe. De steunproef moet de geldige bovenkant dan ook bereiken.
-	await _launch_sprint()
-	await _pulse("crouch")
-	await _wait_for_landing()
+	await _begin_slide(ground_entry)
 	var start := character.position
 	var step := _add_box(start + Vector3(0, 0.15, -2.5), Vector3(8, 0.3, 4))
 	var continued := true
@@ -372,9 +489,7 @@ func _test_slide_step_boundary() -> void:
 	print("MEASURE: close step crossed %s; slide continued %s; speed %.3f" % [crossed_step, continued, _speed()])
 	step.queue_free()
 	await _frames(3)
-	await _launch_sprint()
-	await _pulse("crouch")
-	await _wait_for_landing()
+	await _begin_slide(ground_entry)
 	start = character.position
 	var wall := _add_box(start + Vector3(0, 2, -0.6), Vector3(8, 4, 0.2))
 	await _frames(8)
@@ -390,15 +505,13 @@ func _test_slide_step_boundary() -> void:
 	await _frames(3)
 
 
-func _test_slide_safe_restore() -> void:
+func _test_slide_safe_restore(ground_entry: bool = false) -> void:
 	var duration := _setting("crouch_slide_duration", 0.75)
 	var friction := _setting("crouch_slide_deceleration", 10.0)
 	character.set("crouch_slide_duration", 1.5)
 	character.set("crouch_slide_deceleration", 100.0)
-	await _launch_sprint()
-	await _pulse("crouch")
-	_expect(str(character.get_debug_state().get("manual_posture", "")) == "staan", "lucht-Ctrl is een tijdelijke skill bovenop de staande voorkeur")
-	await _wait_for_landing()
+	await _begin_slide(ground_entry)
+	_expect(str(character.get_debug_state().get("manual_posture", "")) == "staan", "Ctrl-slide is een tijdelijke skill bovenop de staande voorkeur")
 	var elapsed := 0
 	while _flag("slide_active") and elapsed < 100:
 		await _frames(1)
@@ -408,9 +521,7 @@ func _test_slide_safe_restore() -> void:
 	_expect(character.get_posture() == 0 and str(character.get_debug_state().get("manual_posture", "")) == "staan", "een natuurlijk einde op snelheid herstelt vrij staan")
 	character.set("crouch_slide_duration", duration)
 	character.set("crouch_slide_deceleration", friction)
-	await _launch_sprint()
-	await _pulse("crouch")
-	await _wait_for_landing()
+	await _begin_slide(ground_entry)
 	var landing := character.position
 	var crouch_roof := _add_box(landing + Vector3(0, 1.3, -7), Vector3(8, 0.2, 20))
 	var prone_roof := _add_box(landing + Vector3(0, 0.9, -20), Vector3(8, 0.2, 6))
@@ -441,9 +552,7 @@ func _test_slide_safe_restore() -> void:
 	await _frames(3)
 	# De skill forceert tijdelijk kruip, maar mag een nog lager geldig pad niet
 	# blokkeren. Automatisch lig annuleert de kruipslide en gebruikt het ligbudget.
-	await _launch_sprint()
-	await _pulse("crouch")
-	await _wait_for_landing()
+	await _begin_slide(ground_entry)
 	landing = character.position
 	var slide_prone_roof := _add_box(landing + Vector3(0, 0.9, -3), Vector3(8, 0.2, 4))
 	var saw_prone := false
@@ -463,9 +572,7 @@ func _test_slide_safe_restore() -> void:
 	slide_prone_roof.queue_free()
 	await _frames(3)
 	for cancel_action in ["crouch", "prone"]:
-		await _launch_sprint()
-		await _pulse("crouch")
-		await _wait_for_landing()
+		await _begin_slide(ground_entry)
 		_expect(_flag("slide_active"), "expliciete houdingkeuze wordt tijdens een echte slide getoetst")
 		await _pulse(cancel_action)
 		await _frames(45)
@@ -504,8 +611,8 @@ func _coast_slide_range() -> Dictionary:
 	return {"frames": frames, "travel": Vector2(character.position.x - start.x, character.position.z - start.z).length(), "launch": launch, "max_speed": max_speed}
 
 
-func _test_slide_jump() -> void:
-	await _active_slide()
+func _test_slide_jump(ground_entry: bool = false) -> void:
+	await _active_slide(ground_entry)
 	var horizontal := Vector3(character.velocity.x, 0, character.velocity.z)
 	var speed_before := horizontal.length()
 	var fatigue_before := float(character.get_debug_state().get("fatigue", 0.0))
@@ -519,7 +626,7 @@ func _test_slide_jump() -> void:
 	_expect(launched and character.get_posture() == 0 and not _flag("slide_active") and not _flag("slide_pending"), "een nieuwe spatie onderbreekt een echte actieve slide direct met een staande sprong")
 	_expect(_speed() <= speed_before + 0.03 and _speed() >= speed_before - _setting("crouch_slide_deceleration", 10.0) * PHYSICS_DELTA - 0.03 and launch_cap <= speed_before + 0.03, "slide-sprong bewaart de overgebleven afzetvaart zonder sprintbonus toe te voegen of het oude budget te herstellen")
 	_expect(absf(float(state.get("jump_boost", -1.0))) < 0.001 and absf(character.velocity.y - float(expected.vertical_speed)) < 0.08, "slide-sprong gebruikt het actuele hoogteprofiel maar geen extra horizontale bonus")
-	_expect(fatigue_before > 0.1 and launch_fatigue > fatigue_before + 0.1, "slide-sprong behoudt opgebouwde vermoeidheid en betaalt een echte nieuwe sprong")
+	_expect((ground_entry or fatigue_before > 0.1) and launch_fatigue > fatigue_before + 0.1, "slide-sprong behoudt opgebouwde vermoeidheid en betaalt een echte nieuwe sprong")
 	_expect(not _flag("ground_jump_available") and float(state.get("jump_buffer_remaining", 1.0)) <= 0.001 and float(state.get("coyote_remaining", 1.0)) <= 0.001, "slide-sprong verbruikt grondticket, buffer en coyote eenmaal")
 	print("MEASURE: slide jump speed %.3f -> %.3f; cap %.3f; Y %.3f; fatigue %.3f -> %.3f; bonus %.3f" % [speed_before, _speed(), launch_cap, character.velocity.y, fatigue_before, launch_fatigue, float(state.get("jump_boost", -1.0))])
 	Input.action_release("jump")
@@ -563,7 +670,7 @@ func _test_slide_jump_negative_cases() -> void:
 	await _pulse("crouch")
 	await _pulse("jump")
 	await _frames(12)
-	_expect(character.get_posture() == 0 and character.is_on_floor() and character.velocity.y <= 0.05 and not _flag("slide_active"), "Ctrl op de grond geeft geen skill: spatie richt gewone kruip alleen op zonder sprong")
+	_expect(character.get_posture() == 0 and character.is_on_floor() and character.velocity.y <= 0.05 and not _flag("slide_active"), "Ctrl vanuit stilstand geeft geen skill: spatie richt gewone kruip alleen op zonder sprong")
 	await _active_slide()
 	var roof := _add_box(character.position + Vector3(0, 1.3, -5), Vector3(8, 0.2, 16))
 	await _frames(1)
@@ -614,10 +721,8 @@ func _test_repeated_slide_jumps() -> void:
 	character.jump_fatigue_enabled = true
 
 
-func _active_slide() -> void:
-	await _launch_sprint()
-	await _pulse("crouch")
-	await _wait_for_landing()
+func _active_slide(ground_entry: bool = false) -> void:
+	await _begin_slide(ground_entry)
 	await _frames(6)
 	_expect(_flag("slide_active") and character.get_posture() == 1 and character.is_on_floor(), "slide-sprongproef begint met een werkelijk actieve, ondersteunde kruipslide")
 

@@ -37,6 +37,7 @@ func _run() -> void:
 	await _test_gait_distance()
 	await _test_jump_and_contact()
 	await _test_slide_and_virtual_support()
+	await _test_ground_slide_feedback()
 	await _test_routing_and_instances()
 	await _test_physics_independence()
 	_release_inputs()
@@ -178,6 +179,29 @@ func _test_slide_and_virtual_support() -> void:
 	actor.crouch_capsule_radius = original_radius
 	actor.floor_snap_length = original_snap
 	await _frames(2)
+
+
+func _test_ground_slide_feedback() -> void:
+	await _reset()
+	Input.action_press("move_forward")
+	Input.action_press("sprint")
+	await _frames(80)
+	var land_before := _count("landing")
+	var slide_landing_before := _count("slide_landing")
+	var jump_before := _count("jump")
+	var steps_before := _count("step")
+	var contact_before := contacts.size()
+	await _pulse("crouch")
+	await _frames(3)
+	_expect(_flag("slide_active") and bool(_state().get("slide_loop_active", false)) and bool(_state().get("slide_audio_playing", false)), "sprintgrondslide start een echte schuurlaag zonder voorafgaande sprong")
+	await _frames(12)
+	var false_landing := false
+	for index in range(contact_before, contacts.size()):
+		false_landing = false_landing or bool(contacts[index].landed)
+	_expect(not false_landing and _count("landing") == land_before and _count("slide_landing") == slide_landing_before and _count("jump") == jump_before, "grondslide geeft geen vals landingcontact, landingcue of afzetcue")
+	_expect(_count("step") == steps_before, "actieve sprintgrondslide speelt schuren zonder gewone stapcues")
+	await _pulse("jump")
+	_expect(not actor.is_on_floor() and not bool(_state().get("slide_loop_active", true)) and _count("jump") == jump_before + 1, "echte sprong uit grondslide stopt schuren en geeft exact één afzetcue")
 
 
 func _test_routing_and_instances() -> void:

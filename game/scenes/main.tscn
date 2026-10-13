@@ -114,7 +114,7 @@ theme_override_constants/margin_bottom = 10
 [node name="Keys" type="Label" parent="UI/Help/Margin"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-text = "WASD bewegen   ·   Shift sprint   ·   Alt sneak   ·   Ctrl kruip aan/uit   ·   Z lig\nCtrl in sprong → slide   ·   Spatie uit slide springt   ·   S remt in lucht / slide\nSpatie springen / houding herstellen   ·   Scroll zoom   ·   Tab Character wisselen   ·   R terug naar start\nF3 debug   ·   F4 FOV   ·   F6 audio   ·   F7 landing   ·   F9 lucht-/slide-FOV   ·   Esc muis vrij"
+text = "WASD bewegen   ·   Shift sprint   ·   Alt sneak   ·   Ctrl kruip aan/uit   ·   Z lig\nCtrl tijdens sprint / sprong → slide   ·   Spatie uit slide springt   ·   S remt in lucht / slide\nSpatie springen / houding herstellen   ·   Scroll zoom   ·   Tab Character wisselen   ·   R terug naar start\nF3 debug   ·   F4 FOV   ·   F6 audio   ·   F7 landing   ·   F9 lucht-/slide-FOV   ·   Esc muis vrij"
 
 [node name="FPS" type="Label" parent="UI"]
 anchors_preset = 1
