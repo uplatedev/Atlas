@@ -112,7 +112,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.0, 1.0, 0.01, "suffix:m") var crouch_step_height: float = 0.35
 ## Camerahoogte boven de voeten bij kruipen in meters; blijft binnen de vrije hoogte.
 @export_range(0.05, 3.0, 0.01, "suffix:m") var crouch_eye_height: float = 0.95
-## Maximale slide na Ctrl tijdens sprint op de grond of tijdens een sprong in seconden; langer schuift verder. Daarna automatisch de hoogste veilige houding; spatie springt eruit als staan veilig past. 0 schakelt slides uit.
+## Maximale slide na C tijdens sprint op de grond of tijdens een sprong in seconden; langer schuift verder. Daarna automatisch de hoogste veilige houding; spatie springt eruit als staan veilig past. 0 schakelt slides uit.
 @export_range(0.0, 2.0, 0.01, "suffix:s") var crouch_slide_duration: float = 0.75
 ## Horizontale slidewrijving in m/s² vanaf de slidestart; lager bewaart meer opgebouwde vaart, zonder extra snelheid te geven.
 @export_range(0.0, 100.0, 0.5, "suffix:m/s²") var crouch_slide_deceleration: float = 10.0
@@ -763,7 +763,7 @@ func _read_posture_input(input_allowed: bool) -> void:
 		return
 	if InputMap.has_action("crouch") and Input.is_action_just_pressed("crouch"):
 		var interrupted_slide := _slide_pending or _slide_active
-		# Beoordeel sprint en vaart vóór Ctrl de handmatige houding verandert.
+		# Beoordeel sprint en vaart vóór C de handmatige houding verandert.
 		# Wanddruk, een lage houding en alleen Shift leveren geen slidestart op.
 		var ground_slide_requested := (
 			get_camera_grounded() and _posture == Posture.STAND and _manual_posture == Posture.STAND
@@ -775,7 +775,10 @@ func _read_posture_input(input_allowed: bool) -> void:
 		request_posture(target)
 		_slide_requested_this_frame = not interrupted_slide and target == Posture.CROUCH and (not get_camera_grounded() or ground_slide_requested)
 	elif InputMap.has_action("prone") and Input.is_action_just_pressed("prone"):
-		request_posture(Posture.PRONE)
+		if _posture == Posture.PRONE and _manual_posture == Posture.PRONE:
+			_return_from_manual_prone()
+		else:
+			request_posture(Posture.PRONE)
 	elif Input.is_action_just_pressed("jump") and _posture > Posture.STAND:
 		if _posture == Posture.PRONE and _manual_posture == Posture.PRONE:
 			_return_from_manual_prone()
@@ -826,7 +829,7 @@ func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 		if get_camera_grounded():
 			_limit_ground_velocity()
 		_slide_ground_exit_pending = false
-	# Alleen de nieuwe Ctrl-druk mag een veilige kruipvorm in een slide omzetten;
+	# Alleen de nieuwe C-druk mag een veilige kruipvorm in een slide omzetten;
 	# een later passende vorm of later opgebouwde sprintvaart doet dat niet.
 	if _slide_requested_this_frame and _posture == Posture.CROUCH and _manual_posture == Posture.CROUCH and _shape_fits(Posture.CROUCH, global_transform):
 		if grounded:
@@ -836,7 +839,7 @@ func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 			_slide_time_left = crouch_slide_duration
 			_air_speed_cap = Vector2(velocity.x, velocity.z).length()
 			_air_min_control_active = false
-			# Gelijktijdig Ctrl/spatie kiest deze slide, zonder latere buffersprong.
+			# Gelijktijdig C/spatie kiest deze slide, zonder latere buffersprong.
 			_jump_buffer_remaining = 0.0
 		else:
 			_slide_pending = crouch_slide_duration > 0.0
@@ -1115,7 +1118,7 @@ func _physics_process(delta: float) -> void:
 			_slide_active = landing_velocity.length() > crouch_slide_end_speed and crouch_slide_duration > 0.0
 			_slide_time_left = crouch_slide_duration if _slide_active else 0.0
 	if not was_grounded and is_on_floor() and _posture != Posture.STAND and not _slide_active:
-		# Een lage landing zonder Ctrl-slide geeft geen verborgen lange glijfase.
+		# Een lage landing zonder C-slide geeft geen verborgen lange glijfase.
 		# Pas het grondbudget pas bij contact toe, nooit op de afzetvaart in vlucht.
 		_limit_ground_velocity()
 	# Feedback ontvangt uitsluitend de definitieve fysieke uitkomst, na slide- en

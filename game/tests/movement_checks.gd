@@ -55,7 +55,7 @@ func _test_sneak_and_postures() -> void:
 	await _frames(2)
 	Input.action_release("crouch")
 	await _frames(5)
-	_expect(character.get_posture() == 1, "Ctrl kiest kruip en bewaart die na loslaten")
+	_expect(character.get_posture() == 1, "C kiest kruip en bewaart die na loslaten")
 	Input.action_press("move_forward")
 	await _frames(100)
 	_expect(absf(_speed() - character.crouch_forward_speed) < 0.06, "kruip gebruikt eigen bewegingssnelheid")

@@ -56,4 +56,6 @@ De [volledige agentafspraken](../AGENTS.md) bepalen het uitvoeringsprotocol. [CO
 | D-041 | Eerst grondbeweging beoordelen; later klimmen inclusief plafonds, automatisch hergrijpen en tijdelijke ragdoll. | Vaste geometrie eerst, horizon recht. Kleine reacties goedkoop; bij controleverlies expliciete pose-/snelheidsoverdracht. Andere traversal en netwerk blijven aparte proeven. | Gebruiker, verkenningsantwoorden en volledige planbevestiging 13-10-2026 |
 | D-042 | Artemis herstellen vanuit een werkkopie van het Blender-bronbestand; origineel behouden. | Ontbrekende modifier herstellen, gewichten/handen controleren en export/import bewijzen. Vroege test met drie humanoïde verhoudingen; geen veronderstelde correcte skinning. | Gebruiker, aangeleverd bronbestand en implementatieopdracht 13-10-2026 |
 
+| D-043 | C vervangt Ctrl voor kruip en slide; Z schakelt handmatig lig ook uit. | Hergebruik veilige terugkeer naar de houding vóór lig. Spatie-oprichten blijft bestaan; geen vertraagde oprichting bij blokkade. Vervangt toetsnaam uit D-018 en Z-blijft-lig uit D-031. | Gebruiker na goedgekeurde grondslideproef, 13-10-2026 |
+
 Het volledige samenhangende ontwerp staat in [T-011](work/T-011.md).

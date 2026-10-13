@@ -134,7 +134,7 @@ func _test_slide_and_virtual_support() -> void:
 	var land_before := _count("landing")
 	var slide_before := _count("slide_landing")
 	await _pulse("crouch")
-	_expect(not actor.is_on_floor() and not bool(_state().get("slide_loop_active", true)), "lucht-Ctrl start nog geen grondschuurlaag")
+	_expect(not actor.is_on_floor() and not bool(_state().get("slide_loop_active", true)), "lucht-C start nog geen grondschuurlaag")
 	await _landing()
 	_expect(_flag("slide_active") and _count("landing") == land_before + 1 and _count("slide_landing") == slide_before + 1 and bool(_last_impact().get("sliding", false)), "slidelanding geeft één samengestelde cue zonder tweede volle landing")
 	_expect(bool(_state().get("slide_loop_active", false)), "loop begint pas bij werkelijk ondersteunde actieve slide")
