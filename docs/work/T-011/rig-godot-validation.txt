@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 617.42 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 5060 Ti
+
+MEASURE: Godot Artemis upperarm.l: 709 vertices bewegen; maximaal 0.385227 m.
+MEASURE: Godot Artemis upperarm.r: 709 vertices bewegen; maximaal 0.384909 m.
+MEASURE: Godot Artemis hand.l: 413 vertices bewegen; maximaal 0.113969 m.
+MEASURE: Godot Artemis hand.r: 413 vertices bewegen; maximaal 0.113970 m.
+MEASURE: Godot Artemis index.001.l: 107 vertices bewegen; maximaal 0.069988 m.
+MEASURE: Godot Artemis index.001.r: 107 vertices bewegen; maximaal 0.069988 m.
+MEASURE: Godot Artemis calf.l: 364 vertices bewegen; maximaal 0.267135 m.
+MEASURE: Godot Artemis calf.r: 364 vertices bewegen; maximaal 0.267655 m.
+MEASURE: Godot Artemis head: 708 vertices bewegen; maximaal 0.215049 m.
+MEASURE: Godot Artemis bones 53, surfaces 5, skin vertices 3110, bounds (-0.403017, -0.000001, -0.25262) / (0.403016, 1.738555, 0.095183).
+PASS: Artemis skinning, arm-/hand-/vinger-/knie-/hoofddeformatie, rustlengtes, meterschaal en -Z-front.
