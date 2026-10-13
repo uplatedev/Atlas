@@ -85,5 +85,5 @@ func _stop_and_look(direction: float, look_delay: int) -> void:
 				violations += 1
 			started_turn = true
 	_expect(violations == 0, "stoppen plus grote blik bewaart borstreserve vóór de eerste nieuwe draaibijstap")
-	_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < 0.01, "stop-en-draai eindigt zonder blijvende achterstand")
+	_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < deg_to_rad(actor.body_profile.turn_step_angle_degrees * 0.38 + 0.2), "stop-en-draai eindigt met begrensde comfortabele asymmetrie")
 	print("STOP LOOK direction=", direction, " delay=", look_delay, " neutral_steps=", neutral_steps, " turning_steps=", turning_steps, " first_turn_chest=", rad_to_deg(first_chest), " violations=", violations)

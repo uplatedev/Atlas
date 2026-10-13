@@ -60,6 +60,8 @@ extends Resource
 @export_range(0.0, 14.0, 0.5, "suffix:°") var body_twist_degrees: float = 8.0
 ## Ruimte voor knievolume bij de knieslide als deel van beenlengte; helpt bij andere modeldiktes.
 @export_range(0.04, 0.18, 0.005) var slide_knee_clearance_ratio: float = 0.09
+## Achterwaartse bovenbeenhoek bij de knieslide; groter zit lager op de kuiten. Kniegrenzen begrenzen de pose veilig.
+@export_range(25.0, 70.0, 1.0, "suffix:°") var slide_sit_degrees: float = 55.0
 ## Kleine bekken-/kniecompressie per werkelijk voetcontact, als deel van beenlengte; nul zet het pasaccent uit.
 @export_range(0.0, 0.06, 0.001) var step_compression_ratio: float = 0.025
 ## Grootste extra compressie bij een bewuste sprong/val; de echte impactsnelheid schaalt de sterkte.
@@ -76,10 +78,19 @@ extends Resource
 @export_range(0.0, 0.5, 0.01) var foot_lift_ratio: float = 0.18
 ## X is zwaaivoortgang, Y is relatieve voetheffing. Eindpunten blijven op de grond.
 @export var swing_foot_curve: Curve = _default_swing_curve()
-## X is snelheid/referentiesnelheid; Y is pasvluchthoogte als deel van beenlengte.
+## X is snelheid/referentiesnelheid; Y is pasvluchthoogte als deel van beenlengte. Geldt voor jog/sprint/zijhup; Alt-wandelen houdt grondsteun.
 @export var stride_flight_curve: Curve = _default_flight_curve()
 ## Maximale armzwaai bij referentiesnelheid in graden.
 @export_range(0.0, 85.0, 1.0) var arm_swing_degrees: float = 48.0
+@export_group("Wandelen en joggen")
+## Mengduur voor de zichtbare ganghouding; de motor blijft onmiddellijk op invoer reageren.
+@export_range(0.05, 0.5, 0.01, "suffix:s") var gait_blend_time: float = 0.18
+## Armzwaai bij ontspannen Alt-wandelen; de armen blijven lang naast het lichaam.
+@export_range(0.0, 30.0, 1.0, "suffix:°") var walking_arm_swing_degrees: float = 12.0
+## Afstand schouder-hand als deel van armlengte tijdens wandelen; hoog is los en bijna gestrekt.
+@export_range(0.92, 0.995, 0.005) var walking_arm_reach_ratio: float = 0.985
+## Joghouding tussen ontspannen wandelen (0) en de actieve sprint (1); verandert geen snelheid.
+@export_range(0.1, 0.8, 0.05) var jogging_pose_blend: float = 0.40
 @export_group("Gewrichtsgrenzen")
 ## Kleinste kniebuiging; nul is volledig gestrekt. Een kleine marge voorkomt doorslaan.
 @export_range(0.0, 170.0, 1.0) var knee_min_flex_degrees: float = 5.0
@@ -198,15 +209,39 @@ extends Resource
 		right_hand_bone = value
 		emit_changed()
 
+@export_group("Zijpas")
+## Gezamenlijke knie-intrek tijdens de echte zijwaartse pasvlucht, als deel van beenlengte; groeit met snelheid.
+@export_range(0.0, 0.15, 0.005) var side_hop_tuck_ratio: float = 0.06
+
 @export_group("Bijstappen")
 ## Grootste borstrotatie ten opzichte van het bekken bij stilstaand kijken; 0 schakelt de borstreserve uit.
 @export_range(0.0, 50.0, 1.0, "suffix:°") var turn_torso_max_degrees: float = 35.0
 ## De eerste bijstap wacht tot de borst deze hoek benut. Wordt veilig begrensd onder de maximale borstrotatie.
 @export_range(5.0, 40.0, 1.0, "suffix:°") var turn_torso_before_step_degrees: float = 24.0
 ## Duur van één vrije bijstap bij draaien in seconden; lager draait sneller, zonder de capsule te sturen.
-@export_range(0.08, 0.4, 0.01, "suffix:s") var turn_step_duration: float = 0.15
+@export_range(0.08, 0.4, 0.01, "suffix:s") var turn_step_duration: float = 0.22
 ## Grootste richtingsverschil tussen de twee voeten tijdens bijdraaien; lager geeft meer, kleinere stappen.
-@export_range(20.0, 70.0, 1.0, "suffix:°") var turn_step_angle_degrees: float = 54.0
+@export_range(20.0, 70.0, 1.0, "suffix:°") var turn_step_angle_degrees: float = 68.0
+
+@export_group("Idle")
+## Rustige ademhaling en incidentele visuele zucht; geen invloed op motor of contacten.
+@export var idle_enabled: bool = true
+## Kortste en langste ademcyclus in seconden. Wordt veilig tussen 2 en 12 begrensd.
+@export var idle_breath_seconds: Vector2 = Vector2(4.0, 5.0)
+## Kleine borstrotatie bij ademhalen in graden.
+@export_range(0.0, 2.0, 0.05, "suffix:°") var idle_breath_degrees: float = 0.55
+## Ademheffing van schouders als deel van beenlengte.
+@export_range(0.0, 0.015, 0.001) var idle_shoulder_lift_ratio: float = 0.004
+## Ogen knipperen alleen als het model een vlak Eyes-materiaal met Skin-kleur bevat.
+@export var idle_blink_enabled: bool = true
+## Kortste en langste pauze tussen knippers in seconden; veilig tussen 0.5 en 30.
+@export var idle_blink_seconds: Vector2 = Vector2(3.0, 7.0)
+## Duur van sluiten en openen samen.
+@export_range(0.1, 0.5, 0.01, "suffix:s") var idle_blink_duration: float = 0.20
+## Kortste en langste pauze tussen visuele zuchten; veilig tussen 5 en 120 seconden.
+@export var idle_sigh_seconds: Vector2 = Vector2(20.0, 40.0)
+## Extra borstuitslag bij een visuele zucht. Nul schakelt zuchten uit.
+@export_range(0.0, 4.0, 0.1, "suffix:°") var idle_sigh_degrees: float = 1.4
 
 func _init() -> void:
 	resource_local_to_scene = true

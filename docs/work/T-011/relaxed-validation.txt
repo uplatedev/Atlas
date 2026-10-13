@@ -1,0 +1,912 @@
+Gecombineerde bron: ffea07ecbf7643ae22670af6dbc6b514689e19ed
+Godot 4.7.2.stable.official.ed1daf0bf; Jolt, 60 Hz; 24 suites; exitcode 0.
+Controle: tools/Check-Atlas.ps1 -CharacterChecks
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PASS: lopen bereikt ingestelde voorwaartse snelheid
+PASS: lopen: vooruit > zijwaarts > achteruit
+PASS: diagonale loopinput geeft geen snelheidsbonus
+PASS: sprint bereikt ingestelde voorwaartse snelheid
+PASS: sprint werkt in alle richtingen met lagere zij-/achterwaartse snelheden
+PASS: diagonale sprintinput geeft geen snelheidsbonus
+PASS: tegengestelde inputs heffen elkaar op
+PASS: acceleratie bouwt snelheid op
+PASS: loslaten remt af
+PASS: sprint naar lopen keert terug naar looplimiet
+PASS: sprong komt los en landt weer
+PASS: sprong komt los en landt weer
+PASS: sprong komt los en landt weer
+PASS: gemeten spronghoogte: stilstand > lopen > sprint
+PASS: gemeten sprintsprong gaat extra ver
+PASS: alleen Shift verandert sprongprofiel niet bij dezelfde snelheid
+PASS: stationaire sprong blijft hoog
+PASS: lage trede wordt werkelijk opgestapt
+PASS: trede boven opstapgrens blijft obstakel
+PASS: geldige trede onder laag plafond passeert met automatisch lagere houding
+PASS: twee onafhankelijke editorinstellingen aanwezig
+PASS: instancewijziging blijft lokaal
+PASS: capsulebotsingen hebben eigen Resources
+PASS: capsulematerialen hebben eigen Resources
+PASS: naamwijziging raakt tweede instance niet
+PASS: camera kan naar first person zoomen
+PASS: first-personcamera verbergt uitsluitend eigen capsule
+PASS: andere capsule blijft zichtbaar voor first-personcamera
+PASS: zoom blijft binnen instelbare maximale afstand
+PASS: tweede instance houdt eigen camerafstand
+PASS: camera van tweede Character ziet de eerste capsule
+PASS: reset keert terug naar eigen startpositie
+PASS: camera-arm comprimeert werkelijk bij een nabije muur
+PASS: gecomprimeerde camera blijft vrij van eigen capsule
+PASS: eigen capsule wordt zichtbaar zodra de camera weer vrij is
+PASS: kleine ingestelde maximale zoomafstand blijft bruikbaar
+PASS: prototypelevel bevat precies twee lampen
+PASS: alle Character-physics- en scenecontroles geslaagd.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PASS: Alt-sneak heeft voorrang op sprint
+PASS: sneak verandert de staande capsule niet
+PASS: C kiest kruip en bewaart die na loslaten
+PASS: kruip gebruikt eigen bewegingssnelheid
+PASS: Z gaat vanuit kruip naar lig
+PASS: lig gebruikt eigen bewegingssnelheid
+PASS: spatie richt lig één houding op zonder sprong
+PASS: Z kiest handmatig rechtstreeks lig vanuit staan
+PASS: sprong wordt uitgevoerd en landt
+PASS: sneak-sprong blijft laag en boven de ingestelde minimumhoogte
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_forward"]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_right"]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_back"]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: twaalf directe sprongen stapelen niet, ook zonder vermoeidheid: ["move_forward", "move_right"]
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: sprong wordt uitgevoerd en landt
+PASS: opeenvolgende sprintsprongen worden lager
+PASS: opeenvolgende sprintsprongen verliezen extra sprintbonus
+PASS: wisselen naar sneak wist sprintvermoeidheid niet
+PASS: voldoende grondrust herstelt volle sprongkracht
+PASS: sprong wordt uitgevoerd en landt
+PASS: na grondherstel komt dezelfde volle sprong terug
+PASS: sprongvermoeidheid herstelt niet tijdens vliegen
+PASS: vasthouden van spatie veroorzaakt geen automatische volgende sprong
+PASS: tweede druk binnen coyotetijd geeft geen dubbele luchtjump
+PASS: vroege nieuwe druk wordt eenmaal bij landing uitgevoerd
+PASS: kort na een echte rand blijft de coyote-sprong geldig
+PASS: na verlopen coyotetijd start geen luchtjump
+PASS: geldige .30m trede met 1.20m hoofdruimte wordt automatisch kruipend gepasseerd
+PASS: automatisch kruipen herstelt na vrije uitgang naar staan
+PASS: staande voorkeur blokkeert vóór de ligingang zonder automatisch te gaan liggen
+PASS: de geblokkeerde ligingang bewaart de staande voorkeur
+PASS: handmatige kruip staat automatische lig toe bij lage ingang
+PASS: automatisch lig herstelt naar de handmatig gekozen kruip
+PASS: handmatige kruiphouding blijft op open grond behouden
+PASS: handmatige lighouding blijft op open grond behouden
+PASS: doorgang lager dan elke capsulevorm blijft geblokkeerd
+PASS: gelijke muisbeweging draait geleidelijk langzamer in de zachte hoofdzone
+PASS: grote muisinput kan de hoofdgrens niet overschrijden
+PASS: hoofdrichting en lichaamsrichting worden afzonderlijk bijgehouden
+PASS: terugdraaien reageert direct bij de hoofdgrens
+PASS: lichaam draait per physicsframe binnen zijn limiet bij
+PASS: stilstaand lichaam haalt alleen de noodzakelijke hoofdhoek in
+PASS: horizontale ligcapsule draait niet door de smalle tunnelwanden
+PASS: hoofd en camera blijven begrensd wanneer lichaam niet kan draaien
+PASS: FOV-uit houdt de gekozen third-personbasis
+PASS: snelheids-FOV reageert begrensd op echte sprint
+PASS: FOV keert na afremmen naar de basis terug
+PASS: first person gebruikt zijn eigen verticale basis-FOV
+PASS: camerahoogte volgt de ligcapsule
+PASS: werkelijke arena: staande voorkeur passeert kruipruimte maar blokkeert vóór ligruimte
+PASS: arena-route bewaart de houdingvoorkeur en geeft geen slide
+PASS: werkelijke arena: expliciete kruip passeert de ligroute en herstelt kruip
+PASS: arena-route bewaart de houdingvoorkeur en geeft geen slide
+PASS: movement-, houdings-, sprongherhaal- en hoofd/cameraregressies geslaagd.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: 0.10s sprintaanloop geeft minder afzetsnelheid dan volle sprint
+PASS: korte sprintaanloop geeft aantoonbaar minder sprongafstand dan volle sprint
+PASS: luchtsturing versnelt een gedeeltelijke sprintafzet niet alsnog tot volle loopsnelheid
+PASS: gedeeltelijke sprintafzet legt haar werkelijke eigen snelheidsbudget vast
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: acht onmiddellijke sprintsprongen stapelen niet wanneer vermoeidheid uitstaat
+PASS: de sprongcap blijft maximaal één ingestelde sprintbonus
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: gemeten sprong heeft werkelijk een vlucht en landing
+PASS: 0.10s loopaanloop geeft minder afzetsnelheid dan volle loop
+PASS: gedeeltelijke loopaanloop geeft minder sprongafstand dan volle loop
+PASS: luchtsturing maakt een gedeeltelijke loopafzet niet alsnog volle loopsnelheid
+PASS: echte frontale wandbotsing remt horizontale sprintvlucht tot nul voordat de speler landt
+PASS: na een frontale luchtbotsing kan zijinput binnen de beperkte luchtsturing weer langs de wand bewegen
+PASS: herstel na een luchtbotsing blijft binnen het actuele budget en vergroot de bestaande afzetcap niet
+PASS: crouch wordt tijdens een echte sprintsprong gemeten
+PASS: crouch bewaart de horizontale afzetvaart tijdens de vlucht
+PASS: crouch bewaart het werkelijke afzetbudget tijdens de vormwissel
+PASS: crouch verandert de verticale sprong niet behalve normale zwaartekracht
+PASS: crouch reset werkelijk opgebouwde sprongvermoeidheid niet
+PASS: crouch kiest rechtstreeks de bedoelde handmatige houding
+PASS: alleen succesvolle lucht-C bereidt een slide voor; de slide begint nog niet
+PASS: crouch behoudt de vaart tot een echte landing zonder lucht-slide
+PASS: de C-landing behoudt momentum zonder nieuwe sprongbonus
+PASS: C-slide begint uitsluitend op het eerste echte grondcontact en verbruikt de voorbereiding
+PASS: de C-skill bewaart staan als voorkeur tijdens de echte slide
+PASS: zijinput stuurt de grondslide beperkt bij in plaats van direct negentig graden te draaien
+PASS: grondslide verliest geleidelijk vaart door wrijving in plaats van een onmiddellijke stop
+PASS: W en Shift toevoegen tijdens de slide geen snelheid of oude boost
+PASS: de tijdelijke skill blijft fysiek kruip zolang de slide actief is zonder permanente kruipvoorkeur
+PASS: een echte opstap via de steunroute herstart de landingsslide niet
+PASS: grondslide eindigt binnen de ingestelde maximale duur
+PASS: natuurlijk slide-einde herstelt veilig staan ondanks nog vastgehouden C
+PASS: vastgehouden C maakt na natuurlijk slide-einde geen tweede skill
+PASS: prone wordt tijdens een echte sprintsprong gemeten
+PASS: prone bewaart de horizontale afzetvaart tijdens de vlucht
+PASS: prone bewaart het werkelijke afzetbudget tijdens de vormwissel
+PASS: prone verandert de verticale sprong niet behalve normale zwaartekracht
+PASS: prone reset werkelijk opgebouwde sprongvermoeidheid niet
+PASS: prone kiest rechtstreeks de bedoelde handmatige houding
+PASS: alleen succesvolle lucht-C bereidt een slide voor; de slide begint nog niet
+PASS: prone behoudt de vaart tot een echte landing zonder lucht-slide
+PASS: Z-lig start ook bij de landing geen kruipslide
+PASS: Z-lig krijgt bij het eerste echte contact zijn eigen grondbudget zonder verborgen slide
+PASS: gemeten luchtremvlucht eindigt werkelijk op de vloer
+PASS: gemeten luchtremvlucht eindigt werkelijk op de vloer
+PASS: S tijdens een voorwaartse sprintsprong geeft werkelijk een kortere landingsafstand
+PASS: S verlaagt de luchtvaart over meerdere frames zonder onmiddellijke stop
+PASS: S verandert de verticale vlucht niet vergeleken met dezelfde ongeremde afzet
+PASS: vooruit sturen na luchtremmen herstelt geen verloren sprintbonus
+PASS: S remt een achterwaartse afzet niet wanneer de input al met de vaart meegaat
+PASS: S remt een achterwaartse afzet niet wanneer de input al met de vaart meegaat
+PASS: S remt ook een werkelijk voorwaartse diagonale afzet geleidelijk
+PASS: de vergeleken grondrem wordt tijdens een echte actieve slide gemeten
+PASS: de vergeleken grondrem wordt tijdens een echte actieve slide gemeten
+PASS: S remt een voorwaartse grondslide sterker maar niet onmiddellijk tot stilstand
+PASS: extra sliderem geeft een aantoonbaar kortere verplaatsing op de grond
+PASS: ["move_forward"]: nieuwe C start direct een ondersteunde grondslide
+PASS: ["move_forward"]: grondslide bewaart staan als handmatige voorkeur
+PASS: ["move_forward"]: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving
+PASS: ["move_forward"]: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd
+PASS: ["move_forward"]: natuurlijk einde richt veilig op; held-C start geen volgende slide
+PASS: ["move_forward"]: starten en eindigen van grondslide verbruiken geen sprong
+PASS: ["move_back"]: nieuwe C start direct een ondersteunde grondslide
+PASS: ["move_back"]: grondslide bewaart staan als handmatige voorkeur
+PASS: ["move_back"]: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving
+PASS: ["move_back"]: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd
+PASS: ["move_back"]: natuurlijk einde richt veilig op; held-C start geen volgende slide
+PASS: ["move_back"]: starten en eindigen van grondslide verbruiken geen sprong
+PASS: ["move_left"]: nieuwe C start direct een ondersteunde grondslide
+PASS: ["move_left"]: grondslide bewaart staan als handmatige voorkeur
+PASS: ["move_left"]: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving
+PASS: ["move_left"]: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd
+PASS: ["move_left"]: natuurlijk einde richt veilig op; held-C start geen volgende slide
+PASS: ["move_left"]: starten en eindigen van grondslide verbruiken geen sprong
+PASS: ["move_right"]: nieuwe C start direct een ondersteunde grondslide
+PASS: ["move_right"]: grondslide bewaart staan als handmatige voorkeur
+PASS: ["move_right"]: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving
+PASS: ["move_right"]: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd
+PASS: ["move_right"]: natuurlijk einde richt veilig op; held-C start geen volgende slide
+PASS: ["move_right"]: starten en eindigen van grondslide verbruiken geen sprong
+PASS: ["move_forward", "move_left"]: nieuwe C start direct een ondersteunde grondslide
+PASS: ["move_forward", "move_left"]: grondslide bewaart staan als handmatige voorkeur
+PASS: ["move_forward", "move_left"]: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving
+PASS: ["move_forward", "move_left"]: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd
+PASS: ["move_forward", "move_left"]: natuurlijk einde richt veilig op; held-C start geen volgende slide
+PASS: ["move_forward", "move_left"]: starten en eindigen van grondslide verbruiken geen sprong
+PASS: ["move_forward", "move_right"]: nieuwe C start direct een ondersteunde grondslide
+PASS: ["move_forward", "move_right"]: grondslide bewaart staan als handmatige voorkeur
+PASS: ["move_forward", "move_right"]: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving
+PASS: ["move_forward", "move_right"]: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd
+PASS: ["move_forward", "move_right"]: natuurlijk einde richt veilig op; held-C start geen volgende slide
+PASS: ["move_forward", "move_right"]: starten en eindigen van grondslide verbruiken geen sprong
+PASS: ["move_back", "move_left"]: nieuwe C start direct een ondersteunde grondslide
+PASS: ["move_back", "move_left"]: grondslide bewaart staan als handmatige voorkeur
+PASS: ["move_back", "move_left"]: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving
+PASS: ["move_back", "move_left"]: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd
+PASS: ["move_back", "move_left"]: natuurlijk einde richt veilig op; held-C start geen volgende slide
+PASS: ["move_back", "move_left"]: starten en eindigen van grondslide verbruiken geen sprong
+PASS: ["move_back", "move_right"]: nieuwe C start direct een ondersteunde grondslide
+PASS: ["move_back", "move_right"]: grondslide bewaart staan als handmatige voorkeur
+PASS: ["move_back", "move_right"]: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving
+PASS: ["move_back", "move_right"]: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd
+PASS: ["move_back", "move_right"]: natuurlijk einde richt veilig op; held-C start geen volgende slide
+PASS: ["move_back", "move_right"]: starten en eindigen van grondslide verbruiken geen sprong
+PASS: korte grondslide-aanloop bereikt aantoonbaar geen volle sprintvaart
+PASS: korte aanloop: nieuwe C start direct een ondersteunde grondslide
+PASS: korte aanloop: grondslide bewaart staan als handmatige voorkeur
+PASS: korte aanloop: grondslide bewaart echte richting en vaart, met uitsluitend eerste-framewrijving
+PASS: korte aanloop: Shift en bewegingsinput geven geen boost of herstart en de ingestelde duur blijft begrensd
+PASS: korte aanloop geeft een kortere slide op de werkelijke resterende vaart
+PASS: korte aanloop: natuurlijk einde richt veilig op; held-C start geen volgende slide
+PASS: korte aanloop: starten en eindigen van grondslide verbruiken geen sprong
+PASS: []: zonder effectieve bewegende sprint blijft C gewone kruip
+PASS: []: later bewegen of sprinten verandert held-C niet in een vertraagde slide
+PASS: ["sprint"]: zonder effectieve bewegende sprint blijft C gewone kruip
+PASS: ["sprint"]: later bewegen of sprinten verandert held-C niet in een vertraagde slide
+PASS: ["move_forward"]: zonder effectieve bewegende sprint blijft C gewone kruip
+PASS: ["move_forward"]: later bewegen of sprinten verandert held-C niet in een vertraagde slide
+PASS: ["move_forward", "sprint", "sneak"]: zonder effectieve bewegende sprint blijft C gewone kruip
+PASS: ["move_forward", "sprint", "sneak"]: later bewegen of sprinten verandert held-C niet in een vertraagde slide
+PASS: nul slideduur geeft gewone kruip zonder verborgen grondslide
+PASS: weer ingeschakelde slideduur voert een oude C niet alsnog uit
+PASS: geblokkeerde brede kruipvorm weigert de sprintgrondslide
+PASS: vrijkomende ruimte maakt geweigerde held-C geen vertraagde slide
+PASS: wanddrukproef staat werkelijk stil tegen een hoge wand
+PASS: W en Shift tegen een wand starten zonder echte vaart geen slide
+PASS: gelijktijdige grond-C en spatie starten alleen slide, zonder verborgen sprong
+PASS: held-C plus held-spatie geven ook na grondslide-einde geen vertraagde afzet
+PASS: een programmatisch aangevraagde lage houding in de lucht is geen handmatige C-skill
+PASS: automatisch aangevraagde kruip start bij de landing geen slide
+PASS: een lage landing zonder C-skill houdt geen verborgen sprintvaart over
+PASS: een werkelijk geblokkeerde brede kruipvorm bereidt geen slide voor
+PASS: mislukte lucht-C wordt bij de landing geen vertraagde slide
+PASS: succesvolle lucht-C bereidt de volgende negatieve proef werkelijk voor
+PASS: crouch annuleert de voorbereiding vóór de landing
+PASS: een nieuwe C tijdens voorbereide skill kiest permanente kruip en annuleert de skill
+PASS: crouch laat een geannuleerde voorbereiding bij de landing niet terugkomen
+PASS: succesvolle lucht-C bereidt de volgende negatieve proef werkelijk voor
+PASS: prone annuleert de voorbereiding vóór de landing
+PASS: prone laat een geannuleerde voorbereiding bij de landing niet terugkomen
+PASS: respawnproef begint met een werkelijk voorbereide slide
+PASS: respawn wist de oude slide en begint weer gewoon staand
+PASS: de korte slide begint met echte bewaarde afzetvaart
+PASS: ook een slide van 0.02s zonder wrijving eindigt binnen het grondbudget van de veilige houding
+PASS: grond-Z-proef begint met een echte actieve C-slide
+PASS: Z tijdens de grondslide kiest lig, annuleert de slide en houdt alleen veilige ligvaart over
+PASS: proef begint met een echte landingsslide
+PASS: uitsluitend virtuele steun op een geldige opstap bewaart de bestaande slide zonder herstart of nieuwe voorbereiding
+PASS: proef begint met een echte sprintgrondslide
+PASS: uitsluitend virtuele steun op een geldige opstap bewaart de bestaande slide zonder herstart of nieuwe voorbereiding
+PASS: proef begint met een echte landingsslide
+PASS: een geldige trede van 0.30m op 0.50m vooruit bewaart de default-capsuleslide zonder botsingsstop of nieuwe vaart
+PASS: proef begint met een echte landingsslide
+PASS: een echte hoge wand stopt de slide en wordt niet als geldige opstap of nieuwe voorbereiding behandeld
+PASS: de slide blijft vóór de echte wand zonder lift of doorsnijden
+PASS: een natuurlijke wandstop herstelt vrij staan zonder vastgehouden kruipvoorkeur
+PASS: zijinput na een echte wandstop herstelt alleen gewone grondacceleratie zonder de oude sprintboost
+PASS: proef begint met een echte landingsslide
+PASS: C-slide is een tijdelijke skill bovenop de staande voorkeur
+PASS: de speedgrens beëindigt de sterk geremde slide ruim vóór haar timer
+PASS: een natuurlijk einde op snelheid herstelt vrij staan
+PASS: proef begint met een echte landingsslide
+PASS: slide-einde onder 1.20m plafond blijft veilig automatisch kruip met voorkeur staan
+PASS: staande voorkeur blokkeert de ligingang ook na automatisch kruipherstel uit een slide
+PASS: de geblokkeerde herstelroute bewaart staan en maakt geen tweede slide
+PASS: expliciete C na slideherstel geeft veilige kruip-lig-kruip doorgang
+PASS: expliciete lage herstelroute bewaart kruip zonder tweede slide
+PASS: proef begint met een echte landingsslide
+PASS: actieve slide met staande voorkeur blokkeert de lagere ingang zonder automatisch lig
+PASS: proef begint met een echte landingsslide
+PASS: C bewaart de actieve skill vóór de lagere ingang
+PASS: handmatige kruip laat de slide veilig overgaan in lig zonder ligslide of overvaart
+PASS: lage ingang na C tijdens slide herstelt de gekozen kruipvoorkeur
+PASS: proef begint met een echte landingsslide
+PASS: Z annuleert de actieve slide direct en bewaart expliciete lig
+PASS: de gemeten slideafstand gebruikt een echte, beëindigde landingsslide
+PASS: de gemeten slideafstand gebruikt een echte, beëindigde landingsslide
+PASS: sterkere slide-defaults bewaren de oorspronkelijke vaart langer en vergroten de werkelijke grondafstand
+PASS: de langere slide voegt geen boost toe en blijft binnen haar ingestelde duur
+PASS: proef begint met een echte sprintgrondslide
+PASS: een geldige trede van 0.30m op 0.50m vooruit bewaart de default-capsuleslide zonder botsingsstop of nieuwe vaart
+PASS: proef begint met een echte sprintgrondslide
+PASS: een echte hoge wand stopt de slide en wordt niet als geldige opstap of nieuwe voorbereiding behandeld
+PASS: de slide blijft vóór de echte wand zonder lift of doorsnijden
+PASS: een natuurlijke wandstop herstelt vrij staan zonder vastgehouden kruipvoorkeur
+PASS: zijinput na een echte wandstop herstelt alleen gewone grondacceleratie zonder de oude sprintboost
+PASS: proef begint met een echte sprintgrondslide
+PASS: C-slide is een tijdelijke skill bovenop de staande voorkeur
+PASS: de speedgrens beëindigt de sterk geremde slide ruim vóór haar timer
+PASS: een natuurlijk einde op snelheid herstelt vrij staan
+PASS: proef begint met een echte sprintgrondslide
+PASS: slide-einde onder 1.20m plafond blijft veilig automatisch kruip met voorkeur staan
+PASS: staande voorkeur blokkeert de ligingang ook na automatisch kruipherstel uit een slide
+PASS: de geblokkeerde herstelroute bewaart staan en maakt geen tweede slide
+PASS: expliciete C na slideherstel geeft veilige kruip-lig-kruip doorgang
+PASS: expliciete lage herstelroute bewaart kruip zonder tweede slide
+PASS: proef begint met een echte sprintgrondslide
+PASS: actieve slide met staande voorkeur blokkeert de lagere ingang zonder automatisch lig
+PASS: proef begint met een echte sprintgrondslide
+PASS: C bewaart de actieve skill vóór de lagere ingang
+PASS: handmatige kruip laat de slide veilig overgaan in lig zonder ligslide of overvaart
+PASS: lage ingang na C tijdens slide herstelt de gekozen kruipvoorkeur
+PASS: proef begint met een echte sprintgrondslide
+PASS: Z annuleert de actieve slide direct en bewaart expliciete lig
+PASS: proef begint met een echte landingsslide
+PASS: slide eindigt binnen haar begrensde duur, ook met vastgehouden C
+PASS: natuurlijk slide-einde volgt de gekozen voorkeur zonder herstart door held-C
+PASS: proef begint met een echte landingsslide
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: slide eindigt binnen haar begrensde duur, ook met vastgehouden C
+PASS: natuurlijk slide-einde volgt de gekozen voorkeur zonder herstart door held-C
+PASS: proef begint met een echte sprintgrondslide
+PASS: slide eindigt binnen haar begrensde duur, ook met vastgehouden C
+PASS: natuurlijk slide-einde volgt de gekozen voorkeur zonder herstart door held-C
+PASS: proef begint met een echte sprintgrondslide
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C bewaart elk actief frame dezelfde vaart en grondbaan zonder remdip of boost
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: C verlengt de echte slide niet
+PASS: nieuwe, herhaalde en vastgehouden C laten slide-activiteit en timer gelijk aan het referentietraject
+PASS: C tijdens slide bewaart kruip als voorkeur na afloop
+PASS: slide eindigt binnen haar begrensde duur, ook met vastgehouden C
+PASS: natuurlijk slide-einde volgt de gekozen voorkeur zonder herstart door held-C
+PASS: proef begint met een echte landingsslide
+PASS: slide-sprongproef begint met een werkelijk actieve, ondersteunde kruipslide
+PASS: een nieuwe spatie onderbreekt een echte actieve slide direct met een staande sprong
+PASS: slide-sprong bewaart de overgebleven afzetvaart zonder sprintbonus toe te voegen of het oude budget te herstellen
+PASS: slide-sprong gebruikt het actuele hoogteprofiel maar geen extra horizontale bonus
+PASS: slide-sprong behoudt opgebouwde vermoeidheid en betaalt een echte nieuwe sprong
+PASS: slide-sprong verbruikt grondticket, buffer en coyote eenmaal
+PASS: een tweede druk binnen coyotetijd geeft na slide-sprong geen tweede afzet of extra fatigue
+PASS: de hele slide-sprong houdt haar eigen beperkte budget en landt werkelijk
+PASS: verlopen buffer en vastgehouden replay-spatie starten na de landing geen stille extra sprong
+PASS: proef begint met een echte sprintgrondslide
+PASS: slide-sprongproef begint met een werkelijk actieve, ondersteunde kruipslide
+PASS: een nieuwe spatie onderbreekt een echte actieve slide direct met een staande sprong
+PASS: slide-sprong bewaart de overgebleven afzetvaart zonder sprintbonus toe te voegen of het oude budget te herstellen
+PASS: slide-sprong gebruikt het actuele hoogteprofiel maar geen extra horizontale bonus
+PASS: slide-sprong behoudt opgebouwde vermoeidheid en betaalt een echte nieuwe sprong
+PASS: slide-sprong verbruikt grondticket, buffer en coyote eenmaal
+PASS: een tweede druk binnen coyotetijd geeft na slide-sprong geen tweede afzet of extra fatigue
+PASS: de hele slide-sprong houdt haar eigen beperkte budget en landt werkelijk
+PASS: verlopen buffer en vastgehouden replay-spatie starten na de landing geen stille extra sprong
+PASS: proef begint met een echte landingsslide
+PASS: slide-sprongproef begint met een werkelijk actieve, ondersteunde kruipslide
+PASS: slide-sprong wordt ook getest na C-voorkeur tijdens de skill
+PASS: een nieuwe spatie onderbreekt een echte actieve slide direct met een staande sprong
+PASS: slide-sprong bewaart de overgebleven afzetvaart zonder sprintbonus toe te voegen of het oude budget te herstellen
+PASS: slide-sprong gebruikt het actuele hoogteprofiel maar geen extra horizontale bonus
+PASS: slide-sprong behoudt opgebouwde vermoeidheid en betaalt een echte nieuwe sprong
+PASS: slide-sprong verbruikt grondticket, buffer en coyote eenmaal
+PASS: een tweede druk binnen coyotetijd geeft na slide-sprong geen tweede afzet of extra fatigue
+PASS: de hele slide-sprong houdt haar eigen beperkte budget en landt werkelijk
+PASS: verlopen buffer en vastgehouden replay-spatie starten na de landing geen stille extra sprong
+PASS: proef begint met een echte sprintgrondslide
+PASS: slide-sprongproef begint met een werkelijk actieve, ondersteunde kruipslide
+PASS: slide-sprong wordt ook getest na C-voorkeur tijdens de skill
+PASS: een nieuwe spatie onderbreekt een echte actieve slide direct met een staande sprong
+PASS: slide-sprong bewaart de overgebleven afzetvaart zonder sprintbonus toe te voegen of het oude budget te herstellen
+PASS: slide-sprong gebruikt het actuele hoogteprofiel maar geen extra horizontale bonus
+PASS: slide-sprong behoudt opgebouwde vermoeidheid en betaalt een echte nieuwe sprong
+PASS: slide-sprong verbruikt grondticket, buffer en coyote eenmaal
+PASS: een tweede druk binnen coyotetijd geeft na slide-sprong geen tweede afzet of extra fatigue
+PASS: de hele slide-sprong houdt haar eigen beperkte budget en landt werkelijk
+PASS: verlopen buffer en vastgehouden replay-spatie starten na de landing geen stille extra sprong
+PASS: vastgehouden oorspronkelijke sprongspatie onderbreekt de nieuwe landingsslide niet
+PASS: originele held-spatie geeft ook na natuurlijk slide-einde geen automatische sprong
+PASS: C vanuit stilstand geeft geen skill: spatie richt gewone kruip alleen op zonder sprong
+PASS: proef begint met een echte landingsslide
+PASS: slide-sprongproef begint met een werkelijk actieve, ondersteunde kruipslide
+PASS: onvoldoende staande hoofdruimte weigert slide-sprong zonder clippen of het onderbreken van de slide
+PASS: geweigerde slide-sprong bewaart de aflopende skill en maakt geen ticketkosten of buffer
+PASS: vrijgekomen hoofdruimte herhaalt een geblokkeerde held-spatie niet alsnog stil
+PASS: na een geweigerde poging kan alleen een nieuwe veilige druk de slide werkelijk onderbreken
+PASS: twaalf echte slide-sprong-slidecycli behouden ieder hun actuele budget zonder nieuwe bonus, ook met fatigue uit
+PASS: herhaald slide-springen stapelt nooit boven de oorspronkelijke sprintafzet
+PASS: kruip/slide is uitsluitend aan fysieke C gekoppeld
+PASS: Z kiest vanuit staan handmatig direct lig
+PASS: Z tijdens lig keert direct veilig terug naar staan zonder sprong
+PASS: C kiest vanuit lig expliciet kruip
+PASS: C schakelt de handmatig gekozen kruiphouding weer uit
+PASS: staan-Z-spatie keert direct terug naar staan zonder tussentijdse kruip of sprong
+PASS: vasthouden van directe oprichtspatie voert geen sprong of buffer uit
+PASS: opricht-input wordt geen gebufferde sprong na het staan
+PASS: pas een nieuwe spatie vanuit staan start werkelijk een sprong
+PASS: handmatige kruip-Z-spatie keert terug naar de vorige kruipvoorkeur zonder sprong
+PASS: de onthouden kruipvoorkeur blijft na de handmatige lig-terugkeer bewaard
+PASS: Z vasthouden na uitschakelen herhaalt de ligtoggle niet
+PASS: C-kruip naar lig en opnieuw Z herstelt de eigen kruipvoorkeur
+PASS: Z weigert lig uitschakelen wanneer de eerdere staande houding niet past
+PASS: geblokkeerde held-Z wordt later geen onverwachte oprichting
+PASS: nieuwe Z na de plafondblokkade richt veilig op
+PASS: geblokkeerde directe lig-naar-staan-terugkeer blijft lig, ook als kruip wel zou passen
+PASS: geblokkeerde lig-terugkeer geeft geen fallback, sprong, buffer of houdingflikkering
+PASS: vrijgekomen hoofdruimte voert geweigerde held-oprichtinput niet stil alsnog uit
+PASS: na vrije hoofdruimte kan een nieuwe oprichtdruk veilig staan
+PASS: staande voorkeur blokkeert een ligingang en verlaagt nooit automatisch tot lig
+PASS: de geblokkeerde ligingang verandert de handmatige staande voorkeur niet
+PASS: automatisch kruip en lig voorbereiden of starten geen slide
+MEASURE: auto direct low passage postures [0]; adjacent true; z -0.649
+PASS: eerste 1.20m doorgang kiest automatisch kruip en bewaart staan als voorkeur
+PASS: automatisch kruip met staande voorkeur geeft geen sluiproute naar automatisch lig
+PASS: lage route bewaart de gekozen voorkeur zonder slide-skill
+PASS: eerste 1.20m doorgang kiest automatisch kruip en bewaart staan als voorkeur
+PASS: C tijdens automatisch kruip kiest permanent kruip zonder een slide te geven
+PASS: expliciete C tijdens automatisch kruip geeft toegang tot ligruimte en herstelt kruip
+PASS: lage route bewaart de gekozen voorkeur zonder slide-skill
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x 0.00 / yaw 0.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x -1.75 / yaw -30.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x 1.75 / yaw 30.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x -1.20 / yaw -45.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+PASS: geldige .30m opstap met 1.20m hoofdruimte passeert bij x 1.20 / yaw 45.0
+PASS: een ruime kruipingang gebruikt ook schuin geen onnodige lighouding
+PASS: automatische kruip en opstapsteun starten geen handmatige landingsslide
+PASS: aanloop tot binnen de doorgang wisselt niet voortdurend staan/kruip
+PASS: schuine input langs een wand gebruikt het vrije pad om automatisch de geldige kruipopstap te nemen
+PASS: klein rondkijken vanuit stilstand draait het lichaam niet mee
+PASS: bij stilstand blijft aparte hoofdhoek behouden
+PASS: ver rondkijken bij de hoofdgrens laat ook stilstaand het lichaam bijdraaien
+PASS: stilstaand rondkijken in de lucht gebruikt een echte verticale sprong zonder WASD
+PASS: klein rondkijken tijdens een verticale stilstandsprong draait het lichaam niet mee
+PASS: bij de hoofdgrens draait een horizontaal stilstaand lichaam in de lucht binnen de eigen luchtdraailimiet
+PASS: tijdens beweging volgt het lichaam de kleine hoofddraai wel
+PASS: move_left plus cameradraai geeft beperkte echte luchtsturing
+PASS: move_left plus cameradraai vergroot de sprongcap niet
+PASS: move_right plus cameradraai geeft beperkte echte luchtsturing
+PASS: move_right plus cameradraai vergroot de sprongcap niet
+PASS: feedbackregressies voor sprongafstand, grond-/landingsslide, luchtrem, houdingknoppen, schuine doorgang en lichaamsdraai.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PASS: camera-overdracht, FOV-/bewegingspariteit, kijkrichting, eigen zicht en instancebediening.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PASS: contactaudio voor echte afstand/afzet/impact/slide, routing, reset en ongewijzigde physics.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PASS: landingsaccent, actuele lucht-/slide-FOV, collisionvolume, histories, opgeslagen overrides en physics/kijkpariteit.
+Procedurele Character-proef: procedural_motor_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PASS: procedurele motor, echte pasvlucht, intentpariteit, randen en massa-impulsen.
+Procedurele Character-proef: procedural_presentation_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PROCEDURAL PRESENTATION CHECKS: PASS
+Procedurele Character-proef: procedural_integration_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+AI-look: renderbehoud, muisoverdracht en hoofdgrenzen PASS
+PROCEDURAL INTEGRATION: PASS
+Procedurele Character-proef: procedural_terrain_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PROCEDURAL TERRAIN: PASS
+Procedurele Character-proef: procedural_knee_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+KNEE MOTOR CHECKS: PASS
+Procedurele Character-proef: procedural_compression_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+COMPRESSION CHECKS: PASS
+Procedurele Character-proef: procedural_turn_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PROCEDURAL TURN: PASS
+Procedurele Character-proef: procedural_torso_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+TORSO EDITOR live_chest=19.8953771400162 max=20 threshold=40; independent/live/no-rebuild/completes PASS
+TORSO EDITOR maximum0/1 with threshold40: completes PASS
+PROCEDURAL TORSO: PASS
+Procedurele Character-proef: procedural_stop_turn_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+PROCEDURAL STOP TURN: PASS
+Procedurele Character-proef: procedural_style_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+STYLE CHECKS: PASS
+Procedurele Character-proef: procedural_contact_release_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+CONTACT RELEASE CHECKS: PASS
+Procedurele Character-proef: procedural_walk_contacts_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+WALK CONTACT CHECKS: PASS
+Procedurele Character-proef: procedural_relaxed_gaits_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+RELAXED GAITS CHECKS: PASS
+Procedurele Character-proef: procedural_direction_style_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+DIRECTION STYLE CHECKS: PASS
+Procedurele Character-proef: procedural_idle_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+IDLE CHECKS: PASS
+Procedurele Character-proef: procedural_idle_pose_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+IDLE POSE CHECKS: PASS
+Procedurele Character-proef: procedural_gait_transition_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+REVERSALS {"flights":341,"ground_steps":0,"max_pin":0.0,"max_planted":0.000000436034042650135,"max_target":0.00000127036219055299,"ray_max":2,"releases":0,"reversal":"free"}
+REVERSALS {"flights":0,"ground_steps":907,"max_pin":0.0,"max_planted":0.00000070035457611084,"max_target":0.000000880178163242817,"ray_max":2,"releases":0,"reversal":"zero_curve"}
+REVERSALS {"flights":0,"ground_steps":907,"max_pin":0.0,"max_planted":0.00000070035457611084,"max_target":0.000000880178163242817,"ray_max":2,"releases":0,"reversal":"ceiling"}
+GAIT TRANSITION CHECKS: PASS
+Procedurele Character-proef: procedural_free_target_checks...
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+BLOCKED INPUT {"blocked_input":true,"inner_width":0.7,"max_pin_drift":0.0,"max_queries":1,"max_target":0.000000607302297339629,"minimum_gap":0.0878628641366959,"turn_steps":12,"turn_yaw":3.14159265358979}
+BLOCKED INPUT {"blocked_input":true,"inner_width":1.0,"max_pin_drift":0.0,"max_queries":2,"max_target":0.00103591289371252,"minimum_gap":0.0799346566200256,"turn_steps":0,"turn_yaw":3.14159265358979}
+BLOCKED INPUT {"blocked_input":true,"inner_width":1.0,"max_pin_drift":0.0,"max_queries":2,"max_target":0.00103591289371252,"minimum_gap":0.0799346566200256,"turn_steps":0,"turn_yaw":-3.14159265358979}
+FREE TARGET CHECKS: PASS
+Atlas: versie, import en headless-start geslaagd.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+RUN_REFERENCE values=92640 max_error=0.00000054389238 compared=true status=PASS

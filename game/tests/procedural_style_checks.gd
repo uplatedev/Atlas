@@ -61,7 +61,10 @@ func _run() -> void:
 			sides.append({"hip":str(hip),"knee":str(knee),"ankle":str(ankle)})
 			_expect(knee.y>0.015 and knee.y<0.14,"knie laag boven vloer %s/%s: %s"%[index,side,knee])
 			_expect(ankle.z>knee.z+view._leg_lengths[side].y*0.65,"scheen en voet achter knie %s/%s"%[index,side])
-			_expect(hip.y>knee.y+view._leg_lengths[side].x*0.7,"bovenbeen draagt knielpose %s/%s"%[index,side])
+			_expect(hip.y<knee.y+view._leg_lengths[side].x*0.65,"heup zit laag richting kuiten %s/%s"%[index,side])
+			_expect(hip.z>knee.z+view._leg_lengths[side].x*0.65,"heup zit zichtbaar achter de knie %s/%s"%[index,side])
+			var flexion:=PI-(points[0]-points[1]).angle_to(points[2]-points[1])
+			_expect(flexion<=actor.body_profile.get_flexion_limits(false).y+0.002,"zitpose bewaart de echte kniegrens %s/%s"%[index,side])
 			_expect(points[2].distance_to(view._targets[side])<0.003,"slidevoet blijft bereikbaar %s/%s"%[index,side])
 		slide.append(sides)
 		view._skeleton.reset_bone_poses()
@@ -71,11 +74,31 @@ func _run() -> void:
 	unique.walking_stance_ratio=0.62
 	unique.body_roll_degrees=1.5
 	unique.slide_knee_clearance_ratio=0.15
-	_expect(profile.walking_stance_ratio==0.50 and profile.body_roll_degrees==3.0 and profile.slide_knee_clearance_ratio==0.09,"nieuwe stijlvelden blijven per profiel onafhankelijk")
+	unique.slide_sit_degrees=40.0
+	_expect(profile.walking_stance_ratio==0.50 and profile.body_roll_degrees==3.0 and profile.slide_knee_clearance_ratio==0.09 and profile.slide_sit_degrees==55.0,"nieuwe stijlvelden blijven per profiel onafhankelijk")
 	_expect(unique.rig_signature()==signature,"nieuwe stijlvelden herbouwen de rig niet")
 	var file:=FileAccess.open("user://t011_style_metrics.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"walk":records[0],"run":records[1],"slide":slide},"\t"))
 	file.close()
+	var max_slide_error:=0.0
+	var greatest_flexion:=0.0
+	for angle in [25.0, 55.0, 70.0]:
+		for actor in actors:
+			actor.body_profile.slide_sit_degrees=angle
+		await _ticks(1)
+		for actor in actors:
+			var view:AtlasCharacterPresentation=actor.get_node("Presentation/ProceduralBody")
+			view.apply_skeleton_pose(view._skeleton)
+			for side in range(2):
+				var points:=_joint_points(view,actor.body_profile.leg_bones(side))
+				var error:=points[2].distance_to(view._targets[side])
+				max_slide_error=maxf(max_slide_error,error)
+				var flexion:=PI-(points[0]-points[1]).angle_to(points[2]-points[1])
+				greatest_flexion=maxf(greatest_flexion,flexion)
+				_expect(error<0.003,"live zitdiepte behoudt bereikbare voeten bij alle proporties")
+				_expect(flexion<=actor.body_profile.get_flexion_limits(false).y+0.002,"live maximale zitdiepte overschrijdt kniegrens niet")
+				_expect(actor.to_local(points[1]).y>0.015,"live zitdiepte bewaart ruimte onder de knie")
+	print("SLIDE SIT live25/55/70 all4 max_ankle_error=",max_slide_error," max_flexion=",rad_to_deg(greatest_flexion))
 	world.queue_free()
 	await AUDIO_SHUTDOWN.drain(self)
 	print("STYLE CHECKS: ","PASS" if failures.is_empty() else "FAIL "+str(failures))

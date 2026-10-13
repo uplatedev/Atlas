@@ -1,0 +1,60 @@
+Source: bf86cc2; Godot 4.7.2.stable.official.ed1daf0bf
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+FREE TARGET jog [{"free_adjustment":0.0,"pin_drift":0.0,"pin_error":0.000000355838352561477,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.00000104701200598356},{"free_adjustment":0.00265872478485107,"pin_drift":0.0,"pin_error":0.0000001564621925354,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.00000019371509552002},{"free_adjustment":0.0202500075101852,"pin_drift":0.0,"pin_error":0.000000171363353729248,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000178813934326172},{"free_adjustment":0.0177499949932098,"pin_drift":0.0,"pin_error":0.00000019371509552002,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.00000019371509552002}]
+FREE TARGET sprint [{"free_adjustment":0.0168444067239761,"pin_drift":0.0,"pin_error":0.000000436034042650135,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.00000127036219055299},{"free_adjustment":0.0190000012516975,"pin_drift":0.0,"pin_error":0.0000001564621925354,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000240274005136598},{"free_adjustment":0.0202500075101852,"pin_drift":0.0,"pin_error":0.000000149011611938477,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000178969088437952},{"free_adjustment":0.0177499949932098,"pin_drift":0.0,"pin_error":0.000000186264514923096,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000266560078898692}]
+FREE TARGET walk [{"free_adjustment":0.000754603883251548,"pin_drift":0.0,"pin_error":0.000000782310962677002,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000782310962677002},{"free_adjustment":0.00305960071273148,"pin_drift":0.0,"pin_error":0.000000180051415554772,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000180051415554772},{"free_adjustment":0.0142777347937226,"pin_drift":0.0,"pin_error":0.000000171363353729248,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000171363353729248},{"free_adjustment":0.00102496787440032,"pin_drift":0.0,"pin_error":0.0000388803528039716,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.0000388803528039716}]
+BLOCKED INPUT {"blocked_input":true,"max_pin_drift":0.0,"max_queries":1,"max_target":0.000000607302297339629,"minimum_gap":0.0878628641366959,"turn_steps":12}
+FREE TARGET CHECKS: PASS
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TURN head-body-foot sequence steps=1 crossing=0 min_side=0.07384212315083 foot_delta=0.01440045796335 lift=0.06036527454853 lock_drift=0.0 offset=-0.3665191298949
+HEAD TURN basis error degrees=0.03956468118525 maximum body offset=104.4441656865
+QUIET TURN direction=-1.0 steps=1 step_angle=68.0 resting_spread=68.0 support_rotation=0.0
+QUIET REVERSE direction=-1.0 contacts=2 crossing=0 pin_drift=0.0
+QUIET TURN direction=1.0 steps=1 step_angle=68.0 resting_spread=68.0 support_rotation=0.0
+QUIET REVERSE direction=1.0 contacts=2 crossing=0 pin_drift=0.0
+TURN turn 90 steps=1 crossing=0 min_side=0.07384212315083 foot_delta=0.01440045796335 lift=0.06036527454853 lock_drift=0.0 offset=-0.19198623957507
+TURN turn -90 steps=1 crossing=0 min_side=0.07384212315083 foot_delta=0.01440045796335 lift=0.06036527454853 lock_drift=0.0 offset=0.19198623957507
+TURN turn 180 steps=3 crossing=0 min_side=0.07384212315083 foot_delta=0.02390369027853 lift=0.06036527454853 lock_drift=0.0 offset=0.0
+TURN turn -180 steps=3 crossing=0 min_side=0.07384212315083 foot_delta=0.02390369027853 lift=0.06036527454853 lock_drift=0.0 offset=0.0
+TURN continuous -360 steps=10 crossing=0 min_side=0.07666601240635 foot_delta=0.01438074372709 lift=0.06036527454853 lock_drift=0.0 offset=0.15707978963773
+TURN continuous -720 steps=22 crossing=0 min_side=0.07666601240635 foot_delta=0.01438074372709 lift=0.06036527454853 lock_drift=0.0 offset=0.03141626230807
+TURN continuous 360 steps=10 crossing=0 min_side=0.07666601240635 foot_delta=0.01438074372709 lift=0.06036527454853 lock_drift=0.0 offset=-0.15707978963773
+TURN continuous 720 steps=22 crossing=0 min_side=0.07666601240635 foot_delta=0.01438074372709 lift=0.06036527454853 lock_drift=0.0 offset=-0.03141626230807
+TURN abrupt reversal steps=4 crossing=0 min_side=0.07384212315083 foot_delta=0.02390370331705 lift=0.06036527454853 lock_drift=0.0 offset=0.04537875844164
+TURN WALK delay=2 largest foot delta=0.27083998918533
+TURN STOP delay=2 largest foot delta=0.17836683988571
+TURN WALK delay=7 largest foot delta=0.26979324221611
+TURN STOP delay=7 largest foot delta=0.17932510375977
+TURN WALK delay=12 largest foot delta=0.26978540420532
+TURN STOP delay=12 largest foot delta=0.17932510375977
+TURN START degrees=120.0 delay=2 lag9=0.65576935698347 target_gap=0.15569296479225 ankle_gap=0.15569293498993 old_axis_gap=0.15562684834003 planted_drift=0.0 foot_delta=0.13962204754353
+TURN START degrees=120.0 delay=6 lag9=1.96730807095039 target_gap=0.10168878734112 ankle_gap=0.10168878734112 old_axis_gap=0.10473820567131 planted_drift=0.0 foot_delta=0.13961425423622
+TURN START degrees=120.0 delay=12 lag9=1.84505661497995 target_gap=0.10367052257061 ankle_gap=0.10367057472467 old_axis_gap=0.10162116587162 planted_drift=0.0 foot_delta=0.13961423933506
+TURN START degrees=-120.0 delay=2 lag9=0.65576935698347 target_gap=0.09342810511589 ankle_gap=0.09342813491821 old_axis_gap=-0.02712614834309 planted_drift=0.0 foot_delta=0.13961413502693
+TURN START degrees=-120.0 delay=6 lag9=1.96730807095039 target_gap=0.09008905291557 ankle_gap=0.09008916467428 old_axis_gap=0.04386924207211 planted_drift=0.0 foot_delta=0.13961419463158
+TURN START degrees=-120.0 delay=12 lag9=1.84505661497995 target_gap=0.09250727295876 ankle_gap=0.09250730276108 old_axis_gap=0.05714735388756 planted_drift=0.0 foot_delta=0.13961423933506
+TURN START degrees=180.0 delay=2 lag9=0.65576935698347 target_gap=0.09342810511589 ankle_gap=0.09342813491821 old_axis_gap=-0.07118685543537 planted_drift=0.0 foot_delta=0.13948135077953
+TURN START degrees=180.0 delay=6 lag9=1.96730807095039 target_gap=0.09008905291557 ankle_gap=0.09008916467428 old_axis_gap=-0.02437165379524 planted_drift=0.0 foot_delta=0.14009775221348
+TURN START degrees=180.0 delay=12 lag9=3.48447944756001 target_gap=0.09295530617237 ankle_gap=0.09295535832644 old_axis_gap=0.05808316543698 planted_drift=0.0 foot_delta=0.13961419463158
+TURN START degrees=-180.0 delay=2 lag9=0.65576935698347 target_gap=0.09342810511589 ankle_gap=0.09342813491821 old_axis_gap=-0.07118685543537 planted_drift=0.0 foot_delta=0.13948135077953
+TURN START degrees=-180.0 delay=6 lag9=1.96730807095039 target_gap=0.09008905291557 ankle_gap=0.09008916467428 old_axis_gap=-0.02437165379524 planted_drift=0.0 foot_delta=0.14009775221348
+TURN START degrees=-180.0 delay=12 lag9=3.48447982081243 target_gap=0.09295529872179 ankle_gap=0.09295533597469 old_axis_gap=0.05808318033814 planted_drift=0.0 foot_delta=0.13961419463158
+TURN turn 180 steps=3 crossing=0 min_side=0.04019312560558 foot_delta=0.01645819842815 lift=0.06809027493 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=3 crossing=0 min_side=0.04019312933087 foot_delta=0.01736832410097 lift=0.07256990671158 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=3 crossing=0 min_side=0.04048420488834 foot_delta=0.01578065007925 lift=0.06361064314842 lock_drift=0.0 offset=0.0
+TURN METRICS maximum queries=2
+PROCEDURAL TURN: PASS
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WALK CONTACT METRICS: user://t011_walk_contacts_metrics.json
+WALK CONTACT CHECKS: PASS
+
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+RUN_REFERENCE values=92640 max_error=0.00000054389238 compared=true status=PASS
+

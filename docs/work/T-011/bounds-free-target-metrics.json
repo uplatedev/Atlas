@@ -1,0 +1,155 @@
+[
+	{
+		"bodies": [
+			{
+				"free_adjustment": 0.0,
+				"pin_drift": 0.0,
+				"pin_error": 0.000000355838352561477,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.00000104701200598356
+			},
+			{
+				"free_adjustment": 0.00265872478485107,
+				"pin_drift": 0.0,
+				"pin_error": 0.0000001564621925354,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.00000019371509552002
+			},
+			{
+				"free_adjustment": 0.0202500075101852,
+				"pin_drift": 0.0,
+				"pin_error": 0.000000171363353729248,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.000000178813934326172
+			},
+			{
+				"free_adjustment": 0.0177499949932098,
+				"pin_drift": 0.0,
+				"pin_error": 0.00000019371509552002,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.00000019371509552002
+			}
+		],
+		"mode": "jog"
+	},
+	{
+		"bodies": [
+			{
+				"free_adjustment": 0.0168444067239761,
+				"pin_drift": 0.0,
+				"pin_error": 0.000000436034042650135,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.00000127036219055299
+			},
+			{
+				"free_adjustment": 0.0190000012516975,
+				"pin_drift": 0.0,
+				"pin_error": 0.0000001564621925354,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.000000240274005136598
+			},
+			{
+				"free_adjustment": 0.0202500075101852,
+				"pin_drift": 0.0,
+				"pin_error": 0.000000149011611938477,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.000000178969088437952
+			},
+			{
+				"free_adjustment": 0.0177499949932098,
+				"pin_drift": 0.0,
+				"pin_error": 0.000000186264514923096,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.000000266560078898692
+			}
+		],
+		"mode": "sprint"
+	},
+	{
+		"bodies": [
+			{
+				"free_adjustment": 0.000754603883251548,
+				"pin_drift": 0.0,
+				"pin_error": 0.000000782310962677002,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.000000782310962677002
+			},
+			{
+				"free_adjustment": 0.00305960071273148,
+				"pin_drift": 0.0,
+				"pin_error": 0.000000180051415554772,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.000000180051415554772
+			},
+			{
+				"free_adjustment": 0.0142777347937226,
+				"pin_drift": 0.0,
+				"pin_error": 0.000000171363353729248,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.000000171363353729248
+			},
+			{
+				"free_adjustment": 0.00102496787440032,
+				"pin_drift": 0.0,
+				"pin_error": 0.0000388803528039716,
+				"pose_reapply_error": 0.0,
+				"reapply_drift": 0.0,
+				"releases": 0,
+				"target_error": 0.0000388803528039716
+			}
+		],
+		"mode": "walk"
+	},
+	{
+		"blocked_input": true,
+		"inner_width": 0.7,
+		"max_pin_drift": 0.0,
+		"max_queries": 1,
+		"max_target": 0.000000607302297339629,
+		"minimum_gap": 0.0878628641366959,
+		"turn_steps": 12,
+		"turn_yaw": 3.14159265358979
+	},
+	{
+		"blocked_input": true,
+		"inner_width": 1.0,
+		"max_pin_drift": 0.0,
+		"max_queries": 2,
+		"max_target": 0.00103591289371252,
+		"minimum_gap": 0.0798965692520142,
+		"turn_steps": 0,
+		"turn_yaw": 3.14159265358979
+	},
+	{
+		"blocked_input": true,
+		"inner_width": 1.0,
+		"max_pin_drift": 0.0,
+		"max_queries": 2,
+		"max_target": 0.00103591289371252,
+		"minimum_gap": 0.0798965692520142,
+		"turn_steps": 0,
+		"turn_yaw": -3.14159265358979
+	}
+]

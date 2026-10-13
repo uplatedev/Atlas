@@ -51,7 +51,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 		name_font_size = value
 		_refresh_if_ready()
 
-@export_group("Lopen")
+@export_group("Joggen", "walk_")
 ## Maximum vooruit in m/s; gecombineerde input krijgt één limiet.
 @export_range(0.1, 20.0, 0.1, "suffix:m/s") var walk_forward_speed: float = 5.0
 ## Zijwaartse snelheid als deel van vooruit; 0.8 betekent 80%.
@@ -81,20 +81,20 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 ## Maximale automatische sprintopstap in meters; geen klimhoogte.
 @export_range(0.0, 1.0, 0.01, "suffix:m") var sprint_step_height: float = 0.35
 
-@export_group("Sneak")
-## Maximum vooruit met Alt in m/s; sneak verandert de staande vorm niet.
+@export_group("Wandelen (Alt)", "sneak_")
+## Ontspannen wandelen met Alt in m/s; houdt de staande botsingsvorm en opgeslagen instancewaarde.
 @export_range(0.1, 20.0, 0.1, "suffix:m/s") var sneak_forward_speed: float = 2.0
-## Zijwaartse sneaksnelheid als deel van vooruit; 0.8 betekent 80%.
+## Zijwaartse wandelsnelheid als deel van vooruit; 0.8 betekent 80%.
 @export_range(0.05, 1.0, 0.01) var sneak_side_ratio: float = 0.8
-## Achterwaartse sneaksnelheid als deel van vooruit; 0.55 betekent 55%.
+## Achterwaartse wandelsnelheid als deel van vooruit; 0.55 betekent 55%.
 @export_range(0.05, 1.0, 0.01) var sneak_back_ratio: float = 0.55
-## Snelheidstoename bij sneak in m/s²; hoger reageert sneller.
+## Snelheidstoename bij wandelen in m/s²; hoger reageert sneller.
 @export_range(0.1, 80.0, 0.5, "suffix:m/s²") var sneak_acceleration: float = 18.0
-## Sneakafremming in m/s²; hoger stopt sneller.
+## Wandelafremming in m/s²; hoger stopt sneller.
 @export_range(0.1, 80.0, 0.5, "suffix:m/s²") var sneak_deceleration: float = 28.0
-## Maximale lichaamsdraai bij sneak in graden/s; hoger volgt sneller.
+## Maximale lichaamsdraai bij wandelen in graden/s; hoger volgt sneller.
 @export_range(0.0, 1440.0, 5.0, "suffix:°/s") var sneak_turn_speed: float = 420.0
-## Maximale automatische sneakopstap in meters; de vorm moet volledig passen.
+## Maximale automatische wandelopstap in meters; de vorm moet volledig passen.
 @export_range(0.0, 1.0, 0.01, "suffix:m") var sneak_step_height: float = 0.35
 
 @export_group("Kruipen")
@@ -184,9 +184,9 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.1, 6.0, 0.05, "suffix:m") var walking_jump_height: float = 1.25
 ## Hoogte boven het afzetpunt in meters bij volle sprint, vóór vermoeidheid.
 @export_range(0.1, 6.0, 0.05, "suffix:m") var sprint_jump_height: float = 0.7
-## Kleine spronghoogte met sneak in meters; blijft bruikbaar voor een opstapje.
+## Kleine spronghoogte met wandelen in meters; blijft bruikbaar voor een opstapje.
 @export_range(0.1, 3.0, 0.01, "suffix:m") var sneak_jump_height: float = 0.45
-## Minimum sneakhoogte in meters bij vermoeidheid; nooit hoger dan de ingestelde basishoogte.
+## Minimum spronghoogte met Alt in meters bij vermoeidheid; nooit hoger dan de ingestelde basishoogte.
 @export_range(0.0, 3.0, 0.01, "suffix:m") var sneak_min_jump_height: float = 0.4
 ## Eenmalige horizontale sprintafzetbonus in m/s; oude bonussen worden nooit opgeteld.
 @export_range(0.0, 15.0, 0.1, "suffix:m/s") var sprint_jump_boost: float = 1.5
@@ -212,7 +212,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.0, 1.0, 0.01) var walking_jump_fatigue_cost: float = 0.30
 ## Vermoeidheid toegevoegd na een sprintsprong; 0.40 is 40 procentpunten.
 @export_range(0.0, 1.0, 0.01) var sprint_jump_fatigue_cost: float = 0.40
-## Vermoeidheid toegevoegd na een sneaksprong; 0.10 is 10 procentpunten.
+## Vermoeidheid toegevoegd na een wandel-sprong; 0.10 is 10 procentpunten.
 @export_range(0.0, 1.0, 0.01) var sneak_jump_fatigue_cost: float = 0.10
 ## Grondseconden voor herstel vanaf 100% stilstandvermoeidheid; lucht telt niet.
 @export_range(0.01, 5.0, 0.01, "suffix:s") var standing_jump_recovery_time: float = 0.65
@@ -220,7 +220,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.01, 5.0, 0.01, "suffix:s") var walking_jump_recovery_time: float = 0.80
 ## Grondseconden voor herstel vanaf 100% sprintvermoeidheid; de reeks bewaart haar langzaamste duur.
 @export_range(0.01, 5.0, 0.01, "suffix:s") var sprint_jump_recovery_time: float = 1.0
-## Grondseconden voor herstel vanaf 100% sneakvermoeidheid; wist eerdere sprintschuld niet.
+## Grondseconden voor herstel vanaf 100% wandelvermoeidheid; wist eerdere sprintschuld niet.
 @export_range(0.01, 5.0, 0.01, "suffix:s") var sneak_jump_recovery_time: float = 0.35
 ## Overblijvend deel van stilstandhoogte bij volle vermoeidheid; 0.6 betekent 60%.
 @export_range(0.0, 1.0, 0.01) var standing_jump_min_height_factor: float = 0.60
@@ -228,7 +228,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.0, 1.0, 0.01) var walking_jump_min_height_factor: float = 0.65
 ## Overblijvend deel van sprinthoogte bij volle vermoeidheid; 0.65 betekent 65%.
 @export_range(0.0, 1.0, 0.01) var sprint_jump_min_height_factor: float = 0.65
-## Overblijvend deel van sneakhoogte bij volle vermoeidheid; de absolute minimumhoogte blijft gelden.
+## Overblijvend deel van spronghoogte met Alt bij volle vermoeidheid; de absolute minimumhoogte blijft gelden.
 @export_range(0.0, 1.0, 0.01) var sneak_jump_min_height_factor: float = 0.90
 ## Overblijvend deel van extra sprintafstand bij volle vermoeidheid; 0 laat de bonus vervallen.
 @export_range(0.0, 1.0, 0.01) var sprint_jump_min_boost_factor: float = 0.0
@@ -338,15 +338,15 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(30.0, 100.0, 1.0, "suffix:° verticaal") var camera_fov_third_person: float = 70.0
 ## Verticale first-personbeeldhoek in graden; gebruikt uitsluitend bij bewust naar de ogen zoomen.
 @export_range(30.0, 100.0, 1.0, "suffix:° verticaal") var camera_fov_first_person: float = 75.0
-## Dynamische FOV voor werkelijke sprint en sneak/kruip/lig; uit houdt de gekozen basisbeeldhoek constant. F4 schakelt dit tijdens spelen.
+## Dynamische FOV voor werkelijke sprint en wandelen/kruip/lig; uit houdt de gekozen basisbeeldhoek constant. F4 schakelt dit tijdens spelen.
 @export var camera_speed_fov_enabled: bool = true
 ## Grootste extra verticale beeldhoek in graden bij sprint; sprongbonus vergroot deze waarde niet.
 @export_range(0.0, 15.0, 0.5, "suffix:°") var camera_sprint_fov_bonus: float = 6.0
-## Extra verticale FOV in graden bij sneak; negatief geeft rustiger/iets nauwer zicht. F4 schakelt ook deze profielverandering uit.
+## Extra verticale FOV in graden bij wandelen; negatief geeft rustiger/iets nauwer zicht. F4 schakelt ook deze profielverandering uit.
 @export_range(-15.0, 15.0, 0.5, "suffix:°") var camera_sneak_fov_offset: float = -2.0
 ## Extra verticale FOV in graden bij kruipen; negatief versmalt licht. Overgang gebruikt dezelfde FOV-halveringstijden.
 @export_range(-15.0, 15.0, 0.5, "suffix:°") var camera_crouch_fov_offset: float = -3.0
-## Extra verticale FOV in graden bij liggen; onafhankelijk van sneak en kruip. 0 behoudt de gewone basisbeeldhoek.
+## Extra verticale FOV in graden bij liggen; onafhankelijk van wandelen en kruip. 0 behoudt de gewone basisbeeldhoek.
 @export_range(-15.0, 15.0, 0.5, "suffix:°") var camera_prone_fov_offset: float = -5.0
 ## Seconden om de helft van een toenemende FOV-afwijking weg te werken; lager reageert sneller.
 @export_range(0.0, 1.0, 0.01, "suffix:s") var camera_fov_rise_half_life: float = 0.10
@@ -381,7 +381,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.1, 20.0, 0.1, "suffix:m") var feedback_unit_size: float = 4.0
 
 @export_group("Audio: samples")
-## Varianten voor stappen tijdens lopen, sprint en sneak; lege lijst geeft stil contact.
+## Varianten voor stappen tijdens lopen, sprint en wandelen; lege lijst geeft stil contact.
 @export var feedback_footstep_samples: Array[AudioStream] = [preload("res://assets/audio/footstep_concrete_000.wav"), preload("res://assets/audio/footstep_concrete_001.wav"), preload("res://assets/audio/footstep_concrete_002.wav"), preload("res://assets/audio/footstep_concrete_003.wav"), preload("res://assets/audio/footstep_concrete_004.wav")]
 ## Zachtere contactvarianten voor kruip en lig; geen gewone voetstap nodig bij lage houdingen.
 @export var feedback_low_contact_samples: Array[AudioStream] = [preload("res://assets/audio/low_contact_carpet_000.wav"), preload("res://assets/audio/low_contact_carpet_001.wav"), preload("res://assets/audio/low_contact_carpet_002.wav")]
@@ -401,9 +401,9 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.2, 4.0, 0.05, "suffix:m") var sprint_step_distance: float = 2.4
 ## Extra contactsterkte tijdens sprint in dB.
 @export_range(-30.0, 6.0, 0.5, "suffix:dB") var sprint_contact_volume_db: float = 1.0
-## Werkelijk ondersteunde sneakmeters per contact; langzaam bewegen klinkt minder vaak.
+## Werkelijk ondersteunde wandelmeters per contact; langzaam bewegen klinkt minder vaak.
 @export_range(0.2, 4.0, 0.05, "suffix:m") var sneak_step_distance: float = 1.3
-## Extra contactsterkte tijdens sneak in dB; negatief geeft zachtere stappen en afzet.
+## Extra contactsterkte tijdens wandelen in dB; negatief geeft zachtere stappen en afzet.
 @export_range(-30.0, 6.0, 0.5, "suffix:dB") var sneak_contact_volume_db: float = -12.0
 ## Werkelijk ondersteunde kruipmeters per laag contactgeluid.
 @export_range(0.2, 4.0, 0.05, "suffix:m") var crouch_step_distance: float = 1.2
@@ -423,7 +423,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.0, 3.0, 0.1, "suffix:dB") var feedback_volume_variation_db: float = 1.0
 
 @export_group("Audio: afzet en landing")
-## Basissterkte van een geaccepteerde afzet in dB; sneak gebruikt bovendien zijn zachtere profiel.
+## Basissterkte van een geaccepteerde afzet in dB; wandelen gebruikt bovendien zijn zachtere profiel.
 @export_range(-30.0, 6.0, 0.5, "suffix:dB") var feedback_jump_volume_db: float = -5.0
 ## Minimale neerwaartse impactsnelheid in m/s voor een landingscue; gewone opstapsteun geeft geen impact.
 @export_range(0.0, 10.0, 0.1, "suffix:m/s") var landing_min_speed: float = 0.75
@@ -1237,11 +1237,15 @@ func _try_start_stride(delta: float, supported: bool) -> bool:
 		return false
 	var speed := Vector2(velocity.x, velocity.z).length()
 	var moving := speed > 0.10 and _actual_speed > 0.10
-	var duration := body_profile.get_support_duration(speed, _procedural_leg_length, _sneak_requested)
-	var first_support_ratio := 1.0 if _sprint_requested else body_profile.walk_start_support_ratio
-	if not _stride.support_tick(delta, duration, moving, first_support_ratio, Vector2(velocity.x, velocity.z)):
+	var local_velocity := global_basis.inverse() * Vector3(velocity.x, 0.0, velocity.z)
+	var side_hop := AtlasGaitStyle.side_amount(local_velocity) > 0.5
+	var grounded_walk := _sneak_requested and not side_hop
+	var duration := body_profile.get_support_duration(speed, _procedural_leg_length, grounded_walk)
+	var first_support_ratio := 1.0 if _sprint_requested and not side_hop else body_profile.walk_start_support_ratio
+	if not _stride.support_tick(delta, duration, moving, first_support_ratio, Vector2(velocity.x, velocity.z), grounded_walk, not _input_direction.is_zero_approx()):
 		return false
-	var height := body_profile.get_flight_height(speed / maxf(body_profile.reference_speed, 0.1), _procedural_leg_length, _sneak_requested)
+	# Alt wandelt met grondsteun. Zijwaartse hup, jog en sprint gebruiken de echte boog.
+	var height := 0.0 if grounded_walk else body_profile.get_flight_height(speed / maxf(body_profile.reference_speed, 0.1), _procedural_leg_length, false)
 	if height <= 0.000001:
 		_ground_step_requested = true
 		return false
@@ -1251,6 +1255,9 @@ func _try_start_stride(delta: float, supported: bool) -> bool:
 	# Ook een heel kleine ingestelde pas krijgt bij 60 Hz een echte luchtframe.
 	height = maxf(height, 0.5 * gravity_strength * delta * delta)
 	if not _shape_sweep_clear(Posture.STAND, global_transform, Vector3.UP * (height + 0.003)):
+		_ground_step_requested = true
+		return false
+	if _stride.defer_flight_until_next_step():
 		_ground_step_requested = true
 		return false
 	# Gebruik de gemiddelde verticale snelheid van de eerste integratiestap.
@@ -1355,7 +1362,7 @@ func _physics_process(delta: float) -> void:
 				_ground_step_requested = true
 			else:
 				stride_landed = true
-				_stride.touch_down()
+				_stride.touch_down(Vector2(velocity.x, velocity.z))
 			_stride_jump_available = false
 			_air_kind = "none"
 	elif get_camera_grounded() and not jumped and not external_lift:
@@ -1364,7 +1371,7 @@ func _physics_process(delta: float) -> void:
 		_air_kind = "fall"
 	var ground_step := _ground_step_requested and get_camera_grounded() and _actual_speed > 0.10
 	if ground_step:
-		_stride.supported_step()
+		_stride.supported_step(Vector2(velocity.x, velocity.z))
 	elif _ground_step_requested:
 		_stride.cancel()
 	if _slide_active and (not get_camera_grounded() or _actual_speed < 0.02):
@@ -1385,6 +1392,7 @@ func _physics_process(delta: float) -> void:
 	contact.delta = delta
 	contact.horizontal_travel = Vector3(travel.x, 0.0, travel.z)
 	contact.horizontal_speed = _actual_speed
+	contact.movement_requested = not _input_direction.is_zero_approx()
 	contact.incoming_velocity = incoming_velocity
 	contact.supported = get_camera_grounded() and not jumped and not stride_started and not external_lift
 	contact.real_grounded = is_on_floor() and not jumped and not stride_started and not external_lift

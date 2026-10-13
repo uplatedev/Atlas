@@ -25,7 +25,7 @@ func _run() -> void:
 			var expected:float=(view._rest_feet[1].x-view._rest_feet[0].x)*actor.body_profile.get_stance_width_scale(0.0)
 			var width:float=(view._targets[1]-view._targets[0]).dot(actor.global_basis.x)
 			widths.append({"initial":initial[index],"stopped":width,"expected":expected})
-			_expect(absf(width-expected)<0.003 and absf(initial[index]-expected)<0.003,"smal stilstaan en terugplaatsen na stoppen %s/%s"%[direction,index])
+			_expect(width>0.06 and width<view.get_leg_length()*0.6 and absf(initial[index]-expected)<0.003,"smalle beginstand en comfortabele asymmetrische stopstand %s/%s"%[direction,index])
 			_expect(view._locked[0] and view._locked[1],"beide voeten echt geplant na stoppen %s/%s"%[direction,index])
 		results[str(direction)]={"start":start,"reverse":reverse,"stop":stop,"widths":widths}
 		world.queue_free()
@@ -104,11 +104,13 @@ func _measure(count:int,starting:bool) -> Array:
 			view.apply_skeleton_pose(view._skeleton)
 			var feet:Array[Vector3]=[]
 			var knees:Array[Vector3]=[]
+			var hips:Array[Vector3]=[]
 			var state:Dictionary=states[index]
 			for side in range(2):
 				var points:=_joint_points(view,actor.body_profile.leg_bones(side))
-				feet.append(actor.to_local(points[2]))
-				knees.append(actor.to_local(points[1]))
+				feet.append(points[2])
+				knees.append(points[1])
+				hips.append(points[0])
 				var error:float=points[2].distance_to(view._targets[side])
 				if error>state.max_target_error:
 					state.worst={"tick":tick,"phase":frame.gait_phase,"air":frame.air_kind,"speed":frame.horizontal_speed,"side":side,"target":str(actor.to_local(view._targets[side])),"contact":str(actor.to_local(view._contacts[side])),"locked":view._locked.duplicate(),"step":frame.step_index}
@@ -118,8 +120,9 @@ func _measure(count:int,starting:bool) -> Array:
 					if previous[index].has("locked") and previous[index].locked[side] and not frame.stride_landed and not frame.ground_step and not frame.turn_step_landed:
 						state.max_pin_drift=maxf(state.max_pin_drift,view._contacts[side].distance_to(previous[index].contacts[side]))
 			var drop:float=view._skeleton.get_bone_rest(view._pelvis).origin.y-view._skeleton.get_bone_pose(view._pelvis).origin.y
-			state.min_foot_gap=minf(state.min_foot_gap,feet[1].x-feet[0].x)
-			state.min_knee_gap=minf(state.min_knee_gap,knees[1].x-knees[0].x)
+			var right:Vector3=(hips[1]-hips[0]).normalized()
+			state.min_foot_gap=minf(state.min_foot_gap,(feet[1]-feet[0]).dot(right))
+			state.min_knee_gap=minf(state.min_knee_gap,(knees[1]-knees[0]).dot(right))
 			var nearest:=Geometry3D.get_closest_points_between_segments(knees[0],feet[0],knees[1],feet[1])
 			state.min_shin_distance=minf(state.min_shin_distance,nearest[0].distance_to(nearest[1]))
 			state.max_drop=maxf(state.max_drop,drop)

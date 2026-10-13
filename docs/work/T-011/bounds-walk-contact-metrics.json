@@ -1,0 +1,2567 @@
+{
+	"(-0.707107, -0.707107)": {
+		"reverse": [
+			{
+				"air_frames": 60,
+				"ground_steps": 0,
+				"max_drop": 0.0538027286529541,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000260770320892334,
+				"max_start_compression": 0.0102188191510433,
+				"max_start_drop": 0.0538027286529541,
+				"max_steady_drop": 0.0445874929428101,
+				"max_target_error": 0.000000950993012338586,
+				"min_foot_gap": 0.142353013157845,
+				"min_knee_gap": 0.129541888833046,
+				"min_shin_distance": 0.161480337381363,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.804884, -0.000133, -0.678923)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.495461701017881,
+					"side": 0,
+					"speed": 3.20475196838379,
+					"step": 21,
+					"target": "(-0.051572, 0.190438, 0.07439)",
+					"tick": 114
+				}
+			},
+			{
+				"air_frames": 56,
+				"ground_steps": 0,
+				"max_drop": 0.124478578567505,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000134110450744629,
+				"max_start_compression": 0.0113117676388412,
+				"max_start_drop": 0.124478578567505,
+				"max_steady_drop": 0.0695812702178955,
+				"max_target_error": 0.000000238418579101563,
+				"min_foot_gap": 0.074493408203125,
+				"min_knee_gap": 0.142574027180672,
+				"min_shin_distance": 0.126183480024338,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.308175, -0.021127, -0.226858)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.677149819176905,
+					"side": 0,
+					"speed": 3.20475196838379,
+					"step": 18,
+					"target": "(-0.236375, 0.182927, -0.155058)",
+					"tick": 92
+				}
+			},
+			{
+				"air_frames": 55,
+				"ground_steps": 0,
+				"max_drop": 0.0733211636543274,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000141561031341553,
+				"max_start_compression": 0.013612031307139,
+				"max_start_drop": 0.0733211636543274,
+				"max_steady_drop": 0.073271632194519,
+				"max_target_error": 0.000000149011611938477,
+				"min_foot_gap": 0.0721720606088638,
+				"min_knee_gap": 0.122048333287239,
+				"min_shin_distance": 0.124460928142071,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.824716, -0.000871, -0.743396)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.457929051798324,
+					"side": 0,
+					"speed": 3.20479249954224,
+					"step": 15,
+					"target": "(-0.045317, 0.235327, 0.036)",
+					"tick": 57
+				}
+			},
+			{
+				"air_frames": 61,
+				"ground_steps": 0,
+				"max_drop": 0.145130932331085,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000178813934326172,
+				"max_start_compression": 0.0105401124576903,
+				"max_start_drop": 0.145130932331085,
+				"max_steady_drop": 0.066036581993103,
+				"max_target_error": 0.000000240274005136598,
+				"min_foot_gap": 0.0772929638624191,
+				"min_knee_gap": 0.165405958890915,
+				"min_shin_distance": 0.125353172421455,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.541324, -0.000132, -0.622641)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.261213036054434,
+					"side": 1,
+					"speed": 3.20476961135864,
+					"step": 24,
+					"target": "(-0.049547, 0.204656, -0.130864)",
+					"tick": 156
+				}
+			}
+		],
+		"start": [
+			{
+				"air_frames": 83,
+				"ground_steps": 0,
+				"max_drop": 0.0452359914779663,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000312924385070801,
+				"max_start_compression": 0.0116453609769948,
+				"max_start_drop": 0.0452359914779663,
+				"max_steady_drop": 0.0451636910438538,
+				"max_target_error": 0.000000894069671630859,
+				"min_foot_gap": 0.10203592479229,
+				"min_knee_gap": 0.124235384166241,
+				"min_shin_distance": 0.129189223051071,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.761484, -0.000871, 0.887443)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.455276130106967,
+					"side": 0,
+					"speed": 4.41728591918945,
+					"step": 9,
+					"target": "(-0.047924, 0.207992, 0.078039)",
+					"tick": 121
+				}
+			},
+			{
+				"air_frames": 77,
+				"ground_steps": 0,
+				"max_drop": 0.0731903910636902,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000146759418839792,
+				"max_start_compression": 0.0131363225992096,
+				"max_start_drop": 0.0731903910636902,
+				"max_steady_drop": 0.0721895098686218,
+				"max_target_error": 0.000000242573321429518,
+				"min_foot_gap": 0.110161475837231,
+				"min_knee_gap": 0.161277174949646,
+				"min_shin_distance": 0.122187569737434,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(1.001625, -0.016488, 0.920345)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.572806231277952,
+					"side": 1,
+					"speed": 4.4265718460083,
+					"step": 2,
+					"target": "(-0.00639, 0.203869, -0.087386)",
+					"tick": 35
+				}
+			},
+			{
+				"air_frames": 84,
+				"ground_steps": 0,
+				"max_drop": 0.0700462460517883,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000149011611938477,
+				"max_start_compression": 0.0140007975010627,
+				"max_start_drop": 0.0700462460517883,
+				"max_steady_drop": 0.0692514777183533,
+				"max_target_error": 0.000000197686247815909,
+				"min_foot_gap": 0.110129952430725,
+				"min_knee_gap": 0.146876290440559,
+				"min_shin_distance": 0.127937942743301,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.429081, -0.017482, 0.486581)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.92879568407017,
+					"side": 0,
+					"speed": 4.41726064682007,
+					"step": 0,
+					"target": "(0.068339, 0.202248, 0.173313)",
+					"tick": 12
+				}
+			},
+			{
+				"air_frames": 82,
+				"ground_steps": 0,
+				"max_drop": 0.0621951222419739,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000149011611938477,
+				"max_start_compression": 0.0122720860787075,
+				"max_start_drop": 0.0621951222419739,
+				"max_steady_drop": 0.0619638562202454,
+				"max_target_error": 0.000000168587391158326,
+				"min_foot_gap": 0.103906139731407,
+				"min_knee_gap": 0.174118831753731,
+				"min_shin_distance": 0.114257261157036,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.441004, -0.023623, 0.359723)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.876631085595144,
+					"side": 1,
+					"speed": 4.41725587844849,
+					"step": 1,
+					"target": "(0.15773, 0.198942, 0.0775)",
+					"tick": 24
+				}
+			}
+		],
+		"stop": [
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0441321134567261,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000277277734994641,
+				"max_start_compression": 0.00925953091382913,
+				"max_start_drop": 0.0441321134567261,
+				"max_steady_drop": 0.0337859392166138,
+				"max_target_error": 0.000000277277734994641,
+				"min_foot_gap": 0.107803717255592,
+				"min_knee_gap": 0.121516421437263,
+				"min_shin_distance": 0.254556089639664,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.059078, -0.000131, 0.185041)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0,
+					"side": 0,
+					"speed": 0.0,
+					"step": 26,
+					"target": "(0.059078, 0.096922, 0.185041)",
+					"tick": 19
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0246216058731079,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000111758708953857,
+				"max_start_compression": 0.0101522199378475,
+				"max_start_drop": 0.0246216058731079,
+				"max_steady_drop": 0.0174248218536377,
+				"max_target_error": 0.000000111758708953857,
+				"min_foot_gap": 0.0965094566345215,
+				"min_knee_gap": 0.157948538661003,
+				"min_shin_distance": 0.170092776417732,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.040745, -0.000131, 0.040572)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.0,
+					"side": 0,
+					"speed": 0.0,
+					"step": 24,
+					"target": "(-0.040745, 0.109869, 0.040572)",
+					"tick": 7
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0217809081077576,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000119209289550781,
+				"max_start_compression": 0.00955035291394188,
+				"max_start_drop": 0.0217809081077576,
+				"max_steady_drop": 0.0139057636260986,
+				"max_target_error": 0.000000119209289550781,
+				"min_foot_gap": 0.100023485720158,
+				"min_knee_gap": 0.14431332051754,
+				"min_shin_distance": 0.141583412885666,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.127035, 0.12203, -0.045718)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.0,
+					"side": 0,
+					"speed": 0.0,
+					"step": 23,
+					"target": "(-0.127035, 0.247207, -0.045718)",
+					"tick": 5
+				}
+			},
+			{
+				"air_frames": 1,
+				"ground_steps": 0,
+				"max_drop": 0.0770270228385925,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.00000025023305738614,
+				"max_start_compression": 0.0089719094608887,
+				"max_start_drop": 0.0770270228385925,
+				"max_steady_drop": 0.0706347227096558,
+				"max_target_error": 0.00000025023305738614,
+				"min_foot_gap": 0.0797339379787445,
+				"min_knee_gap": 0.165849313139915,
+				"min_shin_distance": 0.267021745443344,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.225908, -0.000878, -0.166698)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0,
+					"side": 1,
+					"speed": 0.0,
+					"step": 26,
+					"target": "(0.225908, 0.109122, -0.166698)",
+					"tick": 24
+				}
+			}
+		],
+		"widths": [
+			{
+				"expected": 0.178139448165894,
+				"initial": 0.178139209747314,
+				"stopped": 0.107804298400879
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.115000009536743
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.142057061195374
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000247955322,
+				"stopped": 0.113600008189678
+			}
+		]
+	},
+	"(-1.0, 0.0)": {
+		"reverse": [
+			{
+				"air_frames": 75,
+				"ground_steps": 0,
+				"max_drop": 0.0465254783630371,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000329851275182591,
+				"max_start_compression": 0.0107937340570954,
+				"max_start_drop": 0.0465251207351685,
+				"max_steady_drop": 0.0465254783630371,
+				"max_target_error": 0.000000354196544094521,
+				"min_foot_gap": 0.177465602755547,
+				"min_knee_gap": 0.162375494837761,
+				"min_shin_distance": 0.152602806687355,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.523033, -0.026731, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.742515531596496,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 24,
+					"target": "(-0.134931, 0.120609, 0.0)",
+					"tick": 163
+				}
+			},
+			{
+				"air_frames": 71,
+				"ground_steps": 0,
+				"max_drop": 0.0886386036872864,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000143314778711101,
+				"max_start_compression": 0.0123348072712936,
+				"max_start_drop": 0.0886386036872864,
+				"max_steady_drop": 0.0886300802230835,
+				"max_target_error": 0.00000017709827204726,
+				"min_foot_gap": 0.114565216004848,
+				"min_knee_gap": 0.164243027567863,
+				"min_shin_distance": 0.110305204987526,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.5282, -0.030619, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.728344514075098,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 16,
+					"target": "(-0.045448, 0.136354, 0.0)",
+					"tick": 70
+				}
+			},
+			{
+				"air_frames": 71,
+				"ground_steps": 0,
+				"max_drop": 0.0923032760620117,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000141561031341553,
+				"max_start_compression": 0.013146383458101,
+				"max_start_drop": 0.0923032760620117,
+				"max_steady_drop": 0.0922940373420715,
+				"max_target_error": 0.000000149754811218372,
+				"min_foot_gap": 0.114565216004848,
+				"min_knee_gap": 0.155891835689545,
+				"min_shin_distance": 0.110561430454254,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.329256, -0.027442, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.647456393282989,
+					"side": 1,
+					"speed": 3.99999594688416,
+					"step": 15,
+					"target": "(-0.101618, 0.132666, 0.0)",
+					"tick": 54
+				}
+			},
+			{
+				"air_frames": 75,
+				"ground_steps": 0,
+				"max_drop": 0.145936846733093,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000175365840959785,
+				"max_start_compression": 0.0114480577405757,
+				"max_start_drop": 0.145936846733093,
+				"max_steady_drop": 0.0850304961204529,
+				"max_target_error": 0.000000178852729959544,
+				"min_foot_gap": 0.114565216004848,
+				"min_knee_gap": 0.173442110419273,
+				"min_shin_distance": 0.102860160171986,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.422901, -0.021263, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.676382393002603,
+					"side": 1,
+					"speed": 3.89997458457947,
+					"step": 13,
+					"target": "(-0.16923, 0.131921, 0.0)",
+					"tick": 11
+				}
+			}
+		],
+		"start": [
+			{
+				"air_frames": 77,
+				"ground_steps": 0,
+				"max_drop": 0.0465803146362305,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000271205237822869,
+				"max_start_compression": 0.0111788549757553,
+				"max_start_drop": 0.0465803146362305,
+				"max_steady_drop": 0.0465257167816162,
+				"max_target_error": 0.000000443043376208152,
+				"min_foot_gap": 0.105949737131596,
+				"min_knee_gap": 0.123292751610279,
+				"min_shin_distance": 0.109745398163795,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.411559, -0.024468, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.823354042128662,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 1,
+					"target": "(-0.169215, 0.118175, 0.0)",
+					"tick": 22
+				}
+			},
+			{
+				"air_frames": 72,
+				"ground_steps": 0,
+				"max_drop": 0.088630199432373,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000153597653707038,
+				"max_start_compression": 0.0126101206456178,
+				"max_start_drop": 0.0880828499794006,
+				"max_steady_drop": 0.088630199432373,
+				"max_target_error": 0.00000017709827204726,
+				"min_foot_gap": 0.114565216004848,
+				"min_knee_gap": 0.16417133808136,
+				"min_shin_distance": 0.110305204987526,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.5282, -0.030619, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.728344514075098,
+					"side": 1,
+					"speed": 3.99999594688416,
+					"step": 9,
+					"target": "(0.045448, 0.136354, 0.0)",
+					"tick": 144
+				}
+			},
+			{
+				"air_frames": 72,
+				"ground_steps": 0,
+				"max_drop": 0.0922941565513611,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000141561031341553,
+				"max_start_compression": 0.013439730176241,
+				"max_start_drop": 0.0917110443115234,
+				"max_steady_drop": 0.0922941565513611,
+				"max_target_error": 0.000000168092753938254,
+				"min_foot_gap": 0.114565223455429,
+				"min_knee_gap": 0.155823424458504,
+				"min_shin_distance": 0.110557898879051,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.395923, -0.032391, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.721184589924483,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 2,
+					"target": "(-0.083145, 0.137887, 0.0)",
+					"tick": 39
+				}
+			},
+			{
+				"air_frames": 77,
+				"ground_steps": 0,
+				"max_drop": 0.0850266814231873,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000149754811218372,
+				"max_start_compression": 0.0117805166852429,
+				"max_start_drop": 0.0843952894210815,
+				"max_steady_drop": 0.0850266814231873,
+				"max_target_error": 0.00000018566751691651,
+				"min_foot_gap": 0.111413680016994,
+				"min_knee_gap": 0.168761119246483,
+				"min_shin_distance": 0.110151141881943,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.591412, -0.006697, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.972496052693463,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 0,
+					"target": "(-0.298569, 0.114273, 0.0)",
+					"tick": 12
+				}
+			}
+		],
+		"stop": [
+			{
+				"air_frames": 1,
+				"ground_steps": 0,
+				"max_drop": 0.0401681661605835,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000277177633734027,
+				"max_start_compression": 0.00930302432009641,
+				"max_start_drop": 0.0401681661605835,
+				"max_steady_drop": 0.0130423307418823,
+				"max_target_error": 0.000000277177633734027,
+				"min_foot_gap": 0.177465841174126,
+				"min_knee_gap": 0.164884239435196,
+				"min_shin_distance": 0.1539246737957,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.321927, -0.000908, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0,
+					"side": 1,
+					"speed": 2.666659116745,
+					"step": 26,
+					"target": "(0.321927, 0.096146, 0.0)",
+					"tick": 1
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0676547288894653,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000120137002568299,
+				"max_start_compression": 0.0122601858830314,
+				"max_start_drop": 0.0676547288894653,
+				"max_steady_drop": 0.0196727514266968,
+				"max_target_error": 0.000000120137002568299,
+				"min_foot_gap": 0.114576414227486,
+				"min_knee_gap": 0.165851458907127,
+				"min_shin_distance": 0.112458154559135,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.220156, -0.000872, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0913742629384445,
+					"side": 1,
+					"speed": 2.666659116745,
+					"step": 24,
+					"target": "(0.220156, 0.109128, 0.0)",
+					"tick": 1
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0717000961303711,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000103774581816651,
+				"max_start_compression": 0.0130667718309633,
+				"max_start_drop": 0.0717000961303711,
+				"max_steady_drop": 0.0224812626838684,
+				"max_target_error": 0.000000103774581816651,
+				"min_foot_gap": 0.114575102925301,
+				"min_knee_gap": 0.155973345041275,
+				"min_shin_distance": 0.112443968653679,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.170769, -0.000132, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0,
+					"side": 1,
+					"speed": 0.0,
+					"step": 24,
+					"target": "(0.170769, 0.109868, 0.0)",
+					"tick": 34
+				}
+			},
+			{
+				"air_frames": 3,
+				"ground_steps": 0,
+				"max_drop": 0.0831069946289063,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000126878816786302,
+				"max_start_compression": 0.00823234207657636,
+				"max_start_drop": 0.0831069946289063,
+				"max_steady_drop": 0.0667469501495361,
+				"max_target_error": 0.000000126878816786302,
+				"min_foot_gap": 0.114565223455429,
+				"min_knee_gap": 0.173443347215652,
+				"min_shin_distance": 0.110164172947407,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.291765, -0.000132, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0,
+					"side": 1,
+					"speed": 0.0,
+					"step": 26,
+					"target": "(0.291765, 0.109868, 0.0)",
+					"tick": 43
+				}
+			}
+		],
+		"widths": [
+			{
+				"expected": 0.178139448165894,
+				"initial": 0.178139209747314,
+				"stopped": 0.178139209747314
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.115000009536743
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.115000009536743
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000247955322,
+				"stopped": 0.114999771118164
+			}
+		]
+	},
+	"(0.0, -1.0)": {
+		"reverse": [],
+		"start": [
+			{
+				"air_frames": 89,
+				"ground_steps": 0,
+				"max_drop": 0.0472157597541809,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000245869159698486,
+				"max_start_compression": 0.0122968868187527,
+				"max_start_drop": 0.0472157597541809,
+				"max_steady_drop": 0.0463218688964844,
+				"max_target_error": 0.00000114893657610082,
+				"min_foot_gap": 0.168143332004547,
+				"min_knee_gap": 0.15407395362854,
+				"min_shin_distance": 0.165398776531219,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.090473, -0.000871, 1.100605)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.343558422672895,
+					"side": 0,
+					"speed": 4.99998044967651,
+					"step": 13,
+					"target": "(-0.090473, 0.219852, 0.100812)",
+					"tick": 159
+				}
+			},
+			{
+				"air_frames": 89,
+				"ground_steps": 0,
+				"max_drop": 0.073481023311615,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000134110450744629,
+				"max_start_compression": 0.0138712188693239,
+				"max_start_drop": 0.073481023311615,
+				"max_steady_drop": 0.0728880167007446,
+				"max_target_error": 0.000000178813934326172,
+				"min_foot_gap": 0.104406736791134,
+				"min_knee_gap": 0.160268545150757,
+				"min_shin_distance": 0.115000009536743,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.058406, -0.017599, 1.487387)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.571221586988632,
+					"side": 0,
+					"speed": 5.00129652023315,
+					"step": 3,
+					"target": "(-0.058408, 0.200129, -0.064298)",
+					"tick": 48
+				}
+			},
+			{
+				"air_frames": 89,
+				"ground_steps": 0,
+				"max_drop": 0.0708784461021423,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000111758708953857,
+				"max_start_compression": 0.0147840435020449,
+				"max_start_drop": 0.0708784461021423,
+				"max_steady_drop": 0.0705095529556274,
+				"max_target_error": 0.000000134110450744629,
+				"min_foot_gap": 0.103565379977226,
+				"min_knee_gap": 0.146050825715065,
+				"min_shin_distance": 0.115000009536743,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.0575, -0.000806, 0.816692)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.999,
+					"side": 0,
+					"speed": 4.99999856948853,
+					"step": 0,
+					"target": "(-0.058406, 0.204065, 0.167963)",
+					"tick": 13
+				}
+			},
+			{
+				"air_frames": 82,
+				"ground_steps": 0,
+				"max_drop": 0.0851044654846191,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000164588698225998,
+				"max_start_compression": 0.0129586435076473,
+				"max_start_drop": 0.0851044654846191,
+				"max_steady_drop": 0.0844219326972961,
+				"max_target_error": 0.000000179433740754575,
+				"min_foot_gap": 0.104780361056328,
+				"min_knee_gap": 0.177178740501404,
+				"min_shin_distance": 0.115000247955322,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.0575, -0.032421, 1.566711)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.721060174283137,
+					"side": 0,
+					"speed": 5.00000190734863,
+					"step": 1,
+					"target": "(-0.058403, 0.137514, -0.154285)",
+					"tick": 22
+				}
+			}
+		],
+		"stop": [
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0174320340156555,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.0000001564621925354,
+				"max_start_compression": 0.0116582722645717,
+				"max_start_drop": 0.0174320340156555,
+				"max_steady_drop": 0.00319421291351318,
+				"max_target_error": 0.00000107989728803659,
+				"min_foot_gap": 0.180630445480347,
+				"min_knee_gap": 0.165150612592697,
+				"min_shin_distance": 0.167235970497131,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.090158, 0.120833, 0.123078)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.0,
+					"side": 0,
+					"speed": 0.0,
+					"step": 15,
+					"target": "(-0.090158, 0.230205, 0.123078)",
+					"tick": 8
+				}
+			},
+			{
+				"air_frames": 1,
+				"ground_steps": 0,
+				"max_drop": 0.0637243986129761,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.0000000670552253723145,
+				"max_start_compression": 0.0117110807341721,
+				"max_start_drop": 0.0637243986129761,
+				"max_steady_drop": 0.029766321182251,
+				"max_target_error": 0.000000141561031341553,
+				"min_foot_gap": 0.115000009536743,
+				"min_knee_gap": 0.167640745639801,
+				"min_shin_distance": 0.167122349143028,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.058406, -0.001271, 1.976268)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.998551108920426,
+					"side": 1,
+					"speed": 4.33330535888672,
+					"step": 12,
+					"target": "(0.0575, 0.10874, -0.262653)",
+					"tick": 0
+				}
+			},
+			{
+				"air_frames": 2,
+				"ground_steps": 0,
+				"max_drop": 0.0705753564834595,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000104308128356934,
+				"max_start_compression": 0.0115854870124274,
+				"max_start_drop": 0.0705753564834595,
+				"max_steady_drop": 0.0329190492630005,
+				"max_target_error": 0.000000104308128356934,
+				"min_foot_gap": 0.115002989768982,
+				"min_knee_gap": 0.153431236743927,
+				"min_shin_distance": 0.182282447814941,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.057503, 0.083404, 0.202566)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.0,
+					"side": 0,
+					"speed": 0.0,
+					"step": 13,
+					"target": "(-0.057503, 0.233966, 0.202566)",
+					"tick": 12
+				}
+			},
+			{
+				"air_frames": 2,
+				"ground_steps": 0,
+				"max_drop": 0.0629145503044128,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000141561031341553,
+				"max_start_compression": 0.0100509247557028,
+				"max_start_drop": 0.0629145503044128,
+				"max_steady_drop": 0.0323401689529419,
+				"max_target_error": 0.000000149011611938477,
+				"min_foot_gap": 0.11503267288208,
+				"min_knee_gap": 0.18424916267395,
+				"min_shin_distance": 0.180027842521667,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.058406, -0.025674, 0.660197)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.868433623805228,
+					"side": 1,
+					"speed": 4.33330535888672,
+					"step": 13,
+					"target": "(0.057655, 0.199178, 0.179897)",
+					"tick": 0
+				}
+			}
+		],
+		"widths": [
+			{
+				"expected": 0.178139448165894,
+				"initial": 0.178139209747314,
+				"stopped": 0.180630445480347
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.115000009536743
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.115002989768982
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000247955322,
+				"stopped": 0.11503267288208
+			}
+		]
+	},
+	"(0.707107, -0.707107)": {
+		"reverse": [
+			{
+				"air_frames": 60,
+				"ground_steps": 0,
+				"max_drop": 0.0518844723701477,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000314075322194185,
+				"max_start_compression": 0.0102188201033817,
+				"max_start_drop": 0.0518844723701477,
+				"max_steady_drop": 0.0445867776870728,
+				"max_target_error": 0.000000981329435489897,
+				"min_foot_gap": 0.142352059483528,
+				"min_knee_gap": 0.129547506570816,
+				"min_shin_distance": 0.161481335759163,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.678924, -0.000133, -0.804886)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.495461701017881,
+					"side": 0,
+					"speed": 3.20476222038269,
+					"step": 23,
+					"target": "(-0.074391, 0.190438, -0.051572)",
+					"tick": 144
+				}
+			},
+			{
+				"air_frames": 56,
+				"ground_steps": 0,
+				"max_drop": 0.12447851896286,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000141561031341553,
+				"max_start_compression": 0.011311767638841,
+				"max_start_drop": 0.12447851896286,
+				"max_steady_drop": 0.0695813298225403,
+				"max_target_error": 0.000000163912773132324,
+				"min_foot_gap": 0.0744935870170593,
+				"min_knee_gap": 0.142573922872543,
+				"min_shin_distance": 0.126182422041893,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.604542, -0.000871, -0.68586)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.292833581688192,
+					"side": 0,
+					"speed": 3.20477223396301,
+					"step": 23,
+					"target": "(0.042598, 0.220531, -0.123915)",
+					"tick": 166
+				}
+			},
+			{
+				"air_frames": 55,
+				"ground_steps": 0,
+				"max_drop": 0.0733211636543274,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000111758708953857,
+				"max_start_compression": 0.0136120305635321,
+				"max_start_drop": 0.0733211636543274,
+				"max_steady_drop": 0.0732717514038086,
+				"max_target_error": 0.000000149011611938477,
+				"min_foot_gap": 0.072172075510025,
+				"min_knee_gap": 0.122048631310463,
+				"min_shin_distance": 0.124460756778717,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.824716, -0.000871, -0.743399)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.457929051798324,
+					"side": 1,
+					"speed": 3.20479249954224,
+					"step": 18,
+					"target": "(0.045317, 0.235327, 0.036)",
+					"tick": 105
+				}
+			},
+			{
+				"air_frames": 61,
+				"ground_steps": 0,
+				"max_drop": 0.145130693912506,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000163912773132324,
+				"max_start_compression": 0.0105400904676335,
+				"max_start_drop": 0.145130693912506,
+				"max_steady_drop": 0.0660366415977478,
+				"max_target_error": 0.000000163912773132324,
+				"min_foot_gap": 0.0772929638624191,
+				"min_knee_gap": 0.165406376123428,
+				"min_shin_distance": 0.125352323055267,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.063092, -0.000871, -0.018226)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.208970428843547,
+					"side": 0,
+					"speed": 3.20475196838379,
+					"step": 16,
+					"target": "(-0.063092, 0.109129, -0.018226)",
+					"tick": 35
+				}
+			}
+		],
+		"start": [
+			{
+				"air_frames": 83,
+				"ground_steps": 0,
+				"max_drop": 0.0451664924621582,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000245869159698486,
+				"max_start_compression": 0.0116453609769948,
+				"max_start_drop": 0.0442931652069092,
+				"max_steady_drop": 0.0451632142066956,
+				"max_target_error": 0.000000968460881267674,
+				"min_foot_gap": 0.158356994390488,
+				"min_knee_gap": 0.149638578295708,
+				"min_shin_distance": 0.151126116514206,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.887443, -0.000871, 0.76148)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.455276130106967,
+					"side": 0,
+					"speed": 4.4172534942627,
+					"step": 5,
+					"target": "(-0.078039, 0.207992, -0.047925)",
+					"tick": 69
+				}
+			},
+			{
+				"air_frames": 77,
+				"ground_steps": 0,
+				"max_drop": 0.0760163068771362,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000130118792185385,
+				"max_start_compression": 0.0131363256059164,
+				"max_start_drop": 0.0760163068771362,
+				"max_steady_drop": 0.0721891522407532,
+				"max_target_error": 0.000000238883785641519,
+				"min_foot_gap": 0.099484845995903,
+				"min_knee_gap": 0.155105039477348,
+				"min_shin_distance": 0.122004114091396,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.896201, -0.000871, 0.814883)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.403623951848755,
+					"side": 0,
+					"speed": 4.41724538803101,
+					"step": 5,
+					"target": "(-0.082767, 0.24548, 0.001449)",
+					"tick": 75
+				}
+			},
+			{
+				"air_frames": 84,
+				"ground_steps": 0,
+				"max_drop": 0.072399914264679,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000149011611938477,
+				"max_start_compression": 0.0140008007055792,
+				"max_start_drop": 0.072399914264679,
+				"max_steady_drop": 0.0692514777183533,
+				"max_target_error": 0.000000152691470134414,
+				"min_foot_gap": 0.1008535400033,
+				"min_knee_gap": 0.140470951795578,
+				"min_shin_distance": 0.118509650230408,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-1.012603, -0.000155, 0.955103)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.441827036166229,
+					"side": 0,
+					"speed": 4.41725826263428,
+					"step": 1,
+					"target": "(-0.054184, 0.238755, -0.015984)",
+					"tick": 21
+				}
+			},
+			{
+				"air_frames": 82,
+				"ground_steps": 0,
+				"max_drop": 0.0710152387619019,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.0000001564621925354,
+				"max_start_compression": 0.0122720860787075,
+				"max_start_drop": 0.0710152387619019,
+				"max_steady_drop": 0.0619639158248901,
+				"max_target_error": 0.00000019670096662594,
+				"min_foot_gap": 0.100812397897244,
+				"min_knee_gap": 0.175419449806213,
+				"min_shin_distance": 0.114854164421558,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-1.034056, -0.023623, 1.115338)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.876631085595144,
+					"side": 1,
+					"speed": 4.41725063323975,
+					"step": 2,
+					"target": "(0.200286, 0.100033, -0.118928)",
+					"tick": 37
+				}
+			}
+		],
+		"stop": [
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0423901677131653,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000307556490497518,
+				"max_start_compression": 0.00925952455015608,
+				"max_start_drop": 0.0423901677131653,
+				"max_steady_drop": 0.0016445517539978,
+				"max_target_error": 0.000000307556490497518,
+				"min_foot_gap": 0.143223375082016,
+				"min_knee_gap": 0.129893735051155,
+				"min_shin_distance": 0.270033597946167,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.185042, -0.000131, 0.059078)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0,
+					"side": 0,
+					"speed": 0.0,
+					"step": 26,
+					"target": "(-0.185042, 0.096922, 0.059078)",
+					"tick": 46
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0239318609237671,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000126659870147705,
+				"max_start_compression": 0.0101522190647502,
+				"max_start_drop": 0.0239318609237671,
+				"max_steady_drop": 0.00870627164840698,
+				"max_target_error": 0.000000126659870147705,
+				"min_foot_gap": 0.0965095162391663,
+				"min_knee_gap": 0.157948642969131,
+				"min_shin_distance": 0.170092076063156,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.136258, -0.000131, -0.05494)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0,
+					"side": 1,
+					"speed": 0.0,
+					"step": 24,
+					"target": "(0.136258, 0.109869, -0.05494)",
+					"tick": 24
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0255128145217896,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000119209289550781,
+				"max_start_compression": 0.00955035336885738,
+				"max_start_drop": 0.0255128145217896,
+				"max_steady_drop": 0.0177687406539917,
+				"max_target_error": 0.000000119209289550781,
+				"min_foot_gap": 0.100023791193962,
+				"min_knee_gap": 0.144313484430313,
+				"min_shin_distance": 0.141583532094955,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.066295, -0.000878, 0.015022)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.0,
+					"side": 1,
+					"speed": 0.0,
+					"step": 23,
+					"target": "(0.066295, 0.109122, 0.015022)",
+					"tick": 8
+				}
+			},
+			{
+				"air_frames": 1,
+				"ground_steps": 0,
+				"max_drop": 0.0650765299797058,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000134110450744629,
+				"max_start_compression": 0.00897188755236418,
+				"max_start_drop": 0.0650765299797058,
+				"max_steady_drop": 0.0178583860397339,
+				"max_target_error": 0.000000134110450744629,
+				"min_foot_gap": 0.0797337740659714,
+				"min_knee_gap": 0.165849104523659,
+				"min_shin_distance": 0.284113705158234,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.193626, -0.000878, 0.112308)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.0,
+					"side": 0,
+					"speed": 0.0,
+					"step": 26,
+					"target": "(-0.193626, 0.109122, 0.112308)",
+					"tick": 5
+				}
+			}
+		],
+		"widths": [
+			{
+				"expected": 0.178139448165894,
+				"initial": 0.178139209747314,
+				"stopped": 0.372380197048187
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.176829695701599
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.115000009536743
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000247955322,
+				"stopped": 0.360322952270508
+			}
+		]
+	},
+	"(1.0, 0.0)": {
+		"reverse": [
+			{
+				"air_frames": 75,
+				"ground_steps": 0,
+				"max_drop": 0.0465259552001953,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000379906566649879,
+				"max_start_compression": 0.0107937340570987,
+				"max_start_drop": 0.0465093851089478,
+				"max_steady_drop": 0.0465259552001953,
+				"max_target_error": 0.000000390071875244757,
+				"min_foot_gap": 0.177465602755547,
+				"min_knee_gap": 0.162375256419182,
+				"min_shin_distance": 0.152603521943092,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.344892, -0.026731, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.742515531596496,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 20,
+					"target": "(-0.043209, 0.120609, 0.0)",
+					"tick": 107
+				}
+			},
+			{
+				"air_frames": 71,
+				"ground_steps": 0,
+				"max_drop": 0.0886301398277283,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000172814921484132,
+				"max_start_compression": 0.0123348072712936,
+				"max_start_drop": 0.0885046720504761,
+				"max_steady_drop": 0.0886301398277283,
+				"max_target_error": 0.000000172814921484132,
+				"min_foot_gap": 0.114565216004848,
+				"min_knee_gap": 0.164228171110153,
+				"min_shin_distance": 0.110305167734623,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.075154, -0.000133, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.394563639638703,
+					"side": 0,
+					"speed": 1.76668155193329,
+					"step": 12,
+					"target": "(0.075154, 0.109867, 0.0)",
+					"tick": 7
+				}
+			},
+			{
+				"air_frames": 71,
+				"ground_steps": 0,
+				"max_drop": 0.0922942161560059,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000171363353729248,
+				"max_start_compression": 0.0131463834587431,
+				"max_start_drop": 0.0921884775161743,
+				"max_steady_drop": 0.0922942161560059,
+				"max_target_error": 0.000000171363353729248,
+				"min_foot_gap": 0.114565216004848,
+				"min_knee_gap": 0.155877619981766,
+				"min_shin_distance": 0.110560342669487,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.062565, -0.000871, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.34293551449368,
+					"side": 0,
+					"speed": 4.00002479553223,
+					"step": 18,
+					"target": "(0.062565, 0.109129, 0.0)",
+					"tick": 95
+				}
+			},
+			{
+				"air_frames": 75,
+				"ground_steps": 0,
+				"max_drop": 0.143631041049957,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000171525243786164,
+				"max_start_compression": 0.0114480577405757,
+				"max_start_drop": 0.143631041049957,
+				"max_steady_drop": 0.0850266814231873,
+				"max_target_error": 0.000000172010004462209,
+				"min_foot_gap": 0.114565216004848,
+				"min_knee_gap": 0.173442602157593,
+				"min_shin_distance": 0.102696768939495,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(0.563947, -0.006011, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.972496052693463,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 14,
+					"target": "(-0.29821, 0.114273, 0.0)",
+					"tick": 28
+				}
+			}
+		],
+		"start": [
+			{
+				"air_frames": 77,
+				"ground_steps": 0,
+				"max_drop": 0.0465253591537476,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000317240790081996,
+				"max_start_compression": 0.0111788549757553,
+				"max_start_drop": 0.0458866357803345,
+				"max_steady_drop": 0.0465253591537476,
+				"max_target_error": 0.000000396564104221397,
+				"min_foot_gap": 0.177465602755547,
+				"min_knee_gap": 0.162373751401901,
+				"min_shin_distance": 0.152602806687355,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.523031, -0.026731, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.742515531596496,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 6,
+					"target": "(-0.13493, 0.120609, 0.0)",
+					"tick": 91
+				}
+			},
+			{
+				"air_frames": 72,
+				"ground_steps": 0,
+				"max_drop": 0.0886693596839905,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.0000001413648220705,
+				"max_start_compression": 0.0126101170375697,
+				"max_start_drop": 0.0886693596839905,
+				"max_steady_drop": 0.088630199432373,
+				"max_target_error": 0.000000169899379898197,
+				"min_foot_gap": 0.114565216004848,
+				"min_knee_gap": 0.164243012666702,
+				"min_shin_distance": 0.110305242240429,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "stride",
+					"contact": "(-0.528203, -0.030619, 0.0)",
+					"locked": [
+						false,
+						false
+					],
+					"phase": 0.728344514075098,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 6,
+					"target": "(-0.045449, 0.136354, 0.0)",
+					"tick": 99
+				}
+			},
+			{
+				"air_frames": 72,
+				"ground_steps": 0,
+				"max_drop": 0.0923360586166382,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000178813934326172,
+				"max_start_compression": 0.0134397340216608,
+				"max_start_drop": 0.0923360586166382,
+				"max_steady_drop": 0.0922942757606506,
+				"max_target_error": 0.000000178813934326172,
+				"min_foot_gap": 0.114565216004848,
+				"min_knee_gap": 0.155891180038452,
+				"min_shin_distance": 0.110561467707157,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.062565, -0.000871, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.34293551449368,
+					"side": 1,
+					"speed": 4.00002479553223,
+					"step": 5,
+					"target": "(-0.062565, 0.109129, 0.0)",
+					"tick": 79
+				}
+			},
+			{
+				"air_frames": 77,
+				"ground_steps": 0,
+				"max_drop": 0.0850840210914612,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000182653224101159,
+				"max_start_compression": 0.0117805166852429,
+				"max_start_drop": 0.0850840210914612,
+				"max_steady_drop": 0.0850266814231873,
+				"max_target_error": 0.000000182653224101159,
+				"min_foot_gap": 0.114565208554268,
+				"min_knee_gap": 0.173442602157593,
+				"min_shin_distance": 0.110150553286076,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.036209, -0.000871, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.260824179524459,
+					"side": 1,
+					"speed": 3.99999594688416,
+					"step": 8,
+					"target": "(0.036209, 0.109129, 0.0)",
+					"tick": 115
+				}
+			}
+		],
+		"stop": [
+			{
+				"air_frames": 1,
+				"ground_steps": 0,
+				"max_drop": 0.0456146597862244,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000253757633572604,
+				"max_start_compression": 0.00930302494545632,
+				"max_start_drop": 0.0456146597862244,
+				"max_steady_drop": 0.0130429267883301,
+				"max_target_error": 0.000000253757633572604,
+				"min_foot_gap": 0.177466094493866,
+				"min_knee_gap": 0.162375375628471,
+				"min_shin_distance": 0.157304257154465,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.25526, -0.000132, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0,
+					"side": 0,
+					"speed": 0.0,
+					"step": 26,
+					"target": "(-0.25526, 0.096922, 0.0)",
+					"tick": 19
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0584096908569336,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000120137002568299,
+				"max_start_compression": 0.0122601809578543,
+				"max_start_drop": 0.0584096908569336,
+				"max_steady_drop": 0.0196727514266968,
+				"max_target_error": 0.000000120137002568299,
+				"min_foot_gap": 0.114576414227486,
+				"min_knee_gap": 0.17249995470047,
+				"min_shin_distance": 0.112993694841862,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.2646, -0.000185, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0507634802171107,
+					"side": 0,
+					"speed": 3.33333468437195,
+					"step": 24,
+					"target": "(-0.2646, 0.109815, 0.0)",
+					"tick": 0
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 0,
+				"max_drop": 0.0624409914016724,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000111758708953857,
+				"max_start_compression": 0.0130667777624797,
+				"max_start_drop": 0.0624409914016724,
+				"max_steady_drop": 0.0224813222885132,
+				"max_target_error": 0.000000111758708953857,
+				"min_foot_gap": 0.114575117826462,
+				"min_knee_gap": 0.160303950309753,
+				"min_shin_distance": 0.112921789288521,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.17077, -0.000132, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0,
+					"side": 0,
+					"speed": 0.0,
+					"step": 24,
+					"target": "(-0.17077, 0.109868, 0.0)",
+					"tick": 7
+				}
+			},
+			{
+				"air_frames": 3,
+				"ground_steps": 0,
+				"max_drop": 0.0749794244766235,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000139188330194884,
+				"max_start_compression": 0.00823234239154678,
+				"max_start_drop": 0.0749794244766235,
+				"max_steady_drop": 0.0667470693588257,
+				"max_target_error": 0.000000139188330194884,
+				"min_foot_gap": 0.114565223455429,
+				"min_knee_gap": 0.18381929397583,
+				"min_shin_distance": 0.111043594777584,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.176765, -0.000132, 0.0)",
+					"locked": [
+						true,
+						true
+					],
+					"phase": 0.0245098039215686,
+					"side": 1,
+					"speed": 0.666661202907562,
+					"step": 26,
+					"target": "(-0.176765, 0.109868, 0.0)",
+					"tick": 4
+				}
+			}
+		],
+		"widths": [
+			{
+				"expected": 0.178139448165894,
+				"initial": 0.178139209747314,
+				"stopped": 0.178139209747314
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.115000009536743
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000009536743,
+				"stopped": 0.115000009536743
+			},
+			{
+				"expected": 0.115000009536743,
+				"initial": 0.115000247955322,
+				"stopped": 0.114999771118164
+			}
+		]
+	},
+	"ceiling": [
+		[
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.073538601398468,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000232047014492309,
+				"max_start_compression": 0.0108788809202284,
+				"max_start_drop": 0.073413610458374,
+				"max_steady_drop": 0.073538601398468,
+				"max_target_error": 0.000000670552253723145,
+				"min_foot_gap": 0.107396692037582,
+				"min_knee_gap": 0.126637205481529,
+				"min_shin_distance": 0.103731401264668,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.656213, -0.000871, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.549693476276632,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 11,
+					"target": "(-0.083256, 0.157095, 0.0)",
+					"tick": 90
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.0893256664276123,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000134162178255792,
+				"max_start_compression": 0.0126082412377935,
+				"max_start_drop": 0.0893256664276123,
+				"max_steady_drop": 0.0890658497810364,
+				"max_target_error": 0.0000001413648220705,
+				"min_foot_gap": 0.121140420436859,
+				"min_knee_gap": 0.167861074209213,
+				"min_shin_distance": 0.116318315267563,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.413177, -0.000155, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.243664710851551,
+					"side": 1,
+					"speed": 4.0,
+					"step": 2,
+					"target": "(0.325771, 0.152271, 0.0)",
+					"tick": 18
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.0940245985984802,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000178813934326172,
+				"max_start_compression": 0.013437726161784,
+				"max_start_drop": 0.0940245985984802,
+				"max_steady_drop": 0.0935757160186768,
+				"max_target_error": 0.000000178813934326172,
+				"min_foot_gap": 0.129110336303711,
+				"min_knee_gap": 0.165099918842316,
+				"min_shin_distance": 0.123901948332787,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.177564, -0.000871, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.685871028987361,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 4,
+					"target": "(-0.177564, 0.109129, 0.0)",
+					"tick": 40
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0861038565635681,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000164967701721253,
+				"max_start_compression": 0.0117787654167847,
+				"max_start_drop": 0.0861038565635681,
+				"max_steady_drop": 0.0855702757835388,
+				"max_target_error": 0.000000169899379898197,
+				"min_foot_gap": 0.113170512020588,
+				"min_knee_gap": 0.173982754349709,
+				"min_shin_distance": 0.108864918351173,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.612126, -0.000155, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.521648359048918,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 5,
+					"target": "(-0.077391, 0.176855, 0.0)",
+					"tick": 43
+				}
+			}
+		],
+		[
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0728217363357544,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000338243239639269,
+				"max_start_compression": 0.0108043225978774,
+				"max_start_drop": 0.0724881291389465,
+				"max_steady_drop": 0.0728217363357544,
+				"max_target_error": 0.000000426964419375508,
+				"min_foot_gap": 0.107396729290485,
+				"min_knee_gap": 0.126637354493141,
+				"min_shin_distance": 0.103731624782085,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.411407, -0.000871, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.412270107207474,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 15,
+					"target": "(-0.277598, 0.161997, 0.0)",
+					"tick": 26
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.089781641960144,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000141756970606366,
+				"max_start_compression": 0.0116347736224884,
+				"max_start_drop": 0.0895562767982483,
+				"max_steady_drop": 0.089781641960144,
+				"max_target_error": 0.000000151962623817781,
+				"min_foot_gap": 0.120906822383404,
+				"min_knee_gap": 0.167835131287575,
+				"min_shin_distance": 0.116318598389626,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.644846, -0.000132, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.460203814666904,
+					"side": 0,
+					"speed": 1.50000560283661,
+					"step": 11,
+					"target": "(-0.130586, 0.184599, 0.0)",
+					"tick": 2
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.0935758352279663,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000173935561065264,
+				"max_start_compression": 0.0125910663002719,
+				"max_start_drop": 0.0930370092391968,
+				"max_steady_drop": 0.0935758352279663,
+				"max_target_error": 0.000000173935561065264,
+				"min_foot_gap": 0.129110336303711,
+				"min_knee_gap": 0.165044724941254,
+				"min_shin_distance": 0.12389712035656,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.070768, -0.000155, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.45724735265824,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 14,
+					"target": "(-0.070768, 0.109845, 0.0)",
+					"tick": 31
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0865421891212463,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000171403840454332,
+				"max_start_compression": 0.0111443272085246,
+				"max_start_drop": 0.0865421891212463,
+				"max_steady_drop": 0.0862860679626465,
+				"max_target_error": 0.000000186711019978247,
+				"min_foot_gap": 0.113170512020588,
+				"min_knee_gap": 0.173572033643723,
+				"min_shin_distance": 0.108867064118385,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.74546, -0.000871, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.782472538573378,
+					"side": 1,
+					"speed": 4.00002479553223,
+					"step": 20,
+					"target": "(0.210725, 0.141674, 0.0)",
+					"tick": 70
+				}
+			}
+		],
+		[
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0731021165847778,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000264993587961726,
+				"max_start_compression": 0.010660134814907,
+				"max_start_drop": 0.0731021165847778,
+				"max_steady_drop": 0.072822630405426,
+				"max_target_error": 0.00000065649720681904,
+				"min_foot_gap": 0.106959812343121,
+				"min_knee_gap": 0.126564189791679,
+				"min_shin_distance": 0.103282786905766,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.198594, -0.000155, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.535727318689265,
+					"side": 0,
+					"speed": 3.90000319480896,
+					"step": 25,
+					"target": "(-0.042545, 0.18796, 0.0)",
+					"tick": 11
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.0890656709671021,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000130969254996671,
+				"max_start_compression": 0.0115605682934317,
+				"max_start_drop": 0.0889559984207153,
+				"max_steady_drop": 0.0890656709671021,
+				"max_target_error": 0.000000130969254996671,
+				"min_foot_gap": 0.121140420436859,
+				"min_knee_gap": 0.167848691344261,
+				"min_shin_distance": 0.116318598389626,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.067622, -0.000871, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.708658178457153,
+					"side": 1,
+					"speed": 4.00000047683716,
+					"step": 23,
+					"target": "(-0.067622, 0.109129, 0.0)",
+					"tick": 15
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 10,
+				"max_drop": 0.0928665399551392,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000127533397176194,
+				"max_start_compression": 0.0122464427306556,
+				"max_start_drop": 0.0928665399551392,
+				"max_steady_drop": 0.09285968542099,
+				"max_target_error": 0.000000139188330194884,
+				"min_foot_gap": 0.129110336303711,
+				"min_knee_gap": 0.165099889039993,
+				"min_shin_distance": 0.123901955783367,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.662566, -0.000155, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.685871028987361,
+					"side": 1,
+					"speed": 3.99999594688416,
+					"step": 28,
+					"target": "(0.340853, 0.158438, 0.0)",
+					"tick": 61
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0862858891487122,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000157874978867767,
+				"max_start_compression": 0.0109314883897065,
+				"max_start_drop": 0.0857051610946655,
+				"max_steady_drop": 0.0862858891487122,
+				"max_target_error": 0.000000166600045758969,
+				"min_foot_gap": 0.112736634910107,
+				"min_knee_gap": 0.173908323049545,
+				"min_shin_distance": 0.108868263661861,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.430459, -0.000155, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.391236269286689,
+					"side": 1,
+					"speed": 3.99999594688416,
+					"step": 30,
+					"target": "(0.301951, 0.176364, 0.0)",
+					"tick": 51
+				}
+			}
+		]
+	],
+	"zero_height": [
+		[
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.073538601398468,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000309804420339788,
+				"max_start_compression": 0.0108765002064801,
+				"max_start_drop": 0.0734139084815979,
+				"max_steady_drop": 0.073538601398468,
+				"max_target_error": 0.000000670552253723145,
+				"min_foot_gap": 0.107396692037582,
+				"min_knee_gap": 0.126637205481529,
+				"min_shin_distance": 0.103731401264668,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.656213, -0.000871, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.549693476276632,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 11,
+					"target": "(-0.083256, 0.157095, 0.0)",
+					"tick": 90
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.0893248915672302,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000126659870147705,
+				"max_start_compression": 0.0126061930650762,
+				"max_start_drop": 0.0893248915672302,
+				"max_steady_drop": 0.0890658497810364,
+				"max_target_error": 0.000000146759418839792,
+				"min_foot_gap": 0.121140420436859,
+				"min_knee_gap": 0.167861074209213,
+				"min_shin_distance": 0.116318352520466,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.413177, -0.000155, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.243664710851551,
+					"side": 1,
+					"speed": 4.0,
+					"step": 2,
+					"target": "(0.325771, 0.152271, 0.0)",
+					"tick": 18
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.0940237641334534,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000141561031341553,
+				"max_start_compression": 0.013435543240833,
+				"max_start_drop": 0.0940237641334534,
+				"max_steady_drop": 0.0935757160186768,
+				"max_target_error": 0.000000141561031341553,
+				"min_foot_gap": 0.129110336303711,
+				"min_knee_gap": 0.165099918842316,
+				"min_shin_distance": 0.123901948332787,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.137435, -0.000871, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.34293551449368,
+					"side": 1,
+					"speed": 4.00002479553223,
+					"step": 7,
+					"target": "(0.137435, 0.109129, 0.0)",
+					"tick": 64
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0861030220985413,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000181280455535671,
+				"max_start_compression": 0.0117768519921403,
+				"max_start_drop": 0.0861030220985413,
+				"max_steady_drop": 0.0855702757835388,
+				"max_target_error": 0.000000181280455535671,
+				"min_foot_gap": 0.113170512020588,
+				"min_knee_gap": 0.173982754349709,
+				"min_shin_distance": 0.108864910900593,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.078791, -0.000155, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.521648359048918,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 4,
+					"target": "(-0.078791, 0.109845, 0.0)",
+					"tick": 35
+				}
+			}
+		],
+		[
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0728217363357544,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000338243239639269,
+				"max_start_compression": 0.0108043225979458,
+				"max_start_drop": 0.0724881291389465,
+				"max_steady_drop": 0.0728217363357544,
+				"max_target_error": 0.000000426964419375508,
+				"min_foot_gap": 0.107396729290485,
+				"min_knee_gap": 0.126637354493141,
+				"min_shin_distance": 0.103731624782085,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.411407, -0.000871, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.412270107207474,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 15,
+					"target": "(-0.277598, 0.161997, 0.0)",
+					"tick": 26
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.089781641960144,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000141756970606366,
+				"max_start_compression": 0.0116347736224332,
+				"max_start_drop": 0.0895562767982483,
+				"max_steady_drop": 0.089781641960144,
+				"max_target_error": 0.000000151962623817781,
+				"min_foot_gap": 0.120906822383404,
+				"min_knee_gap": 0.167835131287575,
+				"min_shin_distance": 0.116318598389626,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.644846, -0.000132, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.460203814666904,
+					"side": 0,
+					"speed": 1.50000560283661,
+					"step": 11,
+					"target": "(-0.130586, 0.184599, 0.0)",
+					"tick": 2
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.0935758352279663,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000173935561065264,
+				"max_start_compression": 0.0125910663002223,
+				"max_start_drop": 0.0930370092391968,
+				"max_steady_drop": 0.0935758352279663,
+				"max_target_error": 0.000000173935561065264,
+				"min_foot_gap": 0.129110336303711,
+				"min_knee_gap": 0.165044724941254,
+				"min_shin_distance": 0.12389712035656,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.070768, -0.000155, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.45724735265824,
+					"side": 0,
+					"speed": 3.99999594688416,
+					"step": 14,
+					"target": "(-0.070768, 0.109845, 0.0)",
+					"tick": 31
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0865421891212463,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000171403840454332,
+				"max_start_compression": 0.0111443272085796,
+				"max_start_drop": 0.0865421891212463,
+				"max_steady_drop": 0.0862860679626465,
+				"max_target_error": 0.000000186711019978247,
+				"min_foot_gap": 0.113170512020588,
+				"min_knee_gap": 0.173572033643723,
+				"min_shin_distance": 0.108867064118385,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(0.74546, -0.000871, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.782472538573378,
+					"side": 1,
+					"speed": 4.00002479553223,
+					"step": 20,
+					"target": "(0.210725, 0.141674, 0.0)",
+					"tick": 70
+				}
+			}
+		],
+		[
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0731021165847778,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000264993587961726,
+				"max_start_compression": 0.010660134814907,
+				"max_start_drop": 0.0731021165847778,
+				"max_steady_drop": 0.072822630405426,
+				"max_target_error": 0.00000065649720681904,
+				"min_foot_gap": 0.106959812343121,
+				"min_knee_gap": 0.126564189791679,
+				"min_shin_distance": 0.103282786905766,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.198594, -0.000155, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.535727318689265,
+					"side": 0,
+					"speed": 3.90000319480896,
+					"step": 25,
+					"target": "(-0.042545, 0.18796, 0.0)",
+					"tick": 11
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 11,
+				"max_drop": 0.0890656709671021,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000130969254996671,
+				"max_start_compression": 0.0115605682934317,
+				"max_start_drop": 0.0889559984207153,
+				"max_steady_drop": 0.0890656709671021,
+				"max_target_error": 0.000000130969254996671,
+				"min_foot_gap": 0.121140420436859,
+				"min_knee_gap": 0.167848691344261,
+				"min_shin_distance": 0.116318598389626,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.067622, -0.000871, 0.0)",
+					"locked": [
+						false,
+						true
+					],
+					"phase": 0.708658178457153,
+					"side": 1,
+					"speed": 4.00000047683716,
+					"step": 23,
+					"target": "(-0.067622, 0.109129, 0.0)",
+					"tick": 15
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 10,
+				"max_drop": 0.0928665399551392,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000127533397176194,
+				"max_start_compression": 0.0122464427306556,
+				"max_start_drop": 0.0928665399551392,
+				"max_steady_drop": 0.09285968542099,
+				"max_target_error": 0.000000139188330194884,
+				"min_foot_gap": 0.129110336303711,
+				"min_knee_gap": 0.165099889039993,
+				"min_shin_distance": 0.123901955783367,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.662566, -0.000155, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.685871028987361,
+					"side": 1,
+					"speed": 3.99999594688416,
+					"step": 28,
+					"target": "(0.340853, 0.158438, 0.0)",
+					"tick": 61
+				}
+			},
+			{
+				"air_frames": 0,
+				"ground_steps": 12,
+				"max_drop": 0.0862858891487122,
+				"max_pin_drift": 0.0,
+				"max_planted_error": 0.000000157874978867767,
+				"max_start_compression": 0.0109314883897065,
+				"max_start_drop": 0.0857051610946655,
+				"max_steady_drop": 0.0862858891487122,
+				"max_target_error": 0.000000166600045758969,
+				"min_foot_gap": 0.112736634910107,
+				"min_knee_gap": 0.173908323049545,
+				"min_shin_distance": 0.108868263661861,
+				"rays": 2,
+				"releases": 0,
+				"worst": {
+					"air": "none",
+					"contact": "(-0.430459, -0.000155, 0.0)",
+					"locked": [
+						true,
+						false
+					],
+					"phase": 0.391236269286689,
+					"side": 1,
+					"speed": 3.99999594688416,
+					"step": 30,
+					"target": "(0.301951, 0.176364, 0.0)",
+					"tick": 51
+				}
+			}
+		]
+	]
+}

@@ -1,0 +1,40 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TURN head-body-foot sequence steps=1 crossing=0 min_side=0.07384212315083 foot_delta=0.01440045796335 lift=0.06036527454853 lock_drift=0.0 offset=-0.3665191298949
+HEAD TURN basis error degrees=0.03956468118525 maximum body offset=104.4441656865
+QUIET TURN direction=-1.0 steps=1 step_angle=68.0 resting_spread=68.0 support_rotation=0.0
+QUIET REVERSE direction=-1.0 contacts=2 crossing=0 pin_drift=0.0
+QUIET TURN direction=1.0 steps=1 step_angle=68.0 resting_spread=68.0 support_rotation=0.0
+QUIET REVERSE direction=1.0 contacts=2 crossing=0 pin_drift=0.0
+TURN turn 90 steps=1 crossing=0 min_side=0.07384212315083 foot_delta=0.01440045796335 lift=0.06036527454853 lock_drift=0.0 offset=-0.19198623957507
+TURN turn -90 steps=1 crossing=0 min_side=0.07384212315083 foot_delta=0.01440045796335 lift=0.06036527454853 lock_drift=0.0 offset=0.19198623957507
+TURN turn 180 steps=3 crossing=0 min_side=0.07384212315083 foot_delta=0.02390369027853 lift=0.06036527454853 lock_drift=0.0 offset=0.0
+TURN turn -180 steps=3 crossing=0 min_side=0.07384212315083 foot_delta=0.02390369027853 lift=0.06036527454853 lock_drift=0.0 offset=0.0
+TURN continuous -360 steps=10 crossing=0 min_side=0.07666601240635 foot_delta=0.01438074372709 lift=0.06036527454853 lock_drift=0.0 offset=0.15707978963773
+TURN continuous -720 steps=22 crossing=0 min_side=0.07666601240635 foot_delta=0.01438074372709 lift=0.06036527454853 lock_drift=0.0 offset=0.03141626230807
+TURN continuous 360 steps=10 crossing=0 min_side=0.07666601240635 foot_delta=0.01438074372709 lift=0.06036527454853 lock_drift=0.0 offset=-0.15707978963773
+TURN continuous 720 steps=22 crossing=0 min_side=0.07666601240635 foot_delta=0.01438074372709 lift=0.06036527454853 lock_drift=0.0 offset=-0.03141626230807
+TURN abrupt reversal steps=4 crossing=0 min_side=0.07384212315083 foot_delta=0.02390370331705 lift=0.06036527454853 lock_drift=0.0 offset=0.04537875844164
+TURN WALK delay=2 largest foot delta=0.26960515975952
+TURN STOP delay=2 largest foot delta=0.18465358018875
+TURN WALK delay=7 largest foot delta=0.26966825127602
+TURN STOP delay=7 largest foot delta=0.18316212296486
+TURN WALK delay=12 largest foot delta=0.26972576975822
+TURN STOP delay=12 largest foot delta=0.18316212296486
+TURN START degrees=120.0 delay=2 lag9=0.65576935698347 target_gap=0.15562883019447 ankle_gap=0.15562880039215 planted_drift=0.0 foot_delta=0.13961413502693
+TURN START degrees=120.0 delay=6 lag9=1.96730807095039 target_gap=0.10780418664217 ankle_gap=0.10780419409275 planted_drift=0.0 foot_delta=0.13961417973042
+TURN START degrees=120.0 delay=12 lag9=1.84505661497995 target_gap=0.10780418664217 ankle_gap=0.10780418664217 planted_drift=0.0 foot_delta=0.1396142244339
+TURN START degrees=-120.0 delay=2 lag9=0.65576935698347 target_gap=0.10780417919159 ankle_gap=0.10780417919159 planted_drift=0.0 foot_delta=0.15993456542492
+TURN START degrees=-120.0 delay=6 lag9=1.96730807095039 target_gap=0.10780417919159 ankle_gap=0.10780417919159 planted_drift=0.0 foot_delta=0.13961425423622
+TURN START degrees=-120.0 delay=12 lag9=1.84505661497995 target_gap=0.10780417919159 ankle_gap=0.10780417174101 planted_drift=0.0 foot_delta=0.13961426913738
+TURN START degrees=180.0 delay=2 lag9=0.65576935698347 target_gap=0.10780417919159 ankle_gap=0.10780416429043 planted_drift=0.0 foot_delta=0.15993456542492
+TURN START degrees=180.0 delay=6 lag9=1.96730807095039 target_gap=0.10780416429043 ankle_gap=0.10780416429043 planted_drift=0.0 foot_delta=0.16306822001934
+TURN START degrees=180.0 delay=12 lag9=3.48447944756001 target_gap=0.10780417919159 ankle_gap=0.10780421644449 planted_drift=0.0 foot_delta=0.13961423933506
+TURN START degrees=-180.0 delay=2 lag9=0.65576935698347 target_gap=0.10780417919159 ankle_gap=0.10780416429043 planted_drift=0.0 foot_delta=0.15993456542492
+TURN START degrees=-180.0 delay=6 lag9=1.96730807095039 target_gap=0.10780416429043 ankle_gap=0.10780416429043 planted_drift=0.0 foot_delta=0.16306822001934
+TURN START degrees=-180.0 delay=12 lag9=3.48447982081243 target_gap=0.10780417174101 ankle_gap=0.10780414938927 planted_drift=0.0 foot_delta=0.13961412012577
+TURN turn 180 steps=3 crossing=0 min_side=0.04019312560558 foot_delta=0.01645819842815 lift=0.06809027493 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=3 crossing=0 min_side=0.04019312933087 foot_delta=0.01736832410097 lift=0.07256990671158 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=3 crossing=0 min_side=0.04048420488834 foot_delta=0.01578065007925 lift=0.06361064314842 lock_drift=0.0 offset=0.0
+TURN METRICS maximum queries=2
+PROCEDURAL TURN: PASS

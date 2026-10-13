@@ -99,7 +99,7 @@ func _process(delta: float) -> void:
 	var speed_fov: Variant = character.get("camera_speed_fov_enabled")
 	values_label.text = "%s · %s · %.2f m/s\nZoom %.1f / vrij %.1f m · FOV %.1f°\nF4 snelheid %s · F6 audio %s · F7 landing %s · F9 vaart-FOV %s" % [
 		str(state.get("posture", "staan")),
-		str(state.get("motion_mode", "lopen")),
+		_movement_label(str(state.get("motion_mode", "lopen"))),
 		float(state.get("speed", 0.0)),
 		float(state.get("camera_distance", 0.0)),
 		float(state.get("camera_actual_distance", state.get("camera_distance", 0.0))),
@@ -117,7 +117,7 @@ func _process(delta: float) -> void:
 		_direction_text(state.get("movement_direction", Vector3.ZERO)),
 		float(state.get("head_relative_yaw", 0.0)),
 		float(head_limit) if head_limit is float or head_limit is int else 85.0,
-		str(state.get("jump_profile", "—")),
+		_movement_label(str(state.get("jump_profile", "—"))),
 		float(state.get("jump_height", 0.0)),
 		float(state.get("air_speed_cap", 0.0)),
 		"actief" if state.get("slide_active", false) else ("klaar" if state.get("slide_pending", false) else "uit"),
@@ -145,3 +145,6 @@ func _version_text() -> String:
 		if data is Dictionary and data.has("source_commit"):
 			version = "Bron %s · lokale proef" % str(data.source_commit).left(8)
 	return "%s\nGodot %s" % [version, Engine.get_version_info().string]
+
+func _movement_label(mode: String) -> String:
+	return str({"lopen": "joggen", "sneak": "wandelen"}.get(mode, mode))

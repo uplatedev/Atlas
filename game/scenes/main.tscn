@@ -122,7 +122,7 @@ theme_override_constants/margin_bottom = 10
 [node name="Keys" type="Label" parent="UI/Help/Margin"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-text = "WASD bewegen   ·   Shift sprint   ·   Alt sneak   ·   C kruip aan/uit   ·   Z lig aan/uit\nC tijdens sprint / sprong → slide   ·   C tijdens slide → na afloop kruip   ·   S remt\nSpatie springen / oprichten   ·   Scroll zoom   ·   Tab wisselen   ·   I testimpuls   ·   R reset\nF3 debug   ·   F4 FOV   ·   F6 audio   ·   F7 landing   ·   F9 lucht-/slide-FOV   ·   Esc muis vrij"
+text = "WASD joggen   ·   Shift sprint   ·   Alt wandelen   ·   C kruip aan/uit   ·   Z lig aan/uit\nC tijdens sprint / sprong → slide   ·   C tijdens slide → na afloop kruip   ·   S remt\nSpatie springen / oprichten   ·   Scroll zoom   ·   Tab wisselen   ·   I testimpuls   ·   R reset\nF3 debug   ·   F4 FOV   ·   F6 audio   ·   F7 landing   ·   F9 lucht-/slide-FOV   ·   Esc muis vrij"
 
 [node name="FPS" type="Label" parent="UI"]
 anchors_preset = 1

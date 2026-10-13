@@ -45,3 +45,13 @@ De gebruiker vindt de run op die versie goed. Beoordeel de nieuwe correctie daar
 Voor de torsovolgorde staan onder **Body Profile > Bijstappen** ook **Turn Torso Max Degrees** en **Turn Torso Before Step Degrees**. De eerste bepaalt hoeveel de borst mag draaien; de tweede hoeveel daarvan vóór de eerste bijstap wordt benut. Een onhaalbare combinatie wordt veilig begrensd. Probeer dit op één instance en controleer dat de andere gelijk blijft.
 
 De rustigere voetbreedte is instelbaar met **Walking Stance Ratio** en **Idle Stance Ratio**. **Walk Start Support Ratio** verkort alleen de eerste gewone steun bij starten, hervatten en omkeren; sprint behoudt zijn cadans. Kleine waarden laten de volgende stap eerder beginnen. Probeer ook schuin lopen, omkeren en stoppen terwijl je omkijkt.
+
+## Gerichte vervolgproef na c041f65e
+
+De bevestigde indeling is nu **Alt = wandelen**, **WASD = joggen**, **Shift = sprinten**. De bestaande snelheden en opgeslagen instancewaarden blijven behouden; Artemis gebruikt 2/5/9 m/s vooruit. Wandelarmen hangen laag, voeten heffen weinig en er blijft steeds grondsteun. Jog en sprint hebben pasvlucht. Vergelijk vooruit, schuin vooruit en schuin achteruit: het lijf neemt de bewegingsas over terwijl de blik bestuurbaar blijft. Zuiver zijwaarts gebruikt een kleine hup, groter met sprint. Probeer ook wisselen tussen modifiers midden in de pas en spatie op verschillende pasmomenten.
+
+Draai stilstaand langzaam en plotseling, ook terug naar de andere kant. Hoofd en borst nemen eerst ruimte; daarna volgen minder, grotere voetstappen. Eén voet bewaart tijdelijk zijn oude richting. De uiteindelijke ongelijke stand mag blijven staan. Begin vanuit zo'n stand te wandelen of joggen en controleer op kruisen of een plotselinge dip.
+
+Sprint + C gebruikt de diepere knieslide: het bekken zit lager richting kuiten en de borst helt voorwaarts. Nogmaals C laat de slide uitlopen en blijft daarna gekruipt. Blijf tot slot ongeveer 40 seconden staan: ademhaling is klein, ogen knipperen afzonderlijk getimed en af en toe volgt een grotere visuele inademing/zucht. Daar zit geen nieuw zuchtgeluid bij.
+
+De Character blijft één editoringang. In **Body Profile > Wandelen en joggen** staan armzwaai, armstrekking, jogmengverhouding en overgangsduur. **Bijstappen** bewaart duur, voetdraaihoek en borstreserve; **Slide Sit Degrees** regelt zitdiepte binnen de kniegrens. **Idle** bevat aan/uit, sterkte en intervallen. Pas iets aan op één gedupliceerde Character, sla op en heropen: het andere exemplaar moet gelijk blijven. Alleen Artemis' vlakke Eyes/Skin-materialen krijgen de knippershader; andere modellen behouden hun eigen uiterlijk.

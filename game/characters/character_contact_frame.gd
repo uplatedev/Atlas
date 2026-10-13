@@ -6,6 +6,8 @@ extends RefCounted
 var delta: float = 0.0
 var horizontal_travel: Vector3 = Vector3.ZERO
 var horizontal_speed: float = 0.0
+## Blijvende loopinvoer onderscheidt een omkeernulpunt van echte stilstand.
+var movement_requested: bool = false
 var incoming_velocity: Vector3 = Vector3.ZERO
 var supported: bool = false
 var real_grounded: bool = false

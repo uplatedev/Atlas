@@ -55,7 +55,7 @@ func _measure_torso(direction: float, abrupt: bool) -> void:
 	_expect(first_step_tick >= 0, "grotere blik begint uiteindelijk afwisselende bijstappen")
 	_expect(first_step_chest >= deg_to_rad(23.5), "borst draait merkbaar minstens24graden vóór eerste bijstap")
 	_expect(max_neck <= deg_to_rad(actor.head_max_yaw + 0.2), "extra borstreserve overschrijdt de bestaande nekgrens niet")
-	_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < 0.01, "bijstappen lossen na de borstreserve nog volledig op")
+	_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < deg_to_rad(actor.body_profile.turn_step_angle_degrees * 0.38 + 0.2), "bijstappen eindigen na de borstreserve in een comfortabele stand")
 	_expect(crossing_frames == 0 and lock_drift < 0.0001, "extra borstreserve bewaart gescheiden en geplante voeten")
 	print("TORSO direction=", direction, " abrupt=", abrupt, " first_tick=", first_step_tick, " chest_before_step=", rad_to_deg(first_step_chest), " head_before_step=", rad_to_deg(first_step_head), " max_neck=", rad_to_deg(max_neck), " max_look_error=", rad_to_deg(max_head_error))
 
@@ -75,14 +75,14 @@ func _profile_adjustments() -> void:
 	_expect(untouched.turn_torso_max_degrees == 35.0 and untouched.turn_torso_before_step_degrees == 24.0, "eigen torsoafstelling verandert geen ander instanceprofiel")
 	_send(deg_to_rad(120.0))
 	await _ticks(120)
-	_expect(int(presentation.get_debug_state().turn_step_index) > 0 and absf(float(presentation.get_debug_state().turn_body_offset)) < 0.01, "te hoge borst-wachthoek klemt veilig onder het maximum en blokkeert bijstappen niet")
+	_expect(int(presentation.get_debug_state().turn_step_index) > 0 and absf(float(presentation.get_debug_state().turn_body_offset)) < deg_to_rad(actor.body_profile.turn_step_angle_degrees * 0.38 + 0.2), "te hoge borst-wachthoek klemt veilig onder het maximum en blokkeert bijstappen niet")
 	print("TORSO EDITOR live_chest=", rad_to_deg(chest), " max=20 threshold=40; independent/live/no-rebuild/completes PASS")
 	for small_limit in [0.0, 1.0]:
 		await _reset()
 		actor.body_profile.turn_torso_max_degrees = small_limit
 		_send(deg_to_rad(120.0))
 		await _ticks(120)
-		_expect(int(presentation.get_debug_state().turn_step_index) > 0 and absf(float(presentation.get_debug_state().turn_body_offset)) < 0.01, "nul of kleine live borstreserve blokkeert bijstappen niet")
+		_expect(int(presentation.get_debug_state().turn_step_index) > 0 and absf(float(presentation.get_debug_state().turn_body_offset)) < deg_to_rad(actor.body_profile.turn_step_angle_degrees * 0.38 + 0.2), "nul of kleine live borstreserve blokkeert bijstappen niet")
 		_expect(absf(float(presentation.get_debug_state().turn_torso_yaw)) <= deg_to_rad(small_limit + 0.1), "kleine borstinstelling blijft werkelijk binnen haar maximum")
 	print("TORSO EDITOR maximum0/1 with threshold40: completes PASS")
 func _bone_yaw(skeleton: Skeleton3D, index: int) -> float:

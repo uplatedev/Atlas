@@ -43,6 +43,7 @@ func _run() -> void:
 	await _ticks(12)
 	await _head_then_body()
 	await _head_pitch_during_turn()
+	await _quiet_asymmetric_stance()
 	for target in [PI * 0.5, -PI * 0.5, PI, -PI]:
 		await _turn_to(target)
 	for direction in [-1.0, 1.0]:
@@ -76,8 +77,46 @@ func _head_then_body() -> void:
 	_expect(absf(float(presentation.get("_head_yaw")) - deg_to_rad(30.0)) < 0.001, "hoofd behoudt gevraagde blik")
 	_send(deg_to_rad(100.0))
 	await _ticks(90)
-	_expect(int(presentation.get_debug_state().turn_step_index) >= 2, "grotere blik volgt met echte afwisselende bijstappen")
+	_expect(int(presentation.get_debug_state().turn_step_index) >= 1, "grotere blik volgt met een echte duidelijke bijstap")
 	_check_stationary("head-body-foot sequence")
+
+func _quiet_asymmetric_stance() -> void:
+	for direction in [-1.0, 1.0]:
+		await _reset()
+		_send(direction * deg_to_rad(90.0))
+		var max_support_rotation := 0.0
+		var biggest_step := 0.0
+		var previous: Array[float] = [0.0, 0.0]
+		for tick in 100:
+			await _ticks(1)
+			var planner: AtlasTurnStepPlanner = presentation.get("_turn_planner")
+			if planner.active_side >= 0:
+				var support := 1 - planner.active_side
+				max_support_rotation = maxf(max_support_rotation, absf(wrapf(planner.foot_yaws[support] - previous[support], -PI, PI)))
+			if planner.started_side >= 0:
+				biggest_step = maxf(biggest_step, absf(wrapf(planner.get("_target_yaw") - planner.get("_from_yaw"), -PI, PI)))
+			previous.assign(planner.foot_yaws)
+		var state := presentation.get_debug_state()
+		var feet: Array = state.foot_targets.duplicate()
+		var yaw_gap := absf(wrapf(state.turn_foot_yaws[1] - state.turn_foot_yaws[0], -PI, PI))
+		var count: int = state.turn_step_index
+		for tick in 180:
+			_send(direction * deg_to_rad(90.0 + sin(float(tick) * 0.11) * 3.0))
+			await _ticks(1)
+		_expect(count == 1, "negentig graden kijken vraagt één duidelijke stap in plaats van opruimpasjes")
+		_expect(biggest_step >= deg_to_rad(60.0), "de afzonderlijke draaistap heeft een duidelijke grote hoek")
+		_expect(yaw_gap >= deg_to_rad(60.0), "comfortabele ongelijke voetrichtingen blijven na de draai bestaan")
+		_expect(max_support_rotation < 0.0001, "steunvoet behoudt ook zijn oude oriëntatie tijdens de vrije stap")
+		_expect(int(presentation.get_debug_state().turn_step_index) == count, "kleine blikvariatie veroorzaakt geen neutrale correctiestap")
+		for side in range(2):
+			_expect(Vector3(presentation.get_debug_state().foot_targets[side]).distance_to(feet[side]) < 0.0001, "ruststand bewaart beide echte voetpins")
+		print("QUIET TURN direction=", direction, " steps=", count, " step_angle=", rad_to_deg(biggest_step), " resting_spread=", rad_to_deg(yaw_gap), " support_rotation=", max_support_rotation)
+		_send(-direction * deg_to_rad(90.0))
+		await _ticks(120)
+		var reversed := presentation.get_debug_state()
+		_expect(int(reversed.turn_active_side) == -1 and absf(float(reversed.turn_body_offset)) < deg_to_rad(actor.body_profile.turn_step_angle_degrees * 0.38 + 0.2), "tegenrichting vanuit scheve rust kiest een bereikbare volgende voet")
+		_expect(crossing_frames == 0 and lock_drift < 0.0001 and max_foot_delta < 0.10, "tegenrichting vanuit scheve rust bewaart pins en gescheiden voetbanen")
+		print("QUIET REVERSE direction=",direction," contacts=",serials.size()," crossing=",crossing_frames," pin_drift=",lock_drift)
 
 func _head_pitch_during_turn() -> void:
 	var max_error := 0.0
@@ -106,7 +145,7 @@ func _turn_to(target: float) -> void:
 	await _ticks(130)
 	_check_stationary("turn %.0f" % rad_to_deg(target))
 	var state := presentation.get_debug_state()
-	_expect(absf(float(state.turn_body_offset)) < 0.01 and int(state.turn_active_side) == -1, "bijstappen lossen visuele draai volledig op")
+	_expect(absf(float(state.turn_body_offset)) < deg_to_rad(actor.body_profile.turn_step_angle_degrees * 0.38 + 0.2) and int(state.turn_active_side) == -1, "bijstappen eindigen binnen de comfortabele hoekreserve")
 	_expect(absf(wrapf(actor.get_look_input().x - target, -PI, PI)) < 0.001, "turnplanner verandert geen logische kijkinvoer")
 
 func _continuous_turn(direction: float, amount: float) -> void:
@@ -118,7 +157,7 @@ func _continuous_turn(direction: float, amount: float) -> void:
 	await _ticks(140)
 	_check_stationary("continuous %.0f" % rad_to_deg(direction * amount))
 	var state := presentation.get_debug_state()
-	_expect(absf(float(state.turn_body_offset)) < 0.01 and absf(float(state.turn_pose_yaw)) <= PI + 0.001, "360/720 graden bewaren geen opgetelde draai-offset")
+	_expect(absf(float(state.turn_body_offset)) < deg_to_rad(actor.body_profile.turn_step_angle_degrees * 0.38 + 0.2) and absf(float(state.turn_pose_yaw)) <= PI + 0.001, "360/720 graden bewaren geen opgetelde draai-offset")
 	var completed := int(state.turn_step_index)
 	await _ticks(40)
 	_expect(int(presentation.get_debug_state().turn_step_index) == completed, "stoppen laat geen wachtrij van oude bijstappen doorlopen")
@@ -130,7 +169,7 @@ func _reverse() -> void:
 	_send(-PI * 0.65)
 	await _ticks(130)
 	_check_stationary("abrupt reversal")
-	_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < 0.01, "plots tegenrichting voltooit begrensde huidige voet en volgt laatste wens")
+	_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < deg_to_rad(actor.body_profile.turn_step_angle_degrees * 0.38 + 0.2), "plots tegenrichting voltooit begrensde huidige voet en volgt laatste wens")
 
 func _walk_transition() -> void:
 	for delay in [2, 7, 12]:
@@ -169,6 +208,7 @@ func _walk_start_alignment() -> void:
 			max_foot_delta = 0.0
 			var smallest_gap := INF
 			var smallest_bone_gap := INF
+			var smallest_old_axis_gap := INF
 			var lag_after_nine := 0.0
 			var planted_drift := 0.0
 			_send(deg_to_rad(degrees), Vector2(0, -1))
@@ -176,12 +216,17 @@ func _walk_start_alignment() -> void:
 				var before: Dictionary = presentation.get_debug_state()
 				await _ticks(1)
 				var state := presentation.get_debug_state()
-				var right := Basis(Vector3.UP, float(state.turn_pose_yaw)).x
-				var gap := (Vector3(state.foot_targets[1]) - Vector3(state.foot_targets[0])).dot(right)
-				smallest_gap = minf(smallest_gap, gap)
+				var old_right := Basis(Vector3.UP, float(state.turn_pose_yaw)).x
+				smallest_old_axis_gap = minf(smallest_old_axis_gap, (Vector3(state.foot_targets[1]) - Vector3(state.foot_targets[0])).dot(old_right))
 				var skeleton: Skeleton3D = presentation.get("_skeleton")
 				presentation.apply_skeleton_pose(skeleton)
 				var legs: Array = presentation.get("_legs")
+				# Meet dwars op de echte heupen: diagonale gangen hebben een eigen yaw
+				# boven op de bijstaprichting. De capsule-/turn-as is dan verouderd.
+				var left_hip := skeleton.global_transform * skeleton.get_bone_global_pose(legs[0][0]).origin
+				var right_hip := skeleton.global_transform * skeleton.get_bone_global_pose(legs[1][0]).origin
+				var right := (right_hip - left_hip).normalized()
+				smallest_gap = minf(smallest_gap, (Vector3(state.foot_targets[1]) - Vector3(state.foot_targets[0])).dot(right))
 				var left := skeleton.global_transform * skeleton.get_bone_global_pose(legs[0][2]).origin
 				var right_ankle := skeleton.global_transform * skeleton.get_bone_global_pose(legs[1][2]).origin
 				smallest_bone_gap = minf(smallest_bone_gap, (right_ankle - left).dot(right))
@@ -199,7 +244,7 @@ func _walk_start_alignment() -> void:
 			_expect(planted_drift < 0.0001, "overdracht corrigeert alleen vrije voeten en bewaart bestaand steuncontact")
 			_expect(max_foot_delta < 0.25, "hele loopoverdracht houdt voetverplaatsing begrensd")
 			_expect(absf(float(presentation.get_debug_state().turn_body_offset)) < 0.001, "overdracht bewaart geen blijvende visuele draai")
-			print("TURN START degrees=", degrees, " delay=", delay, " lag9=", lag_after_nine, " target_gap=", smallest_gap, " ankle_gap=", smallest_bone_gap, " planted_drift=", planted_drift, " foot_delta=", max_foot_delta)
+			print("TURN START degrees=", degrees, " delay=", delay, " lag9=", lag_after_nine, " target_gap=", smallest_gap, " ankle_gap=", smallest_bone_gap, " old_axis_gap=", smallest_old_axis_gap, " planted_drift=", planted_drift, " foot_delta=", max_foot_delta)
 			await _ticks(30)
 			_expect(float(presentation.get("_turn_release_remaining")) == 0.0, "loopoverdracht eindigt en laat de gewone pasplanner volledig vrij")
 func _check_stationary(label: String) -> void:
@@ -207,7 +252,7 @@ func _check_stationary(label: String) -> void:
 	_expect(crossing_frames == 0, "voeten kruisen niet tijdens " + label)
 	_expect(lock_drift < 0.0001, "geplante steunvoet blijft wereldvast tijdens " + label)
 	_expect(max_foot_delta < 0.10, "bijstap heeft geen zichtbare doelteleport tijdens " + label)
-	_expect(max_lift > 0.02 and serials.size() >= 2, "bijstap heft en plant voeten aantoonbaar tijdens " + label)
+	_expect(max_lift > 0.02 and serials.size() >= 1, "bijstap heft en plant voeten aantoonbaar tijdens " + label)
 	_expect(actor.position.distance_to(Vector3(0, actor.position.y, 0)) < 0.001 and actor.is_on_floor(), "stationaire draai verplaatst de capsule niet")
 	_expect(float(state.max_planted_error) < 0.01, "werkelijke steunvoet blijft binnen bereik bij " + label)
 	for index in range(1, serials.size()):

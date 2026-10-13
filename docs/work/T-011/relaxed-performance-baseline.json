@@ -1,0 +1,76 @@
+{
+	"1": {
+		"frame_ms": {
+			"max": 2.312,
+			"p50": 0.571,
+			"p95": 0.915
+		},
+		"physics_cpu_ms": {
+			"max": 0.884,
+			"p50": 0.739,
+			"p95": 0.884
+		},
+		"process_cpu_ms": {
+			"max": 2.048,
+			"p50": 1.067,
+			"p95": 2.048
+		},
+		"queries": 669,
+		"queries_per_second": 167.238795000735,
+		"render_frames": 6363,
+		"wall_seconds": 4.000268
+	},
+	"12": {
+		"frame_ms": {
+			"max": 7.436,
+			"p50": 2.129,
+			"p95": 5.794
+		},
+		"physics_cpu_ms": {
+			"max": 5.197,
+			"p50": 4.816,
+			"p95": 5.197
+		},
+		"process_cpu_ms": {
+			"max": 4.295,
+			"p50": 3.235,
+			"p95": 4.295
+		},
+		"queries": 8028,
+		"queries_per_second": 2006.78527397568,
+		"render_frames": 1442,
+		"wall_seconds": 4.000428
+	},
+	"4": {
+		"frame_ms": {
+			"max": 2.972,
+			"p50": 0.993,
+			"p95": 2.252
+		},
+		"physics_cpu_ms": {
+			"max": 1.834,
+			"p50": 1.731,
+			"p95": 1.834
+		},
+		"process_cpu_ms": {
+			"max": 1.832,
+			"p50": 1.786,
+			"p95": 1.832
+		},
+		"queries": 2676,
+		"queries_per_second": 668.992306588474,
+		"render_frames": 3563,
+		"wall_seconds": 4.000046
+	},
+	"environment": {
+		"adapter": "NVIDIA GeForce RTX 5060 Ti",
+		"fixed_fps": false,
+		"godot": "4.7.2-stable (official)",
+		"os": "Windows",
+		"physics_hz": 60,
+		"renderer": "forward_plus",
+		"sample_seconds": 4.0,
+		"vsync": false,
+		"warmup_seconds": 3.0
+	}
+}

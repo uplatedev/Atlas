@@ -1,0 +1,77 @@
+Guardcorrectie op bf86cc2; Godot 4.7.2.stable.official.ed1daf0bf; 60 Hz
+
+atlas-t011-box-baseline-fcde.txt
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WALL LOOK gaps [0.07898792624474, 0.09290681779385, 0.09961237758398, 0.08615574985743] errors [0.00103591289371, 0.0006178743788, 0.00038491105079, 0.00077803776367]
+0 { "side_hop": false, "side_amount": 0.0, "gait_yaw": 0.0, "motion_profile": "lopen", "turn_body_offset": 0.0011853948368, "turn_torso_yaw": -0.00077050664393, "turn_pose_yaw": -3.14040710775719, "turn_active_side": -1, "turn_step_index": 1, "turn_foot_yaws": [-3.14040710775719, -3.14040710775719], "leg_length": 0.67377617955208, "leg_segments": [(0.334538, 0.339238), (0.334538, 0.339239)], "arm_segments": [(0.239253, 0.237519), (0.239253, 0.237519)], "rays_last_frame": 0, "rays_total": 70, "max_reach_error": 0.0000006992837, "max_planted_error": 0.00103591289371, "released_overreach": 0, "locked_feet": [true, true], "foot_targets": [(-2.462377, 0.097053, 0.157988), (-2.647547, 0.097053, 0.202457)], "max_planner_usec": 192, "compression": 0.0, "compression_velocity": 0.0, "compression_events": 2 } speed 0.0
+1 { "side_hop": false, "side_amount": 0.0, "gait_yaw": 0.0, "motion_profile": "lopen", "turn_body_offset": 0.0011853948368, "turn_torso_yaw": -0.00077050664393, "turn_pose_yaw": -3.14040710775719, "turn_active_side": -1, "turn_step_index": 1, "turn_foot_yaws": [-3.14040710775719, -3.14040710775719], "leg_length": 0.76000002026558, "leg_segments": [(0.38, 0.38), (0.38, 0.38)], "arm_segments": [(0.28, 0.25), (0.28, 0.25)], "rays_last_frame": 0, "rays_total": 70, "max_reach_error": 0.00000047985418, "max_planted_error": 0.0006178743788, "released_overreach": 0, "locked_feet": [true, true], "foot_targets": [(-0.693788, 0.11, 0.15483), (-0.816088, 0.11, 0.205294)], "max_planner_usec": 161, "compression": 0.0, "compression_velocity": 0.0, "compression_events": 2 } speed 0.0
+2 { "side_hop": false, "side_amount": 0.0, "gait_yaw": 0.0, "motion_profile": "lopen", "turn_body_offset": 0.00053263223409, "turn_torso_yaw": -0.00034621095216, "turn_pose_yaw": -3.1410598703599, "turn_active_side": -1, "turn_step_index": 1, "turn_foot_yaws": [-3.1410598703599, -3.1410598703599], "leg_length": 0.81000003218651, "leg_segments": [(0.49, 0.32), (0.49, 0.32)], "arm_segments": [(0.31, 0.23), (0.31, 0.23)], "rays_last_frame": 0, "rays_total": 74, "max_reach_error": 0.0000004803889, "max_planted_error": 0.00038491105079, "released_overreach": 0, "locked_feet": [true, true], "foot_targets": [(1.106386, 0.11, 0.152702), (0.986717, 0.11, 0.206886)], "max_planner_usec": 138, "compression": 0.0, "compression_velocity": 0.0, "compression_events": 2 } speed 0.0
+3 { "side_hop": false, "side_amount": 0.0, "gait_yaw": 0.0, "motion_profile": "lopen", "turn_body_offset": 0.0011853948368, "turn_torso_yaw": -0.00077050664393, "turn_pose_yaw": -3.14040710775719, "turn_active_side": -1, "turn_step_index": 1, "turn_foot_yaws": [-3.14040710775719, -3.14040710775719], "leg_length": 0.7100000679493, "leg_segments": [(0.27, 0.44), (0.27, 0.44)], "arm_segments": [(0.22, 0.29), (0.22, 0.29)], "rays_last_frame": 0, "rays_total": 70, "max_reach_error": 0.00000047900028, "max_planted_error": 0.00077803776367, "released_overreach": 0, "locked_feet": [true, true], "foot_targets": [(2.906212, 0.11, 0.154831), (2.783839, 0.11, 0.205865)], "max_planner_usec": 144, "compression": 0.0, "compression_velocity": 0.0, "compression_events": 2 } speed 0.0
+
+atlas-t011-box-procedural_free_target_checks.txt
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+FREE TARGET jog [{"free_adjustment":0.0,"pin_drift":0.0,"pin_error":0.000000355838352561477,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.00000104701200598356},{"free_adjustment":0.00265872478485107,"pin_drift":0.0,"pin_error":0.0000001564621925354,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.00000019371509552002},{"free_adjustment":0.0202500075101852,"pin_drift":0.0,"pin_error":0.000000171363353729248,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000178813934326172},{"free_adjustment":0.0177499949932098,"pin_drift":0.0,"pin_error":0.00000019371509552002,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.00000019371509552002}]
+FREE TARGET sprint [{"free_adjustment":0.0168444067239761,"pin_drift":0.0,"pin_error":0.000000436034042650135,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.00000127036219055299},{"free_adjustment":0.0190000012516975,"pin_drift":0.0,"pin_error":0.0000001564621925354,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000240274005136598},{"free_adjustment":0.0202500075101852,"pin_drift":0.0,"pin_error":0.000000149011611938477,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000178969088437952},{"free_adjustment":0.0177499949932098,"pin_drift":0.0,"pin_error":0.000000186264514923096,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000266560078898692}]
+FREE TARGET walk [{"free_adjustment":0.000754603883251548,"pin_drift":0.0,"pin_error":0.000000782310962677002,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000782310962677002},{"free_adjustment":0.00305960071273148,"pin_drift":0.0,"pin_error":0.000000180051415554772,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000180051415554772},{"free_adjustment":0.0142777347937226,"pin_drift":0.0,"pin_error":0.000000171363353729248,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.000000171363353729248},{"free_adjustment":0.00102496787440032,"pin_drift":0.0,"pin_error":0.0000388803528039716,"pose_reapply_error":0.0,"reapply_drift":0.0,"releases":0,"target_error":0.0000388803528039716}]
+BLOCKED INPUT {"blocked_input":true,"inner_width":0.7,"max_pin_drift":0.0,"max_queries":1,"max_target":0.000000607302297339629,"minimum_gap":0.0878628641366959,"turn_steps":12,"turn_yaw":3.14159265358979}
+BLOCKED INPUT {"blocked_input":true,"inner_width":1.0,"max_pin_drift":0.0,"max_queries":2,"max_target":0.00103591289371252,"minimum_gap":0.0798965692520142,"turn_steps":0,"turn_yaw":3.14159265358979}
+BLOCKED INPUT {"blocked_input":true,"inner_width":1.0,"max_pin_drift":0.0,"max_queries":2,"max_target":0.00103591289371252,"minimum_gap":0.0798965692520142,"turn_steps":0,"turn_yaw":-3.14159265358979}
+FREE TARGET CHECKS: PASS
+
+atlas-t011-box-procedural_gait_transition_checks.txt
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+HANDOFF {"backwards":0,"direction":"(0.0, -1.0)","flights":33,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000897168717983732,"source":"walk","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(0.0, -1.0)","flights":29,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.00000128703254631546,"source":"walk","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(0.707107, -0.707107)","flights":30,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000961096020546393,"source":"walk","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(0.707107, -0.707107)","flights":29,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.00000135395725919807,"source":"walk","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(1.0, 0.0)","flights":31,"ground_steps":0,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000359562875473785,"source":"walk","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(1.0, 0.0)","flights":33,"ground_steps":0,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000405355422117282,"source":"walk","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(-1.0, 0.0)","flights":31,"ground_steps":0,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000423636095092661,"source":"walk","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(-1.0, 0.0)","flights":33,"ground_steps":0,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000553152290194703,"source":"walk","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(0.0, -1.0)","flights":32,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000789761543273926,"source":"zero_curve","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(0.0, -1.0)","flights":30,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.00000110268592834473,"source":"zero_curve","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(0.707107, -0.707107)","flights":30,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000935337254759361,"source":"zero_curve","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(0.707107, -0.707107)","flights":30,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.00000121020912047243,"source":"zero_curve","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(1.0, 0.0)","flights":28,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000640056498468766,"source":"zero_curve","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(1.0, 0.0)","flights":31,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000741622898203786,"source":"zero_curve","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(-1.0, 0.0)","flights":28,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000405355422117282,"source":"zero_curve","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(-1.0, 0.0)","flights":31,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000644722831566469,"source":"zero_curve","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(0.0, -1.0)","flights":32,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000789761543273926,"source":"ceiling","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(0.0, -1.0)","flights":30,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.00000110268592834473,"source":"ceiling","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(0.707107, -0.707107)","flights":30,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000935337254759361,"source":"ceiling","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(0.707107, -0.707107)","flights":30,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.00000121020912047243,"source":"ceiling","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(1.0, 0.0)","flights":28,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000640056498468766,"source":"ceiling","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(1.0, 0.0)","flights":31,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000741622898203786,"source":"ceiling","target":"sprint"}
+HANDOFF {"backwards":0,"direction":"(-1.0, 0.0)","flights":28,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000405355422117282,"source":"ceiling","target":"jog"}
+HANDOFF {"backwards":0,"direction":"(-1.0, 0.0)","flights":31,"ground_steps":4,"jumps":0,"lands":0,"max_pin":0.0,"max_target":0.000000644722831566469,"source":"ceiling","target":"sprint"}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.0000000794728598485506,"direction":"(0.0, -1.0)","jumps":[1,1,1,1],"mode":"walk","phase":0.15}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.0000000794728598485506,"direction":"(0.0, -1.0)","jumps":[1,1,1,1],"mode":"walk","phase":0.65}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.0000000794728598485506,"direction":"(0.0, -1.0)","jumps":[1,1,1,1],"mode":"walk","phase":0.9}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.0000000794728598485506,"direction":"(1.0, 0.0)","jumps":[1,1,1,1],"mode":"walk","phase":0.15}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.0000000794728598485506,"direction":"(1.0, 0.0)","jumps":[1,1,1,1],"mode":"walk","phase":0.65}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.0000000794728598485506,"direction":"(1.0, 0.0)","jumps":[1,1,1,1],"mode":"walk","phase":0.9}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(0.0, -1.0)","jumps":[1,1,1,1],"mode":"jog","phase":0.15}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(0.0, -1.0)","jumps":[1,1,1,1],"mode":"jog","phase":0.65}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(0.0, -1.0)","jumps":[1,1,1,1],"mode":"jog","phase":0.9}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(1.0, 0.0)","jumps":[1,1,1,1],"mode":"jog","phase":0.15}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(1.0, 0.0)","jumps":[1,1,1,1],"mode":"jog","phase":0.65}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(1.0, 0.0)","jumps":[1,1,1,1],"mode":"jog","phase":0.9}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(0.0, -1.0)","jumps":[1,1,1,1],"mode":"sprint","phase":0.15}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(0.0, -1.0)","jumps":[1,1,1,1],"mode":"sprint","phase":0.65}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(0.0, -1.0)","jumps":[1,1,1,1],"mode":"sprint","phase":0.9}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(1.0, 0.0)","jumps":[1,1,1,1],"mode":"sprint","phase":0.15}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(1.0, 0.0)","jumps":[1,1,1,1],"mode":"sprint","phase":0.65}
+JUMP MODIFIERS {"air_boost":0.0,"ballistic_error":0.000000158945719697101,"direction":"(1.0, 0.0)","jumps":[1,1,1,1],"mode":"sprint","phase":0.9}
+REVERSALS {"flights":341,"ground_steps":0,"max_pin":0.0,"max_planted":0.000000436034042650135,"max_target":0.00000127036219055299,"ray_max":2,"releases":0,"reversal":"free"}
+REVERSALS {"flights":0,"ground_steps":907,"max_pin":0.0,"max_planted":0.00000070035457611084,"max_target":0.000000880178163242817,"ray_max":2,"releases":0,"reversal":"zero_curve"}
+REVERSALS {"flights":0,"ground_steps":907,"max_pin":0.0,"max_planted":0.00000070035457611084,"max_target":0.000000880178163242817,"ray_max":2,"releases":0,"reversal":"ceiling"}
+GAIT TRANSITION CHECKS: PASS
+
+atlas-t011-box-run.txt
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+RUN_REFERENCE values=92640 max_error=0.00000054389238 compared=true status=PASS
+
