@@ -78,7 +78,7 @@ extends Resource
 @export_range(0.0, 0.5, 0.01) var foot_lift_ratio: float = 0.18
 ## X is zwaaivoortgang, Y is relatieve voetheffing. Eindpunten blijven op de grond.
 @export var swing_foot_curve: Curve = _default_swing_curve()
-## X is snelheid/referentiesnelheid; Y is pasvluchthoogte als deel van beenlengte. Geldt voor jog/run/zijhup; Alt-wandelen houdt grondsteun.
+## X is snelheid/referentiesnelheid; Y is pasvluchthoogte als deel van beenlengte. Geldt voor Jog/Run; Walk houdt in alle richtingen grondsteun.
 @export var stride_flight_curve: Curve = _default_flight_curve()
 ## Maximale armzwaai bij referentiesnelheid in graden.
 @export_range(0.0, 85.0, 1.0) var arm_swing_degrees: float = 48.0
@@ -226,14 +226,27 @@ extends Resource
 		right_hand_bone = value
 		emit_changed()
 
-@export_group("Zijpas")
-## Gezamenlijke knie-intrek tijdens de echte zijwaartse pasvlucht, als deel van beenlengte; groeit met snelheid.
-@export_range(0.0, 0.15, 0.005) var side_hop_tuck_ratio: float = 0.06
-
-## Moment waarop de leidende voet na de achterste landt, als fractie van de echte zijpassteun.
-@export_range(0.05, 0.4, 0.01) var shuffle_lead_contact_ratio: float = 0.22
-## Moment waarop de achterste voet weer loskomt; de leidende blijft tot de echte capsuleafzet staan.
-@export_range(0.45, 0.85, 0.01) var shuffle_trail_release_ratio: float = 0.55
+@export_group("Strafe")
+## Maximale bekken-/beenoriëntatie naar de verplaatsing tijdens Walk; borst en blik blijven afzonderlijk.
+@export_range(0.0, 85.0, 1.0, "suffix:°") var strafe_walk_yaw_degrees: float = 60.0
+## Maximale bekken-/beenoriëntatie naar de verplaatsing tijdens Jog.
+@export_range(0.0, 85.0, 1.0, "suffix:°") var strafe_jog_yaw_degrees: float = 70.0
+## Maximale bekken-/beenoriëntatie naar de verplaatsing tijdens Run; verandert geen capsulebesturing.
+@export_range(0.0, 85.0, 1.0, "suffix:°") var strafe_run_yaw_degrees: float = 80.0
+## Deel van de visuele onderlichaamsdraai dat de borst volgt; 0 houdt de borst bij de besturingsrichting.
+@export_range(0.0, 0.5, 0.01) var strafe_torso_follow_ratio: float = 0.15
+## Vrije voethef bij zuivere Walk-strafe als deel van beenlengte; Walk houdt grondsteun.
+@export_range(0.01, 0.15, 0.005) var strafe_walk_foot_lift_ratio: float = 0.04
+## Vrije voethef bij zuivere Jog-strafe als deel van beenlengte.
+@export_range(0.01, 0.2, 0.005) var strafe_jog_foot_lift_ratio: float = 0.07
+## Vrije voethef bij zuivere Run-strafe als deel van beenlengte.
+@export_range(0.01, 0.25, 0.005) var strafe_run_foot_lift_ratio: float = 0.10
+## Steunafstand bij Walk-strafe als deel van beenlengte; kortere zijpassen zonder wijziging aan de snelheid.
+@export_range(0.35, 1.0, 0.05) var strafe_walk_support_ratio: float = 0.65
+## Deel van de gewone pasvluchthoogte bij zuivere Jog-strafe; 0 houdt grondsteun, geen snelheidsverandering.
+@export_range(0.0, 1.0, 0.05) var strafe_jog_flight_ratio: float = 0.45
+## Deel van de gewone pasvluchthoogte bij zuivere Run-strafe.
+@export_range(0.0, 1.0, 0.05) var strafe_run_flight_ratio: float = 0.70
 
 @export_group("Bijstappen")
 ## Grootste borstrotatie ten opzichte van het bekken bij stilstaand kijken; 0 schakelt de borstreserve uit.
@@ -309,10 +322,10 @@ func get_support_duration(speed: float, leg_length: float, walking: bool) -> flo
 
 ## X = steunseconden, Y = vluchtseconden, Z = fysieke vluchthoogte.
 ## Dezelfde berekening levert het ritme én de afzet; geen tweede onafhankelijke klok.
-func get_gait_timing(speed: float, leg_length: float, gravity: float, motion_profile: String, side_amount: float = 0.0) -> Vector3:
+func get_gait_timing(speed: float, leg_length: float, gravity: float, motion_profile: String, lateral_amount: float = 0.0) -> Vector3:
 	var leg := maxf(leg_length, 0.05)
 	var travel_speed := maxf(speed, 0.2)
-	var walking := motion_profile == "walk" and side_amount <= 0.5
+	var walking := motion_profile == "walk"
 	var running := motion_profile == "run"
 	var cadence := walk_cadence if walking else (run_cadence if running else jog_cadence)
 	var reference := 1.4 if walking else (reference_speed if running else reference_speed / 3.0)
@@ -322,9 +335,11 @@ func get_gait_timing(speed: float, leg_length: float, gravity: float, motion_pro
 	var period := 60.0 / maxf(cadence, 30.0)
 	if walking:
 		var overlap := clampf(walk_double_support_ratio, 0.0, 0.3)
-		var reach_time := leg * clampf(walk_support_distance_ratio, 0.5, 1.2) / (travel_speed * (1.0 + overlap))
+		var support_ratio := lerpf(walk_support_distance_ratio, strafe_walk_support_ratio, clampf(lateral_amount, 0.0, 1.0))
+		var reach_time := leg * clampf(support_ratio, 0.35, 1.2) / (travel_speed * (1.0 + overlap))
 		return Vector3(clampf(minf(period, reach_time), 0.035, 0.8), 0.0, 0.0)
 	var height := get_flight_height(speed / maxf(reference_speed, 0.1), leg, false)
+	height *= lerpf(1.0, strafe_run_flight_ratio if running else strafe_jog_flight_ratio, clampf(lateral_amount, 0.0, 1.0))
 	var flight := sqrt(8.0 * height / maxf(gravity, 0.1))
 	var reach_ratio := step_length_ratio if running else jog_support_distance_ratio
 	var reach_time := leg * clampf(reach_ratio, 0.2, 1.2) / travel_speed

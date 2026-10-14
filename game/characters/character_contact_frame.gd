@@ -25,6 +25,8 @@ var stride_started: bool = false
 var stride_landed: bool = false
 ## Gesteunde voetwissel wanneer plafond of curve de pasvlucht verhindert.
 var ground_step: bool = false
+## Werkelijk gesteunde voetoverdracht bij een omkering; geen sprong of impactlanding.
+var direction_step: bool = false
 var step_index: int = 0
 ## Steun 0..0,5 en vlucht 0,5..1; een geheel gesteunde cyclus gebruikt uniforme 0..1.
 var gait_phase: float = 0.0
@@ -32,7 +34,7 @@ var gait_phase: float = 0.0
 ## Gebruik voor een poseklok alleen met faseoverdracht. Geheel gesteunde passen gebruiken 1.
 var support_fraction: float = 1.0
 ## Eén motorcyclus in seconden: vooruit/diagonaal één afwisselende stap;
-## zijwaarts één lead/follow-shuffle met twee voetcontacten. Botsingen kunnen dit verkorten.
+## ook zijwaarts één afwisselende Walk/Jog/Run-pas. Botsingen kunnen dit verkorten.
 var step_duration: float = 0.0
 ## Fractie dubbele steun van een volledige wandelcyclus; presentatie beheert zoolcontacten.
 var double_support_ratio: float = 0.0

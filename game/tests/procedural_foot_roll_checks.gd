@@ -1,5 +1,5 @@
 extends "res://tests/procedural_knee_checks.gd"
-## Echte voetafrol en lead/follow-contacten; dezelfde vier skeletverhoudingen.
+## Echte voetafrol en afwisselende directionele contacten op vier skeletverhoudingen.
 func _run() -> void:
 	_phase_transfer()
 	await _style_transfers()
@@ -36,7 +36,10 @@ func _run() -> void:
 							var pivot_z:float=view._toe_lengths[side]*(0.25 if view._foot_roll[side]>0 else -1.0)
 							var point:=points[2]+world_basis*(view._rest_foot_basis[side].inverse()*Vector3(0,-view._ankle_height,pivot_z))
 							state.pivot_error=maxf(state.pivot_error,point.distance_to(view._foot_pivots[side]))
-					state.min_gap=minf(state.min_gap,(view._targets[1]-view._targets[0]).dot(view._body_transform.basis.x))
+					var gap: float = (view._targets[1]-view._targets[0]).dot(view._body_transform.basis.x)
+					if gap < state.min_gap:
+						state.worst_gap = {"tick":tick,"phase":frame.gait_phase,"locked":view._locked.duplicate(),"yaw":view._gait_yaw,"turn":view._turn_planner.enabled,"speed":view._speed,"air":frame.air_kind,"targets":[view._targets[0],view._targets[1]]}
+					state.min_gap=minf(state.min_gap,gap)
 					if tick>40:
 						state.double+=1 if view._locked[0] and view._locked[1] else 0
 						state.air+=1 if not frame.supported else 0
@@ -51,7 +54,7 @@ func _run() -> void:
 					state.free_correction=view._max_free_target_adjustment
 					_expect(view._rays_last_frame<=2,"querybudget")
 					if direction.x!=0 and tick>40:
-						_expect(view._contact_sides.size()<=1,"shuffle heeft afzonderlijke landingen")
+						_expect(view._contact_sides.size()<=1,"directionele stappen hebben afzonderlijke landingen")
 					view._skeleton.reset_bone_poses()
 			for index in 4:
 				var state:Dictionary=samples[index]
@@ -64,7 +67,7 @@ func _run() -> void:
 				if direction.x!=0:
 					var lead:=1 if direction.x>0 else 0
 					for pair in range(1,state.events.size()):
-						_expect(state.events[pair][0]>state.events[pair-1][0] and state.events[pair][1]!=state.events[pair-1][1],"shufflecontacten volgen apart en afwisselend")
+						_expect(state.events[pair][0]>state.events[pair-1][0] and state.events[pair][1]!=state.events[pair-1][1],"zijwaartse contacten volgen apart en afwisselend")
 			print("FOOT ROLL ",mode," ",direction," ",JSON.stringify(samples))
 			report.append({"mode":mode,"direction":direction,"bodies":samples})
 			world.queue_free()
@@ -81,20 +84,20 @@ func _run() -> void:
 func _phase_transfer() -> void:
 	var planner := AtlasFootPhase.new()
 	var frame := {"gait_phase":0.30,"support_fraction":0.667,"step_duration":0.3,"gait_supported_cycle":false,"step_index":1,"supported":true,"delta":1.0/60.0}
-	planner.sample(frame,false,false,0)
+	planner.sample(frame,false)
 	var before := planner.uniform_phase
 	frame.gait_phase=0.35
 	frame.support_fraction=0.5
-	planner.sample(frame,false,false,0)
+	planner.sample(frame,false)
 	_expect(planner.uniform_phase>before,"kortere actuele steun draait posefase niet terug")
 	before=planner.uniform_phase
 	frame.gait_phase=0.80
 	frame.gait_supported_cycle=true
-	planner.sample(frame,true,false,0)
+	planner.sample(frame,true)
 	_expect(planner.uniform_phase>before,"WALK tijdens bestaande steun draait posefase niet terug")
 	frame.step_index=2
 	frame.gait_phase=0.0
-	planner.sample(frame,true,false,0)
+	planner.sample(frame,true)
 	_expect(planner.uniform_phase==0.0,"echte nieuwe motorstap reset uniforme posefase")
 
 func _style_transfers() -> void:

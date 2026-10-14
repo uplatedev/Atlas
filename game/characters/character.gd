@@ -455,6 +455,7 @@ var _queued_impulse: Vector3 = Vector3.ZERO
 var _external_speed_allowance: float = 0.0
 var _stride_probe_count: int = 0
 var _ground_step_requested: bool = false
+var _direction_step_requested: bool = false
 var _controlled: bool = false
 var _spawn_transform: Transform3D
 var _look_input: Vector2 = Vector2.ZERO
@@ -805,7 +806,7 @@ func _gait_motion_profile(local_velocity: Vector3) -> String:
 		return "jog"
 	# Een lopende vluchtcyclus wordt bij werkelijk contact overgedragen. Zo krijgt
 	# dezelfde halve steunfase niet plots de volle wandelfase als Alt wordt gedrukt.
-	if AtlasGaitStyle.side_amount(local_velocity) <= 0.5 and not _stride.is_supported_cycle() and _stride.phase > 0.000001:
+	if not _stride.is_supported_cycle() and _stride.phase > 0.000001:
 		return "jog"
 	return "walk"
 
@@ -1254,16 +1255,19 @@ func _try_start_stride(delta: float, supported: bool) -> bool:
 	var speed := Vector2(velocity.x, velocity.z).length()
 	var moving := speed > 0.10 and _actual_speed > 0.10
 	var local_velocity := global_basis.inverse() * Vector3(velocity.x, 0.0, velocity.z)
-	var side_hop := AtlasGaitStyle.side_amount(local_velocity) > 0.5
 	var gait_profile := _gait_motion_profile(local_velocity)
-	var grounded_walk := gait_profile == "walk" and not side_hop
-	var timing := body_profile.get_gait_timing(speed, _procedural_leg_length, gravity_strength, gait_profile, 1.0 if side_hop else 0.0)
+	var grounded_walk := gait_profile == "walk"
+	var timing := body_profile.get_gait_timing(speed, _procedural_leg_length, gravity_strength, gait_profile, AtlasGaitStyle.lateral_amount(local_velocity))
 	_stride.configure_timing(timing.x, timing.y, body_profile.walk_double_support_ratio if grounded_walk else 0.0)
+	if moving and AtlasGaitStyle.lateral_amount(local_velocity) > 0.001 and _stride.needs_direction_step(Vector2(velocity.x, velocity.z)):
+		_ground_step_requested = true
+		_direction_step_requested = true
+		return false
 	var duration := timing.x
-	var first_support_ratio := 1.0 if _run_requested and not side_hop else body_profile.walk_start_support_ratio
+	var first_support_ratio := 1.0 if _run_requested else body_profile.walk_start_support_ratio
 	if not _stride.support_tick(delta, duration, moving, first_support_ratio, Vector2(velocity.x, velocity.z), grounded_walk, not _input_direction.is_zero_approx()):
 		return false
-	# Alt wandelt met grondsteun. Zijwaartse hup, jog en run gebruiken de echte boog.
+	# Walk houdt in iedere richting grondsteun; Jog/Run gebruiken hun richtinggebonden pasvlucht.
 	var height := timing.z
 	if height <= 0.000001:
 		_ground_step_requested = true
@@ -1296,6 +1300,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_stride_probe_count = 0
 	_ground_step_requested = false
+	_direction_step_requested = false
 	var intent := _consume_intent()
 	var input := intent.movement
 	_walk_requested = intent.walk
@@ -1390,16 +1395,19 @@ func _physics_process(delta: float) -> void:
 		_air_kind = "fall"
 	var ground_step := _ground_step_requested and get_camera_grounded() and _actual_speed > 0.10
 	if ground_step:
-		_stride.supported_step(Vector2(velocity.x, velocity.z))
+		if _direction_step_requested:
+			_stride.supported_direction_step(Vector2(velocity.x, velocity.z))
+		else:
+			_stride.supported_step(Vector2(velocity.x, velocity.z))
 	elif _ground_step_requested:
 		_stride.cancel()
 	if stride_landed or ground_step:
 		# Plaatsing gebruikt de komende steun, ook na versnellen of stijlwissel in vlucht.
 		var contact_speed := Vector2(velocity.x, velocity.z).length()
 		var contact_local_velocity := global_basis.inverse() * Vector3(velocity.x, 0.0, velocity.z)
-		var contact_side := AtlasGaitStyle.side_amount(contact_local_velocity)
+		var contact_side := AtlasGaitStyle.lateral_amount(contact_local_velocity)
 		var contact_profile := _gait_motion_profile(contact_local_velocity)
-		var contact_walk := contact_profile == "walk" and contact_side <= 0.5
+		var contact_walk := contact_profile == "walk"
 		var contact_timing := body_profile.get_gait_timing(contact_speed, _procedural_leg_length, gravity_strength, contact_profile, contact_side)
 		_stride.configure_timing(contact_timing.x, contact_timing.y, body_profile.walk_double_support_ratio if contact_walk else 0.0)
 		if contact_walk:
@@ -1437,6 +1445,7 @@ func _physics_process(delta: float) -> void:
 	contact.stride_started = stride_started
 	contact.stride_landed = stride_landed
 	contact.ground_step = ground_step
+	contact.direction_step = ground_step and _direction_step_requested
 	contact.step_index = _stride.step_index
 	contact.gait_phase = _stride.phase
 	contact.support_fraction = _stride.get_support_fraction()

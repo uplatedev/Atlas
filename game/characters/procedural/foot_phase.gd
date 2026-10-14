@@ -16,7 +16,7 @@ var _last_motor_phase: float = 0.0
 var _uniform_origin: float = 0.0
 var _motor_origin: float = 0.0
 
-func sample(frame: Variant, walking: bool, shuffle: bool, leading: int, double_support: float = 0.18, lead_contact: float = 0.22, trail_release: float = 0.55, first_shuffle_support: bool = false) -> void:
+func sample(frame: Variant, walking: bool, double_support: float = 0.18) -> void:
 	var phase: float = clampf(frame.gait_phase, 0.0, 1.0)
 	var fraction_value: Variant = frame.get("support_fraction")
 	var fraction: float = clampf(float(fraction_value), 0.01, 1.0) if fraction_value != null else 0.5
@@ -51,25 +51,7 @@ func sample(frame: Variant, walking: bool, shuffle: bool, leading: int, double_s
 		contact[side] = false
 		support_age[side] = 0.0
 		swing[side] = uniform_phase if side != stance else clampf((phase - 0.5) * 2.0, 0.0, 1.0)
-	if shuffle:
-		var lead_touch := 0.40 if supported_cycle else clampf(maxf(lead_contact, frame.delta / maxf(support_seconds, frame.delta)), 0.05, 0.75)
-		var trail_off := clampf(maxf(trail_release, lead_touch + 0.12), lead_touch, 0.9)
-		var support_phase := phase if supported_cycle else clampf(phase * 2.0, 0.0, 1.0)
-		var span := 1.0 if supported_cycle else fraction
-		var lead_start := 0.0 if supported_cycle else span
-		var lead_end := lead_touch * span
-		var trail_start := trail_off * span
-		contact[leading] = frame.supported and support_phase >= lead_touch
-		contact[1-leading] = frame.supported and support_phase < trail_off
-		support_age[leading] = clampf((support_phase - lead_touch) / maxf(1.0 - lead_touch, 0.001), 0.0, 1.0)
-		support_age[1-leading] = clampf(support_phase / trail_off, 0.0, 1.0)
-		if supported_cycle or first_shuffle_support:
-			swing[leading] = clampf(support_phase / lead_touch, 0.0, 1.0)
-		else:
-			var elapsed := uniform_phase - lead_start if uniform_phase >= lead_start else uniform_phase + 1.0 - lead_start
-			swing[leading] = clampf(elapsed / (1.0 - lead_start + lead_end), 0.0, 1.0)
-		swing[1-leading] = clampf((uniform_phase - trail_start) / (1.0 - trail_start), 0.0, 1.0)
-	elif walking and supported_cycle:
+	if walking and supported_cycle:
 		contact[stance] = frame.supported
 		contact[1-stance] = frame.supported and phase < overlap
 		support_age[stance] = phase / (1.0 + overlap)

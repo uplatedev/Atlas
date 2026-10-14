@@ -42,7 +42,7 @@ func _test_timing(profile: AtlasCharacterBodyProfile) -> void:
 		_expect(timing.x > 0.0 and timing.y == 0.0 and timing.z == 0.0, "nulcurve bewaart een echte gesteunde cyclus")
 	profile.stride_flight_curve = original
 	var side := profile.get_gait_timing(1.12, 0.673775, 20.0, "walk", 1.0)
-	_expect(side.y > 0.0 and side.z > 0.0, "expliciete Alt-zijpas houdt de bevestigde kleine fysieke hup")
+	_expect(side.y == 0.0 and side.z == 0.0, "Walk-strafe houdt de bevestigde voortdurende grondsteun")
 
 func _test_scheduler_contract() -> void:
 	var initial := AtlasStrideScheduler.new()
@@ -51,6 +51,10 @@ func _test_scheduler_contract() -> void:
 	_expect(is_equal_approx(initial.get_step_duration(), 0.2), "eerste steun duurt korter vanuit neutrale voeten")
 	initial.supported_step(Vector2(0,-1.4))
 	_expect(is_equal_approx(initial.get_step_duration(), 0.4), "nieuwe contactplaatsing krijgt volle toekomstige steun, geen oude startduur")
+	initial.support_tick(0.2,0.4,true,1.0,Vector2(0,-1.4),true,true)
+	var reversal_phase := initial.phase
+	initial.support_tick(1.0/60.0,0.4,false,1.0,Vector2.ZERO,true,true)
+	_expect(is_equal_approx(initial.phase,reversal_phase) and initial.step_index==1,"omkeernulpassage bewaart de lopende steunfase zonder extra voetwissel")
 	var scheduler := AtlasStrideScheduler.new()
 	scheduler.configure_timing(0.2, 0.1, 0.0)
 	_expect(is_equal_approx(scheduler.get_step_duration(), 0.3), "steun plus vlucht is één links-rechtsstap")
@@ -89,7 +93,7 @@ func _test_gait_selection() -> void:
 	_expect(actor._gait_motion_profile(Vector3(0,0,-1.4)) == "jog", "lopende vluchtcyclus wacht op werkelijk contact voor WALK")
 	actor._stride.support_tick(0.01,0.4,true,1.0,Vector2(0,-1.4),true)
 	_expect(not actor._stride.is_supported_cycle() and actor._stride.phase < 0.5, "Alt verdubbelt lopende halve steunfase niet")
-	_expect(actor._gait_motion_profile(Vector3(1.12,0,0)) == "walk", "lage zijshuffle houdt eigen stijl tijdens steun en vlucht")
+	_expect(actor._gait_motion_profile(Vector3(1.12,0,0)) == "jog", "ook zijwaartse Walk wacht op werkelijk contact vóór grondsteun")
 	actor._stride.touch_down(Vector2(0,-1.4))
 	actor._stride.configure_timing(0.4,0.0,0.18)
 	actor._stride.begin_supported_cycle()

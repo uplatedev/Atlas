@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-14",
+  "machine": "WIN-O6OHNVI0QFJ",
+  "godot": "4.7.2.stable.official.ed1daf0bf",
+  "source_branch": "Smyl3z/T-014-directionele-strafe",
+  "source_game_tree": "9bc7a6176bc88ab18c85bd0e07c17851358bc5b1",
+  "source_tools_tree": "1a0e571322123e4634b2934e27b92a61892dcf98",
+  "checks": {
+    "import": "PASS",
+    "main_scene_10_frames": "PASS",
+    "suites": 31,
+    "result": "PASS"
+  },
+  "strafe": {
+    "cases": 24,
+    "bodies": 4,
+    "modes": [
+      "walk",
+      "jog",
+      "run"
+    ],
+    "side_speed_caps": [
+      1.12,
+      2.4,
+      7.2
+    ],
+    "max_speed_error": 0.00943884849548349,
+    "max_target_error": 1.12402574359294e-06,
+    "max_pin_drift": 0.0,
+    "min_foot_gap": 0.0524334311485291,
+    "min_shin_gap": 0.09779442101717,
+    "min_free_sole": -0.00102525949478149,
+    "max_queries": 2
+  },
+  "directions": {
+    "routes": 21,
+    "body_cases": 84,
+    "max_target_error": 1.19209289550781e-06,
+    "max_pin_drift": 0.0,
+    "min_foot_gap": 0.0425999760627747
+  },
+  "forward_run_reference": {
+    "baseline_commit": "5dbd95c2108f6c3c884ae6085351241652de3862",
+    "values": 92640,
+    "max_error": 5e-14,
+    "result": "PASS"
+  },
+  "graphics": {
+    "renderer": "D3D12 / Forward+",
+    "gpu": "Intel Iris Xe",
+    "captures": [
+      {
+        "scenario": "strafe-preview",
+        "case": "strafe_walk_front",
+        "frames": 180,
+        "ticks_per_frame": 1
+      },
+      {
+        "scenario": "strafe-preview",
+        "case": "strafe_jog_front",
+        "frames": 180,
+        "ticks_per_frame": 1
+      },
+      {
+        "scenario": "strafe-preview",
+        "case": "strafe_run_front",
+        "frames": 180,
+        "ticks_per_frame": 1
+      },
+      {
+        "scenario": "strafe-preview",
+        "case": "strafe_run_side",
+        "frames": 180,
+        "ticks_per_frame": 1
+      },
+      {
+        "scenario": "strafe-reverse-preview",
+        "case": "strafe_walk_front",
+        "frames": 180,
+        "ticks_per_frame": 1
+      },
+      {
+        "scenario": "strafe-reverse-preview",
+        "case": "strafe_jog_front",
+        "frames": 180,
+        "ticks_per_frame": 1
+      },
+      {
+        "scenario": "strafe-reverse-preview",
+        "case": "strafe_run_front",
+        "frames": 180,
+        "ticks_per_frame": 1
+      },
+      {
+        "scenario": "strafe-reverse-preview",
+        "case": "strafe_run_side",
+        "frames": 180,
+        "ticks_per_frame": 1
+      }
+    ],
+    "total_frames": 1440
+  },
+  "human_review": "open; approach and unchanged speeds confirmed, new posture/steps not accepted yet"
+}

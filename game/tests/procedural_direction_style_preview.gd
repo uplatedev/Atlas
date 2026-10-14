@@ -1,5 +1,5 @@
 extends "res://tests/procedural_live_preview.gd"
-## Werkelijke zijhup en diagonale rencyclus; geen ingevoerde poseframes.
+## Werkelijke directionele zij- en diagonale passen; geen ingevoerde poseframes.
 func _run() -> void:
 	Engine.max_fps=144
 	for mode in ["side_jog","side_run","diagonal_forward","diagonal_back"]:

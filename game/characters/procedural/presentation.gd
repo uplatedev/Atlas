@@ -25,6 +25,7 @@ var _targets: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
 var _contact_directions: Array[Vector3] = [Vector3.FORWARD, Vector3.FORWARD]
 var _pose_delta: float = 1.0 / 60.0
 var _jog_pose: float = 0.0
+var _arm_phase_offset: float = 0.0
 var _contact_forwards: Array[Vector3] = [Vector3.FORWARD, Vector3.FORWARD]
 var _foot_roll: Array[float] = [0.0, 0.0]
 var _foot_pivots: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
@@ -38,10 +39,7 @@ var _free_plan_origins: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
 var _toe_lengths: Array[float] = [0.14, 0.14]
 var _contact_sides: Array[int] = []
 var _foot_phase := FootPhase.new()
-var _shuffle_lead: int = 1
-var _shuffle_first_support: bool = false
 var _walk_overlap_release_step: Array[int] = [-1, -1]
-var _shuffle_contact_step: Array[int] = [-1, -1]
 var _contacts: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
 var _normals: Array[Vector3] = [Vector3.UP, Vector3.UP]
 var _locked: Array[bool] = [false, false]
@@ -56,8 +54,7 @@ var _ankle_height: float = 0.1
 var _hip_height: float = 0.85
 var _speed: float = 0.0
 var _motion_profile: String = "jog"
-var _side_hop: bool = false
-var _side_amount: float = 0.0
+var _strafe_amount: float = 0.0
 var _gait_yaw: float = 0.0
 var _phase: float = 0.0
 var _step_index: int = 0
@@ -193,9 +190,7 @@ func reset_pose() -> void:
 	_foot_roll = [0.0, 0.0]
 	_foot_phase = FootPhase.new()
 	_free_target_adjustment = [0.0, 0.0]
-	_shuffle_first_support = false
 	_contact_sides.clear()
-	_shuffle_contact_step = [-1, -1]
 	_walk_overlap_release_step = [-1, -1]
 	_swing_phase_origin = [0.0, 0.0]
 	_swing_style = ""
@@ -206,9 +201,9 @@ func reset_pose() -> void:
 	_jogging = true
 	_running_pose = 0.0
 	_jog_pose = 0.0
+	_arm_phase_offset = 0.0
 	_walking_pose = 0.0
-	_side_hop = false
-	_side_amount = 0.0
+	_strafe_amount = 0.0
 	_gait_yaw = 0.0
 	_phase = 0.0
 	_step_index = 0
@@ -245,6 +240,7 @@ func reset_pose() -> void:
 func consume_frame(frame: Variant) -> void:
 	if _skeleton == null or _profile == null:
 		return
+	var previous_arm_phase := float(_step_index) + _pose_phase() + _arm_phase_offset
 	var started := Time.get_ticks_usec()
 	_pose_delta = frame.delta
 	_rays_last_frame = 0
@@ -306,14 +302,24 @@ func consume_frame(frame: Variant) -> void:
 		_body_transform.basis *= Basis(Vector3.UP, _gait_yaw)
 	else:
 		_update_gait_basis(frame, standing, changed_step)
-	_foot_phase.sample(frame, _relaxed_walk, _side_hop, _shuffle_lead, _setting("walk_double_support_ratio", 0.18), _setting("shuffle_lead_contact_ratio", 0.22), _setting("shuffle_trail_release_ratio", 0.55), _shuffle_first_support)
-	var next_swing_style := ("shuffle%d" % _shuffle_lead) if _side_hop else ("walk" if _relaxed_walk else "run")
+	_foot_phase.sample(frame, _relaxed_walk, _setting("walk_double_support_ratio", 0.18))
+	if frame.get("direction_step") == true:
+		# Een vroege voetwissel bij omkeren mag de armen niet midden in hun
+		# zwaai spiegelen. Draag hun bereikte fase over en sluit rustig aan.
+		_arm_phase_offset = wrapf(previous_arm_phase - float(_step_index) - _pose_phase(), -1.0, 1.0)
+	else:
+		_arm_phase_offset = lerpf(_arm_phase_offset, 0.0, 1.0 - exp(-frame.delta / maxf(_profile.gait_blend_time * 2.0, 0.02)))
+		if absf(_arm_phase_offset) < 0.000001:
+			_arm_phase_offset = 0.0
+	var next_swing_style := "walk" if _relaxed_walk else "stride"
 	var swing_style_changed := _swing_style != "" and next_swing_style != _swing_style
 	_swing_style = next_swing_style
 	var moving_stride := standing and not stationary and _air_kind in ["none", "stride"]
 	var length := minf(_measured_leg_length * _profile.step_length_ratio, _measured_leg_length * 0.85)
 	var running := _running_blend()
 	var lift := _profile.foot_lift_ratio * _measured_leg_length * lerpf(_profile.walk_lift_ratio, 1.0, running)
+	var lateral_lift := _profile.strafe_walk_foot_lift_ratio if _relaxed_walk else (_profile.strafe_jog_foot_lift_ratio if _jogging else _profile.strafe_run_foot_lift_ratio)
+	lift = lerpf(lift, _measured_leg_length * lateral_lift, _strafe_amount)
 	# Nieuwe steun wordt eerst bewezen; pas daarna mag de oude overlap los.
 	for side in [stance, 1 - stance]:
 		# Een omkeernulpassage is geen rustcontact: bewaar de bereikte vrije voet
@@ -334,17 +340,17 @@ func consume_frame(frame: Variant) -> void:
 		rest.x *= _profile.get_stance_width_scale(_speed, standing)
 		var base := _body_transform * Vector3(rest.x, 0.0, 0.0)
 		var ahead_length := length * 0.48
-		if _relaxed_walk or _jogging or _side_hop:
-			var contact_seconds := _foot_phase.support_seconds * (1.0 + _foot_phase.overlap if _relaxed_walk and not _side_hop else 1.0)
+		if _relaxed_walk or _jogging or _strafe_amount > 0.001:
+			var contact_seconds := _foot_phase.support_seconds * (1.0 + _foot_phase.overlap if _relaxed_walk else 1.0)
 			ahead_length = clampf(_speed * contact_seconds * 0.5, _measured_leg_length * 0.12, _measured_leg_length * 0.50)
 		var ahead := _direction * ahead_length
 		var destination := base + ahead if moving_stride else base
-		var new_cycle_contact: bool = (frame.stride_landed or frame.ground_step) and (side == (1 - _shuffle_lead) if _side_hop else side == stance)
+		var new_cycle_contact: bool = (frame.stride_landed or frame.ground_step) and side == stance
 		if _turn_release_remaining > 0.0 and supported and side == stance and (frame.stride_landed or not _locked[side]):
 			# Eerste loopcontact mag de afgeronde bijstap niet naar een verre voorspelling verplaatsen.
 			var reached := previous_target - Vector3.UP * _ankle_height
 			destination = reached.move_toward(destination, _measured_leg_length * 0.08)
-		if moving_stride and _side_hop and supported and _foot_phase.contact[side] and (not _locked[side] or new_cycle_contact) and _locked[1 - side]:
+		if moving_stride and _strafe_amount > 0.001 and supported and _foot_phase.contact[side] and _foot_phase.contact[1 - side] and (not _locked[side] or new_cycle_contact) and _locked[1 - side]:
 			# Een nieuwe landing mag de nog vaste andere voet niet voorbijgaan.
 			# Plan de bestemming vóór de bestaande grondmeting; verplaats nooit de pin.
 			var right := _pose_lateral_axis().slide(Vector3.UP).normalized()
@@ -361,7 +367,7 @@ func consume_frame(frame: Variant) -> void:
 		var ankle := ground + Vector3.UP * _ankle_height
 		var early_walk_swing := false
 		var may_plant := supported and standing and (stationary or _foot_phase.contact[side])
-		if moving_stride and _relaxed_walk and not _side_hop and side != stance:
+		if moving_stride and _relaxed_walk and side != stance:
 			# Na een omkering draagt de nieuwe voet al. Rek de oude pin niet nog
 			# een overlap verder in de verlaten bewegingsrichting uit.
 			var narrow_overlap := (_targets[1] - _targets[0]).dot(_pose_lateral_axis()) < _measured_leg_length * 0.12
@@ -369,13 +375,6 @@ func consume_frame(frame: Variant) -> void:
 				_walk_overlap_release_step[side] = _step_index
 				may_plant = false
 				early_walk_swing = true
-				_foot_phase.swing[side] = _phase
-		if moving_stride and _side_hop and side != _shuffle_lead and _locked[_shuffle_lead]:
-			# Ook bij WALK naar shuffle mag de oude volgende voet los zodra de
-			# leidende voet werkelijk draagt; rek de verlaten steunrichting niet uit.
-			if _direction.dot(_contact_directions[side]) < 0.75 or _walk_overlap_release_step[side] == _step_index:
-				may_plant = false
-				_walk_overlap_release_step[side] = _step_index
 				_foot_phase.swing[side] = _phase
 		# Bij een externe verplaatsing buiten fysiek beenbereik wordt contact expliciet
 		# losgelaten. Tijdens gewone steun blijft het wereldpunt onveranderd.
@@ -392,11 +391,10 @@ func consume_frame(frame: Variant) -> void:
 			_contact_forwards[side] = -_body_transform.basis.z
 			_contact_directions[side] = _direction
 			_locked[side] = true
-			var audible_contact: bool = (_side_hop and _shuffle_contact_step[side] != _step_index) or (new_cycle_contact and side == stance)
+			var audible_contact: bool = new_cycle_contact and side == stance
 			if audible_contact and _initialized_pose and _speed > 0.10:
 				frame.foot_contacts.append(ground)
 				_contact_sides.append(side)
-				_shuffle_contact_step[side] = _step_index
 		if not may_plant or not has_ground:
 			if _locked[side]:
 				_swing_phase_origin[side] = _foot_phase.swing[side] if swing_style_changed else 0.0
@@ -407,17 +405,17 @@ func consume_frame(frame: Variant) -> void:
 			_contacts[side] = ground
 		if _locked[side]:
 			_targets[side] = _contacts[side] + Vector3.UP * _ankle_height
-			if moving_stride and (_walking_pose > 0.0 or _jog_pose > 0.0) and not _side_hop:
+			if moving_stride and (_walking_pose > 0.0 or _jog_pose > 0.0):
 				_foot_roll[side] = _foot_phase.roll(side, _setting("walk_heel_strike_degrees", 12.0), _setting("walk_toe_off_degrees", 24.0)) * _walking_pose
 				_foot_roll[side] += _foot_phase.roll(side, 0.0, _profile.ankle_swing_degrees * 2.0) * _jog_pose
+				_foot_roll[side] *= lerpf(1.0, 0.45, _strafe_amount)
 				_targets[side] = _rolled_ankle(side, _foot_roll[side])
-		elif moving_stride and _side_hop:
-			_targets[side] = _side_target(side, ankle)
 		elif moving_stride:
 			var progress := _swing_progress(side)
 			var speed_mix := clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)
 			var heel_height := _measured_leg_length * _profile.heel_recovery_ratio * lerpf(_profile.walk_lift_ratio * 0.12, 1.0, running) * speed_mix
 			heel_height = lerpf(heel_height, _measured_leg_length * _profile.heel_recovery_ratio * 0.45 * clampf(_speed / 3.0, 0.0, 1.0), _jog_pose)
+			heel_height *= lerpf(1.0, 0.40, _strafe_amount)
 			var lateral_ahead := _body_transform.basis.x * ahead.dot(_body_transform.basis.x)
 			# Zijdelings herstel blijft in de toekomstige voetbaan; achteruit zwaaien
 			# over de andere baan zou de benen tijdens strafing laten kruisen.
@@ -485,24 +483,16 @@ func _pose_lateral_axis() -> Vector3:
 	var roll := wave * deg_to_rad(_profile.body_roll_degrees) * lerpf(1.0, 0.45, _running_blend())
 	return _body_transform.basis.x.rotated(Vector3.UP, twist).rotated(-_body_transform.basis.z, roll)
 
-func _update_gait_basis(frame: Variant, standing: bool, changed_step: bool) -> void:
+func _update_gait_basis(frame: Variant, standing: bool, _changed_step: bool) -> void:
 	var local_velocity: Vector3 = frame.body_transform.basis.inverse() * frame.body_velocity
-	_side_amount = GaitStyle.side_amount(local_velocity) if standing else 0.0
-	var shuffle_requested := _side_amount > 0.5 and standing and _speed >= 0.1 and _air_kind in ["none", "stride"]
-	if shuffle_requested and not _side_hop:
-		_shuffle_first_support = frame.supported
-	if changed_step or not frame.supported:
-		_shuffle_first_support = false
-	var requested_lead := 1 if local_velocity.x >= 0.0 else 0
-	if shuffle_requested and (not _side_hop or changed_step or requested_lead != _shuffle_lead):
-		_shuffle_lead = requested_lead
-	_side_hop = shuffle_requested
-	var desired := GaitStyle.diagonal_yaw(local_velocity, _motion_profile) if standing else 0.0
+	_strafe_amount = GaitStyle.lateral_amount(local_velocity) if standing else 0.0
+	var maximum: float = _profile.strafe_walk_yaw_degrees if _relaxed_walk else (_profile.strafe_jog_yaw_degrees if _jogging else _profile.strafe_run_yaw_degrees)
+	var desired := GaitStyle.movement_yaw(local_velocity, maximum) if standing else 0.0
 	var previous := _gait_yaw
 	_gait_yaw = lerp_angle(_gait_yaw, desired, 1.0 - exp(-frame.delta * 14.0))
 	if absf(_gait_yaw) < 0.000001 and desired == 0.0:
 		_gait_yaw = 0.0
-	# Vrije doelen behouden hun bereikte plaats als de visuele lengte-as draait.
+	# Een nieuwe richting draagt de bereikte vrije voetpositie over; steun blijft wereldvast.
 	var change := Basis(Vector3.UP, previous - _gait_yaw)
 	for side in range(2):
 		_swing_from[side] = change * _swing_from[side]
@@ -527,19 +517,6 @@ func _swing_progress(side: int) -> float:
 		_swing_phase_origin[side] = 0.0
 	return clampf((raw - _swing_phase_origin[side]) / maxf(1.0 - _swing_phase_origin[side], 0.001), 0.0, 1.0)
 
-func _side_target(side: int, ankle: Vector3) -> Vector3:
-	var progress := _swing_progress(side)
-	var from_world := _body_transform * _swing_from[side]
-	# De leidende voet opent al in de vlucht; de volgende sluit compact aan.
-	# De contactbestemming blijft gelijk en geplante voeten passeren dit pad niet.
-	var travel := 1.0 - pow(1.0 - progress, 2.0) if side == _shuffle_lead else smoothstep(0.0, 1.0, progress)
-	var target := from_world.lerp(ankle, travel)
-	var lift := _measured_leg_length * _profile.side_hop_tuck_ratio * lerpf(0.55, 1.0, clampf(_speed / _profile.reference_speed, 0.0, 1.0))
-	target.y += sin(progress * PI) * lift
-	if _air_kind == "stride":
-		target.y = maxf(target.y, _body_transform.origin.y + _ankle_height * 0.7)
-	return target
-
 func _pose_phase() -> float:
 	return _foot_phase.uniform_phase
 
@@ -559,7 +536,7 @@ func _requested_running_blend() -> float:
 
 func _update_compression(frame: Variant, was_jump: bool) -> void:
 	_gait_compression = 0.0
-	if _jog_pose > 0.0 and not _side_hop and frame.supported and _speed > 0.1 and _posture in ["staan", "stand"] and not _sliding:
+	if _jog_pose > 0.0 and frame.supported and _speed > 0.1 and _posture in ["staan", "stand"] and not _sliding:
 		# Eén compressieboog tijdens de echte steun. Geen tweede trillende pasveer
 		# bovenop capsulevlucht en beenbereik; sprong/val houdt de impactveer.
 		var contact_progress: float = _phase if _foot_phase.supported_cycle else clampf(_phase * 2.0, 0.0, 1.0)
@@ -769,7 +746,8 @@ func apply_skeleton_pose(skeleton: Skeleton3D, plan_free_targets: bool = false) 
 			var hip := skeleton.global_transform * skeleton.get_bone_global_pose(_legs[side][0]).origin
 			var delta := _targets[side] - hip
 			var horizontal_distance := Vector2(delta.x, delta.z).length()
-			var reach := (_leg_lengths[side].x + _leg_lengths[side].y) * 0.995
+			# De gewichtsverplaatsing volgt hieronder; zijpassen houden daarvoor bereikreserve.
+			var reach := (_leg_lengths[side].x + _leg_lengths[side].y) * lerpf(0.995, 0.975, _strafe_amount)
 			var vertical_reach := sqrt(maxf(0.001, reach * reach - horizontal_distance * horizontal_distance))
 			var required_drop := hip.y - _targets[side].y - vertical_reach
 			if plan_free_targets and not _locked[side] and _air_kind == "stride" and absf(_gait_yaw) > 0.01:
@@ -778,7 +756,7 @@ func apply_skeleton_pose(skeleton: Skeleton3D, plan_free_targets: bool = false) 
 				var lift_correction := minf(maxf(0.0, required_drop - _measured_leg_length * 0.10), _measured_leg_length * 0.025)
 				_targets[side].y += lift_correction
 				required_drop -= lift_correction
-			if not _locked[side] and (_relaxed_walk or _jogging or _side_hop):
+			if _speed > 0.10 and not _locked[side] and (_relaxed_walk or _jogging or _strafe_amount > 0.001):
 				# Een vrije voet past zich aan het lichaam aan. Alleen steun bepaalt
 				# de noodzakelijke verlaging; de vrije keten wordt later éénmaal gepland.
 				var preparing_contact := smoothstep(0.55, 0.95, _foot_phase.swing[side])
@@ -808,7 +786,7 @@ func apply_skeleton_pose(skeleton: Skeleton3D, plan_free_targets: bool = false) 
 	# Vrije doelen worden hierna binnen de kniegrenzen gepland. Hergebruik bij
 	# opnieuw toepassen dezelfde bekkenhoogte, anders verandert die tweede pose.
 	if plan_free_targets:
-		if (_relaxed_walk or _jog_pose > 0.0 or _side_hop) and not low and not prone and not _sliding:
+		if (_relaxed_walk or _jog_pose > 0.0 or _strafe_amount > 0.001) and not low and not prone and not _sliding:
 			# Loskomen van de oude steun tilt het bekken geleidelijk terug; de
 			# vrije voet hoeft die hoogteverandering niet in één frame te overbruggen.
 			drop = maxf(drop, _planned_pelvis_drop - _measured_leg_length * _pose_delta * 1.5)
@@ -820,7 +798,7 @@ func apply_skeleton_pose(skeleton: Skeleton3D, plan_free_targets: bool = false) 
 	var slide_sit_back := slide_hip.y if _sliding else 0.0
 	skeleton.set_bone_pose_position(_pelvis, pelvis_rest.origin + Vector3.DOWN * drop / maxf(skeleton.global_basis.get_scale().y, 0.001) + body_right * weight_shift - body_forward * slide_sit_back)
 	if _spine >= 0:
-		_rotate_global(_spine, body_up, -2.0 * twist + _turn_torso_yaw)
+		_rotate_global(_spine, body_up, -2.0 * twist + _turn_torso_yaw - _gait_yaw * (1.0 - _profile.strafe_torso_follow_ratio))
 		_rotate_global(_spine, body_forward, -2.0 * roll)
 		_rotate_global(_spine, body_right, (-0.35 if _sliding else (-0.60 if low else -_lean)) + _idle.chest_pitch)
 	if prone:
@@ -843,7 +821,7 @@ func apply_skeleton_pose(skeleton: Skeleton3D, plan_free_targets: bool = false) 
 		_solve_limb(_legs[side], _leg_lengths[side], local_target, forward, _profile.get_flexion_limits(false))
 		if _valid_chain(_legs[side]):
 			_apply_foot_rotation(side, skeleton)
-			if plan_free_targets and _side_hop and not _locked[side] and _ground_known[side] and _air_kind in ["none", "stride"] and not low and not prone and not _sliding:
+			if plan_free_targets and _strafe_amount > 0.001 and not _locked[side] and _ground_known[side] and _air_kind in ["none", "stride"] and not low and not prone and not _sliding:
 				_correct_free_sole(side, skeleton, forward)
 		if _locked[side] and _valid_chain(_legs[side]):
 			var actual_ankle := skeleton.global_transform * skeleton.get_bone_global_pose(_legs[side][2]).origin
@@ -915,10 +893,8 @@ func _foot_pitch(side: int) -> float:
 		return _foot_roll[side]
 	if _locked[side] or _speed < 0.1 or _posture not in ["staan", "stand"] or _sliding or _air_kind in ["jump", "fall"]:
 		return 0.0
-	if _side_hop:
-		return _limit_ankle(side, -deg_to_rad(4.0) * sin(_foot_phase.swing[side] * PI))
 	var speed_mix := clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)
-	var amount := deg_to_rad(_profile.ankle_swing_degrees) * lerpf(0.3, 1.0, speed_mix)
+	var amount := deg_to_rad(_profile.ankle_swing_degrees) * lerpf(0.3, 1.0, speed_mix) * lerpf(1.0, 0.35, _strafe_amount)
 	if side == posmod(_step_index, 2) and _air_kind == "stride":
 		var recovery := clampf((_phase - 0.5) * 2.0, 0.0, 1.0)
 		return _limit_ankle(side, amount * lerpf(-0.8, 0.6, smoothstep(0.0, 1.0, recovery)))
@@ -945,7 +921,8 @@ func _pose_arm(side: int, low: bool, prone: bool) -> void:
 	var length := lengths.x + lengths.y
 	var shoulder := _skeleton.get_bone_global_pose(chain[0]).origin
 	var speed_mix := clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)
-	var swing := cos((float(_step_index) + _pose_phase()) * PI) * (-1.0 if side == 0 else 1.0)
+	var arm_phase := float(_step_index) + _pose_phase() + _arm_phase_offset
+	var swing := cos(arm_phase * PI) * (-1.0 if side == 0 else 1.0)
 	var amplitude := deg_to_rad(lerpf(8.0, _profile.arm_swing_degrees, speed_mix)) * clampf(_speed / 0.6, 0.0, 1.0)
 	var side_sign := -1.0 if side == 0 else 1.0
 	var reach := lerpf(0.94, 0.76, speed_mix)
@@ -953,7 +930,7 @@ func _pose_arm(side: int, low: bool, prone: bool) -> void:
 	run_offset.z -= length * _profile.arm_forward_ratio
 	run_offset.x -= side_sign * length * _profile.arm_inward_ratio * maxf(swing, 0.0) * speed_mix
 	# De wandelarm hangt laag en zwaait klein uit de schouder; geen verkleinde runarm.
-	var walk_swing := cos((float(_step_index) + _pose_phase()) * PI - 0.12) * (-1.0 if side == 0 else 1.0)
+	var walk_swing := cos(arm_phase * PI - 0.12) * (-1.0 if side == 0 else 1.0)
 	var walk_amplitude := deg_to_rad(_profile.walk_arm_swing_degrees) * clampf(_speed / 0.6, 0.0, 1.0)
 	var walk_offset := Basis(Vector3.RIGHT, walk_swing * walk_amplitude) * Vector3(side_sign * length * 0.06, -length * _profile.walk_arm_reach_ratio, 0.0)
 	walk_offset.z -= length * 0.015
@@ -971,9 +948,10 @@ func _pose_arm(side: int, low: bool, prone: bool) -> void:
 	if not low and not prone and not _sliding:
 		offset = offset.lerp(jump_offset, _jump_pose)
 	# Restlengtes zijn wereldmeters; botposities en solver werken in skeletmeters.
-	var world_offset := _body_transform.basis.orthonormalized() * offset
+	var arm_basis := _body_transform.basis * Basis(Vector3.UP, -_gait_yaw * (1.0 - _profile.strafe_torso_follow_ratio))
+	var world_offset := arm_basis.orthonormalized() * offset
 	var skeleton_offset := _skeleton.global_basis.inverse() * world_offset
-	var pole := _skeleton.global_basis.inverse() * (_body_transform.basis * Vector3(side_sign * 0.20, -0.1, 0.95))
+	var pole := _skeleton.global_basis.inverse() * (arm_basis * Vector3(side_sign * 0.20, -0.1, 0.95))
 	_solve_limb(chain, lengths, shoulder + skeleton_offset, pole, _profile.get_flexion_limits(true))
 
 func _plan_free_target_within_reach(side: int) -> void:
@@ -992,10 +970,28 @@ func _plan_free_target_within_reach(side: int) -> void:
 	var minimum := maxf(absf(a - b) + 0.00001, sqrt(maxf(0.000001, a * a + b * b + 2.0 * a * b * cos(limits.y))))
 	var maximum := minf(a + b - 0.00001, sqrt(maxf(0.000001, a * a + b * b + 2.0 * a * b * cos(limits.x))))
 	var distance := delta.length()
-	if distance >= minimum - 0.00001 and distance <= maximum + 0.00001:
+	if distance >= minimum - 0.00001 and distance <= maximum + 0.00001 and _strafe_amount <= 0.001:
 		return
 	var axis := delta.normalized() if distance > 0.000001 else Vector3.DOWN
-	var planned := _skeleton.global_transform * (root + axis * clampf(distance, minimum, maximum))
+	var planned_delta := axis * clampf(distance, minimum, maximum)
+	if _strafe_amount > 0.001:
+		# Bereikprojectie mag een vrije voet niet terug over de andere baan trekken.
+		# Snij de bereikbol analytisch met de veilige zijruimte; geen zoeklus of ray.
+		var sign_side := -1.0 if side == 0 else 1.0
+		var normal := (_skeleton.global_basis.inverse() * _body_transform.basis.x * sign_side).normalized()
+		var other := _skeleton.to_local(_targets[1 - side]) - root
+		# De anatomische heupas bewaakt hierboven de volle pasbreedte. Deze
+		# tweede grens bewaart alleen een kleine vrije marge in de loopas;
+		# twee verschillende assen mogen dezelfde voet niet ver uit haar baan duwen.
+		var required := other.dot(normal) + _measured_leg_length * 0.06 / scale
+		if planned_delta.dot(normal) < required:
+			var normal_distance := clampf(required, -maximum, maximum)
+			var tangent := planned_delta - normal * planned_delta.dot(normal)
+			var tangent_axis := tangent.normalized() if tangent.length_squared() > 0.000001 else Vector3.DOWN.slide(normal).normalized()
+			var tangent_max := sqrt(maxf(0.0, maximum * maximum - normal_distance * normal_distance))
+			var tangent_min := sqrt(maxf(0.0, minimum * minimum - normal_distance * normal_distance))
+			planned_delta = normal * normal_distance + tangent_axis * clampf(tangent.length(), tangent_min, tangent_max)
+	var planned := _skeleton.global_transform * (root + planned_delta)
 	_targets[side] = planned
 
 func _solve_limb(chain: PackedInt32Array, lengths: Vector2, target: Vector3, pole: Vector3, flexion_limits: Vector2) -> void:
@@ -1073,7 +1069,7 @@ func _set_layers(node: Node, layer: int) -> void:
 		_set_layers(child, layer)
 
 func get_debug_state() -> Dictionary:
-	return {"sole_replans": _sole_replans, "sole_clearance_before": _sole_clearance_before.duplicate(), "sole_clearance_after": _sole_clearance_after.duplicate(), "sole_corrections": _sole_corrections.duplicate(), "foot_contact_sides": _contact_sides.duplicate(), "foot_roll": _foot_roll.duplicate(), "foot_pivots": _foot_pivots.duplicate(), "shuffle_lead": _shuffle_lead, "uniform_phase": _foot_phase.uniform_phase, "side_hop": _side_hop, "side_amount": _side_amount, "gait_yaw": _gait_yaw, "motion_profile": _motion_profile, "turn_body_offset": _turn_body_offset, "turn_torso_yaw": _turn_torso_yaw, "turn_pose_yaw": _turn_planner.pose_yaw, "turn_active_side": _turn_planner.active_side, "turn_step_index": _turn_planner.step_index, "turn_foot_yaws": _turn_foot_yaws.duplicate(), "leg_length": _measured_leg_length, "leg_segments": _leg_lengths, "arm_segments": _arm_lengths, "rays_last_frame": _rays_last_frame, "rays_total": _rays_total, "max_reach_error": _max_reach_error, "max_planted_error": _max_planted_error, "max_free_target_adjustment": _max_free_target_adjustment, "free_target_adjustment": _free_target_adjustment.duplicate(), "released_overreach": _released_overreach, "locked_feet": _locked.duplicate(), "foot_targets": _targets.duplicate(), "max_planner_usec": _max_frame_usec, "compression": _compression, "compression_velocity": _compression_velocity, "compression_events": _compression_events}
+	return {"sole_replans": _sole_replans, "sole_clearance_before": _sole_clearance_before.duplicate(), "sole_clearance_after": _sole_clearance_after.duplicate(), "sole_corrections": _sole_corrections.duplicate(), "foot_contact_sides": _contact_sides.duplicate(), "foot_roll": _foot_roll.duplicate(), "foot_pivots": _foot_pivots.duplicate(), "uniform_phase": _foot_phase.uniform_phase, "strafe_amount": _strafe_amount, "gait_yaw": _gait_yaw, "motion_profile": _motion_profile, "turn_body_offset": _turn_body_offset, "turn_torso_yaw": _turn_torso_yaw, "turn_pose_yaw": _turn_planner.pose_yaw, "turn_active_side": _turn_planner.active_side, "turn_step_index": _turn_planner.step_index, "turn_foot_yaws": _turn_foot_yaws.duplicate(), "leg_length": _measured_leg_length, "leg_segments": _leg_lengths, "arm_segments": _arm_lengths, "rays_last_frame": _rays_last_frame, "rays_total": _rays_total, "max_reach_error": _max_reach_error, "max_planted_error": _max_planted_error, "max_free_target_adjustment": _max_free_target_adjustment, "free_target_adjustment": _free_target_adjustment.duplicate(), "released_overreach": _released_overreach, "locked_feet": _locked.duplicate(), "foot_targets": _targets.duplicate(), "max_planner_usec": _max_frame_usec, "compression": _compression, "compression_velocity": _compression_velocity, "compression_events": _compression_events}
 
 func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()

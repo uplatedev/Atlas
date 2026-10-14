@@ -67,8 +67,9 @@ func support_tick(delta: float, duration: float, moving: bool, first_support_rat
 	if not moving:
 		# Nul snelheid bij omkeren is geen nieuwe stand. Alleen een echte stop
 		# wist de richting van de nog bestaande pin.
-		if not movement_requested:
-			_support_direction = Vector2.ZERO
+		if movement_requested:
+			return false
+		_support_direction = Vector2.ZERO
 		_short_support = true
 		_support_progress = 0.0
 		phase = 0.0
@@ -120,8 +121,10 @@ func touch_down(horizontal_velocity: Vector2 = Vector2.ZERO) -> void:
 	# Contact is vóór de volgende versnelling geplaatst. Bewaar diens richting
 	# zodat omkeren vlak na de landing ook als korte steun wordt herkend.
 	_support_direction = horizontal_velocity.normalized()
-	_short_support = false
-	# Het contactframe plant de volgende voet: verkorte startsteun is nu voorbij.
+	_short_support = horizontal_velocity.length() <= 0.11
+	# Contact rond de omkeernulpassage staat onder het lichaam, net als bij
+	# vertrek uit rust. Die pin krijgt een korte aanloopsteun; een echte
+	# voortgaande landing krijgt de volle volgende steunafstand.
 	_support_duration = _configured_support_duration
 
 
@@ -137,3 +140,14 @@ func supported_step(horizontal_velocity: Vector2 = Vector2.ZERO) -> void:
 	touch_down(horizontal_velocity)
 	# Geen dubbele steuntijd onder een plafond: hetzelfde bereik, volle zwaaifase.
 	_support_only = continue_support_only
+
+
+func needs_direction_step(horizontal_velocity: Vector2) -> bool:
+	return _support_direction != Vector2.ZERO and horizontal_velocity.length() > 0.10 and horizontal_velocity.normalized().dot(_support_direction) < 0.75
+
+
+func supported_direction_step(horizontal_velocity: Vector2) -> void:
+	# Een werkelijk gesteunde omkering plant de volgende voet eerder in de
+	# nieuwe richting. De volgende cyclus gebruikt het ingestelde grond-/vluchtritme.
+	touch_down(horizontal_velocity)
+	_support_only = _planned_flight_duration <= 0.000001

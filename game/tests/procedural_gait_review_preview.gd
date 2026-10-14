@@ -5,13 +5,16 @@ func _run() -> void:
 	Engine.max_fps = 0
 	var style := "walk"
 	var view := "side"
+	var reverse_at := -1
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--style="):
 			style = argument.trim_prefix("--style=")
 		if argument.begins_with("--view="):
 			view = argument.trim_prefix("--view=")
-	if style not in ["walk", "jog", "run", "shuffle", "shuffle_run"] or view not in ["side", "front", "rear"]:
-		printerr("Gebruik style=walk/jog/run/shuffle/shuffle_run en view=side/front/rear")
+		if argument.begins_with("--reverse-at="):
+			reverse_at = int(argument.trim_prefix("--reverse-at="))
+	if style not in ["walk", "jog", "run", "strafe_walk", "strafe_jog", "strafe_run"] or view not in ["side", "front", "rear"]:
+		printerr("Gebruik style=walk/jog/run/strafe_walk/strafe_jog/strafe_run en view=side/front/rear")
 		quit(1)
 		return
 	_build(1, false)
@@ -22,12 +25,15 @@ func _run() -> void:
 	view_offset = Vector3(4.0, 1.0, 0.0) if view == "side" else Vector3(0.0, 1.0, -4.0 if view == "front" else 4.0)
 	await _ticks(30)
 	var intent := AtlasCharacterIntent.new()
-	intent.movement = Vector2(1, 0) if style.begins_with("shuffle") else Vector2(0, -1)
-	intent.walk = style == "walk"
-	intent.run = style in ["run", "shuffle_run"]
+	intent.movement = Vector2(1, 0) if style.begins_with("strafe_") else Vector2(0, -1)
+	intent.walk = style in ["walk", "strafe_walk"]
+	intent.run = style in ["run", "strafe_run"]
 	actors[0].submit_intent(intent)
 	await _ticks(120)
-	var output_dir := "user://t011_gait_review/" + style + "_" + view
+	var output_dir := "user://t014_gait_review/" + style + "_" + view
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--output="):
+			output_dir = argument.trim_prefix("--output=")
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output_dir))
 	var overlay := Label.new()
 	overlay.position = Vector2(18, 16)
@@ -36,6 +42,9 @@ func _run() -> void:
 	var records: Array = []
 	var previous_tick := -1
 	for sample in range(180):
+		if sample == reverse_at:
+			intent.movement = -intent.movement
+			actors[0].submit_intent(intent)
 		await RenderingServer.frame_post_draw
 		var physics_tick := Engine.get_physics_frames()
 		if previous_tick >= 0 and physics_tick - previous_tick != 1:
@@ -46,7 +55,7 @@ func _run() -> void:
 		var frame: AtlasCharacterContactFrame = frames[0]
 		var presentation: AtlasCharacterPresentation = actors[0].get_node("Presentation/ProceduralBody")
 		overlay.text = "%s · %.1f m/s · %s" % [style, frame.horizontal_speed, view]
-		records.append({"sample": sample, "physics_tick": physics_tick, "step": frame.step_index, "phase": frame.gait_phase, "air": frame.air_kind, "foot_contacts": frame.foot_contacts.size(), "locked": presentation._locked.duplicate()})
+		records.append({"sample": sample, "physics_tick": physics_tick, "step": frame.step_index, "phase": frame.gait_phase, "air": frame.air_kind, "foot_contacts": frame.foot_contacts.size(), "locked": presentation._locked.duplicate(), "direction_step": frame.direction_step, "velocity_x": frame.body_velocity.x, "gait_yaw": presentation._gait_yaw})
 		root.get_texture().get_image().save_png(output_dir + "/%04d.png" % sample)
 	var output := FileAccess.open(output_dir + "/frames.json", FileAccess.WRITE)
 	output.store_string(JSON.stringify(records, "\t"))

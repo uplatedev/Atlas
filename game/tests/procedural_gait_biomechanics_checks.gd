@@ -1,5 +1,5 @@
 extends "res://tests/procedural_knee_checks.gd"
-## Onafhankelijke uitkomstproef: echt contactritme, zoolpivot en open/sluit-zijpas.
+## Onafhankelijke uitkomstproef: echt contactritme, zoolpivot en directionele zijpas.
 ## Geen aanroep van get_gait_timing of FootPhase als verwachte uitkomst.
 const SAMPLE_TICKS := 480
 const DT := 1.0 / 60.0
@@ -68,7 +68,7 @@ func _measure(index: int, state: Dictionary, mode: String, direction: Vector2) -
 	state.max_queries = maxi(state.max_queries, view._rays_last_frame)
 	_expect(not frame.jumped and not frame.landed, "gangen maken geen bewuste sprong of zware landing")
 	_expect(debug.foot_contact_sides.size() == frame.foot_contacts.size(), "ieder gepubliceerd contact heeft een zichtbare voetzijde")
-	_expect(debug.foot_contact_sides.size() <= 1, "een normale stap of shuffle landt niet met beide voeten tegelijk")
+	_expect(debug.foot_contact_sides.size() <= 1, "een directionele stap landt niet met beide voeten tegelijk")
 	for contact_index in debug.foot_contact_sides.size():
 		var side: int = debug.foot_contact_sides[contact_index]
 		_expect(view._locked[side] and frame.supported, "contactevent komt uitsluitend van een werkelijk gesteunde voet")
@@ -79,7 +79,7 @@ func _measure(index: int, state: Dictionary, mode: String, direction: Vector2) -
 	state.air += int(frame.air_kind == "stride")
 	if frame.air_kind == "stride":
 		_expect(locks == 0 and frame.foot_contacts.is_empty() and not frame.supported, "echte pasvlucht heeft geen zoolsteun of verborgen contactcue")
-	if mode == "walk" and not side_route:
+	if mode == "walk":
 		_expect(frame.supported and locks >= 1 and frame.air_kind == "none", "wandelen heeft onafgebroken echte steun")
 	view.apply_skeleton_pose(view._skeleton)
 	var feet: Array[Vector3] = []
@@ -95,7 +95,7 @@ func _measure(index: int, state: Dictionary, mode: String, direction: Vector2) -
 		var world_basis := view._skeleton.global_basis * view._skeleton.get_bone_global_pose(foot).basis
 		var anatomical_basis := actor.global_basis.inverse() * world_basis * view._rest_foot_basis[side].inverse()
 		var pitch := atan2(anatomical_basis.y.z, anatomical_basis.y.y)
-		var rolling := mode in ["walk", "jog"] and not side_route and view._locked[side]
+		var rolling := mode in ["walk", "jog"] and view._locked[side]
 		var pivot_kind := (1 if view._foot_roll[side] >= 0.0 else -1) if rolling else 0
 		var pivot_z: float = (view._toe_lengths[side] * 0.25 if pivot_kind == 1 else -view._toe_lengths[side]) if rolling else 0.0
 		# Echte voetbotmatrix en een rustoffset: de enkel zelf is geen zoolpin.
@@ -119,25 +119,13 @@ func _measure(index: int, state: Dictionary, mode: String, direction: Vector2) -
 			if state.roll_stage[side] == 3:
 				state.complete_rolls[side] += 1
 			state.roll_stage[side] = 0
-	var right := actor.global_basis.x
+	var right := view._body_transform.basis.x
 	var width := (feet[1] - feet[0]).dot(right)
 	state.min_gap = minf(state.min_gap, width)
 	state.min_width = minf(state.min_width, width)
 	state.max_width = maxf(state.max_width, width)
 	var nearest := Geometry3D.get_closest_points_between_segments(knees[0], feet[0], knees[1], feet[1])
 	state.min_shin_gap = minf(state.min_shin_gap, nearest[0].distance_to(nearest[1]))
-	if side_route and not state.last.is_empty():
-		var lead := 1 if direction.x > 0 else 0
-		var trail := 1 - lead
-		var width_delta: float = width - state.last.width
-		# Positieve afstand alleen bewijst nog geen leidende-openende/volgende-sluitende stap.
-		if view._locked[trail] and not view._locked[lead] and width_delta > 0.0001:
-			state.opening += 1
-			state.open_travel += width_delta
-		if view._locked[lead] and not view._locked[trail] and width_delta < -0.0001:
-			state.closing += 1
-			state.close_travel -= width_delta
-		_expect(debug.shuffle_lead == lead, "richting kiest werkelijk de buitenste leidende voet")
 	state.last = {"locked": view._locked.duplicate(), "contacts": view._contacts.duplicate(), "pivots": pivots, "kinds": pivot_kinds, "width": width}
 	view._skeleton.reset_bone_poses()
 
@@ -169,7 +157,7 @@ func _check_route(index: int, state: Dictionary, mode: String, direction: Vector
 		last_by_side[event.side] = event
 		previous = event
 	var period: float = state.period_sum / SAMPLE_TICKS
-	var observed_period := _mean(strides) if side_route else _mean(intervals)
+	var observed_period := _mean(intervals)
 	state.mean_step_seconds = _mean(intervals)
 	state.mean_same_foot_seconds = _mean(strides)
 	state.contacts_per_minute = 60.0 / maxf(_mean(intervals), DT)
@@ -177,15 +165,12 @@ func _check_route(index: int, state: Dictionary, mode: String, direction: Vector
 	_expect(absf(observed_period-period) < DT*2.1, "staptijd is gemeten tussen contacten, geen halve of dubbele cyclus " + suffix)
 	var speed: float = state.travel / state.time
 	_expect(absf(_mean(contact_speeds)-speed) < 0.08, "zelfde-voetcontactafstand en interval passen bij echte capsulevaart " + suffix)
-	if mode == "walk" and not side_route:
+	if mode == "walk":
 		_expect(absf(float(state.double)/SAMPLE_TICKS-state.overlap_sum/SAMPLE_TICKS) < DT*2.0/period+0.02, "gemeten dubbele steun past bij gedeelde wandelcontactduur " + suffix)
 		_expect(state.air == 0 and state.single > 20 and state.double > 20, "WALK bevat enkele en dubbele steun zonder vlucht " + suffix)
 		_expect(state.complete_rolls[0] >= 3 and state.complete_rolls[1] >= 3, "beide echte voeten tonen hiel-vlak-voorvoet vóór loslaten " + suffix)
-	elif not side_route:
+	else:
 		_expect(state.air > 20 and state.single > 20 and state.double == 0, "JOG/SPRINT hebben afwisselende enkelsteun en echte vlucht " + suffix)
-	if side_route:
-		_expect(state.opening > 8 and state.closing > 8 and state.open_travel > view.get_leg_length()*0.1 and state.close_travel > view.get_leg_length()*0.1, "zijpas opent leidend en sluit volgend tijdens de juiste echte steun " + suffix)
-		_expect(state.max_width-state.min_width > view.get_leg_length()*0.08, "zijpas heeft meetbare open/sluitruimte " + suffix)
 	state.erase("last")
 
 func _mean(values: Array[float]) -> float:
