@@ -4,7 +4,7 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
-T-013 maakt Walk, Jog en Run de definitieve namen met behoud van bestaande instellingen en beweging. Import/start, alle 30 bestaande suites en de nieuwe naam-/opslagcontrole slagen. Het huidige strafen is volgens de gebruiker onnatuurlijk; hij vraagt eerst alleen een oordeel over een betere zijgang, nog geen implementatie. [Naamwijziging, huidige code en voorstel](work/T-013.md). De eerdere T-011-bewegings-/editorbeoordeling en bekende voetposeproblemen blijven open.
+Walk, Jog en Run zijn via T-013 de definitieve namen op main en in de vaste werkmap, met behoud van bestaande instellingen en beweging. Import/start, alle 30 bestaande suites en de nieuwe naam-/opslagcontrole slagen; import/start en de naamcontrole zijn ook in de daadwerkelijke werkmap geslaagd. Het huidige strafen is volgens de gebruiker onnatuurlijk; hij vraagt eerst alleen een oordeel over een betere zijgang, nog geen implementatie. [Naamwijziging, huidige code en voorstel](work/T-013.md). De eerdere T-011-bewegings-/editorbeoordeling en bekende voetposeproblemen blijven open.
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -21,7 +21,7 @@ T-013 maakt Walk, Jog en Run de definitieve namen met behoud van bestaande inste
 | T-010 | Artemis-bronbestanden delen | Afgerond; originele bestanden op main | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` (resultaat op main) | Laptop: main ophalen, source_assets/characters/Artemis openen |
 | T-011 | Grondslide en procedurele Characters | 64fcf41a via T-012 naar main; beoordeling open | atlas-T011-20261013-01a1340e | STELLAR-FORGE (Windows) | `Smyl3z/T-011-procedurele-characters` | Wandelen/joggen/shuffle en begrensd draaien beoordelen; voetoverdracht blijft open |
 | T-012 | Nieuwste speelversie naar main en deze werkmap | Afgerond; main en vaste werkmap speelbaar | atlas-T012-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-012-speelversie-main` (geïntegreerd) | Open game/project.godot en F5; T-011-beoordeling en voetposeproblemen blijven open |
-| T-013 | Vaste Walk/Jog/Run-namen en strafe-uitleg | Namen gecontroleerd; overdracht volgt; strafe-voorstel niet uitvoeren | atlas-T013-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-013-walk-jog-run` | Naamcheckpoint publiceren en lokaal klaarzetten; eerst uitsluitend strafe-oordeel bespreken |
+| T-013 | Vaste Walk/Jog/Run-namen en strafe-uitleg | Afgerond: namen en uitleg; strafe-voorstel niet uitvoeren | atlas-T013-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-013-walk-jog-run` (geïntegreerd) | Eerst het strafe-oordeel bespreken; geen nieuwe zijgang bouwen zonder bevestiging |
 
 ## T-013 — Walk, Jog en Run
 
@@ -30,7 +30,7 @@ Opdracht van de gebruiker op 14 oktober 2026: Walk, Jog en Run worden de definit
 - **Gebouwd:** canonieke Walk/Jog/Run-namen in runtime, Inspector, HUD, inputacties, camera, audio en bodyprofielen; opgeslagen scene-/resourcevelden en alle huidige testreferenties tegelijk omgezet. Bestaande defaults/instance-overrides behouden. Huidig strafen onderzocht en een directionele zijgang uitsluitend als voorstel beschreven; geen strafe-tuning of -implementatie. [Uitleg en bewijs](work/T-013.md).
 - **Technisch gecontroleerd:** Godot4.7.2: import/start en alle30 bestaande suites slagen; extra naam-/echte-opslagcontrole slaagt (31 totaal). Camera5.169 numerieke waarden, grootste afwijking0. Shuffle-posemetingen exact gelijk aan T-012 op dezelfde computer voor vier lichamen bij Jog/Run. Dat bewijst behoud, niet goed strafe-uiterlijk. GitHub-koppeling `uplate` opnieuw geverifieerd als `uplatedev` met push-/adminrecht.
 - **Door de gebruiker beoordeeld:** definitieve naamkeuze expliciet gevraagd. Huidige strafe afgewezen als onnatuurlijk/onvoldoende; vervolgopdracht is alleen een oordeel, nog niet aanpassen. Directionele Walk/Jog/Run-zijgang en eventuele snelheidskeuze blijven onbevestigde voorstellen.
-- **Volgende stap:** naamcheckpoint publiceren, veilig in de vaste werkmap klaarzetten en na lokale import/start en naamcontrole integreren. Strafe-oordeel bespreken zonder uitvoering van het voorstel; de oude T-011-beoordeling blijft open.
+- **Volgende stap:** naamcheckpoint [`c6bc971b`](https://github.com/uplatedev/Atlas/commit/c6bc971bf3dead14e0a8fdcd8ac69e96dfd8bad2) is gepubliceerd en veilig in de vaste werkmap getest; import/start en nieuwe naamcontrole slagen, bron schoon. Main integreert hetzelfde resultaat met deze overdrachtsnotitie. Open hetzelfde `game/project.godot` voor de nieuwe Walk/Jog/Run-namen. Strafe-oordeel bespreken zonder uitvoering van het voorstel; de oude T-011-beoordeling blijft open. Geen andere computer bijgewerkt.
 
 ## T-012 — Nieuwste speelversie op main en deze computer
 
