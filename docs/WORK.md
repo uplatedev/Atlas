@@ -4,7 +4,7 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
-T-012 integreert het nieuwste T-011-speelcheckpoint `64fcf41a` op expliciet verzoek van de gebruiker in main en werkt de vaste Atlas-map op deze computer bij. De gamebron blijft exact gelijk aan het gepubliceerde checkpoint; import/start en alle 30 Character-suites zijn opnieuw geslaagd. Menselijke beoordeling van wandelen/joggen/shuffle en draaien blijft open. [Gebouwd, gemeten en resterende poseproblemen](work/T-011/human-gaits.md).
+Het nieuwste T-011-speelcheckpoint `64fcf41a` staat via T-012 op expliciet verzoek van de gebruiker op main en in de vaste Atlas-map op deze computer. De gamebron is exact gelijk aan het gepubliceerde checkpoint; import/start en alle 30 Character-suites zijn opnieuw geslaagd. Ook import/start in de daadwerkelijke vaste werkmap slaagt. Menselijke beoordeling van wandelen/joggen/shuffle en draaien blijft open. [Gebouwd, gemeten en resterende poseproblemen](work/T-011/human-gaits.md).
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -20,7 +20,7 @@ T-012 integreert het nieuwste T-011-speelcheckpoint `64fcf41a` op expliciet verz
 | T-009 | Camera-accenten, stap 3 | Gepubliceerd en lokaal klaar; camera-proef open | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Landing en lucht-/slide-FOV met F7/F9 lokaal vergelijken |
 | T-010 | Artemis-bronbestanden delen | Afgerond; originele bestanden op main | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` (resultaat op main) | Laptop: main ophalen, source_assets/characters/Artemis openen |
 | T-011 | Grondslide en procedurele Characters | 64fcf41a via T-012 naar main; beoordeling open | atlas-T011-20261013-01a1340e | STELLAR-FORGE (Windows) | `Smyl3z/T-011-procedurele-characters` | Wandelen/joggen/shuffle en begrensd draaien beoordelen; voetoverdracht blijft open |
-| T-012 | Nieuwste speelversie naar main en deze werkmap | Integratie gecontroleerd; lokale overdracht volgt | atlas-T012-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-012-speelversie-main` | Integratie publiceren en de vaste werkmap op main bijwerken en controleren |
+| T-012 | Nieuwste speelversie naar main en deze werkmap | Afgerond; main en vaste werkmap speelbaar | atlas-T012-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-012-speelversie-main` (geïntegreerd) | Open game/project.godot en F5; T-011-beoordeling en voetposeproblemen blijven open |
 
 ## T-012 — Nieuwste speelversie op main en deze computer
 
@@ -28,10 +28,10 @@ Reservering door `atlas-T012-20261014-01a13965`, WIN-O6OHNVI0QFJ (Windows), vana
 
 De expliciete publicatieopdracht staat integratie van dit bestaande proefcheckpoint toe voordat de nog open menselijke beoordeling is afgerond. Dit verklaart alleen deze publicatie; de open bewegings-/editorbeoordeling en bekende voetposeproblemen blijven zichtbaar en T-011 wordt niet als volledig geaccepteerd gemarkeerd.
 
-- **Gebouwd:** volledige speelbron van `64fcf41a` samengevoegd met de actuele main-notities. De drie documentconflicten zijn inhoudelijk samengevoegd; bestaande historische validatielogs behouden. README en TESTING beschrijven de speelbare main-versie. Game, assets en tools zijn exact gelijk aan het geselecteerde checkpoint.
+- **Gebouwd:** volledige speelbron van `64fcf41a` samengevoegd met de actuele main-notities en gepubliceerd in main-mergecommit [`ad51fdef`](https://github.com/uplatedev/Atlas/commit/ad51fdefd2274b9ddb88610ca3309549bfb2321c). De vaste Atlas-map op deze computer is veilig via fast-forward bijgewerkt. De drie documentconflicten zijn inhoudelijk samengevoegd; bestaande historische validatielogs behouden. README en TESTING beschrijven de speelbare main-versie. Game, assets en tools zijn exact gelijk aan het geselecteerde checkpoint.
 - **Technisch gecontroleerd:** Godot `4.7.2.stable.official.ed1daf0bf`: import/start en alle 30 bestaande Character-suites geslaagd, exitcode 0. Gecontroleerde gameboom `f7f0ae43a969cb845074f3f2842995dbca0e517a`, Character-boom `c97b9d5a66220d421a69c62a0d1c9415752c64cd`. [Integratiebewijs](work/T-012.md). De GitHub-koppeling `uplate` is opnieuw geverifieerd als `uplatedev` met push-/adminrecht. Alleen de Godot-projectkiezer is open, geen projecteditor of runtime.
 - **Door de gebruiker beoordeeld:** publicatie op main expliciet gevraagd; geen nieuwe acceptatie van loop-/draaigevoel geclaimd.
-- **Volgende stap:** gecontroleerde integratie publiceren, de schone vaste werkmap via fast-forward op main bijwerken en import/start op die werkelijke testlocatie controleren. De T-011-speel-/editorbeoordeling blijft een afzonderlijke open stap.
+- **Volgende stap:** open hetzelfde `game/project.godot` en speel `scenes/main.tscn` met F5. Import/start op de daadwerkelijke vaste werkmap is geslaagd, exitcode 0; checkout schoon op main. Lokale engine-instelling en HUD-bronmetadata zijn aanwezig en genegeerd. De T-011-speel-/editorbeoordeling blijft een afzonderlijke open stap. Geen andere computer bijgewerkt.
 
 ## T-011 — Grondslide en procedurele Characters
 
