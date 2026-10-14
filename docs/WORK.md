@@ -22,6 +22,16 @@ Walk, Jog en Run zijn via T-013 de definitieve namen op main en in de vaste werk
 | T-011 | Grondslide en procedurele Characters | 64fcf41a via T-012 naar main; beoordeling open | atlas-T011-20261013-01a1340e | STELLAR-FORGE (Windows) | `Smyl3z/T-011-procedurele-characters` | Wandelen/joggen/shuffle en begrensd draaien beoordelen; voetoverdracht blijft open |
 | T-012 | Nieuwste speelversie naar main en deze werkmap | Afgerond; main en vaste werkmap speelbaar | atlas-T012-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-012-speelversie-main` (geïntegreerd) | Open game/project.godot en F5; T-011-beoordeling en voetposeproblemen blijven open |
 | T-013 | Vaste Walk/Jog/Run-namen en strafe-uitleg | Afgerond: namen en uitleg; strafe-voorstel niet uitvoeren | atlas-T013-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-013-walk-jog-run` (geïntegreerd) | Eerst het strafe-oordeel bespreken; geen nieuwe zijgang bouwen zonder bevestiging |
+| T-014 | Directionele strafe voor Walk/Jog/Run | Gereserveerd; voorstel bevestigd | atlas-T014-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-014-directionele-strafe` | Oude zijhup vervangen, snelheden behouden en nieuwe houding/passen lokaal laten beoordelen |
+
+## T-014 — Directionele strafe
+
+Reservering door `atlas-T014-20261014-01a13965`, WIN-O6OHNVI0QFJ (Windows), vanaf main `5dbd95c2108f6c3c884ae6085351241652de3862`. Opdracht op 14 oktober 2026: het T-013-strafevoorstel uitvoeren voor Walk, Jog en Run; snelheden voorlopig ongewijzigd houden en het oude strafe-gedrag uit de code halen. Scope: grondgebonden rustige Walk-zijpassen, compacte Jog-zijgang, meer onderlichaamsoriëntatie bij Run met behouden kijk-/bovenlichaamsrichting, consistente contacten/overgangen en bereikbewaking. Geen snelheids-, input-, camera- of netwerkherontwerp. De eerdere inhoudelijke T-011-claim blijft behouden.
+
+- **Gebouwd:** nog geen implementatie; eigen fysieke worktree voorbereid.
+- **Technisch gecontroleerd:** actuele remote en schone vaste werkmap gecontroleerd. Alleen Godot-projectkiezer open. GitHub-koppeling `uplate` opnieuw geverifieerd als `uplatedev` met push-/adminrecht.
+- **Door de gebruiker beoordeeld:** aanpak en behoud van snelheden expliciet bevestigd. Nieuwe houding en pasvorm moeten daarna worden bekeken.
+- **Volgende stap:** na aantoonbare publicatie van de reservering oude zijhup/contactroute vervangen, technische en visuele controles uitvoeren, de proef publiceren en veilig in de vaste werkmap klaarzetten.
 
 ## T-013 — Walk, Jog en Run
 
