@@ -3,7 +3,7 @@ extends SceneTree
 
 const CHARACTER = preload("res://characters/Character.tscn")
 const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
-const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
+const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "run", "walk", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var world: Node3D
 var character: AtlasCharacter
@@ -45,16 +45,16 @@ func _test_movement() -> void:
 	var side: float = await _speed(["move_right"])
 	var back: float = await _speed(["move_back"])
 	var diagonal: float = await _speed(["move_forward", "move_right"])
-	_expect(absf(forward - character.walk_forward_speed) < 0.06, "lopen bereikt ingestelde voorwaartse snelheid")
+	_expect(absf(forward - character.jog_forward_speed) < 0.06, "lopen bereikt ingestelde voorwaartse snelheid")
 	_expect(forward > side and side > back and back > 0.0, "lopen: vooruit > zijwaarts > achteruit")
 	_expect(diagonal <= forward + 0.06, "diagonale loopinput geeft geen snelheidsbonus")
-	var sprint_forward: float = await _speed(["move_forward", "sprint"])
-	var sprint_side: float = await _speed(["move_right", "sprint"])
-	var sprint_back: float = await _speed(["move_back", "sprint"])
-	var sprint_diagonal: float = await _speed(["move_forward", "move_right", "sprint"])
-	_expect(absf(sprint_forward - character.sprint_forward_speed) < 0.06, "sprint bereikt ingestelde voorwaartse snelheid")
-	_expect(sprint_forward > sprint_side and sprint_side > sprint_back and sprint_back > back, "sprint werkt in alle richtingen met lagere zij-/achterwaartse snelheden")
-	_expect(sprint_diagonal <= sprint_forward + 0.06, "diagonale sprintinput geeft geen snelheidsbonus")
+	var run_forward: float = await _speed(["move_forward", "run"])
+	var run_side: float = await _speed(["move_right", "run"])
+	var run_back: float = await _speed(["move_back", "run"])
+	var run_diagonal: float = await _speed(["move_forward", "move_right", "run"])
+	_expect(absf(run_forward - character.run_forward_speed) < 0.06, "run bereikt ingestelde voorwaartse snelheid")
+	_expect(run_forward > run_side and run_side > run_back and run_back > back, "run werkt in alle richtingen met lagere zij-/achterwaartse snelheden")
+	_expect(run_diagonal <= run_forward + 0.06, "diagonale runinput geeft geen snelheidsbonus")
 	var opposing: float = await _speed(["move_forward", "move_back", "move_left", "move_right"])
 	_expect(opposing < 0.01, "tegengestelde inputs heffen elkaar op")
 	await _reset()
@@ -67,30 +67,30 @@ func _test_movement() -> void:
 	_release_inputs()
 	await _frames(6)
 	_expect(_horizontal_speed() < accelerating, "loslaten remt af")
-	await _speed(["move_forward", "sprint"])
-	Input.action_release("sprint")
+	await _speed(["move_forward", "run"])
+	Input.action_release("run")
 	Input.action_press("move_forward")
 	await _frames(50)
-	_expect(_horizontal_speed() <= forward + 0.06, "sprint naar lopen keert terug naar looplimiet")
-	print("MEASURE: walk %.3f / side %.3f / back %.3f / diagonal %.3f; sprint %.3f / %.3f / %.3f / %.3f" % [forward, side, back, diagonal, sprint_forward, sprint_side, sprint_back, sprint_diagonal])
+	_expect(_horizontal_speed() <= forward + 0.06, "run naar lopen keert terug naar looplimiet")
+	print("MEASURE: jog %.3f / side %.3f / back %.3f / diagonal %.3f; run %.3f / %.3f / %.3f / %.3f" % [forward, side, back, diagonal, run_forward, run_side, run_back, run_diagonal])
 
 
 func _test_jumps() -> void:
 	var standing: Dictionary = await _jump([])
-	var walking: Dictionary = await _jump(["move_forward"])
-	var sprinting: Dictionary = await _jump(["move_forward", "sprint"])
-	_expect(standing.height > walking.height and walking.height > sprinting.height, "gemeten spronghoogte: stilstand > lopen > sprint")
-	_expect(sprinting.distance > walking.distance + 0.5, "gemeten sprintsprong gaat extra ver")
-	var same_velocity := Vector3(0, 0, -character.walk_forward_speed)
-	Input.action_release("sprint")
+	var jogging: Dictionary = await _jump(["move_forward"])
+	var running: Dictionary = await _jump(["move_forward", "run"])
+	_expect(standing.height > jogging.height and jogging.height > running.height, "gemeten spronghoogte: stilstand > lopen > run")
+	_expect(running.distance > jogging.distance + 0.5, "gemeten runsprong gaat extra ver")
+	var same_velocity := Vector3(0, 0, -character.jog_forward_speed)
+	Input.action_release("run")
 	var before := character.jump_parameters(same_velocity)
-	Input.action_press("sprint")
+	Input.action_press("run")
 	var after := character.jump_parameters(same_velocity)
 	_expect(is_equal_approx(float(before.height), float(after.height)), "alleen Shift verandert sprongprofiel niet bij dezelfde snelheid")
-	Input.action_release("sprint")
+	Input.action_release("run")
 	var stationary := character.jump_parameters(Vector3.ZERO)
 	_expect(float(stationary.height) > float(before.height), "stationaire sprong blijft hoog")
-	print("MEASURE: jumps standing %.3fm / %.3fm range; walk %.3fm / %.3fm; sprint %.3fm / %.3fm" % [standing.height, standing.distance, walking.height, walking.distance, sprinting.height, sprinting.distance])
+	print("MEASURE: jumps standing %.3fm / %.3fm range; jog %.3fm / %.3fm; run %.3fm / %.3fm" % [standing.height, standing.distance, jogging.height, jogging.distance, running.height, running.distance])
 
 
 func _test_steps() -> void:
@@ -122,10 +122,10 @@ func _test_main_scene() -> void:
 	await _frames(6)
 	var first := main.get_node("Characters/AtlasA") as AtlasCharacter
 	var second := main.get_node("Characters/AtlasB") as AtlasCharacter
-	_expect(first.display_name != second.display_name and first.walk_forward_speed != second.walk_forward_speed, "twee onafhankelijke editorinstellingen aanwezig")
-	var second_speed := second.walk_forward_speed
-	first.walk_forward_speed += 0.5
-	_expect(is_equal_approx(second.walk_forward_speed, second_speed), "instancewijziging blijft lokaal")
+	_expect(first.display_name != second.display_name and first.jog_forward_speed != second.jog_forward_speed, "twee onafhankelijke editorinstellingen aanwezig")
+	var second_speed := second.jog_forward_speed
+	first.jog_forward_speed += 0.5
+	_expect(is_equal_approx(second.jog_forward_speed, second_speed), "instancewijziging blijft lokaal")
 	_expect(first.get_node("CollisionShape3D").shape != second.get_node("CollisionShape3D").shape, "capsulebotsingen hebben eigen Resources")
 	_expect(first.get_node("Presentation/Capsule").material_override != second.get_node("Presentation/Capsule").material_override, "capsulematerialen hebben eigen Resources")
 	first.display_name = "Alleen eerste naam gewijzigd"

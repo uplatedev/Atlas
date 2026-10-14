@@ -159,7 +159,7 @@ func _check_profile() -> void:
 	_expect(b.stride_flight_curve.get_point_position(3) == old, "eigen pasvluchtcurve")
 	_expect(a.swing_foot_curve != b.swing_foot_curve, "eigen voetcurve")
 	_expect(profile.get_flight_height(0.3, 0.8, false) < profile.get_flight_height(0.9, 0.8, false), "vlucht groeit met snelheid")
-	_expect(profile.get_flight_height(1.0, 0.8, true) < profile.get_flight_height(1.0, 0.8, false), "sneak minimaal")
+	_expect(profile.get_flight_height(1.0, 0.8, true) < profile.get_flight_height(1.0, 0.8, false), "walk minimaal")
 	_expect(profile.get_swing_lift(0.0) == 0.0 and profile.get_swing_lift(1.0) == 0.0, "veilige zwaai-eindpunten")
 
 func _check_persistence() -> void:

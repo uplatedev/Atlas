@@ -3,18 +3,18 @@ extends "res://tests/procedural_knee_checks.gd"
 func _run() -> void:
 	Engine.max_fps=144
 	var records:Array=[]
-	for sprint in [false,true]:
+	for run in [false,true]:
 		var directions:Array[Vector2]=[Vector2(1,0),Vector2(-1,0)]
 		directions.append_array([Vector2(1,-1).normalized(),Vector2(-1,-1).normalized(),Vector2(1,1).normalized(),Vector2(-1,1).normalized()])
 		for direction in directions:
 			_build(4,true)
 			await _ticks(20)
-			_send_direction(direction,sprint)
-			var states:=await _direction_sample(160,direction,sprint)
-			records.append({"direction":str(direction),"sprint":sprint,"bodies":states})
+			_send_direction(direction,run)
+			var states:=await _direction_sample(160,direction,run)
+			records.append({"direction":str(direction),"run":run,"bodies":states})
 			_send_direction(Vector2.ZERO,false)
 			var stopped:=await _direction_sample(100,Vector2.ZERO,false)
-			records.append({"stop_from":str(direction),"sprint":sprint,"bodies":stopped})
+			records.append({"stop_from":str(direction),"run":run,"bodies":stopped})
 			world.queue_free()
 			actors.clear()
 			frames.clear()
@@ -24,7 +24,7 @@ func _run() -> void:
 	for direction in [Vector2(1,0),Vector2(1,-1).normalized(),Vector2(1,1).normalized(),Vector2(-1,0),Vector2(1,0),Vector2(0,-1)]:
 		_send_direction(direction,true)
 		var state:=await _direction_sample(120,direction,true)
-		records.append({"transition":str(direction),"sprint":true,"bodies":state})
+		records.append({"transition":str(direction),"run":true,"bodies":state})
 	world.queue_free()
 	actors.clear()
 	frames.clear()
@@ -37,14 +37,14 @@ func _run() -> void:
 	print("DIRECTION STYLE CHECKS: ","PASS" if failures.is_empty() else "FAIL "+str(failures))
 	quit(0 if failures.is_empty() else 1)
 
-func _send_direction(direction:Vector2,sprint:bool) -> void:
+func _send_direction(direction:Vector2,run:bool) -> void:
 	for actor in actors:
 		var intent:=AtlasCharacterIntent.new()
 		intent.movement=direction
-		intent.sprint=sprint
+		intent.run=run
 		actor.submit_intent(intent)
 
-func _direction_sample(count:int,direction:Vector2,sprint:bool) -> Array:
+func _direction_sample(count:int,direction:Vector2,run:bool) -> Array:
 	var states:Array=[]
 	var previous:Array=[]
 	for index in range(4):
@@ -101,9 +101,9 @@ func _direction_sample(count:int,direction:Vector2,sprint:bool) -> Array:
 		var state:Dictionary=states[index]
 		var actor:=actors[index]
 		var view:AtlasCharacterPresentation=actor.get_node("Presentation/ProceduralBody")
-		_expect(state.max_target_error<0.003 and state.max_planted_error<0.003,"werkelijke enkels bereiken ongeclampte doelen %s/%s/%s: %s"%[direction,sprint,index,state.max_target_error])
-		_expect(state.max_pin_drift<0.00001 and state.releases==0,"vaste wereldcontacten blijven behouden %s/%s/%s"%[direction,sprint,index])
-		_expect(state.min_gap>0.03,"benen behouden links/rechts in zichtbare lichaamsbasis %s/%s/%s"%[direction,sprint,index])
+		_expect(state.max_target_error<0.003 and state.max_planted_error<0.003,"werkelijke enkels bereiken ongeclampte doelen %s/%s/%s: %s"%[direction,run,index,state.max_target_error])
+		_expect(state.max_pin_drift<0.00001 and state.releases==0,"vaste wereldcontacten blijven behouden %s/%s/%s"%[direction,run,index])
+		_expect(state.min_gap>0.03,"benen behouden links/rechts in zichtbare lichaamsbasis %s/%s/%s"%[direction,run,index])
 		_expect(state.max_head_error<0.002 and absf(actor.rotation.y)<0.00001,"visuele richting verandert geen hoofdblik of capsuleyaw")
 		_expect(state.rays<=2,"zij-/diagonaal gebruikt hoogstens twee voetmetingen")
 		if direction.y==0.0 and direction.x!=0.0:
@@ -113,6 +113,6 @@ func _direction_sample(count:int,direction:Vector2,sprint:bool) -> Array:
 				_expect(state.contact_sides[contact]!=state.contact_sides[contact-1],"leidende en volgende voet wisselen hoorbare contacten af")
 			_expect(state.max_side_lift<view.get_leg_length()*0.12,"zijhup heeft bescheiden intrek zonder hoge renhiel")
 		else:
-			var expected:=AtlasGaitStyle.diagonal_yaw(Vector3(direction.x,0,direction.y),"sprint")
-			_expect(absf(state.last_yaw-expected)<0.002 and (not sprint or state.last_running==1.0),"voor/achterdiagonaal gebruikt eigen stijl langs nabijste lengte-as")
+			var expected:=AtlasGaitStyle.diagonal_yaw(Vector3(direction.x,0,direction.y),"run")
+			_expect(absf(state.last_yaw-expected)<0.002 and (not run or state.last_running==1.0),"voor/achterdiagonaal gebruikt eigen stijl langs nabijste lengte-as")
 	return states

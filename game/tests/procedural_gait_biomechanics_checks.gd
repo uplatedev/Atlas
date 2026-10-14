@@ -6,7 +6,7 @@ const DT := 1.0 / 60.0
 var reports: Array = []
 
 func _run() -> void:
-	for mode in ["walk", "jog", "sprint"]:
+	for mode in ["walk", "jog", "run"]:
 		for direction in [Vector2(0, -1), Vector2(1, 0), Vector2(-1, 0)]:
 			await _route(mode, direction)
 	var output := FileAccess.open("user://t011_gait_biomechanics_metrics.json", FileAccess.WRITE)
@@ -24,8 +24,8 @@ func _route(mode: String, direction: Vector2) -> void:
 	for actor in actors:
 		var intent := AtlasCharacterIntent.new()
 		intent.movement = direction
-		intent.sneak = mode == "walk"
-		intent.sprint = mode == "sprint"
+		intent.walk = mode == "walk"
+		intent.run = mode == "run"
 		actor.submit_intent(intent)
 	# De eerste twee seconden zijn versnellen/startsteun, geen stationaire cadans.
 	await _ticks(120)
@@ -63,7 +63,7 @@ func _measure(index: int, state: Dictionary, mode: String, direction: Vector2) -
 	state.period_sum += frame.step_duration
 	state.overlap_sum += frame.double_support_ratio
 	state.support_sum += frame.support_fraction
-	var expected_speed := actor.direction_speed_limit_for_state(direction, "sneak" if mode == "walk" else ("sprint" if mode == "sprint" else "lopen"))
+	var expected_speed := actor.direction_speed_limit_for_state(direction, "walk" if mode == "walk" else ("run" if mode == "run" else "jog"))
 	state.speed_error = maxf(state.speed_error, absf(frame.horizontal_speed - expected_speed))
 	state.max_queries = maxi(state.max_queries, view._rays_last_frame)
 	_expect(not frame.jumped and not frame.landed, "gangen maken geen bewuste sprong of zware landing")
@@ -146,7 +146,7 @@ func _check_route(index: int, state: Dictionary, mode: String, direction: Vector
 	var view: AtlasCharacterPresentation = actors[index].get_node("Presentation/ProceduralBody")
 	var side_route := direction.x != 0.0
 	_expect(state.speed_error < 0.06, "werkelijke stabiele vaart volgt de ingestelde richtingssnelheid " + suffix)
-	var configured := [actors[index].sneak_forward_speed, actors[index].walk_forward_speed, actors[index].sprint_forward_speed]
+	var configured := [actors[index].walk_forward_speed, actors[index].jog_forward_speed, actors[index].run_forward_speed]
 	_expect(absf(configured[0]-1.4) < 0.00001 and absf(configured[1]-3.0) < 0.00001 and absf(configured[2]-9.0) < 0.00001, "nieuwe drie gangen zijn 1,4/3/9 m/s")
 	_expect(state.max_queries <= 2 and state.max_ankle_error < 0.003, "bereikbare echte enkels binnen twee lokale voetmetingen " + suffix)
 	_expect(state.min_gap > 0.03 and state.min_shin_gap > 0.03, "zichtbare enkels en schenen kruisen niet " + suffix)

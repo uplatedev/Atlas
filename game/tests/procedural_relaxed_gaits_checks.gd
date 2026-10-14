@@ -2,14 +2,14 @@ extends "res://tests/procedural_knee_checks.gd"
 ## Drie echte gangen met dezelfde motor en vier gemeten lichaamsverhoudingen.
 func _run() -> void:
 	var metrics:Dictionary={}
-	for style in ["walk","jog","sprint"]:
+	for style in ["walk","jog","run"]:
 		_build(4,true)
 		await _ticks(30)
 		for actor in actors:
 			var intent:=AtlasCharacterIntent.new()
 			intent.movement=Vector2(0,-1)
-			intent.sneak=style=="walk"
-			intent.sprint=style=="sprint"
+			intent.walk=style=="walk"
+			intent.run=style=="run"
 			actor.submit_intent(intent)
 		var states:Array=[]
 		for index in range(4):
@@ -50,7 +50,7 @@ func _run() -> void:
 			if style=="walk":
 				_expect(state.air_frames==0 and state.max_elbow<35.0,"wandeling met lage ontspannen armen")
 			else:
-				_expect(state.air_frames>10,"jog en sprint behouden echte pasvlucht")
+				_expect(state.air_frames>10,"jog en run behouden echte pasvlucht")
 		metrics[style]=states
 		world.queue_free()
 		actors.clear()

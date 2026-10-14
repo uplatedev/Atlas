@@ -1,17 +1,17 @@
 extends "res://tests/procedural_live_preview.gd"
-## Echte rustige Alt-wandelpas naast jog en sprint; vaste camera voor beoordeling.
+## Echte rustige Alt-wandelpas naast jog en run; vaste camera voor beoordeling.
 func _run() -> void:
 	_build(4, true)
 	await _ticks(30)
 	focus = 0
 	camera.cull_mask = 1 | (1 << (actors[0].get_presentation_layer()-1))
 	camera.size = 2.25
-	for style in ["walk", "jog", "sprint"]:
+	for style in ["walk", "jog", "run"]:
 		for actor in actors:
 			var intent := AtlasCharacterIntent.new()
 			intent.movement = Vector2(0, -1)
-			intent.sneak = style == "walk"
-			intent.sprint = style == "sprint"
+			intent.walk = style == "walk"
+			intent.run = style == "run"
 			actor.submit_intent(intent)
 		await _ticks(90)
 		view_offset = Vector3(4, 1.1, 0)

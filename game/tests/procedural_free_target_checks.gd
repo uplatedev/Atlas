@@ -3,7 +3,7 @@ extends "res://tests/procedural_knee_checks.gd"
 func _run() -> void:
 	var directions:Array[Vector2]=[Vector2(0,-1),Vector2(1,-1).normalized(),Vector2(1,0),Vector2(1,1).normalized(),Vector2(0,1),Vector2(-1,1).normalized(),Vector2(-1,0),Vector2(-1,-1).normalized(),Vector2(1,0),Vector2(-1,0),Vector2(0,-1),Vector2(0,1),Vector2.ZERO]
 	var reports:Array=[]
-	for mode in ["jog", "sprint", "walk"]:
+	for mode in ["jog", "run", "walk"]:
 		_build(4,true)
 		await _ticks(30)
 		var states:Array=[]
@@ -15,8 +15,8 @@ func _run() -> void:
 			for actor in actors:
 				var intent:=AtlasCharacterIntent.new()
 				intent.movement=directions[route]
-				intent.sprint=mode=="sprint"
-				intent.sneak=mode=="walk"
+				intent.run=mode=="run"
+				intent.walk=mode=="walk"
 				actor.submit_intent(intent)
 			for tick in 100:
 				await _ticks(1)

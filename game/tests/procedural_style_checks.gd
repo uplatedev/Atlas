@@ -5,14 +5,14 @@ func _run() -> void:
 	_build(4,true)
 	await _ticks(30)
 	var records:Array=[]
-	for sprint in [false,true]:
-		_intent(1.0,sprint)
-		if not sprint:
+	for run in [false,true]:
+		_intent(1.0,run)
+		if not run:
 			# Alt is de bevestigde wandeling; ongewijzigde invoer is nu een aparte jog.
 			for actor in actors:
 				var intent := AtlasCharacterIntent.new()
 				intent.movement = Vector2(0,-1)
-				intent.sneak = true
+				intent.walk = true
 				actor.submit_intent(intent)
 		await _ticks(50)
 		var samples:Array=[]
@@ -33,16 +33,16 @@ func _run() -> void:
 				state.head_bank=maxf(state.head_bank,absf(head.z))
 				if absf(pelvis.y)>0.01:
 					state.yaw_opposition_samples+=1
-					_expect(pelvis.y*spine.y<0.0,"borst draait tegengesteld aan bekken %s/%s"%[sprint,index])
+					_expect(pelvis.y*spine.y<0.0,"borst draait tegengesteld aan bekken %s/%s"%[run,index])
 				if absf(pelvis.z)>0.01:
 					state.roll_opposition_samples+=1
-					_expect(pelvis.z*spine.z<0.0,"borst rolt tegengesteld aan bekken %s/%s"%[sprint,index])
+					_expect(pelvis.z*spine.z<0.0,"borst rolt tegengesteld aan bekken %s/%s"%[run,index])
 				for side in range(2):
 					state.max_foot_lift=maxf(state.max_foot_lift,actor.to_local(view._targets[side]).y-view._ankle_height)
 				view._skeleton.reset_bone_poses()
 		for index in range(4):
-			_expect(samples[index].head_bank<0.002,"hoofd blijft rustig en recht %s/%s"%[sprint,index])
-			_expect(samples[index].yaw_opposition_samples>20 and samples[index].roll_opposition_samples>20,"tegenbeweging komt echt voor %s/%s"%[sprint,index])
+			_expect(samples[index].head_bank<0.002,"hoofd blijft rustig en recht %s/%s"%[run,index])
+			_expect(samples[index].yaw_opposition_samples>20 and samples[index].roll_opposition_samples>20,"tegenbeweging komt echt voor %s/%s"%[run,index])
 		records.append(samples)
 	for index in range(4):
 		_expect(records[0][index].max_foot_lift<records[1][index].max_foot_lift*0.50,"loopvoet veel lager dan renvoet %s"%index)
@@ -78,11 +78,11 @@ func _run() -> void:
 	var profile:=actors[0].body_profile
 	var signature:=profile.rig_signature()
 	var unique:=profile.make_instance_unique()
-	unique.walking_stance_ratio=0.62
+	unique.walk_stance_ratio=0.62
 	unique.body_roll_degrees=1.5
 	unique.slide_knee_clearance_ratio=0.15
 	unique.slide_sit_degrees=40.0
-	_expect(profile.walking_stance_ratio==0.50 and profile.body_roll_degrees==3.0 and profile.slide_knee_clearance_ratio==0.09 and profile.slide_sit_degrees==55.0,"nieuwe stijlvelden blijven per profiel onafhankelijk")
+	_expect(profile.walk_stance_ratio==0.50 and profile.body_roll_degrees==3.0 and profile.slide_knee_clearance_ratio==0.09 and profile.slide_sit_degrees==55.0,"nieuwe stijlvelden blijven per profiel onafhankelijk")
 	_expect(unique.rig_signature()==signature,"nieuwe stijlvelden herbouwen de rig niet")
 	var file:=FileAccess.open("user://t011_style_metrics.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify({"walk":records[0],"run":records[1],"slide":slide},"\t"))

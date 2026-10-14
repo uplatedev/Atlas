@@ -17,31 +17,31 @@ func _initialize() -> void:
 
 func _test_timing(profile: AtlasCharacterBodyProfile) -> void:
 	for leg in [0.673775, 0.84, 0.91, 0.71]:
-		var walk := profile.get_gait_timing(1.4, leg, 20.0, "sneak")
-		var jog := profile.get_gait_timing(3.0, leg, 20.0, "lopen")
-		var sprint := profile.get_gait_timing(9.0, leg, 20.0, "sprint")
+		var walk := profile.get_gait_timing(1.4, leg, 20.0, "walk")
+		var jog := profile.get_gait_timing(3.0, leg, 20.0, "jog")
+		var run := profile.get_gait_timing(9.0, leg, 20.0, "run")
 		_expect(walk.y == 0.0 and walk.z == 0.0, "wandelen heeft geen afzet of vlucht")
-		_expect(walk.x * 1.4 * (1.0 + profile.walking_double_support_ratio) <= leg * profile.walking_support_distance_ratio + 0.00001, "wandelbereik omvat ook dubbele steun")
-		_expect(jog.x * 3.0 <= leg * profile.jogging_support_distance_ratio + 0.00001, "jogcontact past bij gemeten beenlengte")
-		_expect(sprint.x * 9.0 <= leg * profile.step_length_ratio + 0.00001, "sprintcontact bewaart begrensde steunafstand")
-		_expect(walk.x > jog.x + jog.y and jog.x + jog.y > sprint.x + sprint.y, "cadans neemt toe van wandeling via jog naar sprint")
-		_expect(sprint.y > jog.y and sprint.z > jog.z, "standaardcurve geeft snellere passen meer echte vlucht")
-		for timing in [jog, sprint]:
+		_expect(walk.x * 1.4 * (1.0 + profile.walk_double_support_ratio) <= leg * profile.walk_support_distance_ratio + 0.00001, "wandelbereik omvat ook dubbele steun")
+		_expect(jog.x * 3.0 <= leg * profile.jog_support_distance_ratio + 0.00001, "jogcontact past bij gemeten beenlengte")
+		_expect(run.x * 9.0 <= leg * profile.step_length_ratio + 0.00001, "runcontact bewaart begrensde steunafstand")
+		_expect(walk.x > jog.x + jog.y and jog.x + jog.y > run.x + run.y, "cadans neemt toe van wandeling via jog naar run")
+		_expect(run.y > jog.y and run.z > jog.z, "standaardcurve geeft snellere passen meer echte vlucht")
+		for timing in [jog, run]:
 			_expect(absf(timing.z - 20.0 * timing.y * timing.y / 8.0) < 0.000001, "vluchtduur en hoogte komen uit dezelfde zwaartekracht")
-		print("RHYTHM_PLAN ", JSON.stringify({"leg":leg,"walk_spm":60.0/walk.x,"jog_spm":60.0/(jog.x+jog.y),"sprint_spm":60.0/(sprint.x+sprint.y),"jog_contact":jog.x,"jog_flight":jog.y,"sprint_contact":sprint.x,"sprint_flight":sprint.y}))
-	var earth := profile.get_gait_timing(3.0, 0.673775, 9.81, "lopen")
-	var game := profile.get_gait_timing(3.0, 0.673775, 20.0, "lopen")
+		print("RHYTHM_PLAN ", JSON.stringify({"leg":leg,"walk_spm":60.0/walk.x,"jog_spm":60.0/(jog.x+jog.y),"run_spm":60.0/(run.x+run.y),"jog_contact":jog.x,"jog_flight":jog.y,"run_contact":run.x,"run_flight":run.y}))
+	var earth := profile.get_gait_timing(3.0, 0.673775, 9.81, "jog")
+	var game := profile.get_gait_timing(3.0, 0.673775, 20.0, "jog")
 	_expect(is_equal_approx(earth.z, game.z) and earth.y > game.y, "andere echte zwaartekracht wijzigt duur, niet profielhoogte")
 	var original := profile.stride_flight_curve
 	var zero := Curve.new()
 	zero.add_point(Vector2.ZERO)
 	zero.add_point(Vector2(1,0))
 	profile.stride_flight_curve = zero
-	for mode in ["sneak","lopen","sprint"]:
+	for mode in ["walk","jog","run"]:
 		var timing := profile.get_gait_timing(3.0, 0.673775, 20.0, mode)
 		_expect(timing.x > 0.0 and timing.y == 0.0 and timing.z == 0.0, "nulcurve bewaart een echte gesteunde cyclus")
 	profile.stride_flight_curve = original
-	var side := profile.get_gait_timing(1.12, 0.673775, 20.0, "sneak", 1.0)
+	var side := profile.get_gait_timing(1.12, 0.673775, 20.0, "walk", 1.0)
 	_expect(side.y > 0.0 and side.z > 0.0, "expliciete Alt-zijpas houdt de bevestigde kleine fysieke hup")
 
 func _test_scheduler_contract() -> void:
@@ -76,20 +76,20 @@ func _test_scheduler_contract() -> void:
 
 func _test_gait_selection() -> void:
 	var actor := AtlasCharacter.new()
-	actor._sneak_requested = true
-	_expect(actor._gait_motion_profile(Vector3(0,0,-8)) == "lopen", "Alt met sprintmomentum blijft effectief joggen")
-	_expect(actor._gait_motion_profile(Vector3(0,0,-1.4)) == "sneak", "haalbare wandelvaart gebruikt WALK")
-	_expect(actor._gait_motion_profile(Vector3(0,0,1.0)) == "lopen", "achterwaarts gebruikt eigen lagere wandellimiet")
-	actor.sneak_forward_speed = 2.1
-	actor.walk_forward_speed = 6.5
-	actor.sprint_forward_speed = 11.0
-	_expect(actor._gait_motion_profile(Vector3(0,0,-2.1)) == "sneak" and actor._gait_motion_profile(Vector3(0,0,-2.3)) == "lopen", "instancegrens komt uit eigen Alt-snelheid, niet jog/sprint-defaults")
+	actor._walk_requested = true
+	_expect(actor._gait_motion_profile(Vector3(0,0,-8)) == "jog", "Alt met runmomentum blijft effectief joggen")
+	_expect(actor._gait_motion_profile(Vector3(0,0,-1.4)) == "walk", "haalbare wandelvaart gebruikt WALK")
+	_expect(actor._gait_motion_profile(Vector3(0,0,1.0)) == "jog", "achterwaarts gebruikt eigen lagere wandellimiet")
+	actor.walk_forward_speed = 2.1
+	actor.jog_forward_speed = 6.5
+	actor.run_forward_speed = 11.0
+	_expect(actor._gait_motion_profile(Vector3(0,0,-2.1)) == "walk" and actor._gait_motion_profile(Vector3(0,0,-2.3)) == "jog", "instancegrens komt uit eigen Alt-snelheid, niet jog/run-defaults")
 	actor._stride.configure_timing(0.2,0.1,0.0)
 	actor._stride.support_tick(0.1,0.2,true)
-	_expect(actor._gait_motion_profile(Vector3(0,0,-1.4)) == "lopen", "lopende vluchtcyclus wacht op werkelijk contact voor WALK")
+	_expect(actor._gait_motion_profile(Vector3(0,0,-1.4)) == "jog", "lopende vluchtcyclus wacht op werkelijk contact voor WALK")
 	actor._stride.support_tick(0.01,0.4,true,1.0,Vector2(0,-1.4),true)
 	_expect(not actor._stride.is_supported_cycle() and actor._stride.phase < 0.5, "Alt verdubbelt lopende halve steunfase niet")
-	_expect(actor._gait_motion_profile(Vector3(1.12,0,0)) == "sneak", "lage zijshuffle houdt eigen stijl tijdens steun en vlucht")
+	_expect(actor._gait_motion_profile(Vector3(1.12,0,0)) == "walk", "lage zijshuffle houdt eigen stijl tijdens steun en vlucht")
 	actor._stride.touch_down(Vector2(0,-1.4))
 	actor._stride.configure_timing(0.4,0.0,0.18)
 	actor._stride.begin_supported_cycle()
@@ -99,10 +99,10 @@ func _test_gait_selection() -> void:
 
 func _test_instance_resources(profile: AtlasCharacterBodyProfile) -> void:
 	var other := profile.make_instance_unique()
-	other.jogging_cadence = 200.0
-	other.walking_double_support_ratio = 0.25
+	other.jog_cadence = 200.0
+	other.walk_double_support_ratio = 0.25
 	other.stride_flight_curve.set_point_value(1, 0.02)
-	_expect(profile.jogging_cadence == 176.0 and profile.walking_double_support_ratio == 0.18, "ritme-instellingen blijven per instance")
+	_expect(profile.jog_cadence == 176.0 and profile.walk_double_support_ratio == 0.18, "ritme-instellingen blijven per instance")
 	_expect(profile.stride_flight_curve.get_point_position(1).y != other.stride_flight_curve.get_point_position(1).y, "vluchtcurve blijft werkelijk onafhankelijk")
 
 func _expect(value: bool, message: String) -> void:

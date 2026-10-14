@@ -3,7 +3,7 @@ extends SceneTree
 
 const CHARACTER = preload("res://characters/Character.tscn")
 const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
-const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
+const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "run", "walk", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var world: Node3D
 var actor: AtlasCharacter
@@ -111,7 +111,7 @@ func _test_supported_transitions() -> void:
 	var snap := actor.floor_snap_length
 	actor.crouch_capsule_radius = 0.15
 	actor.floor_snap_length = 0.0
-	await _sprint_jump(80)
+	await _run_jump(80)
 	await _pulse("crouch")
 	await _landing()
 	_rig().call("reset_follow_history")
@@ -215,11 +215,11 @@ func _test_pulse_interruptions() -> void:
 
 
 func _test_fov_profiles() -> void:
-	await _sprint_jump(16)
-	var mix := clampf((float(launch.speed) - float(launch.walk)) / (float(launch.sprint) - float(launch.walk)), 0.0, 1.0)
-	_expect(float(actor.get_debug_state().jump_boost) > 0.0 and _speed() > float(launch.speed), "gedeeltelijke sprintafzet bevat een echte horizontale bonus")
+	await _run_jump(16)
+	var mix := clampf((float(launch.speed) - float(launch.jog)) / (float(launch.run) - float(launch.jog)), 0.0, 1.0)
+	_expect(float(actor.get_debug_state().jump_boost) > 0.0 and _speed() > float(launch.speed), "gedeeltelijke runafzet bevat een echte horizontale bonus")
 	_expect(absf(float(_state().camera_air_launch_mix) - mix) < 0.00001 and float(_state().camera_air_fov_mix) <= mix + 0.00001, "lucht-FOV gebruikt afzet vóór bonus en overschrijdt die mix niet")
-	await _sprint_jump(80)
+	await _run_jump(80)
 	var fov_before := float(_state().camera_fov)
 	var speed_before := _speed()
 	Input.action_release("move_forward")
@@ -227,7 +227,7 @@ func _test_fov_profiles() -> void:
 	await _frames(18)
 	_expect(not actor.is_on_floor() and _speed() < speed_before and float(_state().camera_air_fov_mix) < float(_state().camera_air_launch_mix), "echte S-luchtrem bouwt de FOV-mix af")
 	_expect(float(_state().camera_fov) < fov_before - 0.1, "lens keert tijdens luchtrem vloeiend smaller terug")
-	await _sprint_jump(80)
+	await _run_jump(80)
 	await _pulse("crouch")
 	await _landing()
 	await _frames(1)
@@ -252,12 +252,12 @@ func _test_ground_slide_view() -> void:
 	await _reset()
 	actor.set_camera_distance(4.0)
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(80)
 	await _pulse("crouch")
 	await _frames(1)
 	var initial_offset := float(_state().camera_slide_fov_offset)
-	_expect(_flag("slide_active") and initial_offset > 0.1 and initial_offset <= float(actor.get("camera_slide_fov_bonus")) + 0.001, "sprintgrondslide gebruikt direct dezelfde begrensde vaart-FOV")
+	_expect(_flag("slide_active") and initial_offset > 0.1 and initial_offset <= float(actor.get("camera_slide_fov_bonus")) + 0.001, "rungrondslide gebruikt direct dezelfde begrensde vaart-FOV")
 	var peak := 0.0
 	var previous_offset := initial_offset
 	var continuous := true
@@ -380,7 +380,7 @@ func _physics_trace(enabled: bool) -> Array:
 	actor.set("camera_fov_refinement_enabled", enabled)
 	await _reset(false)
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	var values: Array = []
 	for frame in 220:
 		if frame == 15:
@@ -452,8 +452,8 @@ func _camera_volume_clear() -> bool:
 	return world.get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty()
 
 
-func _observe_jump(horizontal: Vector3, walk_limit: float, sprint_limit: float, _sneaking: bool) -> void:
-	launch = {"speed": horizontal.length(), "walk": walk_limit, "sprint": sprint_limit}
+func _observe_jump(horizontal: Vector3, jog_limit: float, run_limit: float, _walking: bool) -> void:
+	launch = {"speed": horizontal.length(), "jog": jog_limit, "run": run_limit}
 
 
 func _observe_contact(frame: AtlasCharacterContactFrame) -> void:
@@ -468,10 +468,10 @@ func _observe_contact(frame: AtlasCharacterContactFrame) -> void:
 		supported_contact = copy
 
 
-func _sprint_jump(frames: int) -> void:
+func _run_jump(frames: int) -> void:
 	await _reset()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(frames)
 	await _pulse("jump")
 

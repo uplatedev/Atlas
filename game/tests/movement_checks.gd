@@ -3,7 +3,7 @@ extends SceneTree
 
 const CHARACTER = preload("res://characters/Character.tscn")
 const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
-const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
+const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "run", "walk", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var world: Node3D
 var character: AtlasCharacter
@@ -23,7 +23,7 @@ func _run() -> void:
 	world.add_child(character)
 	character.set_controlled(true)
 	await _frames(8)
-	await _test_sneak_and_postures()
+	await _test_walk_and_postures()
 	await _test_repeat_jumps()
 	await _test_jump_input()
 	await _test_low_passages()
@@ -43,14 +43,14 @@ func _run() -> void:
 		quit(1)
 
 
-func _test_sneak_and_postures() -> void:
+func _test_walk_and_postures() -> void:
 	await _reset()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
-	Input.action_press("sneak")
+	Input.action_press("run")
+	Input.action_press("walk")
 	await _frames(80)
-	_expect(absf(_speed() - character.sneak_forward_speed) < 0.06, "Alt-sneak heeft voorrang op sprint")
-	_expect(character.get_posture() == 0, "sneak verandert de staande capsule niet")
+	_expect(absf(_speed() - character.walk_forward_speed) < 0.06, "Alt-walk heeft voorrang op run")
+	_expect(character.get_posture() == 0, "walk verandert de staande capsule niet")
 	await _reset()
 	Input.action_press("crouch")
 	await _frames(2)
@@ -81,9 +81,9 @@ func _test_sneak_and_postures() -> void:
 	await _frames(5)
 	_expect(character.get_posture() == 2, "Z kiest handmatig rechtstreeks lig vanuit staan")
 	await _reset()
-	Input.action_press("sneak")
-	var sneak_jump: Dictionary = await _jump_once()
-	_expect(sneak_jump.height >= character.sneak_min_jump_height - 0.06 and sneak_jump.height < 0.65, "sneak-sprong blijft laag en boven de ingestelde minimumhoogte")
+	Input.action_press("walk")
+	var walk_jump: Dictionary = await _jump_once()
+	_expect(walk_jump.height >= character.walk_min_jump_height - 0.06 and walk_jump.height < 0.65, "walk-sprong blijft laag en boven de ingestelde minimumhoogte")
 
 
 func _test_repeat_jumps() -> void:
@@ -92,7 +92,7 @@ func _test_repeat_jumps() -> void:
 		character.jump_fatigue_enabled = false
 		for action in direction_actions:
 			Input.action_press(action)
-		Input.action_press("sprint")
+		Input.action_press("run")
 		await _frames(100)
 		var launches: Array[float] = []
 		for jump_index in 12:
@@ -103,24 +103,24 @@ func _test_repeat_jumps() -> void:
 	await _reset()
 	character.jump_fatigue_enabled = true
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(100)
 	var first: Dictionary = await _jump_once()
 	var second: Dictionary = await _jump_once()
 	var third: Dictionary = await _jump_once()
-	_expect(first.height > second.height and second.height > third.height, "opeenvolgende sprintsprongen worden lager")
-	_expect(first.launch > second.launch and second.launch > third.launch, "opeenvolgende sprintsprongen verliezen extra sprintbonus")
+	_expect(first.height > second.height and second.height > third.height, "opeenvolgende runsprongen worden lager")
+	_expect(first.launch > second.launch and second.launch > third.launch, "opeenvolgende runsprongen verliezen extra runbonus")
 	print("MEASURE: fatigue heights %.3f / %.3f / %.3f; launch %.3f / %.3f / %.3f" % [first.height, second.height, third.height, first.launch, second.launch, third.launch])
 	_release_inputs()
 	var before := float(character.get_debug_state().get("fatigue", 0.0))
-	Input.action_press("sneak")
+	Input.action_press("walk")
 	await _frames(1)
-	_expect(float(character.get_debug_state().get("fatigue", 0.0)) >= before - 0.04, "wisselen naar sneak wist sprintvermoeidheid niet")
+	_expect(float(character.get_debug_state().get("fatigue", 0.0)) >= before - 0.04, "wisselen naar walk wist runvermoeidheid niet")
 	await _frames(80)
 	_expect(float(character.get_debug_state().get("fatigue", 1.0)) < 0.01, "voldoende grondrust herstelt volle sprongkracht")
 	_release_inputs()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(100)
 	var restored: Dictionary = await _jump_once()
 	_expect(absf(restored.height - first.height) < 0.06 and absf(restored.launch - first.launch) < 0.08, "na grondherstel komt dezelfde volle sprong terug")
@@ -313,9 +313,9 @@ func _test_camera() -> void:
 	_expect(absf(camera.fov - character.camera_fov_third_person) < 0.1, "FOV-uit houdt de gekozen third-personbasis")
 	character.camera_speed_fov_enabled = true
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(100)
-	_expect(camera.fov > character.camera_fov_third_person + 3.0 and camera.fov <= character.camera_fov_third_person + character.camera_sprint_fov_bonus + 0.1, "snelheids-FOV reageert begrensd op echte sprint")
+	_expect(camera.fov > character.camera_fov_third_person + 3.0 and camera.fov <= character.camera_fov_third_person + character.camera_run_fov_bonus + 0.1, "snelheids-FOV reageert begrensd op echte run")
 	_release_inputs()
 	await _frames(100)
 	_expect(absf(camera.fov - character.camera_fov_third_person) < 0.2, "FOV keert na afremmen naar de basis terug")

@@ -34,29 +34,29 @@ extends Resource
 @export_range(0.5, 1.8, 0.05) var stance_width_ratio: float = 1.0
 ## Versterking van de begrensde rompleun bij snelheid en versnellen; nul houdt de romp recht.
 @export_range(0.0, 2.0, 0.05) var torso_lean_scale: float = 1.0
-## Hielhoogte tijdens achterste sprintzwaai als deel van beenlengte; rustige passen schalen vanzelf terug.
+## Hielhoogte tijdens achterste runzwaai als deel van beenlengte; rustige passen schalen vanzelf terug.
 @export_range(0.05, 0.7, 0.01) var heel_recovery_ratio: float = 0.50
-## Maximale actieve enkeluitslag bij sprint: afzet, teenhef en vlak voorbereiden op contact.
+## Maximale actieve enkeluitslag bij run: afzet, teenhef en vlak voorbereiden op contact.
 @export_range(0.0, 45.0, 1.0, "suffix:°") var ankle_swing_degrees: float = 10.0
 ## Extra voorwaartse ruimte voor de handzwaai als deel van armlengte; beïnvloedt geen loopbesturing.
 @export_range(0.0, 0.3, 0.01) var arm_forward_ratio: float = 0.12
-## Voetspoorbreedte bij sprint als deel van rustbreedte; steunvoeten blijven op hun contactpunt.
+## Voetspoorbreedte bij run als deel van rustbreedte; steunvoeten blijven op hun contactpunt.
 @export_range(0.5, 1.0, 0.01) var running_stance_ratio: float = 0.65
 ## Voetspoorbreedte tijdens rustig lopen als deel van de rustbreedte; gaat geleidelijk over naar de renbreedte.
-@export_range(0.5, 1.0, 0.01) var walking_stance_ratio: float = 0.50
+@export_range(0.5, 1.0, 0.01) var walk_stance_ratio: float = 0.50
 ## Rustige standbreedte als deel van de rustvoeten; geldt ook voor stoppen en bijstappen.
 @export_range(0.35, 1.0, 0.01) var idle_stance_ratio: float = 0.50
-## Gewone looppas krijgt kortere steun bij starten, hervatten of omkeren; sprint behoudt zijn cadans.
+## Gewone looppas krijgt kortere steun bij starten, hervatten of omkeren; run behoudt zijn cadans.
 @export_range(0.25, 1.0, 0.05) var walk_start_support_ratio: float = 0.50
 ## Voet- en hielheffing bij rustig lopen als deel van de renstijl; houdt rustige passen dicht bij de grond.
-@export_range(0.1, 0.6, 0.01) var walking_lift_ratio: float = 0.25
+@export_range(0.1, 0.6, 0.01) var walk_lift_ratio: float = 0.25
 ## Zijwaartse bekkenrol bij lopen; de borst rolt tegengesteld en het hoofd blijft recht.
 @export_range(0.0, 6.0, 0.5, "suffix:°") var body_roll_degrees: float = 3.0
 ## Kleine gewichtsverplaatsing naar het steunbeen, als deel van beenlengte; alleen zichtbaar lichaam.
 @export_range(0.0, 0.05, 0.001) var weight_shift_ratio: float = 0.015
 ## Mediale beweging van alleen de voorwaarts zwaaiende hand, als deel van armlengte.
 @export_range(0.0, 0.3, 0.01) var arm_inward_ratio: float = 0.20
-## Tegengestelde bekken-/schouderdraai bij sprint; het hoofd behoudt de gevraagde blik.
+## Tegengestelde bekken-/schouderdraai bij run; het hoofd behoudt de gevraagde blik.
 @export_range(0.0, 14.0, 0.5, "suffix:°") var body_twist_degrees: float = 8.0
 ## Ruimte voor knievolume bij de knieslide als deel van beenlengte; helpt bij andere modeldiktes.
 @export_range(0.04, 0.18, 0.005) var slide_knee_clearance_ratio: float = 0.09
@@ -78,36 +78,36 @@ extends Resource
 @export_range(0.0, 0.5, 0.01) var foot_lift_ratio: float = 0.18
 ## X is zwaaivoortgang, Y is relatieve voetheffing. Eindpunten blijven op de grond.
 @export var swing_foot_curve: Curve = _default_swing_curve()
-## X is snelheid/referentiesnelheid; Y is pasvluchthoogte als deel van beenlengte. Geldt voor jog/sprint/zijhup; Alt-wandelen houdt grondsteun.
+## X is snelheid/referentiesnelheid; Y is pasvluchthoogte als deel van beenlengte. Geldt voor jog/run/zijhup; Alt-wandelen houdt grondsteun.
 @export var stride_flight_curve: Curve = _default_flight_curve()
 ## Maximale armzwaai bij referentiesnelheid in graden.
 @export_range(0.0, 85.0, 1.0) var arm_swing_degrees: float = 48.0
-@export_group("Wandelen en joggen")
+@export_group("Walk en Jog")
 ## Mengduur voor de zichtbare ganghouding; de motor blijft onmiddellijk op invoer reageren.
 @export_range(0.05, 0.5, 0.01, "suffix:s") var gait_blend_time: float = 0.18
 ## Armzwaai bij ontspannen Alt-wandelen; de armen blijven lang naast het lichaam.
-@export_range(0.0, 30.0, 1.0, "suffix:°") var walking_arm_swing_degrees: float = 20.0
+@export_range(0.0, 30.0, 1.0, "suffix:°") var walk_arm_swing_degrees: float = 20.0
 ## Afstand schouder-hand als deel van armlengte tijdens wandelen; hoog is los en bijna gestrekt.
-@export_range(0.92, 0.995, 0.005) var walking_arm_reach_ratio: float = 0.985
-## Joghouding tussen ontspannen wandelen (0) en de actieve sprint (1); verandert geen snelheid.
-@export_range(0.1, 1.0, 0.05) var jogging_pose_blend: float = 0.75
+@export_range(0.92, 0.995, 0.005) var walk_arm_reach_ratio: float = 0.985
+## Joghouding tussen ontspannen wandelen (0) en de actieve run (1); verandert geen snelheid.
+@export_range(0.1, 1.0, 0.05) var jog_pose_blend: float = 0.75
 ## Fractie dubbele steun per volledige voetcyclus. Twee korte overlapmomenten samen; 0,18 geeft 59% contact per voet.
-@export_range(0.0, 0.3, 0.01) var walking_double_support_ratio: float = 0.18
+@export_range(0.0, 0.3, 0.01) var walk_double_support_ratio: float = 0.18
 ## Kleine teenhef bij hielcontact tijdens wandelen; de grondpin blijft op de zool.
-@export_range(0.0, 25.0, 1.0, "suffix:°") var walking_heel_strike_degrees: float = 12.0
+@export_range(0.0, 25.0, 1.0, "suffix:°") var walk_heel_strike_degrees: float = 12.0
 ## Hielheffing rond de voorvoet vóór de wandelzwaai; geen motorafzet.
-@export_range(0.0, 35.0, 1.0, "suffix:°") var walking_toe_off_degrees: float = 24.0
+@export_range(0.0, 35.0, 1.0, "suffix:°") var walk_toe_off_degrees: float = 24.0
 @export_group("Pasritme")
 ## Gewenste afwisselende wandelstappen per minuut. Kortere benen of weinig steunbereik vragen een sneller ritme.
-@export_range(60.0, 200.0, 1.0, "suffix:/min") var walking_cadence: float = 120.0
+@export_range(60.0, 200.0, 1.0, "suffix:/min") var walk_cadence: float = 120.0
 ## Gewenste afwisselende jogstappen per minuut. Steun en echte vlucht delen samen deze staptijd.
-@export_range(100.0, 260.0, 1.0, "suffix:/min") var jogging_cadence: float = 176.0
-## Gewenste afwisselende sprintstappen per minuut. Een hoge ingestelde vluchtcurve kan een langere stap nodig maken.
-@export_range(140.0, 330.0, 1.0, "suffix:/min") var sprinting_cadence: float = 250.0
+@export_range(100.0, 260.0, 1.0, "suffix:/min") var jog_cadence: float = 176.0
+## Gewenste afwisselende runstappen per minuut. Een hoge ingestelde vluchtcurve kan een langere stap nodig maken.
+@export_range(140.0, 330.0, 1.0, "suffix:/min") var run_cadence: float = 250.0
 ## Maximale afgelegde afstand langs één wandelsteun, inclusief dubbele steun, als deel van beenlengte.
-@export_range(0.5, 1.2, 0.01) var walking_support_distance_ratio: float = 1.0
-## Maximale afstand langs één jogsteun als deel van beenlengte; sprint gebruikt Steunafstand bij Pas.
-@export_range(0.5, 1.2, 0.01) var jogging_support_distance_ratio: float = 1.0
+@export_range(0.5, 1.2, 0.01) var walk_support_distance_ratio: float = 1.0
+## Maximale afstand langs één jogsteun als deel van beenlengte; run gebruikt Steunafstand bij Pas.
+@export_range(0.5, 1.2, 0.01) var jog_support_distance_ratio: float = 1.0
 @export_group("Gewrichtsgrenzen")
 ## Kleinste kniebuiging; nul is volledig gestrekt. Een kleine marge voorkomt doorslaan.
 @export_range(0.0, 170.0, 1.0) var knee_min_flex_degrees: float = 5.0
@@ -115,7 +115,7 @@ extends Resource
 @export_range(1.0, 175.0, 1.0) var knee_max_flex_degrees: float = 155.0
 ## Kleinste elleboogbuiging; de vaste buigrichting voorkomt omklappen.
 @export_range(0.0, 170.0, 1.0) var elbow_min_flex_degrees: float = 5.0
-## Grootste elleboogbuiging; geldt ook bij sprint- en sprongposes.
+## Grootste elleboogbuiging; geldt ook bij run- en sprongposes.
 @export_range(1.0, 175.0, 1.0) var elbow_max_flex_degrees: float = 140.0
 @export_group("Botten midden")
 ## Bekkenbot dat de lichaamshoogte en lage houding draagt.
@@ -290,43 +290,43 @@ func make_instance_unique() -> AtlasCharacterBodyProfile:
 	result.stride_flight_curve.resource_local_to_scene = true
 	return result
 
-func get_flight_height(normalized_speed: float, leg_length: float, sneaking: bool) -> float:
+func get_flight_height(normalized_speed: float, leg_length: float, walking: bool) -> float:
 	var curve := stride_flight_curve
 	var ratio := curve.sample_baked(clampf(normalized_speed, 0.0, 1.0)) if curve != null else 0.12 * clampf(normalized_speed, 0.0, 1.0)
-	return clampf(ratio, 0.0, 0.22) * maxf(leg_length, 0.05) * (0.1 if sneaking else 1.0)
+	return clampf(ratio, 0.0, 0.22) * maxf(leg_length, 0.05) * (0.1 if walking else 1.0)
 
 func get_stance_width_scale(speed: float, standing: bool = true) -> float:
 	var normalized := clampf(speed / maxf(reference_speed, 0.1), 0.0, 1.0)
 	var running := smoothstep(0.50, 0.90, normalized)
 	# Lage houdingen behouden hun eerder afgestemde sporen; deze wijziging betreft staan/lopen.
 	var idle_width := idle_stance_ratio if standing else 1.0
-	var walk_width := walking_stance_ratio if standing else 0.75
+	var walk_width := walk_stance_ratio if standing else 0.75
 	return stance_width_ratio * lerpf(idle_width, lerpf(walk_width, running_stance_ratio, running), clampf(speed / 0.6, 0.0, 1.0))
 
-func get_support_duration(speed: float, leg_length: float, sneaking: bool) -> float:
+func get_support_duration(speed: float, leg_length: float, walking: bool) -> float:
 	# Compatibele toegang voor editorproeven; de motor geeft ook zwaartekracht en stijl door.
-	return get_gait_timing(speed, leg_length, 20.0, "sneak" if sneaking else "lopen").x
+	return get_gait_timing(speed, leg_length, 20.0, "walk" if walking else "jog").x
 
 ## X = steunseconden, Y = vluchtseconden, Z = fysieke vluchthoogte.
 ## Dezelfde berekening levert het ritme én de afzet; geen tweede onafhankelijke klok.
 func get_gait_timing(speed: float, leg_length: float, gravity: float, motion_profile: String, side_amount: float = 0.0) -> Vector3:
 	var leg := maxf(leg_length, 0.05)
 	var travel_speed := maxf(speed, 0.2)
-	var walking := motion_profile == "sneak" and side_amount <= 0.5
-	var sprinting := motion_profile == "sprint"
-	var cadence := walking_cadence if walking else (sprinting_cadence if sprinting else jogging_cadence)
-	var reference := 1.4 if walking else (reference_speed if sprinting else reference_speed / 3.0)
+	var walking := motion_profile == "walk" and side_amount <= 0.5
+	var running := motion_profile == "run"
+	var cadence := walk_cadence if walking else (run_cadence if running else jog_cadence)
+	var reference := 1.4 if walking else (reference_speed if running else reference_speed / 3.0)
 	# De proporties veranderen het ritme, nooit de motorzwaartekracht of topsnelheid.
 	cadence *= clampf(sqrt(0.674 / leg), 0.8, 1.25)
 	cadence *= clampf(sqrt(travel_speed / maxf(reference, 0.1)), 0.55, 1.45)
 	var period := 60.0 / maxf(cadence, 30.0)
 	if walking:
-		var overlap := clampf(walking_double_support_ratio, 0.0, 0.3)
-		var reach_time := leg * clampf(walking_support_distance_ratio, 0.5, 1.2) / (travel_speed * (1.0 + overlap))
+		var overlap := clampf(walk_double_support_ratio, 0.0, 0.3)
+		var reach_time := leg * clampf(walk_support_distance_ratio, 0.5, 1.2) / (travel_speed * (1.0 + overlap))
 		return Vector3(clampf(minf(period, reach_time), 0.035, 0.8), 0.0, 0.0)
 	var height := get_flight_height(speed / maxf(reference_speed, 0.1), leg, false)
 	var flight := sqrt(8.0 * height / maxf(gravity, 0.1))
-	var reach_ratio := step_length_ratio if sprinting else jogging_support_distance_ratio
+	var reach_ratio := step_length_ratio if running else jog_support_distance_ratio
 	var reach_time := leg * clampf(reach_ratio, 0.2, 1.2) / travel_speed
 	var support := clampf(minf(period - flight, reach_time), 0.035, 0.8)
 	return Vector3(support, flight, height)

@@ -139,3 +139,9 @@ Deze aanpak is afgesproken; de benodigde functionaliteit bestaat nog niet:
 4. **Steam:** bewijs vroeg met dezelfde beperkte gameplay en editorwerkwijze de Windows-export, actuele engine-/plugincompatibiliteit, sessiontoegang, identiteit, eigenaarschap en toestandsoverdracht. Een andere transportklasse alleen bewijst dit niet. Kies de plugin pas na actuele verificatie. AppID 480 hoort bij Spacewar-ontwikkeling en is geen definitieve Atlas-identiteit; gebruik bij gelijktijdige proeven twee verschillende Steam-accounts en houd Atlas-projectidentiteit/versie apart herkenbaar.
 
 De actuele lokale Character-proef staat op de T-005-werkbranch. Eerdere speelproeven zijn beoordeeld en hebben de huidige feedback opgeleverd; de nieuwe afstelling blijft te beoordelen. Er is nog geen Windows-testexport, LAN-proef of Steamproef uitgevoerd. Technische resultaten en vervolgafstemming staan in [WORK](WORK.md).
+
+
+## Definitieve bewegingsnamen (T-013)
+
+Alt kiest Walk, gewone WASD Jog en Shift Run. Inspector en HUD gebruiken dezelfde namen.
+Check-Atlas met -CharacterChecks voert nu ook de naam-/opslagcontrole uit: 31 suites in totaal. Die nieuwe controle bewaakt behouden defaults en scene-overrides, echte opslag/herlading van afzonderlijke Walk/Jog/Run-instellingen en onafhankelijke instances. Strafe-gedrag is bij deze naamwijziging behouden; de gevraagde vervanging is nog niet uitgevoerd. Zie [T-013](work/T-013.md).

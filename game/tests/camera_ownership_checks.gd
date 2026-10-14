@@ -6,7 +6,7 @@ extends SceneTree
 const CHARACTER = preload("res://characters/Character.tscn")
 const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
 const NEW_CAMERA_FIELDS = ["camera_landing_enabled", "camera_landing_max_dip", "camera_first_person_landing_max_dip", "camera_landing_min_speed", "camera_landing_full_speed", "camera_landing_attack_time", "camera_landing_recovery_time", "camera_accent_max_offset", "camera_fov_refinement_enabled", "camera_slide_fov_bonus", "camera_first_person_slide_fov_bonus", "camera_slide_fov_reference_speed", "camera_stride_follow_ratio"]
-const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
+const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "run", "walk", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var trace: Dictionary = {}
 var world: Node3D
@@ -29,8 +29,8 @@ func _run() -> void:
 	actor.procedural_enabled = false
 	# Historische 69a8-cameraoracle gebruikt zijn oorspronkelijke snelheidsfixture.
 	# Nieuwe gameplaydefaults worden in de huidige motor-/gangproeven getoetst.
-	actor.walk_forward_speed = 5.0
-	actor.sneak_forward_speed = 2.0
+	actor.jog_forward_speed = 5.0
+	actor.walk_forward_speed = 2.0
 	_legacy_camera(actor)
 	actor.position = Vector3(0, 0.05, 0)
 	world.add_child(actor)
@@ -142,8 +142,8 @@ func _test_head_render_and_logical_input() -> void:
 	var twin: AtlasCharacter = CHARACTER.instantiate()
 	twin.procedural_enabled = false
 	# Beide kanten van de camera-isolatieproef gebruiken dezelfde historische motorfixture.
+	twin.jog_forward_speed = actor.jog_forward_speed
 	twin.walk_forward_speed = actor.walk_forward_speed
-	twin.sneak_forward_speed = actor.sneak_forward_speed
 	_legacy_camera(twin)
 	twin.position = Vector3(20, 0.05, 0)
 	world.add_child(twin)
@@ -173,15 +173,15 @@ func _test_head_render_and_logical_input() -> void:
 
 
 func _test_motion_and_fov() -> void:
-	for mode in ["walk_partial", "sprint_partial", "sprint_mid", "sprint_full", "sneak"]:
+	for mode in ["jog_partial", "run_partial", "run_mid", "run_full", "walk"]:
 		await _reset()
 		actor.jump_fatigue_enabled = false
 		Input.action_press("move_forward")
-		if mode.begins_with("sprint"):
-			Input.action_press("sprint")
-		if mode == "sneak":
-			Input.action_press("sneak")
-		var run_frames := 100 if mode in ["sprint_full", "sneak"] else (16 if mode == "sprint_mid" else 6)
+		if mode.begins_with("run"):
+			Input.action_press("run")
+		if mode == "walk":
+			Input.action_press("walk")
+		var run_frames := 100 if mode in ["run_full", "walk"] else (16 if mode == "run_mid" else 6)
 		var curve: Array = []
 		for frame in run_frames:
 			await _frames(1)
@@ -194,18 +194,18 @@ func _test_motion_and_fov() -> void:
 		Input.action_release("jump")
 		var launch: Dictionary = _snapshot()
 		var launch_target := float(_rig().call("get_state").camera_target_fov)
-		if mode == "sprint_mid":
-			_expect(prelaunch > 5.0 and prelaunch < 9.0 and _horizontal_speed() > prelaunch, "tussensprint bewijst een echte bonus boven gedeeltelijke aanloop")
+		if mode == "run_mid":
+			_expect(prelaunch > 5.0 and prelaunch < 9.0 and _horizontal_speed() > prelaunch, "tussenrun bewijst een echte bonus boven gedeeltelijke aanloop")
 			_expect(absf(launch_target - pre_target) < 0.7, "sprongbonus wordt geen extra FOV-bonus boven afzetvaart")
-		if mode in ["walk_partial", "sprint_partial"]:
-			_expect(launch_target < 70.1 and _horizontal_speed() < 5.0, "korte aanloop krijgt geen volle sprint-FOV of vluchtvaart")
-		if mode == "sneak":
-			_expect(absf(launch_target - 68.0) < 0.001, "sneak-afzet gebruikt eigen FOV en geen sprintmix")
+		if mode in ["jog_partial", "run_partial"]:
+			_expect(launch_target < 70.1 and _horizontal_speed() < 5.0, "korte aanloop krijgt geen volle run-FOV of vluchtvaart")
+		if mode == "walk":
+			_expect(absf(launch_target - 68.0) < 0.001, "walk-afzet gebruikt eigen FOV en geen runmix")
 		var air: Array = []
 		for frame in 10:
 			await _frames(1)
 			air.append(_snapshot())
-		if mode == "sprint_full":
+		if mode == "run_full":
 			var speed_before := _horizontal_speed()
 			Input.action_release("move_forward")
 			Input.action_press("move_back")
@@ -214,10 +214,10 @@ func _test_motion_and_fov() -> void:
 			_expect(absf(float(_rig().call("get_state").camera_target_fov) - launch_target) < 0.001, "bestaande lucht-FOV bewaart afzetgeheugen tijdens S-rem")
 			air.append(_snapshot())
 		trace[mode] = {"ground_curve": curve, "launch": launch, "air_curve": air}
-	# Gewone sprintrem: echte snelheid en renderreactie worden samen vergeleken.
+	# Gewone runrem: echte snelheid en renderreactie worden samen vergeleken.
 	await _reset()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(100)
 	_release_inputs()
 	var brake_curve: Array = []
@@ -230,7 +230,7 @@ func _test_motion_and_fov() -> void:
 func _test_fall_memory() -> void:
 	await _reset()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(16)
 	floor_body.queue_free()
 	await _frames(2)
@@ -269,12 +269,12 @@ func _test_data_boundary() -> void:
 func _test_view_reset_history() -> void:
 	await _reset()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(100)
 	Input.action_press("jump")
 	await _frames(1)
 	Input.action_release("jump")
-	_expect(not actor.is_on_floor() and absf(_horizontal_speed() - 10.5) < 0.01, "viewresetfixture is een echte volle sprintvlucht")
+	_expect(not actor.is_on_floor() and absf(_horizontal_speed() - 10.5) < 0.01, "viewresetfixture is een echte volle runvlucht")
 	_rig().call("reset_view")
 	await _frames(1)
 	_expect(absf(float(_rig().call("get_state").camera_target_fov) - 76.0) < 0.001, "alleen viewreset bewaart het afzetgeheugen en vlucht-FOV")
@@ -336,7 +336,7 @@ func _test_render_rates() -> void:
 		var samples: Array = []
 		for frame in rate * 2:
 			var time := float(frame + 1) / float(rate)
-			# 1s constante sprint, daarna een stop: volging en remnawerking.
+			# 1s constante run, daarna een stop: volging en remnawerking.
 			actor.global_position.z = -9.0 * minf(time, 1.0)
 			actor.velocity = Vector3(0, 0, -9.0) if time <= 1.0 else Vector3.ZERO
 			actor.reset_physics_interpolation()
@@ -369,7 +369,7 @@ func _test_main_controls() -> void:
 	await _frames(1)
 	_expect(first.camera_speed_fov_enabled and not second.camera_speed_fov_enabled, "live F4 wijzigt alleen actieve rootinstelling")
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(100)
 	_expect(absf(_camera(second).fov - second.camera_fov_third_person) < 0.1, "component leest live F4-instelling zonder herinitialisatie")
 	_key(KEY_R)
@@ -406,8 +406,25 @@ func _handle_trace() -> void:
 			var expected: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 			_expect(expected is Dictionary, "baselinebestand bevat een trace: " + path)
 			if expected is Dictionary:
-				_compare(trace, expected, "trace")
+				_compare(trace, _canonical_baseline_names(expected), "trace")
 				print("COMPARE: %d numerieke waarden; grootste afwijking %.8f (%s)." % [compared_values, largest_delta, largest_delta_path])
+
+
+func _canonical_baseline_names(value: Variant) -> Variant:
+	# De historische meetwaarden blijven ongewijzigd; alleen oude sleutel-/modenamen
+	# worden voor vergelijking naar de huidige publieke namen vertaald.
+	const RENAMES = {"sneak": "walk", "sprint_full": "run_full", "sprint_mid": "run_mid", "sprint_partial": "run_partial", "walk_partial": "jog_partial", "camera_sneak_fov_offset": "camera_walk_fov_offset", "camera_sprint_fov_bonus": "camera_run_fov_bonus", "lopen": "jog", "sprint": "run"}
+	if value is Dictionary:
+		var result: Dictionary = {}
+		for key in value:
+			result[RENAMES.get(key, key)] = _canonical_baseline_names(value[key])
+		return result
+	if value is Array:
+		var result: Array = []
+		for item in value:
+			result.append(_canonical_baseline_names(item))
+		return result
+	return RENAMES.get(value, value) if value is String else value
 
 
 func _compare(actual: Variant, expected: Variant, path: String) -> void:
@@ -454,9 +471,9 @@ func _reset() -> void:
 
 func _legacy_camera(body: Node) -> void:
 	# Historische camera-oracle houdt de oorspronkelijke motorafstelling.
-	body.set("walk_turn_speed", 540.0)
-	body.set("sprint_turn_speed", 300.0)
-	body.set("sneak_turn_speed", 420.0)
+	body.set("jog_turn_speed", 540.0)
+	body.set("run_turn_speed", 300.0)
+	body.set("walk_turn_speed", 420.0)
 	# Historische 69a8-trace blijft exact; de nieuwe varianten hebben hun eigen suite.
 	for property in body.get_property_list():
 		if String(property.name) in ["camera_landing_enabled", "camera_fov_refinement_enabled"]:

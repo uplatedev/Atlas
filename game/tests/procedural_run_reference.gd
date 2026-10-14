@@ -30,7 +30,7 @@ func _run() -> void:
 	for actor in actors:
 		var intent := AtlasCharacterIntent.new()
 		intent.movement = Vector2(0, -1)
-		intent.sprint = true
+		intent.run = true
 		actor.submit_intent(intent)
 	await _ticks(240)
 	for tick in range(120):

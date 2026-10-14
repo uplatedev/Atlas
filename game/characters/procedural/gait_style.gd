@@ -10,7 +10,7 @@ static func side_amount(local_velocity: Vector3) -> float:
 	return smoothstep(cos(deg_to_rad(30.0)), cos(deg_to_rad(20.0)), absf(horizontal.normalized().x))
 
 static func diagonal_yaw(local_velocity: Vector3, motion_profile: String) -> float:
-	if motion_profile not in ["lopen", "sprint", "sneak"] or Vector2(local_velocity.x, local_velocity.z).length_squared() < 0.01:
+	if motion_profile not in ["jog", "run", "walk"] or Vector2(local_velocity.x, local_velocity.z).length_squared() < 0.01:
 		return 0.0
 	# De nabijste lengte-as geldt ook achterwaarts: nooit een nekdraai van 135 graden.
 	var yaw := atan2(-local_velocity.x, -local_velocity.z)

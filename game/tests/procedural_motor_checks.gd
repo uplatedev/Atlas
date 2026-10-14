@@ -4,7 +4,7 @@ extends SceneTree
 const CHARACTER = preload("res://characters/Character.tscn")
 const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
 const DT := 1.0 / 60.0
-const ACTIONS := ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
+const ACTIONS := ["move_forward", "move_back", "move_left", "move_right", "run", "walk", "crouch", "prone", "jump"]
 var world: Node3D
 var actor: AtlasCharacter
 var contacts: Array[AtlasCharacterContactFrame] = []
@@ -62,7 +62,7 @@ func _test_intent_parity() -> void:
 			else:
 				if frame == 0:
 					Input.action_press("move_forward")
-					Input.action_press("sprint")
+					Input.action_press("run")
 				if frame == 20:
 					Input.action_press("jump")
 				if frame == 21:
@@ -85,13 +85,13 @@ func _test_intent_parity() -> void:
 
 
 func _test_gait() -> void:
-	var walk := await _gait_sample(false)
-	var sprint := await _gait_sample(true)
-	_expect(walk.cycles >= 4 and sprint.cycles >= 4, "lopen en sprinten herhalen echte afzet en echte touchdown")
-	_expect(sprint.height > walk.height * 1.5 and sprint.air_frames > walk.air_frames, "meer snelheid geeft meetbaar hogere én langere echte pasvluchten")
-	_expect(absf(walk.speed - actor.walk_forward_speed) < 0.06 and absf(sprint.speed - actor.sprint_forward_speed) < 0.06, "pasvlucht bewaart ingestelde strakke horizontale loop- en sprintvaart")
+	var jog := await _gait_sample(false)
+	var run := await _gait_sample(true)
+	_expect(jog.cycles >= 4 and run.cycles >= 4, "lopen en runen herhalen echte afzet en echte touchdown")
+	_expect(run.height > jog.height * 1.5 and run.air_frames > jog.air_frames, "meer snelheid geeft meetbaar hogere én langere echte pasvluchten")
+	_expect(absf(jog.speed - actor.jog_forward_speed) < 0.06 and absf(run.speed - actor.run_forward_speed) < 0.06, "pasvlucht bewaart ingestelde strakke horizontale loop- en runvaart")
 	_expect(not fake_support and probe_max <= 1, "echte paslucht meldt geen steun en gebruikt hoogstens één lokale vloerprobe per tick")
-	print("MEASURE: walk height %.4f/air %d; sprint height %.4f/air %d; probes %d" % [walk.height, walk.air_frames, sprint.height, sprint.air_frames, probe_max])
+	print("MEASURE: jog height %.4f/air %d; run height %.4f/air %d; probes %d" % [jog.height, jog.air_frames, run.height, run.air_frames, probe_max])
 	await _reset()
 	_send(Vector2.ZERO)
 	await _frames(100)
@@ -128,14 +128,14 @@ func _test_deceleration_phase() -> void:
 
 
 func _test_walk_momentum_handoff() -> void:
-	var defaults := Vector3(actor.sneak_forward_speed,actor.walk_forward_speed,actor.sprint_forward_speed)
+	var defaults := Vector3(actor.walk_forward_speed,actor.jog_forward_speed,actor.run_forward_speed)
 	var cases := 0
 	var transitional_frames := 0
 	var max_speed_error := 0.0
 	for speeds in [defaults, Vector3(1.4,6.5,11.0), Vector3(2.1,6.5,11.0)]:
-		actor.sneak_forward_speed = speeds.x
-		actor.walk_forward_speed = speeds.y
-		actor.sprint_forward_speed = speeds.z
+		actor.walk_forward_speed = speeds.x
+		actor.jog_forward_speed = speeds.y
+		actor.run_forward_speed = speeds.z
 		for direction in [Vector2(0,-1),Vector2(1,-1).normalized(),Vector2(0,1),Vector2(1,0)]:
 			for delay in [0,5]:
 				await _reset()
@@ -143,44 +143,44 @@ func _test_walk_momentum_handoff() -> void:
 				await _frames(120+delay)
 				var intent := AtlasCharacterIntent.new()
 				intent.movement = direction
-				intent.sneak = true
+				intent.walk = true
 				actor.submit_intent(intent)
 				var previous: AtlasCharacterContactFrame = contacts[-1]
-				var limit := actor.direction_speed_limit_for_state(direction,"sneak")
-				var walking_frames := 0
+				var limit := actor.direction_speed_limit_for_state(direction,"walk")
+				var walk_frames := 0
 				for tick in 90:
 					var before_speed := Vector2(actor.velocity.x,actor.velocity.z).length()
 					await _frames(1)
 					var current: AtlasCharacterContactFrame = contacts[-1]
 					var speed := Vector2(actor.velocity.x,actor.velocity.z).length()
-					max_speed_error = maxf(max_speed_error,absf(speed-maxf(limit,before_speed-actor.sneak_deceleration*DT)))
+					max_speed_error = maxf(max_speed_error,absf(speed-maxf(limit,before_speed-actor.walk_deceleration*DT)))
 					_expect(speed <= before_speed+0.00001,"Alt-overdracht voegt geen vaart toe")
 					_expect(not current.jumped and not current.landed,"Alt-overdracht geeft geen sprong of impactcue")
 					if speed > limit+0.01:
 						transitional_frames += 1
-						_expect(current.motion_profile == "lopen","werkelijke overgangsvaart publiceert jog voor timing en pose")
-					if current.motion_profile == "sneak":
-						walking_frames += 1
+						_expect(current.motion_profile == "jog","werkelijke overgangsvaart publiceert jog voor timing en pose")
+					if current.motion_profile == "walk":
+						walk_frames += 1
 						_expect(speed <= limit+0.01001,"WALK begint pas binnen eigen richtingslimiet")
 						if direction != Vector2(1,0):
 							_expect(current.supported and current.gait_supported_cycle and current.support_fraction == 1.0,"WALK-contacten gebruiken coherente gesteunde timing")
-							if previous.motion_profile != "sneak":
+							if previous.motion_profile != "walk":
 								_expect(current.ground_step or current.stride_landed or previous.gait_supported_cycle,"WALK neemt bestaande cyclus alleen bij contact over")
 					if current.step_index == previous.step_index:
 						_expect(current.gait_phase+0.000001 >= previous.gait_phase,"Alt-overgang draait motorfase niet terug")
 					previous = current
-				_expect(walking_frames > 20,"overdracht bereikt blijvend de eigen Alt-gang")
+				_expect(walk_frames > 20,"overdracht bereikt blijvend de eigen Alt-gang")
 				cases += 1
-	actor.sneak_forward_speed = defaults.x
-	actor.walk_forward_speed = defaults.y
-	actor.sprint_forward_speed = defaults.z
+	actor.walk_forward_speed = defaults.x
+	actor.jog_forward_speed = defaults.y
+	actor.run_forward_speed = defaults.z
 	_expect(max_speed_error < 0.00002,"Alt-overdracht bewaart de bestaande exacte remwet")
 	print("MEASURE: momentum-to-WALK cases %d, transient JOG frames %d, brake error %.8f" % [cases,transitional_frames,max_speed_error])
 
 
-func _gait_sample(sprint: bool) -> Dictionary:
+func _gait_sample(run: bool) -> Dictionary:
 	await _reset()
-	_send(Vector2(0, -1), sprint)
+	_send(Vector2(0, -1), run)
 	await _frames(100)
 	contacts.clear()
 	await _frames(240)
@@ -237,7 +237,7 @@ func _test_posture_and_slide() -> void:
 	var before := Vector2(actor.velocity.x, actor.velocity.z).length()
 	_send(Vector2(0, -1), true, false, true)
 	await _frames(1)
-	_expect(actor.get_posture() == 1 and bool(actor.get_debug_state().slide_pending) and not bool(actor.get_debug_state().stride_jump_available), "C tijdens sprintpasvlucht kiest veilige kruip en bereidt slide zonder pas-sprongticket voor")
+	_expect(actor.get_posture() == 1 and bool(actor.get_debug_state().slide_pending) and not bool(actor.get_debug_state().stride_jump_available), "C tijdens runpasvlucht kiest veilige kruip en bereidt slide zonder pas-sprongticket voor")
 	for index in 40:
 		if bool(actor.get_debug_state().slide_active):
 			break
@@ -249,7 +249,7 @@ func _test_posture_and_slide() -> void:
 	await _wait_for_stride()
 	_send(Vector2(0, -1), false, false, true)
 	await _frames(60)
-	_expect(actor.get_posture() == 1 and not bool(actor.get_debug_state().slide_active) and not bool(actor.get_debug_state().slide_pending), "gewone C tijdens looppas kiest blijvend kruip zonder sprintslide")
+	_expect(actor.get_posture() == 1 and not bool(actor.get_debug_state().slide_active) and not bool(actor.get_debug_state().slide_pending), "gewone C tijdens looppas kiest blijvend kruip zonder runslide")
 	var after := _count("stride_started")
 	await _frames(40)
 	_expect(_count("stride_started") == after, "lage houding start geen nieuwe rechtop-passen")
@@ -345,8 +345,8 @@ func _assert_supported_steps() -> void:
 
 
 func _test_impulses() -> void:
-	var deceleration := actor.walk_deceleration
-	actor.walk_deceleration = 0.0
+	var deceleration := actor.jog_deceleration
+	actor.jog_deceleration = 0.0
 	var speeds: Array[float] = []
 	for mass in [75.0, 150.0]:
 		await _reset(Vector3(0, 0.05, 0), false)
@@ -356,7 +356,7 @@ func _test_impulses() -> void:
 		speeds.append(actor.velocity.x)
 		_expect(actor.is_on_floor(), "horizontale grondimpuls verzint geen verticale afzet")
 	_expect(absf(speeds[0] - 10.0) < 0.03 and absf(speeds[1] - 5.0) < 0.03, "dezelfde impuls verandert snelheid uitsluitend volgens impuls gedeeld door massa")
-	actor.walk_deceleration = deceleration
+	actor.jog_deceleration = deceleration
 	actor.body_profile.mass_kg = 75.0
 	await _reset(Vector3(0, 5, 0), false)
 	var before_y := actor.velocity.y
@@ -376,10 +376,10 @@ func _test_impulses() -> void:
 	actor.apply_impulse(Vector3(0, 0, -750))
 	await _frames(1)
 	var incoming := -actor.velocity.z
-	_expect(incoming > 18.0, "extern sprintsurplus wordt op de grond geleidelijk geremd in plaats van afgekapt")
+	_expect(incoming > 18.0, "extern runsurplus wordt op de grond geleidelijk geremd in plaats van afgekapt")
 	_send(Vector2(0, -1), true, true)
 	await _frames(1)
-	_expect(-actor.velocity.z >= incoming - 0.6 and -actor.velocity.z <= incoming + actor.sprint_jump_boost + 0.03, "bewuste sprong bewaart extern surplus met hoogstens één normale sprongbonus")
+	_expect(-actor.velocity.z >= incoming - 0.6 and -actor.velocity.z <= incoming + actor.run_jump_boost + 0.03, "bewuste sprong bewaart extern surplus met hoogstens één normale sprongbonus")
 	var budget := Vector2(actor.velocity.x, actor.velocity.z).length()
 	for index in 6:
 		for tick in 160:
@@ -398,7 +398,7 @@ func _test_impulses() -> void:
 	var expected_air_speed := Vector2(air_before.x + 5.0, air_before.z).length()
 	_expect(str(actor.get_debug_state().air_kind) == "fall" and not actor.is_on_floor() and not bool(actor.get_debug_state().stride_jump_available), "inslag tijdens echte paslucht schakelt naar luchtreactie zonder grond- of pasprivilege")
 	_expect(absf(Vector2(actor.velocity.x, actor.velocity.z).length() - expected_air_speed) < 0.03, "inslag in paslucht bewaart de echte impuls in het luchtbudget")
-	print("MEASURE: impulse 750 Ns at masses75/150 -> %.3f/%.3f m/s; external sprint %.3f" % [speeds[0], speeds[1], incoming])
+	print("MEASURE: impulse 750 Ns at masses75/150 -> %.3f/%.3f m/s; external run %.3f" % [speeds[0], speeds[1], incoming])
 
 
 func _wait_for_stride() -> void:
@@ -409,10 +409,10 @@ func _wait_for_stride() -> void:
 	_expect(false, "fixture bereikt echte pasvlucht")
 
 
-func _send(movement: Vector2, sprint: bool = false, jump: bool = false, crouch: bool = false, prone: bool = false) -> void:
+func _send(movement: Vector2, run: bool = false, jump: bool = false, crouch: bool = false, prone: bool = false) -> void:
 	var intent := AtlasCharacterIntent.new()
 	intent.movement = movement
-	intent.sprint = sprint
+	intent.run = run
 	intent.jump_pressed = jump
 	intent.crouch_pressed = crouch
 	intent.prone_pressed = prone

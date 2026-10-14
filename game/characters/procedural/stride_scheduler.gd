@@ -78,7 +78,7 @@ func support_tick(delta: float, duration: float, moving: bool, first_support_rat
 		_support_direction = horizontal_velocity.normalized()
 	elif reversing_support:
 		# Na omkeren ligt de bestaande steun nog aan de oude voorkant.
-		# Dit geldt ook voor sprint: de oude pin krijgt geen nieuw bereik cadeau.
+		# Dit geldt ook voor run: de oude pin krijgt geen nieuw bereik cadeau.
 		_short_support = true
 	# Vanuit stilstand staat de eerste voet nog niet vooruit: een kortere gewone
 	# steunfase voorkomt een onbereikbare achterblijvende pin. Sprint geeft ratio 1.

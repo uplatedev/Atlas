@@ -5,14 +5,14 @@ var transition_metrics: Array = []
 func _run() -> void:
 	for source in ["walk", "zero_curve", "ceiling"]:
 		for direction in [Vector2(0,-1),Vector2(1,-1).normalized(),Vector2(1,0),Vector2(-1,0)]:
-			for target in ["jog","sprint"]:
+			for target in ["jog","run"]:
 				await _handoff(source,target,direction)
-	for mode in ["walk","jog","sprint"]:
+	for mode in ["walk","jog","run"]:
 		for direction in [Vector2(0,-1),Vector2(1,0)]:
 			for phase in [0.15,0.65,0.9]:
 				await _jump_modifiers(mode,direction,phase)
 	for constrained in ["free","zero_curve","ceiling"]:
-		await _sprint_reversals(constrained)
+		await _run_reversals(constrained)
 	await _input_priority()
 	var file := FileAccess.open("user://t011_gait_transition_metrics.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(transition_metrics,"\t"))
@@ -24,8 +24,8 @@ func _run() -> void:
 func _send(index: int, direction: Vector2, mode: String, jump: bool = false) -> void:
 	var intent := AtlasCharacterIntent.new()
 	intent.movement = direction
-	intent.sneak = mode == "walk"
-	intent.sprint = mode == "sprint"
+	intent.walk = mode == "walk"
+	intent.run = mode == "run"
 	intent.jump_pressed = jump
 	actors[index].submit_intent(intent)
 
@@ -120,7 +120,7 @@ func _jump_modifiers(mode: String,direction: Vector2,phase: float) -> void:
 				_send(index,direction,mode,true)
 				ages[index] = 0
 			elif ages[index] in [3,6,9]:
-				_send(index,direction,["sprint","walk","jog"][ages[index]/3-1])
+				_send(index,direction,["run","walk","jog"][ages[index]/3-1])
 			previous_y[index] = actors[index].velocity.y
 			previous_speed[index] = Vector2(actors[index].velocity.x,actors[index].velocity.z).length()
 		await _ticks(1)
@@ -146,7 +146,7 @@ func _jump_modifiers(mode: String,direction: Vector2,phase: float) -> void:
 	print("JUMP MODIFIERS ",JSON.stringify(result))
 	await _clear()
 
-func _sprint_reversals(constrained: String) -> void:
+func _run_reversals(constrained: String) -> void:
 	_build(4,true)
 	await _ticks(20)
 	if constrained == "zero_curve":
@@ -167,7 +167,7 @@ func _sprint_reversals(constrained: String) -> void:
 	var directions: Array[Vector2] = [Vector2(0,-1),Vector2(1,-1).normalized(),Vector2(1,0),Vector2(1,1).normalized(),Vector2(0,1),Vector2(-1,1).normalized(),Vector2(-1,0),Vector2(-1,-1).normalized(),Vector2(1,0),Vector2(-1,0),Vector2(0,-1),Vector2(0,1),Vector2.ZERO]
 	var stats := {"reversal":constrained,"max_target":0.0,"max_planted":0.0,"max_pin":0.0,"releases":0,"ray_max":0,"ground_steps":0,"flights":0}
 	for direction in directions:
-		for index in range(4): _send(index,direction,"sprint")
+		for index in range(4): _send(index,direction,"run")
 		var previous: Array = []
 		for index in range(4): previous.append(_capture_state(index))
 		for tick in range(100):
@@ -216,7 +216,7 @@ func _input_priority() -> void:
 		for actor in actors:
 			var intent := AtlasCharacterIntent.new()
 			intent.movement = Vector2(0,-1)
-			intent.sprint = true
+			intent.run = true
 			intent.jump_pressed = action == "jump"
 			intent.crouch_pressed = action == "slide"
 			actor.submit_intent(intent)

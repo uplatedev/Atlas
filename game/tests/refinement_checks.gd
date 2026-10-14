@@ -3,7 +3,7 @@ extends SceneTree
 
 const CHARACTER = preload("res://characters/Character.tscn")
 const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
-const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
+const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "run", "walk", "crouch", "prone", "jump"]
 const PHYSICS_DELTA := 1.0 / 60.0
 var failures: Array[String] = []
 var world: Node3D
@@ -67,48 +67,48 @@ func _test_partial_acceleration_jump() -> void:
 	await _reset()
 	character.jump_fatigue_enabled = false
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(6)
 	var partial: Dictionary = await _jump_once()
 	await _reset()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(100)
 	var full: Dictionary = await _jump_once()
-	print("MEASURE: sprint partial/full launch %.3f/%.3f m/s; travel %.3f/%.3f m; apex %.3f/%.3f m; partial max-air %.3f/cap %.3f" % [partial.launch, full.launch, partial.travel, full.travel, partial.height, full.height, partial.air_max, partial.launch_cap])
-	_expect(partial.launch < full.launch * 0.8, "0.10s sprintaanloop geeft minder afzetsnelheid dan volle sprint")
-	_expect(partial.travel < full.travel * 0.9, "korte sprintaanloop geeft aantoonbaar minder sprongafstand dan volle sprint")
-	_expect(partial.air_max <= partial.launch + 0.03, "luchtsturing versnelt een gedeeltelijke sprintafzet niet alsnog tot volle loopsnelheid")
-	_expect(partial.launch_cap <= partial.launch + 0.03, "gedeeltelijke sprintafzet legt haar werkelijke eigen snelheidsbudget vast")
+	print("MEASURE: run partial/full launch %.3f/%.3f m/s; travel %.3f/%.3f m; apex %.3f/%.3f m; partial max-air %.3f/cap %.3f" % [partial.launch, full.launch, partial.travel, full.travel, partial.height, full.height, partial.air_max, partial.launch_cap])
+	_expect(partial.launch < full.launch * 0.8, "0.10s runaanloop geeft minder afzetsnelheid dan volle run")
+	_expect(partial.travel < full.travel * 0.9, "korte runaanloop geeft aantoonbaar minder sprongafstand dan volle run")
+	_expect(partial.air_max <= partial.launch + 0.03, "luchtsturing versnelt een gedeeltelijke runafzet niet alsnog tot volle loopsnelheid")
+	_expect(partial.launch_cap <= partial.launch + 0.03, "gedeeltelijke runafzet legt haar werkelijke eigen snelheidsbudget vast")
 	var launches: Array[float] = [full.launch]
 	for i in 7:
 		var next: Dictionary = await _jump_once()
 		launches.append(next.launch)
-	_expect(launches.max() <= launches[0] + 0.03, "acht onmiddellijke sprintsprongen stapelen niet wanneer vermoeidheid uitstaat")
-	_expect(launches.max() <= character.sprint_forward_speed + character.sprint_jump_boost + 0.03, "de sprongcap blijft maximaal één ingestelde sprintbonus")
+	_expect(launches.max() <= launches[0] + 0.03, "acht onmiddellijke runsprongen stapelen niet wanneer vermoeidheid uitstaat")
+	_expect(launches.max() <= character.run_forward_speed + character.run_jump_boost + 0.03, "de sprongcap blijft maximaal één ingestelde runbonus")
 	print("MEASURE: repeated launches ", launches)
 	await _reset()
 	Input.action_press("move_forward")
 	# Met 3 m/s is zes ticks al volle vaart; twee ticks toetsen echt gedeeltelijke aanloop.
 	await _frames(2)
 	var partial_approach := _speed()
-	_expect(partial_approach > 0.0 and partial_approach < character.walk_forward_speed * 0.65, "korte jogfixture heeft vóór afzet werkelijk gedeeltelijke vaart")
-	var walking_partial: Dictionary = await _jump_once()
+	_expect(partial_approach > 0.0 and partial_approach < character.jog_forward_speed * 0.65, "korte jogfixture heeft vóór afzet werkelijk gedeeltelijke vaart")
+	var jog_partial: Dictionary = await _jump_once()
 	await _reset()
 	Input.action_press("move_forward")
 	await _frames(100)
-	_expect(absf(_speed() - character.walk_forward_speed) < 0.03, "volle jogfixture bereikt vóór afzet zijn ingestelde snelheid")
-	var walking_full: Dictionary = await _jump_once()
-	print("MEASURE: jog approach %.3f; partial/full launch %.3f/%.3f; travel %.3f/%.3f; partial max-air %.3f/cap %.3f" % [partial_approach, walking_partial.launch, walking_full.launch, walking_partial.travel, walking_full.travel, walking_partial.air_max, walking_partial.launch_cap])
-	_expect(walking_partial.launch < walking_full.launch * 0.8, "twee ticks jogaanloop geven minder afzetsnelheid dan volle jog")
-	_expect(walking_partial.travel < walking_full.travel * 0.9, "gedeeltelijke loopaanloop geeft minder sprongafstand dan volle loop")
-	_expect(walking_partial.air_max <= walking_partial.launch + 0.03, "luchtsturing maakt een gedeeltelijke loopafzet niet alsnog volle loopsnelheid")
+	_expect(absf(_speed() - character.jog_forward_speed) < 0.03, "volle jogfixture bereikt vóór afzet zijn ingestelde snelheid")
+	var jog_full: Dictionary = await _jump_once()
+	print("MEASURE: jog approach %.3f; partial/full launch %.3f/%.3f; travel %.3f/%.3f; partial max-air %.3f/cap %.3f" % [partial_approach, jog_partial.launch, jog_full.launch, jog_partial.travel, jog_full.travel, jog_partial.air_max, jog_partial.launch_cap])
+	_expect(jog_partial.launch < jog_full.launch * 0.8, "twee ticks jogaanloop geven minder afzetsnelheid dan volle jog")
+	_expect(jog_partial.travel < jog_full.travel * 0.9, "gedeeltelijke loopaanloop geeft minder sprongafstand dan volle loop")
+	_expect(jog_partial.air_max <= jog_partial.launch + 0.03, "luchtsturing maakt een gedeeltelijke loopafzet niet alsnog volle loopsnelheid")
 
 
 func _test_air_wall_steering_recovery() -> void:
 	await _reset()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(80)
 	var wall := _add_box(character.position + Vector3(0, 2.5, -2.0), Vector3(12, 5, 0.2))
 	await _frames(2)
@@ -120,7 +120,7 @@ func _test_air_wall_steering_recovery() -> void:
 		await _frames(1)
 		if _speed() < 0.01:
 			break
-	_expect(not character.is_on_floor() and _speed() < 0.01, "echte frontale wandbotsing remt horizontale sprintvlucht tot nul voordat de speler landt")
+	_expect(not character.is_on_floor() and _speed() < 0.01, "echte frontale wandbotsing remt horizontale runvlucht tot nul voordat de speler landt")
 	Input.action_release("move_forward")
 	Input.action_press("move_right")
 	await _frames(6)
@@ -135,7 +135,7 @@ func _test_air_wall_steering_recovery() -> void:
 
 func _test_crouch_landing_slide() -> void:
 	for action in ["crouch", "prone"]:
-		await _launch_sprint()
+		await _launch_run()
 		var speed_before := _speed()
 		var cap_before := float(character.get_debug_state().get("air_speed_cap", 0.0))
 		var vertical_before := character.velocity.y
@@ -146,7 +146,7 @@ func _test_crouch_landing_slide() -> void:
 			Input.action_release(action)
 		var speed_after := _speed()
 		print("MEASURE: airborne %s speed %.3f -> %.3f; vertical %.3f -> %.3f; pending %s" % [action, speed_before, speed_after, vertical_before, character.velocity.y, _flag("slide_pending")])
-		_expect(not character.is_on_floor() and speed_before > character.walk_forward_speed, "%s wordt tijdens een echte sprintsprong gemeten" % action)
+		_expect(not character.is_on_floor() and speed_before > character.jog_forward_speed, "%s wordt tijdens een echte runsprong gemeten" % action)
 		_expect(absf(speed_after - speed_before) < 0.03, "%s bewaart de horizontale afzetvaart tijdens de vlucht" % action)
 		_expect(absf(float(character.get_debug_state().get("air_speed_cap", 0.0)) - cap_before) < 0.03, "%s bewaart het werkelijke afzetbudget tijdens de vormwissel" % action)
 		_expect(absf(character.velocity.y - (vertical_before - character.gravity_strength * PHYSICS_DELTA)) < 0.04, "%s verandert de verticale sprong niet behalve normale zwaartekracht" % action)
@@ -220,7 +220,7 @@ func _test_crouch_landing_slide() -> void:
 func _test_air_braking() -> void:
 	var reference: Dictionary = await _brake_flight(false)
 	var braked: Dictionary = await _brake_flight(true)
-	_expect(braked.travel < reference.travel * 0.97, "S tijdens een voorwaartse sprintsprong geeft werkelijk een kortere landingsafstand")
+	_expect(braked.travel < reference.travel * 0.97, "S tijdens een voorwaartse runsprong geeft werkelijk een kortere landingsafstand")
 	_expect(braked.speeds.size() > 3 and braked.speeds[0] > braked.speeds[1] and braked.speeds[1] > braked.speeds[2] and braked.speeds[2] > 0.1, "S verlaagt de luchtvaart over meerdere frames zonder onmiddellijke stop")
 	var vertical_matches: bool = reference.vertical.size() == braked.vertical.size()
 	if vertical_matches:
@@ -228,7 +228,7 @@ func _test_air_braking() -> void:
 			vertical_matches = vertical_matches and absf(float(reference.vertical[i]) - float(braked.vertical[i])) < 0.001
 	_expect(vertical_matches, "S verandert de verticale vlucht niet vergeleken met dezelfde ongeremde afzet")
 	print("MEASURE: airborne S travel %.3f vs %.3f without S; initial speeds %s" % [braked.travel, reference.travel, str(braked.speeds.slice(0, 4))])
-	await _launch_sprint()
+	await _launch_run()
 	Input.action_release("move_forward")
 	Input.action_press("move_back")
 	await _frames(6)
@@ -236,9 +236,9 @@ func _test_air_braking() -> void:
 	Input.action_release("move_back")
 	Input.action_press("move_forward")
 	await _frames(10)
-	_expect(not character.is_on_floor() and _speed() <= slowed + 0.03, "vooruit sturen na luchtremmen herstelt geen verloren sprintbonus")
+	_expect(not character.is_on_floor() and _speed() <= slowed + 0.03, "vooruit sturen na luchtremmen herstelt geen verloren runbonus")
 	for launch_actions in [["move_back"], ["move_back", "move_left"], ["move_forward", "move_left"]]:
-		await _launch_sprint(launch_actions)
+		await _launch_run(launch_actions)
 		var before := _speed()
 		Input.action_release("move_forward")
 		Input.action_release("move_left")
@@ -262,7 +262,7 @@ func _test_ground_slide() -> void:
 		await _ground_run(actions, 80)
 		await _check_ground_slide_entry(str(actions), false)
 	await _ground_run(["move_forward"], 6)
-	_expect(_speed() < character.sprint_forward_speed * 0.6, "korte grondslide-aanloop bereikt aantoonbaar geen volle sprintvaart")
+	_expect(_speed() < character.run_forward_speed * 0.6, "korte grondslide-aanloop bereikt aantoonbaar geen volle runvaart")
 	await _check_ground_slide_entry("korte aanloop", true)
 
 
@@ -300,19 +300,19 @@ func _check_ground_slide_entry(label: String, short_run: bool) -> void:
 
 
 func _test_ground_slide_negative_cases() -> void:
-	for actions in [[], ["sprint"], ["move_forward"], ["move_forward", "sprint", "sneak"]]:
+	for actions in [[], ["run"], ["move_forward"], ["move_forward", "run", "walk"]]:
 		await _reset()
 		for action in actions:
 			Input.action_press(action)
 		await _frames(80)
 		Input.action_press("crouch")
 		await _frames(1)
-		_expect(character.get_posture() == 1 and not _flag("slide_active") and not _flag("slide_pending"), "%s: zonder effectieve bewegende sprint blijft C gewone kruip" % str(actions))
-		Input.action_release("sneak")
+		_expect(character.get_posture() == 1 and not _flag("slide_active") and not _flag("slide_pending"), "%s: zonder effectieve bewegende run blijft C gewone kruip" % str(actions))
+		Input.action_release("walk")
 		Input.action_press("move_forward")
-		Input.action_press("sprint")
+		Input.action_press("run")
 		await _frames(80)
-		_expect(character.get_posture() == 1 and not _flag("slide_active") and not _flag("slide_pending"), "%s: later bewegen of sprinten verandert held-C niet in een vertraagde slide" % str(actions))
+		_expect(character.get_posture() == 1 and not _flag("slide_active") and not _flag("slide_pending"), "%s: later bewegen of runen verandert held-C niet in een vertraagde slide" % str(actions))
 	var duration := _setting("crouch_slide_duration", 0.75)
 	await _ground_run()
 	character.set("crouch_slide_duration", 0.0)
@@ -330,7 +330,7 @@ func _test_ground_slide_negative_cases() -> void:
 	await _frames(2)
 	Input.action_press("crouch")
 	await _frames(1)
-	_expect(character.get_posture() == 0 and not _flag("slide_active") and not _flag("slide_pending"), "geblokkeerde brede kruipvorm weigert de sprintgrondslide")
+	_expect(character.get_posture() == 0 and not _flag("slide_active") and not _flag("slide_pending"), "geblokkeerde brede kruipvorm weigert de rungrondslide")
 	left.queue_free()
 	right.queue_free()
 	character.crouch_capsule_radius = radius
@@ -339,7 +339,7 @@ func _test_ground_slide_negative_cases() -> void:
 	await _reset()
 	var wall := _add_box(Vector3(0, 2.5, -1), Vector3(8, 5, 0.2))
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(80)
 	_expect(_speed() < 0.03, "wanddrukproef staat werkelijk stil tegen een hoge wand")
 	Input.action_press("crouch")
@@ -363,7 +363,7 @@ func _ground_run(actions: Array = ["move_forward"], frames: int = 80) -> void:
 	await _reset()
 	for action in actions:
 		Input.action_press(action)
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(frames)
 
 
@@ -372,21 +372,21 @@ func _begin_slide(ground_entry: bool = false) -> void:
 		await _ground_run()
 		await _pulse("crouch")
 	else:
-		await _launch_sprint()
+		await _launch_run()
 		await _pulse("crouch")
 		await _wait_for_landing()
-	_expect(_flag("slide_active"), "proef begint met een echte %s" % ("sprintgrondslide" if ground_entry else "landingsslide"))
+	_expect(_flag("slide_active"), "proef begint met een echte %s" % ("rungrondslide" if ground_entry else "landingsslide"))
 
 
 func _test_slide_negative_cases() -> void:
-	await _launch_sprint()
+	await _launch_run()
 	character.request_posture(1)
 	await _frames(2)
 	_expect(character.get_posture() == 1 and not _flag("slide_pending"), "een programmatisch aangevraagde lage houding in de lucht is geen handmatige C-skill")
 	await _wait_for_landing()
 	_expect(not _flag("slide_active"), "automatisch aangevraagde kruip start bij de landing geen slide")
-	_expect(_speed() <= _ground_speed_limit("kruipen") + 0.03, "een lage landing zonder C-skill houdt geen verborgen sprintvaart over")
-	await _launch_sprint()
+	_expect(_speed() <= _ground_speed_limit("kruipen") + 0.03, "een lage landing zonder C-skill houdt geen verborgen runvaart over")
+	await _launch_run()
 	var original_radius := character.crouch_capsule_radius
 	character.crouch_capsule_radius = 0.6
 	var left_wall := _add_box(character.position + Vector3(-0.6, 2.5, -2), Vector3(0.2, 5, 20))
@@ -400,7 +400,7 @@ func _test_slide_negative_cases() -> void:
 	character.crouch_capsule_radius = original_radius
 	await _frames(3)
 	for cancel_action in ["crouch", "prone"]:
-		await _launch_sprint()
+		await _launch_run()
 		await _pulse("crouch")
 		_expect(_flag("slide_pending"), "succesvolle lucht-C bereidt de volgende negatieve proef werkelijk voor")
 		await _pulse(cancel_action)
@@ -409,28 +409,28 @@ func _test_slide_negative_cases() -> void:
 			_expect(character.get_posture() == 1 and str(character.get_debug_state().get("manual_posture", "")) == "kruipen", "een nieuwe C tijdens voorbereide skill kiest permanente kruip en annuleert de skill")
 		await _wait_for_landing()
 		_expect(not _flag("slide_active"), "%s laat een geannuleerde voorbereiding bij de landing niet terugkomen" % cancel_action)
-	await _launch_sprint()
+	await _launch_run()
 	await _pulse("crouch")
 	_expect(_flag("slide_pending"), "respawnproef begint met een werkelijk voorbereide slide")
 	await _reset()
 	_expect(character.get_posture() == 0 and not _flag("slide_pending") and not _flag("slide_active"), "respawn wist de oude slide en begint weer gewoon staand")
-	# Een legale minimale duur zonder wrijving mag de sprintvaart niet buiten
+	# Een legale minimale duur zonder wrijving mag de runvaart niet buiten
 	# de zichtbare slide laten voortbestaan.
 	var duration := _setting("crouch_slide_duration", 0.45)
 	var friction := _setting("crouch_slide_deceleration", 18.0)
 	character.set("crouch_slide_duration", 0.02)
 	character.set("crouch_slide_deceleration", 0.0)
-	await _launch_sprint()
+	await _launch_run()
 	await _pulse("crouch")
 	await _wait_for_landing()
 	_expect(_flag("slide_active") and _speed() > character.crouch_forward_speed, "de korte slide begint met echte bewaarde afzetvaart")
 	await _frames(2)
-	var legal_exit := _ground_speed_limit("sprint" if character.get_posture() == 0 else "kruipen")
+	var legal_exit := _ground_speed_limit("run" if character.get_posture() == 0 else "kruipen")
 	_expect(not _flag("slide_active") and _speed() <= legal_exit + 0.03, "ook een slide van 0.02s zonder wrijving eindigt binnen het grondbudget van de veilige houding")
 	print("MEASURE: short frictionless slide exit speed %.3f; ground limit %.3f" % [_speed(), legal_exit])
 	character.set("crouch_slide_duration", duration)
 	character.set("crouch_slide_deceleration", friction)
-	await _launch_sprint()
+	await _launch_run()
 	await _pulse("crouch")
 	await _wait_for_landing()
 	_expect(_flag("slide_active"), "grond-Z-proef begint met een echte actieve C-slide")
@@ -438,12 +438,12 @@ func _test_slide_negative_cases() -> void:
 	_expect(character.get_posture() == 2 and not _flag("slide_active") and _speed() <= _ground_speed_limit("liggen") + 0.03, "Z tijdens de grondslide kiest lig, annuleert de slide en houdt alleen veilige ligvaart over")
 
 
-func _launch_sprint(actions: Array = ["move_forward"]) -> Vector3:
+func _launch_run(actions: Array = ["move_forward"]) -> Vector3:
 	await _reset()
 	character.jump_fatigue_enabled = true
 	for action in actions:
 		Input.action_press(action)
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(80)
 	var origin := character.position
 	Input.action_press("jump")
@@ -508,8 +508,8 @@ func _test_slide_step_boundary(ground_entry: bool = false) -> void:
 	Input.action_press("move_right")
 	await _frames(6)
 	_expect(character.get_posture() == 0 and str(character.get_debug_state().get("manual_posture", "")) == "staan", "een natuurlijke wandstop herstelt vrij staan zonder vastgehouden kruipvoorkeur")
-	_expect(character.velocity.x > 0.1 and _speed() <= minf(_ground_speed_limit("sprint"), character.sprint_acceleration * PHYSICS_DELTA * 6.0) + 0.03, "zijinput na een echte wandstop herstelt alleen gewone grondacceleratie zonder de oude sprintboost")
-	print("MEASURE: real wall slide stopped; lateral recovery %.3f; ground limit %.3f" % [_speed(), _ground_speed_limit("sprint")])
+	_expect(character.velocity.x > 0.1 and _speed() <= minf(_ground_speed_limit("run"), character.run_acceleration * PHYSICS_DELTA * 6.0) + 0.03, "zijinput na een echte wandstop herstelt alleen gewone grondacceleratie zonder de oude runboost")
+	print("MEASURE: real wall slide stopped; lateral recovery %.3f; ground limit %.3f" % [_speed(), _ground_speed_limit("run")])
 	wall.queue_free()
 	await _frames(3)
 
@@ -647,7 +647,7 @@ func _test_slide_default_range() -> void:
 
 
 func _coast_slide_range() -> Dictionary:
-	await _launch_sprint()
+	await _launch_run()
 	await _pulse("crouch")
 	await _wait_for_landing()
 	var start := character.position
@@ -678,7 +678,7 @@ func _test_slide_jump(ground_entry: bool = false, choose_crouch: bool = false) -
 	var launch_fatigue := float(state.get("fatigue", 0.0))
 	var launched := not character.is_on_floor() and character.velocity.y > 1.0
 	_expect(launched and character.get_posture() == 0 and not _flag("slide_active") and not _flag("slide_pending"), "een nieuwe spatie onderbreekt een echte actieve slide direct met een staande sprong")
-	_expect(_speed() <= speed_before + 0.03 and _speed() >= speed_before - _setting("crouch_slide_deceleration", 10.0) * PHYSICS_DELTA - 0.03 and launch_cap <= speed_before + 0.03, "slide-sprong bewaart de overgebleven afzetvaart zonder sprintbonus toe te voegen of het oude budget te herstellen")
+	_expect(_speed() <= speed_before + 0.03 and _speed() >= speed_before - _setting("crouch_slide_deceleration", 10.0) * PHYSICS_DELTA - 0.03 and launch_cap <= speed_before + 0.03, "slide-sprong bewaart de overgebleven afzetvaart zonder runbonus toe te voegen of het oude budget te herstellen")
 	_expect(absf(float(state.get("jump_boost", -1.0))) < 0.001 and absf(character.velocity.y - float(expected.vertical_speed)) < 0.08, "slide-sprong gebruikt het actuele hoogteprofiel maar geen extra horizontale bonus")
 	_expect((ground_entry or fatigue_before > 0.1) and launch_fatigue > fatigue_before + 0.1, "slide-sprong behoudt opgebouwde vermoeidheid en betaalt een echte nieuwe sprong")
 	_expect(not _flag("ground_jump_available") and float(state.get("jump_buffer_remaining", 1.0)) <= 0.001 and float(state.get("coyote_remaining", 1.0)) <= 0.001, "slide-sprong verbruikt grondticket, buffer en coyote eenmaal")
@@ -709,7 +709,7 @@ func _test_slide_jump_negative_cases() -> void:
 	await _reset()
 	character.jump_fatigue_enabled = true
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(80)
 	Input.action_press("jump")
 	await _frames(9)
@@ -746,7 +746,7 @@ func _test_slide_jump_negative_cases() -> void:
 
 
 func _test_repeated_slide_jumps() -> void:
-	await _launch_sprint()
+	await _launch_run()
 	character.jump_fatigue_enabled = false
 	await _pulse("crouch")
 	await _wait_for_landing()
@@ -770,7 +770,7 @@ func _test_repeated_slide_jumps() -> void:
 			if not _flag("slide_active"):
 				break
 	_expect(launches.size() == 12 and budgets_kept, "twaalf echte slide-sprong-slidecycli behouden ieder hun actuele budget zonder nieuwe bonus, ook met fatigue uit")
-	_expect(not launches.is_empty() and launches.max() <= first_speed + 0.03, "herhaald slide-springen stapelt nooit boven de oorspronkelijke sprintafzet")
+	_expect(not launches.is_empty() and launches.max() <= first_speed + 0.03, "herhaald slide-springen stapelt nooit boven de oorspronkelijke runafzet")
 	print("MEASURE: twelve slide jump launches %s; individual budgets %s" % [str(launches), budgets_kept])
 	character.jump_fatigue_enabled = true
 
@@ -782,7 +782,7 @@ func _active_slide(ground_entry: bool = false) -> void:
 
 
 func _brake_flight(brake: bool) -> Dictionary:
-	var start: Vector3 = await _launch_sprint()
+	var start: Vector3 = await _launch_run()
 	if brake:
 		Input.action_release("move_forward")
 		Input.action_press("move_back")
@@ -799,7 +799,7 @@ func _brake_flight(brake: bool) -> Dictionary:
 
 
 func _slide_sample(brake: bool) -> Dictionary:
-	await _launch_sprint()
+	await _launch_run()
 	await _pulse("crouch")
 	await _wait_for_landing()
 	var start := character.position
@@ -984,7 +984,7 @@ func _test_oblique_step_and_chatter() -> void:
 		var roof := _add_box(Vector3(0, 1.60, -3), Vector3(3, 0.2, 4))
 		await _frames(2)
 		Input.action_press("move_forward")
-		Input.action_press("sprint")
+		Input.action_press("run")
 		var transitions: Array[int] = [character.get_posture()]
 		var greatest_height := character.position.y
 		var entered := false
@@ -1062,7 +1062,7 @@ func _test_idle_body_and_air_steering() -> void:
 	for action in ["move_left", "move_right"]:
 		await _reset()
 		Input.action_press("move_forward")
-		Input.action_press("sprint")
+		Input.action_press("run")
 		await _frames(80)
 		Input.action_press("jump")
 		await _frames(1)

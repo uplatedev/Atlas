@@ -31,7 +31,7 @@ var _distance: float = 0.0
 var _ever_supported: bool = false
 var _last_turn_step_index: int = -1
 var _pending_jump: bool = false
-var _pending_sneak_jump: bool = false
+var _pending_walk_jump: bool = false
 var _cue_counts: Dictionary = {"step": 0, "jump": 0, "landing": 0, "slide_landing": 0}
 
 
@@ -77,7 +77,7 @@ func _exit_tree() -> void:
 	_slide_source = null
 	_slide_stream = null
 	_pending_jump = false
-	_pending_sneak_jump = false
+	_pending_walk_jump = false
 
 
 func initialize(character: Node3D) -> void:
@@ -104,7 +104,7 @@ func set_controlled(value: bool) -> void:
 	_stop_slide()
 	_distance = 0.0
 	_pending_jump = false
-	_pending_sneak_jump = false
+	_pending_walk_jump = false
 
 
 func reset() -> void:
@@ -114,15 +114,15 @@ func reset() -> void:
 	_ever_supported = false
 	_last_turn_step_index = -1
 	_pending_jump = false
-	_pending_sneak_jump = false
+	_pending_walk_jump = false
 	_cue_counts = {"step": 0, "jump": 0, "landing": 0, "slide_landing": 0}
 
 
-func capture_jump(_horizontal: Vector3, _walk_limit: float, _sprint_limit: float, sneaking: bool) -> void:
+func capture_jump(_horizontal: Vector3, _jog_limit: float, _run_limit: float, walking: bool) -> void:
 	if not bool(_value("feedback_enabled", true)):
 		return
 	_pending_jump = true
-	_pending_sneak_jump = sneaking
+	_pending_walk_jump = walking
 	_distance = 0.0
 	_stop_slide()
 
@@ -134,11 +134,11 @@ func consume_contact(frame: AtlasCharacterContactFrame) -> void:
 	var accepted_jump := frame.jumped or _pending_jump
 	var profile := _profile(frame.motion_profile)
 	if accepted_jump:
-		var jump_profile := _profile("sneak") if _pending_sneak_jump else profile
+		var jump_profile := _profile("walk") if _pending_walk_jump else profile
 		_request_cue("jump", "feedback_jump_samples", float(_value("feedback_jump_volume_db", -5.0)) + float(jump_profile.gain), frame.world_position)
 		_ever_supported = true
 		_pending_jump = false
-		_pending_sneak_jump = false
+		_pending_walk_jump = false
 		_distance = 0.0
 	var impact := maxf(0.0, -frame.incoming_velocity.y)
 	var minimum: float = maxf(0.0, float(_value("landing_min_speed", 0.75)))
@@ -186,16 +186,16 @@ func consume_contact(frame: AtlasCharacterContactFrame) -> void:
 
 
 func _profile(motion: String) -> Dictionary:
-	var prefix := "walk"
+	var prefix := "jog"
 	var distance := 1.4
 	var gain := 0.0
 	match motion:
-		"sprint":
-			prefix = "sprint"
+		"run":
+			prefix = "run"
 			distance = 1.8
 			gain = 1.0
-		"sneak":
-			prefix = "sneak"
+		"walk":
+			prefix = "walk"
 			distance = 1.3
 			gain = -12.0
 		"kruipen":

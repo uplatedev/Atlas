@@ -75,9 +75,9 @@ func _run() -> void:
 	var profile:=AtlasCharacterBodyProfile.new()
 	var unique:=profile.make_instance_unique()
 	unique.idle_stance_ratio=0.8
-	unique.walking_stance_ratio=0.7
+	unique.walk_stance_ratio=0.7
 	unique.walk_start_support_ratio=0.7
-	_expect(profile.idle_stance_ratio==0.5 and profile.walking_stance_ratio==0.5 and profile.walk_start_support_ratio==0.5,"nieuwe loopvelden zijn per profiel onafhankelijk")
+	_expect(profile.idle_stance_ratio==0.5 and profile.walk_stance_ratio==0.5 and profile.walk_start_support_ratio==0.5,"nieuwe loopvelden zijn per profiel onafhankelijk")
 	_expect(profile.rig_signature()==unique.rig_signature(),"loopinstellingen herbouwen geen rig")
 	var file:=FileAccess.open("user://t011_walk_contacts_metrics.json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(results,"\t"))
@@ -91,7 +91,7 @@ func _send_walk(direction:Vector2) -> void:
 	for actor in actors:
 		var intent:=AtlasCharacterIntent.new()
 		intent.movement=direction
-		intent.sneak=_tested_style=="walk"
+		intent.walk=_tested_style=="walk"
 		actor.submit_intent(intent)
 
 func _measure(count:int,starting:bool) -> Array:

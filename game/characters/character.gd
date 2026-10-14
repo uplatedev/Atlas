@@ -6,8 +6,8 @@ extends CharacterBody3D
 
 enum Posture { STAND, CROUCH, PRONE }
 
-signal jump_accepted(horizontal_velocity: Vector3, walk_limit: float, sprint_limit: float, sneaking: bool)
-signal ground_motion_updated(horizontal_velocity: Vector3, walk_limit: float, sprint_limit: float, low_or_sneaking: bool)
+signal jump_accepted(horizontal_velocity: Vector3, jog_limit: float, run_limit: float, walking: bool)
+signal ground_motion_updated(horizontal_velocity: Vector3, jog_limit: float, run_limit: float, low_or_walking: bool)
 signal posture_changed(posture: String)
 signal procedural_frame_ready(frame: AtlasCharacterContactFrame)
 signal contact_frame_ready(frame: AtlasCharacterContactFrame)
@@ -51,51 +51,51 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 		name_font_size = value
 		_refresh_if_ready()
 
-@export_group("Joggen", "walk_")
-## Maximum vooruit in m/s; gecombineerde input krijgt één limiet.
-@export_range(0.1, 20.0, 0.1, "suffix:m/s") var walk_forward_speed: float = 3.0
-## Zijwaartse snelheid als deel van vooruit; 0.8 betekent 80%.
-@export_range(0.05, 1.0, 0.01) var walk_side_ratio: float = 0.8
-## Achterwaartse snelheid als deel van vooruit; 0.55 betekent 55%.
-@export_range(0.05, 1.0, 0.01) var walk_back_ratio: float = 0.55
-## Snelheidstoename in m/s²; hoger bereikt de looplimiet eerder.
-@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var walk_acceleration: float = 32.0
-## Snelheidsafname in m/s²; hoger stopt sneller.
-@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var walk_deceleration: float = 40.0
-## Maximale lichaamsdraai tijdens lopen in graden/s; hoger volgt sneller.
-@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var walk_turn_speed: float = 360.0
-
-@export_group("Sprint")
-## Maximum vooruit in m/s; sprint werkt ook op lagere richtingssnelheden.
-@export_range(0.1, 30.0, 0.1, "suffix:m/s") var sprint_forward_speed: float = 9.0
-## Zijwaartse sprintsnelheid als deel van vooruit; 0.8 betekent 80%.
-@export_range(0.05, 1.0, 0.01) var sprint_side_ratio: float = 0.8
-## Achterwaartse sprintsnelheid als deel van vooruit; 0.55 betekent 55%.
-@export_range(0.05, 1.0, 0.01) var sprint_back_ratio: float = 0.55
-## Snelheidstoename bij sprint in m/s²; hoger versnelt sneller.
-@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var sprint_acceleration: float = 26.0
-## Afremmen vanuit sprint in m/s²; hoger verkort de stopafstand.
-@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var sprint_deceleration: float = 36.0
-## Maximale lichaamsdraai bij volle sprint in graden/s; lager geeft ruimere bochten.
-@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var sprint_turn_speed: float = 240.0
-## Maximale automatische sprintopstap in meters; geen klimhoogte.
-@export_range(0.0, 1.0, 0.01, "suffix:m") var sprint_step_height: float = 0.35
-
-@export_group("Wandelen (Alt)", "sneak_")
+@export_group("Walk", "walk_")
 ## Ontspannen wandelen met Alt in m/s; houdt de staande botsingsvorm en opgeslagen instancewaarde.
-@export_range(0.1, 20.0, 0.1, "suffix:m/s") var sneak_forward_speed: float = 1.4
+@export_range(0.1, 20.0, 0.1, "suffix:m/s") var walk_forward_speed: float = 1.4
 ## Zijwaartse wandelsnelheid als deel van vooruit; 0.8 betekent 80%.
-@export_range(0.05, 1.0, 0.01) var sneak_side_ratio: float = 0.8
+@export_range(0.05, 1.0, 0.01) var walk_side_ratio: float = 0.8
 ## Achterwaartse wandelsnelheid als deel van vooruit; 0.55 betekent 55%.
-@export_range(0.05, 1.0, 0.01) var sneak_back_ratio: float = 0.55
+@export_range(0.05, 1.0, 0.01) var walk_back_ratio: float = 0.55
 ## Snelheidstoename bij wandelen in m/s²; hoger reageert sneller.
-@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var sneak_acceleration: float = 18.0
+@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var walk_acceleration: float = 18.0
 ## Wandelafremming in m/s²; hoger stopt sneller.
-@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var sneak_deceleration: float = 28.0
+@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var walk_deceleration: float = 28.0
 ## Maximale lichaamsdraai bij wandelen in graden/s; hoger volgt sneller.
-@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var sneak_turn_speed: float = 240.0
+@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var walk_turn_speed: float = 240.0
 ## Maximale automatische wandelopstap in meters; de vorm moet volledig passen.
-@export_range(0.0, 1.0, 0.01, "suffix:m") var sneak_step_height: float = 0.35
+@export_range(0.0, 1.0, 0.01, "suffix:m") var walk_step_height: float = 0.35
+
+@export_group("Jog", "jog_")
+## Maximum vooruit in m/s; gecombineerde input krijgt één limiet.
+@export_range(0.1, 20.0, 0.1, "suffix:m/s") var jog_forward_speed: float = 3.0
+## Zijwaartse snelheid als deel van vooruit; 0.8 betekent 80%.
+@export_range(0.05, 1.0, 0.01) var jog_side_ratio: float = 0.8
+## Achterwaartse snelheid als deel van vooruit; 0.55 betekent 55%.
+@export_range(0.05, 1.0, 0.01) var jog_back_ratio: float = 0.55
+## Snelheidstoename in m/s²; hoger bereikt de looplimiet eerder.
+@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var jog_acceleration: float = 32.0
+## Snelheidsafname in m/s²; hoger stopt sneller.
+@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var jog_deceleration: float = 40.0
+## Maximale lichaamsdraai tijdens lopen in graden/s; hoger volgt sneller.
+@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var jog_turn_speed: float = 360.0
+
+@export_group("Run", "run_")
+## Maximum vooruit in m/s; run werkt ook op lagere richtingssnelheden.
+@export_range(0.1, 30.0, 0.1, "suffix:m/s") var run_forward_speed: float = 9.0
+## Zijwaartse runsnelheid als deel van vooruit; 0.8 betekent 80%.
+@export_range(0.05, 1.0, 0.01) var run_side_ratio: float = 0.8
+## Achterwaartse runsnelheid als deel van vooruit; 0.55 betekent 55%.
+@export_range(0.05, 1.0, 0.01) var run_back_ratio: float = 0.55
+## Snelheidstoename bij run in m/s²; hoger versnelt sneller.
+@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var run_acceleration: float = 26.0
+## Afremmen vanuit run in m/s²; hoger verkort de stopafstand.
+@export_range(0.1, 80.0, 0.5, "suffix:m/s²") var run_deceleration: float = 36.0
+## Maximale lichaamsdraai bij volle run in graden/s; lager geeft ruimere bochten.
+@export_range(0.0, 1440.0, 5.0, "suffix:°/s") var run_turn_speed: float = 240.0
+## Maximale automatische runopstap in meters; geen klimhoogte.
+@export_range(0.0, 1.0, 0.01, "suffix:m") var run_step_height: float = 0.35
 
 @export_group("Kruipen")
 ## Maximum vooruit bij gewoon kruipen op de grond in m/s; een slide behoudt eerst haar eigen aflopende vaart.
@@ -124,7 +124,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.0, 1.0, 0.01, "suffix:m") var crouch_step_height: float = 0.35
 ## Camerahoogte boven de voeten bij kruipen in meters; blijft binnen de vrije hoogte.
 @export_range(0.05, 3.0, 0.01, "suffix:m") var crouch_eye_height: float = 0.95
-## Maximale slide na C tijdens sprint op de grond of tijdens een sprong in seconden; langer schuift verder. Daarna automatisch de hoogste veilige houding; spatie springt eruit als staan veilig past. 0 schakelt slides uit.
+## Maximale slide na C tijdens run op de grond of tijdens een sprong in seconden; langer schuift verder. Daarna automatisch de hoogste veilige houding; spatie springt eruit als staan veilig past. 0 schakelt slides uit.
 @export_range(0.0, 2.0, 0.01, "suffix:s") var crouch_slide_duration: float = 0.75
 ## Horizontale slidewrijving in m/s² vanaf de slidestart; lager bewaart meer opgebouwde vaart, zonder extra snelheid te geven.
 @export_range(0.0, 100.0, 0.5, "suffix:m/s²") var crouch_slide_deceleration: float = 10.0
@@ -181,20 +181,20 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 ## Hoogte boven het afzetpunt in meters vanuit stilstand, vóór vermoeidheid.
 @export_range(0.1, 6.0, 0.05, "suffix:m") var standing_jump_height: float = 2.0
 ## Hoogte boven het afzetpunt in meters bij volle loopsnelheid, vóór vermoeidheid.
-@export_range(0.1, 6.0, 0.05, "suffix:m") var walking_jump_height: float = 1.25
-## Hoogte boven het afzetpunt in meters bij volle sprint, vóór vermoeidheid.
-@export_range(0.1, 6.0, 0.05, "suffix:m") var sprint_jump_height: float = 0.7
+@export_range(0.1, 6.0, 0.05, "suffix:m") var jog_jump_height: float = 1.25
+## Hoogte boven het afzetpunt in meters bij volle run, vóór vermoeidheid.
+@export_range(0.1, 6.0, 0.05, "suffix:m") var run_jump_height: float = 0.7
 ## Kleine spronghoogte met wandelen in meters; blijft bruikbaar voor een opstapje.
-@export_range(0.1, 3.0, 0.01, "suffix:m") var sneak_jump_height: float = 0.45
+@export_range(0.1, 3.0, 0.01, "suffix:m") var walk_jump_height: float = 0.45
 ## Minimum spronghoogte met Alt in meters bij vermoeidheid; nooit hoger dan de ingestelde basishoogte.
-@export_range(0.0, 3.0, 0.01, "suffix:m") var sneak_min_jump_height: float = 0.4
-## Eenmalige horizontale sprintafzetbonus in m/s; oude bonussen worden nooit opgeteld.
-@export_range(0.0, 15.0, 0.1, "suffix:m/s") var sprint_jump_boost: float = 1.5
+@export_range(0.0, 3.0, 0.01, "suffix:m") var walk_min_jump_height: float = 0.4
+## Eenmalige horizontale runafzetbonus in m/s; oude bonussen worden nooit opgeteld.
+@export_range(0.0, 15.0, 0.1, "suffix:m/s") var run_jump_boost: float = 1.5
 ## Bijstuurversnelling in de lucht in m/s², binnen de vaste totale afzetlimiet.
 @export_range(0.0, 30.0, 0.1, "suffix:m/s²") var air_acceleration: float = 3.5
 ## Geleidelijke horizontale luchtrem in m/s² bij input tegen de werkelijke vaart; ook extra rem tijdens een slide, zonder hoogte te veranderen.
 @export_range(0.0, 40.0, 0.25, "suffix:m/s²") var air_brake_acceleration: float = 8.0
-## Klein luchtstuur-budget in m/s bij bijna stilstaande afzet of na een wandstop; geeft geen sprint en herstelt verloren sprintmomentum niet.
+## Klein luchtstuur-budget in m/s bij bijna stilstaande afzet of na een wandstop; geeft geen run en herstelt verloren runmomentum niet.
 @export_range(0.0, 3.0, 0.05, "suffix:m/s") var air_min_control_speed: float = 0.8
 ## Verticale versnelling in m/s²; hoger verkort de vlucht bij dezelfde spronghoogte.
 @export_range(1.0, 40.0, 0.5, "suffix:m/s²") var gravity_strength: float = 20.0
@@ -209,29 +209,29 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 ## Vermoeidheid toegevoegd na een stilstandsprong; 0.25 is 25 procentpunten.
 @export_range(0.0, 1.0, 0.01) var standing_jump_fatigue_cost: float = 0.25
 ## Vermoeidheid toegevoegd na een loopsprong; 0.30 is 30 procentpunten.
-@export_range(0.0, 1.0, 0.01) var walking_jump_fatigue_cost: float = 0.30
-## Vermoeidheid toegevoegd na een sprintsprong; 0.40 is 40 procentpunten.
-@export_range(0.0, 1.0, 0.01) var sprint_jump_fatigue_cost: float = 0.40
+@export_range(0.0, 1.0, 0.01) var jog_jump_fatigue_cost: float = 0.30
+## Vermoeidheid toegevoegd na een runsprong; 0.40 is 40 procentpunten.
+@export_range(0.0, 1.0, 0.01) var run_jump_fatigue_cost: float = 0.40
 ## Vermoeidheid toegevoegd na een wandel-sprong; 0.10 is 10 procentpunten.
-@export_range(0.0, 1.0, 0.01) var sneak_jump_fatigue_cost: float = 0.10
+@export_range(0.0, 1.0, 0.01) var walk_jump_fatigue_cost: float = 0.10
 ## Grondseconden voor herstel vanaf 100% stilstandvermoeidheid; lucht telt niet.
 @export_range(0.01, 5.0, 0.01, "suffix:s") var standing_jump_recovery_time: float = 0.65
 ## Grondseconden voor herstel vanaf 100% loopvermoeidheid; kleinere schuld herstelt evenredig sneller.
-@export_range(0.01, 5.0, 0.01, "suffix:s") var walking_jump_recovery_time: float = 0.80
-## Grondseconden voor herstel vanaf 100% sprintvermoeidheid; de reeks bewaart haar langzaamste duur.
-@export_range(0.01, 5.0, 0.01, "suffix:s") var sprint_jump_recovery_time: float = 1.0
-## Grondseconden voor herstel vanaf 100% wandelvermoeidheid; wist eerdere sprintschuld niet.
-@export_range(0.01, 5.0, 0.01, "suffix:s") var sneak_jump_recovery_time: float = 0.35
+@export_range(0.01, 5.0, 0.01, "suffix:s") var jog_jump_recovery_time: float = 0.80
+## Grondseconden voor herstel vanaf 100% runvermoeidheid; de reeks bewaart haar langzaamste duur.
+@export_range(0.01, 5.0, 0.01, "suffix:s") var run_jump_recovery_time: float = 1.0
+## Grondseconden voor herstel vanaf 100% wandelvermoeidheid; wist eerdere runschuld niet.
+@export_range(0.01, 5.0, 0.01, "suffix:s") var walk_jump_recovery_time: float = 0.35
 ## Overblijvend deel van stilstandhoogte bij volle vermoeidheid; 0.6 betekent 60%.
 @export_range(0.0, 1.0, 0.01) var standing_jump_min_height_factor: float = 0.60
 ## Overblijvend deel van loophoogte bij volle vermoeidheid; 0.65 betekent 65%.
-@export_range(0.0, 1.0, 0.01) var walking_jump_min_height_factor: float = 0.65
-## Overblijvend deel van sprinthoogte bij volle vermoeidheid; 0.65 betekent 65%.
-@export_range(0.0, 1.0, 0.01) var sprint_jump_min_height_factor: float = 0.65
+@export_range(0.0, 1.0, 0.01) var jog_jump_min_height_factor: float = 0.65
+## Overblijvend deel van runhoogte bij volle vermoeidheid; 0.65 betekent 65%.
+@export_range(0.0, 1.0, 0.01) var run_jump_min_height_factor: float = 0.65
 ## Overblijvend deel van spronghoogte met Alt bij volle vermoeidheid; de absolute minimumhoogte blijft gelden.
-@export_range(0.0, 1.0, 0.01) var sneak_jump_min_height_factor: float = 0.90
-## Overblijvend deel van extra sprintafstand bij volle vermoeidheid; 0 laat de bonus vervallen.
-@export_range(0.0, 1.0, 0.01) var sprint_jump_min_boost_factor: float = 0.0
+@export_range(0.0, 1.0, 0.01) var walk_jump_min_height_factor: float = 0.90
+## Overblijvend deel van extra runafstand bij volle vermoeidheid; 0 laat de bonus vervallen.
+@export_range(0.0, 1.0, 0.01) var run_jump_min_boost_factor: float = 0.0
 
 @export_group("Botsing en automatisch herstellen")
 ## Straal van de staande capsule in meters; hoger vraagt meer ruimte.
@@ -302,7 +302,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_group("Camera: subtiele nawerking")
 ## Laat de camera na stevig horizontaal afremmen heel kort enkele centimeters doorgaan; kijkrichting blijft direct.
 @export var camera_inertia_enabled: bool = true
-## Maximale extra veeruitslag in meters. 0,035 is 3,5 cm; de zichtbare doorschieting bij normaal sprintafremmen is kleiner. De totale afwijking blijft ook binnen Camera Follow Max Lag.
+## Maximale extra veeruitslag in meters. 0,035 is 3,5 cm; de zichtbare doorschieting bij normaal runafremmen is kleiner. De totale afwijking blijft ook binnen Camera Follow Max Lag.
 @export_range(0.0, 0.08, 0.001, "suffix:m") var camera_inertia_amount: float = 0.035
 ## Ongeveer de tijd in seconden waarin het remaccent grotendeels tot rust komt. Kleine waarden corrigeren sneller, zonder herhaald heen-en-weer veren.
 @export_range(0.05, 2.0, 0.01, "suffix:s") var camera_inertia_recovery_time: float = 0.32
@@ -338,12 +338,12 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(30.0, 100.0, 1.0, "suffix:° verticaal") var camera_fov_third_person: float = 70.0
 ## Verticale first-personbeeldhoek in graden; gebruikt uitsluitend bij bewust naar de ogen zoomen.
 @export_range(30.0, 100.0, 1.0, "suffix:° verticaal") var camera_fov_first_person: float = 75.0
-## Dynamische FOV voor werkelijke sprint en wandelen/kruip/lig; uit houdt de gekozen basisbeeldhoek constant. F4 schakelt dit tijdens spelen.
+## Dynamische FOV voor werkelijke run en wandelen/kruip/lig; uit houdt de gekozen basisbeeldhoek constant. F4 schakelt dit tijdens spelen.
 @export var camera_speed_fov_enabled: bool = true
-## Grootste extra verticale beeldhoek in graden bij sprint; sprongbonus vergroot deze waarde niet.
-@export_range(0.0, 15.0, 0.5, "suffix:°") var camera_sprint_fov_bonus: float = 6.0
+## Grootste extra verticale beeldhoek in graden bij run; sprongbonus vergroot deze waarde niet.
+@export_range(0.0, 15.0, 0.5, "suffix:°") var camera_run_fov_bonus: float = 6.0
 ## Extra verticale FOV in graden bij wandelen; negatief geeft rustiger/iets nauwer zicht. F4 schakelt ook deze profielverandering uit.
-@export_range(-15.0, 15.0, 0.5, "suffix:°") var camera_sneak_fov_offset: float = -2.0
+@export_range(-15.0, 15.0, 0.5, "suffix:°") var camera_walk_fov_offset: float = -2.0
 ## Extra verticale FOV in graden bij kruipen; negatief versmalt licht. Overgang gebruikt dezelfde FOV-halveringstijden.
 @export_range(-15.0, 15.0, 0.5, "suffix:°") var camera_crouch_fov_offset: float = -3.0
 ## Extra verticale FOV in graden bij liggen; onafhankelijk van wandelen en kruip. 0 behoudt de gewone basisbeeldhoek.
@@ -381,7 +381,7 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 @export_range(0.1, 20.0, 0.1, "suffix:m") var feedback_unit_size: float = 4.0
 
 @export_group("Audio: samples")
-## Varianten voor stappen tijdens lopen, sprint en wandelen; lege lijst geeft stil contact.
+## Varianten voor stappen tijdens lopen, run en wandelen; lege lijst geeft stil contact.
 @export var feedback_footstep_samples: Array[AudioStream] = [preload("res://assets/audio/footstep_concrete_000.wav"), preload("res://assets/audio/footstep_concrete_001.wav"), preload("res://assets/audio/footstep_concrete_002.wav"), preload("res://assets/audio/footstep_concrete_003.wav"), preload("res://assets/audio/footstep_concrete_004.wav")]
 ## Zachtere contactvarianten voor kruip en lig; geen gewone voetstap nodig bij lage houdingen.
 @export var feedback_low_contact_samples: Array[AudioStream] = [preload("res://assets/audio/low_contact_carpet_000.wav"), preload("res://assets/audio/low_contact_carpet_001.wav"), preload("res://assets/audio/low_contact_carpet_002.wav")]
@@ -394,17 +394,17 @@ signal contact_frame_ready(frame: AtlasCharacterContactFrame)
 
 @export_group("Audio: cadans en intensiteit")
 ## Werkelijk ondersteunde loopmeters per contact; kleiner geeft meer stappen, nooit door muurdruk.
-@export_range(0.2, 4.0, 0.05, "suffix:m") var walk_step_distance: float = 1.8
+@export_range(0.2, 4.0, 0.05, "suffix:m") var jog_step_distance: float = 1.8
 ## Extra contactsterkte tijdens lopen in dB, boven het algemene contactvolume.
-@export_range(-30.0, 6.0, 0.5, "suffix:dB") var walk_contact_volume_db: float = 0.0
-## Werkelijk ondersteunde sprintmeters per contact; de grotere snelheid bepaalt de uiteindelijke cadans.
-@export_range(0.2, 4.0, 0.05, "suffix:m") var sprint_step_distance: float = 2.4
-## Extra contactsterkte tijdens sprint in dB.
-@export_range(-30.0, 6.0, 0.5, "suffix:dB") var sprint_contact_volume_db: float = 1.0
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var jog_contact_volume_db: float = 0.0
+## Werkelijk ondersteunde runmeters per contact; de grotere snelheid bepaalt de uiteindelijke cadans.
+@export_range(0.2, 4.0, 0.05, "suffix:m") var run_step_distance: float = 2.4
+## Extra contactsterkte tijdens run in dB.
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var run_contact_volume_db: float = 1.0
 ## Werkelijk ondersteunde wandelmeters per contact; langzaam bewegen klinkt minder vaak.
-@export_range(0.2, 4.0, 0.05, "suffix:m") var sneak_step_distance: float = 1.3
+@export_range(0.2, 4.0, 0.05, "suffix:m") var walk_step_distance: float = 1.3
 ## Extra contactsterkte tijdens wandelen in dB; negatief geeft zachtere stappen en afzet.
-@export_range(-30.0, 6.0, 0.5, "suffix:dB") var sneak_contact_volume_db: float = -12.0
+@export_range(-30.0, 6.0, 0.5, "suffix:dB") var walk_contact_volume_db: float = -12.0
 ## Werkelijk ondersteunde kruipmeters per laag contactgeluid.
 @export_range(0.2, 4.0, 0.05, "suffix:m") var crouch_step_distance: float = 1.2
 ## Extra contactsterkte tijdens kruipen in dB.
@@ -463,9 +463,9 @@ var _presentation_layer: int = 0
 var _input_direction: Vector3 = Vector3.ZERO
 var _movement_direction: Vector3 = Vector3.ZERO
 var _actual_speed: float = 0.0
-var _sprint_requested: bool = false
-var _sneak_requested: bool = false
-var _last_ground_state: String = "lopen"
+var _run_requested: bool = false
+var _walk_requested: bool = false
+var _last_ground_state: String = "jog"
 var _posture: int = Posture.STAND
 var _manual_posture: int = Posture.STAND
 var _prone_return_posture: int = Posture.STAND
@@ -661,8 +661,8 @@ func get_camera_motion_sample() -> AtlasCharacterCameraMotion:
 	_camera_motion.actual_horizontal_velocity = _movement_direction * _actual_speed
 	var local := global_basis.inverse() * _camera_motion.actual_horizontal_velocity
 	var direction := Vector2(local.x, local.z)
-	_camera_motion.walk_speed_limit = direction_speed_limit(direction, false)
-	_camera_motion.sprint_speed_limit = direction_speed_limit(direction, true)
+	_camera_motion.jog_speed_limit = direction_speed_limit(direction, false)
+	_camera_motion.run_speed_limit = direction_speed_limit(direction, true)
 	_camera_motion.excluded_body = get_rid()
 	_camera_motion.presentation_layer = _presentation_layer
 	_camera_motion.standing_radius = capsule_radius
@@ -715,9 +715,9 @@ func reset_to_spawn() -> void:
 	_input_direction = Vector3.ZERO
 	_movement_direction = Vector3.ZERO
 	_actual_speed = 0.0
-	_last_ground_state = "lopen"
-	_sprint_requested = false
-	_sneak_requested = false
+	_last_ground_state = "jog"
+	_run_requested = false
+	_walk_requested = false
 	_posture = Posture.STAND
 	_manual_posture = Posture.STAND
 	_prone_return_posture = Posture.STAND
@@ -756,8 +756,8 @@ func set_camera_distance(distance: float) -> void:
 
 
 ## Elliptische limiet; Vector2.y < 0 is vooruit, gecombineerde input krijgt geen bonus.
-func direction_speed_limit(local_direction: Vector2, sprinting: bool) -> float:
-	return direction_speed_limit_for_state(local_direction, "sprint" if sprinting else "lopen")
+func direction_speed_limit(local_direction: Vector2, running: bool) -> float:
+	return direction_speed_limit_for_state(local_direction, "run" if running else "jog")
 
 
 func direction_speed_limit_for_state(local_direction: Vector2, state: String) -> float:
@@ -773,15 +773,15 @@ func direction_speed_limit_for_state(local_direction: Vector2, state: String) ->
 
 func _movement_profile(state: String) -> Dictionary:
 	match state:
-		"sprint":
-			return {"speed": sprint_forward_speed, "side_ratio": sprint_side_ratio, "back_ratio": sprint_back_ratio, "acceleration": sprint_acceleration, "deceleration": sprint_deceleration, "turn": sprint_turn_speed, "step": sprint_step_height}
-		"sneak":
-			return {"speed": sneak_forward_speed, "side_ratio": sneak_side_ratio, "back_ratio": sneak_back_ratio, "acceleration": sneak_acceleration, "deceleration": sneak_deceleration, "turn": sneak_turn_speed, "step": sneak_step_height}
+		"run":
+			return {"speed": run_forward_speed, "side_ratio": run_side_ratio, "back_ratio": run_back_ratio, "acceleration": run_acceleration, "deceleration": run_deceleration, "turn": run_turn_speed, "step": run_step_height}
+		"walk":
+			return {"speed": walk_forward_speed, "side_ratio": walk_side_ratio, "back_ratio": walk_back_ratio, "acceleration": walk_acceleration, "deceleration": walk_deceleration, "turn": walk_turn_speed, "step": walk_step_height}
 		"kruipen":
 			return {"speed": crouch_forward_speed, "side_ratio": crouch_side_ratio, "back_ratio": crouch_back_ratio, "acceleration": crouch_acceleration, "deceleration": crouch_deceleration, "turn": crouch_turn_speed, "step": crouch_step_height}
 		"liggen":
 			return {"speed": prone_forward_speed, "side_ratio": prone_side_ratio, "back_ratio": prone_back_ratio, "acceleration": prone_acceleration, "deceleration": prone_deceleration, "turn": prone_turn_speed, "step": prone_step_height}
-	return {"speed": walk_forward_speed, "side_ratio": walk_side_ratio, "back_ratio": walk_back_ratio, "acceleration": walk_acceleration, "deceleration": walk_deceleration, "turn": walk_turn_speed, "step": step_height}
+	return {"speed": jog_forward_speed, "side_ratio": jog_side_ratio, "back_ratio": jog_back_ratio, "acceleration": jog_acceleration, "deceleration": jog_deceleration, "turn": jog_turn_speed, "step": step_height}
 
 
 func _movement_state() -> String:
@@ -789,25 +789,25 @@ func _movement_state() -> String:
 		return "kruipen"
 	if _posture == Posture.PRONE:
 		return "liggen"
-	if _sneak_requested:
-		return "sneak"
-	return "sprint" if _sprint_requested else "lopen"
+	if _walk_requested:
+		return "walk"
+	return "run" if _run_requested else "jog"
 
 
 ## Besturing kiest de gewenste snelheid; het pasritme wacht op haalbare wandelvaart.
 func _gait_motion_profile(local_velocity: Vector3) -> String:
 	var requested := _movement_state()
-	if requested != "sneak":
+	if requested != "walk":
 		return requested
 	var direction := Vector2(local_velocity.x, local_velocity.z)
-	var walking_limit := direction_speed_limit_for_state(direction, "sneak")
-	if direction.length() > walking_limit + 0.01:
-		return "lopen"
+	var walk_limit := direction_speed_limit_for_state(direction, "walk")
+	if direction.length() > walk_limit + 0.01:
+		return "jog"
 	# Een lopende vluchtcyclus wordt bij werkelijk contact overgedragen. Zo krijgt
 	# dezelfde halve steunfase niet plots de volle wandelfase als Alt wordt gedrukt.
 	if AtlasGaitStyle.side_amount(local_velocity) <= 0.5 and not _stride.is_supported_cycle() and _stride.phase > 0.000001:
-		return "lopen"
-	return "sneak"
+		return "jog"
+	return "walk"
 
 
 func _posture_name(posture: int) -> String:
@@ -853,17 +853,17 @@ func _read_posture_input(intent: AtlasCharacterIntent) -> void:
 			_manual_posture = Posture.CROUCH
 			return
 		var interrupted_slide := _slide_pending
-		# Beoordeel sprint en vaart vóór C de handmatige houding verandert.
+		# Beoordeel run en vaart vóór C de handmatige houding verandert.
 		# Wanddruk, een lage houding en alleen Shift leveren geen slidestart op.
 		var ground_slide_requested := (
 			get_camera_grounded() and _posture == Posture.STAND and _manual_posture == Posture.STAND
-			and _sprint_requested and crouch_slide_duration > 0.0
+			and _run_requested and crouch_slide_duration > 0.0
 			and _actual_speed > crouch_slide_end_speed
 			and Vector2(velocity.x, velocity.z).length() > crouch_slide_end_speed
 		)
 		var target := Posture.CROUCH if interrupted_slide else (Posture.STAND if _manual_posture == Posture.CROUCH and _posture != Posture.PRONE else Posture.CROUCH)
 		request_posture(target)
-		_slide_requested_this_frame = not interrupted_slide and target == Posture.CROUCH and ((not get_camera_grounded() and (_air_kind != "stride" or _sprint_requested)) or ground_slide_requested)
+		_slide_requested_this_frame = not interrupted_slide and target == Posture.CROUCH and ((not get_camera_grounded() and (_air_kind != "stride" or _run_requested)) or ground_slide_requested)
 	elif intent.prone_pressed:
 		if _posture == Posture.PRONE and _manual_posture == Posture.PRONE:
 			_return_from_manual_prone()
@@ -920,7 +920,7 @@ func _update_posture(input: Vector2, grounded: bool, delta: float) -> void:
 			_limit_ground_velocity()
 		_slide_ground_exit_pending = false
 	# Alleen de nieuwe C-druk mag een veilige kruipvorm in een slide omzetten;
-	# een later passende vorm of later opgebouwde sprintvaart doet dat niet.
+	# een later passende vorm of later opgebouwde runvaart doet dat niet.
 	if _slide_requested_this_frame and _posture == Posture.CROUCH and _manual_posture == Posture.CROUCH and _shape_fits(Posture.CROUCH, global_transform):
 		if grounded:
 			# Dezelfde slide als na een landing, met uitsluitend de actuele vaart.
@@ -1059,12 +1059,12 @@ func _turn_body(grounded: bool, delta: float, input: Vector2 = Vector2.ZERO) -> 
 	if _posture == Posture.STAND:
 		if not grounded:
 			_turn_rate = air_turn_speed
-		elif _sneak_requested:
-			_turn_rate = sneak_turn_speed
+		elif _walk_requested:
+			_turn_rate = walk_turn_speed
 		elif _actual_speed < 0.10 and input.is_zero_approx():
 			_turn_rate = idle_turn_speed
 		else:
-			_turn_rate = lerpf(walk_turn_speed, sprint_turn_speed, _sprint_mix(Vector3(velocity.x, 0.0, velocity.z)))
+			_turn_rate = lerpf(jog_turn_speed, run_turn_speed, _run_mix(Vector3(velocity.x, 0.0, velocity.z)))
 	var current := global_rotation.y
 	var target := _look_input.x
 	var difference := wrapf(target - current, -PI, PI)
@@ -1104,14 +1104,14 @@ func _turn_body(grounded: bool, delta: float, input: Vector2 = Vector2.ZERO) -> 
 		global_rotation.y = next
 
 
-func _sprint_mix(horizontal: Vector3) -> float:
+func _run_mix(horizontal: Vector3) -> float:
 	var local := global_basis.inverse() * horizontal
 	var direction := Vector2(local.x, local.z)
-	var walk_limit := direction_speed_limit(direction, false)
-	var sprint_limit := direction_speed_limit(direction, true)
-	if sprint_limit <= walk_limit:
+	var jog_limit := direction_speed_limit(direction, false)
+	var run_limit := direction_speed_limit(direction, true)
+	if run_limit <= jog_limit:
 		return 0.0
-	return clampf((horizontal.length() - walk_limit) / (sprint_limit - walk_limit), 0.0, 1.0)
+	return clampf((horizontal.length() - jog_limit) / (run_limit - jog_limit), 0.0, 1.0)
 
 
 ## Werkelijke snelheid kiest het profiel; Shift alleen verandert deze berekening niet.
@@ -1120,31 +1120,31 @@ func jump_parameters(horizontal_velocity: Vector3) -> Dictionary:
 	var speed := horizontal.length()
 	var local := global_basis.inverse() * horizontal
 	var direction := Vector2(local.x, local.z)
-	var walk_limit := direction_speed_limit(direction, false)
-	var walk_weight := clampf(speed / maxf(walk_limit, 0.01), 0.0, 1.0)
-	var sprint_weight := _sprint_mix(horizontal)
-	var height := lerpf(lerpf(standing_jump_height, walking_jump_height, walk_weight), sprint_jump_height, sprint_weight)
-	var cost := lerpf(lerpf(standing_jump_fatigue_cost, walking_jump_fatigue_cost, walk_weight), sprint_jump_fatigue_cost, sprint_weight)
-	var recovery := lerpf(lerpf(standing_jump_recovery_time, walking_jump_recovery_time, walk_weight), sprint_jump_recovery_time, sprint_weight)
-	var floor_factor := lerpf(lerpf(standing_jump_min_height_factor, walking_jump_min_height_factor, walk_weight), sprint_jump_min_height_factor, sprint_weight)
+	var jog_limit := direction_speed_limit(direction, false)
+	var jog_weight := clampf(speed / maxf(jog_limit, 0.01), 0.0, 1.0)
+	var run_weight := _run_mix(horizontal)
+	var height := lerpf(lerpf(standing_jump_height, jog_jump_height, jog_weight), run_jump_height, run_weight)
+	var cost := lerpf(lerpf(standing_jump_fatigue_cost, jog_jump_fatigue_cost, jog_weight), run_jump_fatigue_cost, run_weight)
+	var recovery := lerpf(lerpf(standing_jump_recovery_time, jog_jump_recovery_time, jog_weight), run_jump_recovery_time, run_weight)
+	var floor_factor := lerpf(lerpf(standing_jump_min_height_factor, jog_jump_min_height_factor, jog_weight), run_jump_min_height_factor, run_weight)
 	var profile := "stilstand"
-	if sprint_weight > 0.01:
-		profile = "sprint"
-	elif walk_weight > 0.01:
-		profile = "lopen"
-	if _sneak_requested:
-		profile = "sneak"
-		height = sneak_jump_height
-		cost = sneak_jump_fatigue_cost
-		recovery = sneak_jump_recovery_time
-		floor_factor = sneak_jump_min_height_factor
-		sprint_weight = 0.0
+	if run_weight > 0.01:
+		profile = "run"
+	elif jog_weight > 0.01:
+		profile = "jog"
+	if _walk_requested:
+		profile = "walk"
+		height = walk_jump_height
+		cost = walk_jump_fatigue_cost
+		recovery = walk_jump_recovery_time
+		floor_factor = walk_jump_min_height_factor
+		run_weight = 0.0
 	var fatigue := _fatigue if jump_fatigue_enabled else 0.0
 	height *= lerpf(1.0, floor_factor, fatigue)
-	if profile == "sneak":
-		height = minf(sneak_jump_height, maxf(height, sneak_min_jump_height))
-	var boost := sprint_jump_boost * sprint_weight * lerpf(1.0, sprint_jump_min_boost_factor, fatigue)
-	return {"profile": profile, "height": height, "vertical_speed": sqrt(2.0 * gravity_strength * height), "horizontal_boost": boost, "launch_speed": speed + boost, "walk_weight": walk_weight, "sprint_weight": sprint_weight, "fatigue_cost": cost, "recovery_time": recovery}
+	if profile == "walk":
+		height = minf(walk_jump_height, maxf(height, walk_min_jump_height))
+	var boost := run_jump_boost * run_weight * lerpf(1.0, run_jump_min_boost_factor, fatigue)
+	return {"profile": profile, "height": height, "vertical_speed": sqrt(2.0 * gravity_strength * height), "horizontal_boost": boost, "launch_speed": speed + boost, "jog_weight": jog_weight, "run_weight": run_weight, "fatigue_cost": cost, "recovery_time": recovery}
 
 
 ## AI en proefbesturing leveren dezelfde intent als de toetsenbordadapter.
@@ -1191,8 +1191,8 @@ func _consume_intent() -> AtlasCharacterIntent:
 		var allowed := _controlled and (Input.mouse_mode == Input.MOUSE_MODE_CAPTURED or DisplayServer.get_name() == "headless")
 		if allowed:
 			intent.movement = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-			intent.sprint = Input.is_action_pressed("sprint")
-			intent.sneak = InputMap.has_action("sneak") and Input.is_action_pressed("sneak")
+			intent.run = Input.is_action_pressed("run")
+			intent.walk = InputMap.has_action("walk") and Input.is_action_pressed("walk")
 			intent.jump_pressed = Input.is_action_just_pressed("jump")
 			intent.crouch_pressed = InputMap.has_action("crouch") and Input.is_action_just_pressed("crouch")
 			intent.prone_pressed = InputMap.has_action("prone") and Input.is_action_just_pressed("prone")
@@ -1256,14 +1256,14 @@ func _try_start_stride(delta: float, supported: bool) -> bool:
 	var local_velocity := global_basis.inverse() * Vector3(velocity.x, 0.0, velocity.z)
 	var side_hop := AtlasGaitStyle.side_amount(local_velocity) > 0.5
 	var gait_profile := _gait_motion_profile(local_velocity)
-	var grounded_walk := gait_profile == "sneak" and not side_hop
+	var grounded_walk := gait_profile == "walk" and not side_hop
 	var timing := body_profile.get_gait_timing(speed, _procedural_leg_length, gravity_strength, gait_profile, 1.0 if side_hop else 0.0)
-	_stride.configure_timing(timing.x, timing.y, body_profile.walking_double_support_ratio if grounded_walk else 0.0)
+	_stride.configure_timing(timing.x, timing.y, body_profile.walk_double_support_ratio if grounded_walk else 0.0)
 	var duration := timing.x
-	var first_support_ratio := 1.0 if _sprint_requested and not side_hop else body_profile.walk_start_support_ratio
+	var first_support_ratio := 1.0 if _run_requested and not side_hop else body_profile.walk_start_support_ratio
 	if not _stride.support_tick(delta, duration, moving, first_support_ratio, Vector2(velocity.x, velocity.z), grounded_walk, not _input_direction.is_zero_approx()):
 		return false
-	# Alt wandelt met grondsteun. Zijwaartse hup, jog en sprint gebruiken de echte boog.
+	# Alt wandelt met grondsteun. Zijwaartse hup, jog en run gebruiken de echte boog.
 	var height := timing.z
 	if height <= 0.000001:
 		_ground_step_requested = true
@@ -1298,8 +1298,8 @@ func _physics_process(delta: float) -> void:
 	_ground_step_requested = false
 	var intent := _consume_intent()
 	var input := intent.movement
-	_sneak_requested = intent.sneak
-	_sprint_requested = intent.sprint and not _sneak_requested
+	_walk_requested = intent.walk
+	_run_requested = intent.run and not _walk_requested
 	var external_lift := _consume_impulse()
 	if _air_kind == "stride":
 		if not procedural_enabled or is_on_ceiling() or not _stride_has_local_support():
@@ -1399,9 +1399,9 @@ func _physics_process(delta: float) -> void:
 		var contact_local_velocity := global_basis.inverse() * Vector3(velocity.x, 0.0, velocity.z)
 		var contact_side := AtlasGaitStyle.side_amount(contact_local_velocity)
 		var contact_profile := _gait_motion_profile(contact_local_velocity)
-		var contact_walk := contact_profile == "sneak" and contact_side <= 0.5
+		var contact_walk := contact_profile == "walk" and contact_side <= 0.5
 		var contact_timing := body_profile.get_gait_timing(contact_speed, _procedural_leg_length, gravity_strength, contact_profile, contact_side)
-		_stride.configure_timing(contact_timing.x, contact_timing.y, body_profile.walking_double_support_ratio if contact_walk else 0.0)
+		_stride.configure_timing(contact_timing.x, contact_timing.y, body_profile.walk_double_support_ratio if contact_walk else 0.0)
 		if contact_walk:
 			_stride.begin_supported_cycle()
 	if _slide_active and (not get_camera_grounded() or _actual_speed < 0.02):
@@ -1485,7 +1485,7 @@ func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float, s
 	if grounded or stride_control:
 		var brake_profile := profile
 
-		if input.is_zero_approx() and _posture == Posture.STAND and not _sneak_requested:
+		if input.is_zero_approx() and _posture == Posture.STAND and not _walk_requested:
 			brake_profile = _movement_profile(_last_ground_state)
 		elif not input.is_zero_approx():
 			_last_ground_state = state
@@ -1499,10 +1499,10 @@ func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float, s
 		_air_min_control_active = horizontal.length() < air_min_control_speed
 		var local_ground := global_basis.inverse() * horizontal
 		var ground_direction := Vector2(local_ground.x, local_ground.z)
-		var sprint_limit := direction_speed_limit(ground_direction, true)
-		_external_speed_allowance = minf(_external_speed_allowance, maxf(horizontal.length() - sprint_limit, 0.0))
+		var run_limit := direction_speed_limit(ground_direction, true)
+		_external_speed_allowance = minf(_external_speed_allowance, maxf(horizontal.length() - run_limit, 0.0))
 		if grounded:
-			ground_motion_updated.emit(horizontal, direction_speed_limit(ground_direction, false), sprint_limit, _posture != Posture.STAND or _sneak_requested)
+			ground_motion_updated.emit(horizontal, direction_speed_limit(ground_direction, false), run_limit, _posture != Posture.STAND or _walk_requested)
 	else:
 		if not input.is_zero_approx():
 			var acceleration := air_acceleration
@@ -1512,7 +1512,7 @@ func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float, s
 				acceleration = prone_air_acceleration
 			if horizontal.is_zero_approx() and not _air_min_control_active:
 				# Na een frontale wandstop blijft lichte zijsturing mogelijk;
-				# het verloren sprintmomentum mag daarbij niet terugkomen.
+				# het verloren runmomentum mag daarbij niet terugkomen.
 				_air_speed_cap = minf(_air_speed_cap, air_min_control_speed)
 				_air_min_control_active = true
 			var desired := _input_direction.normalized()
@@ -1531,7 +1531,7 @@ func _update_horizontal_velocity(input: Vector2, grounded: bool, delta: float, s
 				target = desired * _air_speed_cap * minf(input.length(), 1.0)
 				horizontal = horizontal.move_toward(target, acceleration * delta)
 			elif not horizontal.is_zero_approx():
-				# Richting veranderen zonder het afzetbudget naar een sprintdoel op te trekken.
+				# Richting veranderen zonder het afzetbudget naar een rundoel op te trekken.
 				horizontal = _steer_horizontal(horizontal, desired, acceleration / horizontal.length() * delta)
 		horizontal = horizontal.limit_length(_air_speed_cap)
 	velocity.x = horizontal.x
@@ -1630,7 +1630,7 @@ func _start_jump(preserve_slide_momentum: bool = false) -> void:
 	var direction := Vector2(local.x, local.z)
 	# Gewone grondafzet verwijdert de oude bonus vóór het profiel. Vanuit slide
 	# blijft alleen de echte resterende vaart behouden, zonder een nieuwe bonus.
-	var ground_limit := direction_speed_limit_for_state(direction, "sneak" if _sneak_requested else "sprint")
+	var ground_limit := direction_speed_limit_for_state(direction, "walk" if _walk_requested else "run")
 	horizontal = horizontal.limit_length(_air_speed_cap if preserve_slide_momentum else ground_limit + _external_speed_allowance)
 	var parameters := jump_parameters(horizontal)
 	_jump_profile = parameters.profile
@@ -1638,7 +1638,7 @@ func _start_jump(preserve_slide_momentum: bool = false) -> void:
 	_jump_boost = 0.0 if preserve_slide_momentum else float(parameters.horizontal_boost)
 	_launch_speed = horizontal.length() + _jump_boost
 	# Geaccepteerde afzet vóór horizontale bonus: presentatie bepaalt eigen FOV.
-	jump_accepted.emit(horizontal, direction_speed_limit(direction, false), direction_speed_limit(direction, true), _sneak_requested)
+	jump_accepted.emit(horizontal, direction_speed_limit(direction, false), direction_speed_limit(direction, true), _walk_requested)
 	if not horizontal.is_zero_approx():
 		horizontal += horizontal.normalized() * _jump_boost
 	velocity = horizontal + Vector3.UP * float(parameters.vertical_speed)
@@ -1654,7 +1654,7 @@ func _step_limit_for_posture(posture: int) -> float:
 		return crouch_step_height
 	if posture == Posture.PRONE:
 		return prone_step_height
-	return float(_movement_profile("sneak" if _sneak_requested else ("sprint" if _sprint_requested else "lopen")).step)
+	return float(_movement_profile("walk" if _walk_requested else ("run" if _run_requested else "jog")).step)
 
 
 func _step_plan(horizontal_motion: Vector3, posture: int, minimum_probe_distance: float = 0.0, margin: float = 0.0) -> Dictionary:
@@ -1775,7 +1775,7 @@ func _posture_probe_distance(posture: int, direction: Vector3, delta: float) -> 
 	if posture == Posture.PRONE:
 		extent += maxf(dimensions.y * 0.5 - dimensions.x, 0.0) * absf((-global_basis.z).dot(direction))
 	var local := global_basis.inverse() * direction
-	var manual_state := "kruipen" if _manual_posture == Posture.CROUCH else ("sneak" if _sneak_requested else ("sprint" if _sprint_requested else "lopen"))
+	var manual_state := "kruipen" if _manual_posture == Posture.CROUCH else ("walk" if _walk_requested else ("run" if _run_requested else "jog"))
 	var requested_speed := direction_speed_limit_for_state(Vector2(local.x, local.z), manual_state)
 	var speed := maxf(Vector2(velocity.x, velocity.z).length(), requested_speed)
 	return extent + 0.12 + speed * delta * 2.0
@@ -1878,16 +1878,16 @@ func _get_configuration_warnings() -> PackedStringArray:
 	var warnings := PackedStringArray()
 	if capsule_height < capsule_radius * 2.0 or crouch_capsule_height < crouch_capsule_radius * 2.0 or prone_capsule_length < prone_capsule_radius * 2.0:
 		warnings.append("Elke capsulemaat moet minstens twee keer de radius zijn. Atlas bewaart de radius en vergroot een ongeldige lengte/hoogte tot dat minimum.")
-	for state in ["lopen", "sprint", "sneak", "kruipen", "liggen"]:
+	for state in ["jog", "run", "walk", "kruipen", "liggen"]:
 		var profile := _movement_profile(state)
 		if float(profile.back_ratio) >= float(profile.side_ratio) or float(profile.side_ratio) >= 1.0:
 			warnings.append("%s: gebruik achterwaarts < zijwaarts < vooruit voor de afgesproken richtingssnelheden." % state)
-	if sprint_forward_speed <= walk_forward_speed:
-		warnings.append("Sprint moet sneller zijn dan lopen om een apart sprint-spronganker te bereiken.")
+	if run_forward_speed <= jog_forward_speed:
+		warnings.append("Run moet sneller zijn dan Jog om een apart Run-spronganker te bereiken.")
 	if crouch_capsule_height >= capsule_height or prone_capsule_radius * 2.0 >= crouch_capsule_height:
 		warnings.append("Gebruik staan hoger dan kruip, en kruip hoger dan lig, voor de veilige houdingsvolgorde.")
-	if sneak_min_jump_height > sneak_jump_height:
-		warnings.append("Minimum sneakhoogte is hoger dan de basis. Atlas houdt de ingestelde basis aan; verhoog die zelf voor een bruikbaar opstapje.")
+	if walk_min_jump_height > walk_jump_height:
+		warnings.append("Minimum walkhoogte is hoger dan de basis. Atlas houdt de ingestelde basis aan; verhoog die zelf voor een bruikbaar opstapje.")
 	if camera_eye_height >= _posture_vertical_height(Posture.STAND) or crouch_eye_height >= _posture_vertical_height(Posture.CROUCH) or prone_eye_height >= _posture_vertical_height(Posture.PRONE):
 		warnings.append("Plaats iedere ooghoogte binnen de eigen capsulehoogte. De camera begrenst een onveilige hoogte voor de doorgang.")
 	if idle_body_turn_stop_angle >= idle_body_turn_start_angle and idle_body_turn_start_angle > 0.0:

@@ -10,8 +10,8 @@ func _run() -> void:
 			style = argument.trim_prefix("--style=")
 		if argument.begins_with("--view="):
 			view = argument.trim_prefix("--view=")
-	if style not in ["walk", "jog", "sprint", "shuffle", "shuffle_sprint"] or view not in ["side", "front", "rear"]:
-		printerr("Gebruik style=walk/jog/sprint/shuffle/shuffle_sprint en view=side/front/rear")
+	if style not in ["walk", "jog", "run", "shuffle", "shuffle_run"] or view not in ["side", "front", "rear"]:
+		printerr("Gebruik style=walk/jog/run/shuffle/shuffle_run en view=side/front/rear")
 		quit(1)
 		return
 	_build(1, false)
@@ -23,8 +23,8 @@ func _run() -> void:
 	await _ticks(30)
 	var intent := AtlasCharacterIntent.new()
 	intent.movement = Vector2(1, 0) if style.begins_with("shuffle") else Vector2(0, -1)
-	intent.sneak = style == "walk"
-	intent.sprint = style in ["sprint", "shuffle_sprint"]
+	intent.walk = style == "walk"
+	intent.run = style in ["run", "shuffle_run"]
 	actors[0].submit_intent(intent)
 	await _ticks(120)
 	var output_dir := "user://t011_gait_review/" + style + "_" + view

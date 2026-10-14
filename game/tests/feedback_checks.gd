@@ -4,7 +4,7 @@ extends SceneTree
 
 const CHARACTER = preload("res://characters/Character.tscn")
 const AUDIO_SHUTDOWN = preload("res://tests/test_audio_shutdown.gd")
-const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "sprint", "sneak", "crouch", "prone", "jump"]
+const ACTIONS = ["move_forward", "move_back", "move_left", "move_right", "run", "walk", "crouch", "prone", "jump"]
 var failures: Array[String] = []
 var world: Node3D
 var actor: AtlasCharacter
@@ -91,7 +91,7 @@ func _test_silence() -> void:
 	_expect(_count("landing") == 0, "startupcontact geeft geen kunstmatige impact")
 	await _reset()
 	var before := _count("step")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(90)
 	_expect(_count("step") == before, "Shift in stilstand geeft geen stappen")
 	var wall := _box(Vector3(0, 2.5, -1), Vector3(8, 5, 0.2))
@@ -106,13 +106,13 @@ func _test_silence() -> void:
 
 
 func _test_gait_distance() -> void:
-	for profile in ["walk", "sprint", "sneak", "crouch", "prone"]:
+	for profile in ["jog", "run", "walk", "crouch", "prone"]:
 		await _reset()
 		if profile == "crouch":
 			actor.request_posture(1)
 		elif profile == "prone":
 			actor.request_posture(2)
-		if profile in ["sprint", "sneak"]:
+		if profile in ["run", "walk"]:
 			Input.action_press(profile)
 		await _frames(4)
 		var before := _count("step")
@@ -144,7 +144,7 @@ func _test_jump_and_contact() -> void:
 	await _frames(1)
 	_expect(not actor.is_on_floor() and _count("jump") == jump_before + 1, "geaccepteerde afzet geeft exact één jumpcue")
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(12)
 	_expect(not actor.is_on_floor() and _count("step") == steps_before, "W/Shift in vlucht geven geen grondstappen")
 	_release_inputs()
@@ -163,7 +163,7 @@ func _test_jump_and_contact() -> void:
 
 
 func _test_slide_and_virtual_support() -> void:
-	await _sprint_jump()
+	await _run_jump()
 	var land_before := _count("landing")
 	var slide_before := _count("slide_landing")
 	await _pulse("crouch")
@@ -191,7 +191,7 @@ func _test_slide_and_virtual_support() -> void:
 	var original_snap := actor.floor_snap_length
 	actor.crouch_capsule_radius = 0.15
 	actor.floor_snap_length = 0.0
-	await _sprint_jump()
+	await _run_jump()
 	await _pulse("crouch")
 	await _landing()
 	land_before = _count("landing")
@@ -217,7 +217,7 @@ func _test_slide_and_virtual_support() -> void:
 func _test_ground_slide_feedback() -> void:
 	await _reset()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(80)
 	var land_before := _count("landing")
 	var slide_landing_before := _count("slide_landing")
@@ -226,7 +226,7 @@ func _test_ground_slide_feedback() -> void:
 	var contact_before := contacts.size()
 	await _pulse("crouch")
 	await _frames(3)
-	_expect(_flag("slide_active") and bool(_state().get("slide_loop_active", false)) and bool(_state().get("slide_audio_playing", false)), "sprintgrondslide start een echte schuurlaag zonder voorafgaande sprong")
+	_expect(_flag("slide_active") and bool(_state().get("slide_loop_active", false)) and bool(_state().get("slide_audio_playing", false)), "rungrondslide start een echte schuurlaag zonder voorafgaande sprong")
 	Input.action_press("crouch")
 	var uninterrupted := true
 	for frame in 12:
@@ -238,7 +238,7 @@ func _test_ground_slide_feedback() -> void:
 	for index in range(contact_before, contacts.size()):
 		false_landing = false_landing or bool(contacts[index].landed)
 	_expect(not false_landing and _count("landing") == land_before and _count("slide_landing") == slide_landing_before and _count("jump") == jump_before, "grondslide geeft geen vals landingcontact, landingcue of afzetcue")
-	_expect(_count("step") == steps_before, "actieve sprintgrondslide speelt schuren zonder gewone stapcues")
+	_expect(_count("step") == steps_before, "actieve rungrondslide speelt schuren zonder gewone stapcues")
 	await _pulse("jump")
 	_expect(not actor.is_on_floor() and not bool(_state().get("slide_loop_active", true)) and _count("jump") == jump_before + 1, "echte sprong uit grondslide stopt schuren en geeft exact één afzetcue")
 
@@ -251,12 +251,12 @@ func _test_routing_and_instances() -> void:
 	var other: AtlasCharacter = CHARACTER.instantiate()
 	other.procedural_enabled = false
 	other.position = Vector3(20, 0.05, 0)
-	other.walk_step_distance = actor.walk_step_distance * 2.0
+	other.jog_step_distance = actor.jog_step_distance * 2.0
 	world.add_child(other)
 	await _frames(8)
 	var other_feedback: Node = other.get_node("Feedback")
 	var other_before: Dictionary = other_feedback.call("get_debug_state")
-	_expect(other_feedback != feedback and other.walk_step_distance != actor.walk_step_distance, "instances hebben eigen feedbackcomponent en afzonderlijke Inspectorinstellingen")
+	_expect(other_feedback != feedback and other.jog_step_distance != actor.jog_step_distance, "instances hebben eigen feedbackcomponent en afzonderlijke Inspectorinstellingen")
 	actor.set_camera_distance(0.0)
 	await _pulse("jump")
 	_expect(_last_route() == "local", "eigen afzet gebruikt zoomonafhankelijke lokale audio")
@@ -280,7 +280,7 @@ func _test_routing_and_instances() -> void:
 	_expect(int(other_feedback.call("get_debug_state").get("cue_counts", {}).get("landing", 0)) == int(other_before.get("cue_counts", {}).get("landing", 0)), "een landing van de eerste instance raakt de tweede contactgeschiedenis niet")
 	actor.set_controlled(true)
 	other.set_controlled(false)
-	await _sprint_jump()
+	await _run_jump()
 	await _pulse("crouch")
 	await _landing()
 	actor.set("feedback_enabled", false)
@@ -314,7 +314,7 @@ func _physics_trace(enabled: bool) -> Array:
 	await _reset()
 	var values: Array = []
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	for frame in 180:
 		if frame == 60:
 			Input.action_press("jump")
@@ -335,10 +335,10 @@ func _physics_trace(enabled: bool) -> Array:
 	return values
 
 
-func _sprint_jump() -> void:
+func _run_jump() -> void:
 	await _reset()
 	Input.action_press("move_forward")
-	Input.action_press("sprint")
+	Input.action_press("run")
 	await _frames(80)
 	await _pulse("jump")
 	await _frames(6)

@@ -4,7 +4,7 @@ func _run() -> void:
 	_phase_transfer()
 	await _style_transfers()
 	var report: Array = []
-	for mode in ["walk", "jog", "sprint"]:
+	for mode in ["walk", "jog", "run"]:
 		for direction in [Vector2(0,-1), Vector2(1,0), Vector2(-1,0)]:
 			_build(4, true)
 			await _ticks(20)
@@ -14,8 +14,8 @@ func _run() -> void:
 			for actor in actors:
 				var intent := AtlasCharacterIntent.new()
 				intent.movement=direction
-				intent.sneak=mode=="walk"
-				intent.sprint=mode=="sprint"
+				intent.walk=mode=="walk"
+				intent.run=mode=="run"
 				actor.submit_intent(intent)
 			for tick in 180:
 				await _ticks(1)
@@ -100,7 +100,7 @@ func _phase_transfer() -> void:
 func _style_transfers() -> void:
 	_build(4,true)
 	await _ticks(20)
-	var routes := [["walk",Vector2(0,-1),73],["jog",Vector2(0,-1),47],["sprint",Vector2(0,-1),31],["walk",Vector2(0,-1),53],["sprint",Vector2(1,0),57],["jog",Vector2(1,-1).normalized(),43],["walk",Vector2(-1,0),49],["jog",Vector2(0,-1),51]]
+	var routes := [["walk",Vector2(0,-1),73],["jog",Vector2(0,-1),47],["run",Vector2(0,-1),31],["walk",Vector2(0,-1),53],["run",Vector2(1,0),57],["jog",Vector2(1,-1).normalized(),43],["walk",Vector2(-1,0),49],["jog",Vector2(0,-1),51]]
 	var previous: Array = [{},{},{},{}]
 	var peak_error := 0.0
 	var peak_hand_delta := 0.0
@@ -109,8 +109,8 @@ func _style_transfers() -> void:
 		for actor in actors:
 			var intent := AtlasCharacterIntent.new()
 			intent.movement=route[1]
-			intent.sneak=route[0]=="walk"
-			intent.sprint=route[0]=="sprint"
+			intent.walk=route[0]=="walk"
+			intent.run=route[0]=="run"
 			actor.submit_intent(intent)
 		for tick in int(route[2]):
 			await _ticks(1)

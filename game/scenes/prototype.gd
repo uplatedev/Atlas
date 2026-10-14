@@ -99,7 +99,7 @@ func _process(delta: float) -> void:
 	var speed_fov: Variant = character.get("camera_speed_fov_enabled")
 	values_label.text = "%s · %s · %.2f m/s\nZoom %.1f / vrij %.1f m · FOV %.1f°\nF4 snelheid %s · F6 audio %s · F7 landing %s · F9 vaart-FOV %s" % [
 		str(state.get("posture", "staan")),
-		_movement_label(str(state.get("motion_mode", "lopen"))),
+		_movement_label(str(state.get("motion_mode", "jog"))),
 		float(state.get("speed", 0.0)),
 		float(state.get("camera_distance", 0.0)),
 		float(state.get("camera_actual_distance", state.get("camera_distance", 0.0))),
@@ -147,4 +147,4 @@ func _version_text() -> String:
 	return "%s\nGodot %s" % [version, Engine.get_version_info().string]
 
 func _movement_label(mode: String) -> String:
-	return str({"lopen": "joggen", "sneak": "wandelen"}.get(mode, mode))
+	return str({"walk": "Walk", "jog": "Jog", "run": "Run"}.get(mode, mode))

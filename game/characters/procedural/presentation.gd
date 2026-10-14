@@ -55,7 +55,7 @@ var _measured_leg_length: float = 0.76
 var _ankle_height: float = 0.1
 var _hip_height: float = 0.85
 var _speed: float = 0.0
-var _motion_profile: String = "lopen"
+var _motion_profile: String = "jog"
 var _side_hop: bool = false
 var _side_amount: float = 0.0
 var _gait_yaw: float = 0.0
@@ -201,7 +201,7 @@ func reset_pose() -> void:
 	_swing_style = ""
 	_initialized_pose = false
 	_speed = 0.0
-	_motion_profile = "lopen"
+	_motion_profile = "jog"
 	_relaxed_walk = false
 	_jogging = true
 	_running_pose = 0.0
@@ -257,7 +257,7 @@ func consume_frame(frame: Variant) -> void:
 	_body_transform = frame.body_transform
 	_speed = frame.horizontal_speed
 	var motion: Variant = frame.get("motion_profile")
-	_motion_profile = str(motion) if motion != null else "lopen"
+	_motion_profile = str(motion) if motion != null else "jog"
 	_phase = frame.gait_phase
 	var changed_step: bool = frame.step_index != _step_index
 	_step_index = frame.step_index
@@ -270,8 +270,8 @@ func consume_frame(frame: Variant) -> void:
 		_head_pitch = look.y
 	_posture = frame.posture
 	_sliding = frame.sliding
-	_relaxed_walk = _motion_profile == "sneak"
-	_jogging = _motion_profile == "lopen"
+	_relaxed_walk = _motion_profile == "walk"
+	_jogging = _motion_profile == "jog"
 	var style_rate: float = frame.delta / maxf(_profile.gait_blend_time, 0.01)
 	_running_pose = move_toward(_running_pose, _requested_running_blend(), style_rate)
 	_jog_pose = move_toward(_jog_pose, 1.0 if _jogging and _speed > 0.1 else 0.0, style_rate)
@@ -306,14 +306,14 @@ func consume_frame(frame: Variant) -> void:
 		_body_transform.basis *= Basis(Vector3.UP, _gait_yaw)
 	else:
 		_update_gait_basis(frame, standing, changed_step)
-	_foot_phase.sample(frame, _relaxed_walk, _side_hop, _shuffle_lead, _setting("walking_double_support_ratio", 0.18), _setting("shuffle_lead_contact_ratio", 0.22), _setting("shuffle_trail_release_ratio", 0.55), _shuffle_first_support)
+	_foot_phase.sample(frame, _relaxed_walk, _side_hop, _shuffle_lead, _setting("walk_double_support_ratio", 0.18), _setting("shuffle_lead_contact_ratio", 0.22), _setting("shuffle_trail_release_ratio", 0.55), _shuffle_first_support)
 	var next_swing_style := ("shuffle%d" % _shuffle_lead) if _side_hop else ("walk" if _relaxed_walk else "run")
 	var swing_style_changed := _swing_style != "" and next_swing_style != _swing_style
 	_swing_style = next_swing_style
 	var moving_stride := standing and not stationary and _air_kind in ["none", "stride"]
 	var length := minf(_measured_leg_length * _profile.step_length_ratio, _measured_leg_length * 0.85)
 	var running := _running_blend()
-	var lift := _profile.foot_lift_ratio * _measured_leg_length * lerpf(_profile.walking_lift_ratio, 1.0, running)
+	var lift := _profile.foot_lift_ratio * _measured_leg_length * lerpf(_profile.walk_lift_ratio, 1.0, running)
 	# Nieuwe steun wordt eerst bewezen; pas daarna mag de oude overlap los.
 	for side in [stance, 1 - stance]:
 		# Een omkeernulpassage is geen rustcontact: bewaar de bereikte vrije voet
@@ -408,7 +408,7 @@ func consume_frame(frame: Variant) -> void:
 		if _locked[side]:
 			_targets[side] = _contacts[side] + Vector3.UP * _ankle_height
 			if moving_stride and (_walking_pose > 0.0 or _jog_pose > 0.0) and not _side_hop:
-				_foot_roll[side] = _foot_phase.roll(side, _setting("walking_heel_strike_degrees", 12.0), _setting("walking_toe_off_degrees", 24.0)) * _walking_pose
+				_foot_roll[side] = _foot_phase.roll(side, _setting("walk_heel_strike_degrees", 12.0), _setting("walk_toe_off_degrees", 24.0)) * _walking_pose
 				_foot_roll[side] += _foot_phase.roll(side, 0.0, _profile.ankle_swing_degrees * 2.0) * _jog_pose
 				_targets[side] = _rolled_ankle(side, _foot_roll[side])
 		elif moving_stride and _side_hop:
@@ -416,7 +416,7 @@ func consume_frame(frame: Variant) -> void:
 		elif moving_stride:
 			var progress := _swing_progress(side)
 			var speed_mix := clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0)
-			var heel_height := _measured_leg_length * _profile.heel_recovery_ratio * lerpf(_profile.walking_lift_ratio * 0.12, 1.0, running) * speed_mix
+			var heel_height := _measured_leg_length * _profile.heel_recovery_ratio * lerpf(_profile.walk_lift_ratio * 0.12, 1.0, running) * speed_mix
 			heel_height = lerpf(heel_height, _measured_leg_length * _profile.heel_recovery_ratio * 0.45 * clampf(_speed / 3.0, 0.0, 1.0), _jog_pose)
 			var lateral_ahead := _body_transform.basis.x * ahead.dot(_body_transform.basis.x)
 			# Zijdelings herstel blijft in de toekomstige voetbaan; achteruit zwaaien
@@ -552,8 +552,8 @@ func _requested_running_blend() -> float:
 	if _relaxed_walk:
 		return 0.0
 	if _jogging:
-		return _profile.jogging_pose_blend
-	if _motion_profile == "sprint" and _speed > 0.1:
+		return _profile.jog_pose_blend
+	if _motion_profile == "run" and _speed > 0.1:
 		return 1.0
 	return smoothstep(0.50, 0.90, clampf(_speed / maxf(_profile.reference_speed, 0.1), 0.0, 1.0))
 
@@ -949,15 +949,15 @@ func _pose_arm(side: int, low: bool, prone: bool) -> void:
 	var amplitude := deg_to_rad(lerpf(8.0, _profile.arm_swing_degrees, speed_mix)) * clampf(_speed / 0.6, 0.0, 1.0)
 	var side_sign := -1.0 if side == 0 else 1.0
 	var reach := lerpf(0.94, 0.76, speed_mix)
-	var sprint_offset := Basis(Vector3.RIGHT, swing * amplitude) * Vector3(side_sign * length * 0.08, -length * reach, 0.0)
-	sprint_offset.z -= length * _profile.arm_forward_ratio
-	sprint_offset.x -= side_sign * length * _profile.arm_inward_ratio * maxf(swing, 0.0) * speed_mix
-	# De wandelarm hangt laag en zwaait klein uit de schouder; geen verkleinde sprintarm.
+	var run_offset := Basis(Vector3.RIGHT, swing * amplitude) * Vector3(side_sign * length * 0.08, -length * reach, 0.0)
+	run_offset.z -= length * _profile.arm_forward_ratio
+	run_offset.x -= side_sign * length * _profile.arm_inward_ratio * maxf(swing, 0.0) * speed_mix
+	# De wandelarm hangt laag en zwaait klein uit de schouder; geen verkleinde runarm.
 	var walk_swing := cos((float(_step_index) + _pose_phase()) * PI - 0.12) * (-1.0 if side == 0 else 1.0)
-	var walk_amplitude := deg_to_rad(_profile.walking_arm_swing_degrees) * clampf(_speed / 0.6, 0.0, 1.0)
-	var walk_offset := Basis(Vector3.RIGHT, walk_swing * walk_amplitude) * Vector3(side_sign * length * 0.06, -length * _profile.walking_arm_reach_ratio, 0.0)
+	var walk_amplitude := deg_to_rad(_profile.walk_arm_swing_degrees) * clampf(_speed / 0.6, 0.0, 1.0)
+	var walk_offset := Basis(Vector3.RIGHT, walk_swing * walk_amplitude) * Vector3(side_sign * length * 0.06, -length * _profile.walk_arm_reach_ratio, 0.0)
 	walk_offset.z -= length * 0.015
-	var offset := walk_offset.lerp(sprint_offset, _running_blend())
+	var offset := walk_offset.lerp(run_offset, _running_blend())
 	if _jog_pose > 0.0:
 		# Joggen heeft gebogen ellebogen en actieve schouderzwaai, ook bij 3 m/s.
 		var jog_amplitude := deg_to_rad(25.0) * clampf(_speed / 1.0, 0.0, 1.0)

@@ -49,10 +49,10 @@ func _run() -> void:
 	print("PROCEDURAL INTEGRATION: ", "PASS" if failures.is_empty() else str(failures))
 	quit(0 if failures.is_empty() else 1)
 
-func _send(actor: AtlasCharacter, moving: bool, sprint: bool = false) -> void:
+func _send(actor: AtlasCharacter, moving: bool, run: bool = false) -> void:
 	var intent := AtlasCharacterIntent.new()
 	intent.movement = Vector2(0, -1) if moving else Vector2.ZERO
-	intent.sprint = sprint
+	intent.run = run
 	actor.submit_intent(intent)
 
 func _check_running() -> void:

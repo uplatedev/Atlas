@@ -39,14 +39,14 @@ position = Vector3(2, 0.05, 2)
 display_name = "Lange bovenbenen · 90 kg"
 body_profile = ExtResource("4_long_thighs")
 capsule_color = Color(0.93, 0.55, 0.24, 1)
-walk_forward_speed = 6.5
-walk_acceleration = 40.0
-walk_deceleration = 48.0
-walk_turn_speed = 600.0
-sprint_forward_speed = 11.0
-sprint_acceleration = 32.0
-sprint_deceleration = 42.0
-sprint_turn_speed = 360.0
+jog_forward_speed = 6.5
+jog_acceleration = 40.0
+jog_deceleration = 48.0
+jog_turn_speed = 600.0
+run_forward_speed = 11.0
+run_acceleration = 32.0
+run_deceleration = 42.0
+run_turn_speed = 360.0
 step_height = 0.5
 
 [node name="AtlasC" parent="Characters" instance=ExtResource("3_character")]
@@ -91,7 +91,7 @@ text = "Atlas"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.78, 0.84, 0.9, 1)
 theme_override_font_sizes/font_size = 15
-text = "lopen · 0.00 m/s"
+text = "Jog · 0.00 m/s"
 
 [node name="Debug" type="Label" parent="UI/Info/Margin/Rows"]
 layout_mode = 2
@@ -122,7 +122,7 @@ theme_override_constants/margin_bottom = 10
 [node name="Keys" type="Label" parent="UI/Help/Margin"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
-text = "WASD joggen   ·   Shift sprint   ·   Alt wandelen   ·   C kruip aan/uit   ·   Z lig aan/uit\nC tijdens sprint / sprong → slide   ·   C tijdens slide → na afloop kruip   ·   S remt\nSpatie springen / oprichten   ·   Scroll zoom   ·   Tab wisselen   ·   I testimpuls   ·   R reset\nF3 debug   ·   F4 FOV   ·   F6 audio   ·   F7 landing   ·   F9 lucht-/slide-FOV   ·   Esc muis vrij"
+text = "WASD Jog   ·   Shift Run   ·   Alt Walk   ·   C kruip aan/uit   ·   Z lig aan/uit\nC tijdens Run / sprong → slide   ·   C tijdens slide → na afloop kruip   ·   S remt\nSpatie springen / oprichten   ·   Scroll zoom   ·   Tab wisselen   ·   I testimpuls   ·   R reset\nF3 debug   ·   F4 FOV   ·   F6 audio   ·   F7 landing   ·   F9 lucht-/slide-FOV   ·   Esc muis vrij"
 
 [node name="FPS" type="Label" parent="UI"]
 anchors_preset = 1

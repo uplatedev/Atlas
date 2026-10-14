@@ -185,7 +185,7 @@ func _walk_transition() -> void:
 				_expect(max_foot_delta < 0.10, "startlopen tijdens bijstap plant geen verre voetvoorspelling")
 		var state := presentation.get_debug_state()
 		_expect(absf(float(state.turn_body_offset)) < 0.01 and int(state.turn_active_side) == -1, "lopen uit bijstap ruimt visuele draai op")
-		_expect(Vector2(actor.velocity.x, actor.velocity.z).length() > 8.0, "bijstappen verandert sprintmotor niet")
+		_expect(Vector2(actor.velocity.x, actor.velocity.z).length() > 8.0, "bijstappen verandert runmotor niet")
 		print("TURN WALK delay=", delay, " largest foot delta=", max_foot_delta)
 		max_foot_delta = 0.0
 		_send(PI * 0.8)
@@ -333,10 +333,10 @@ func _reset() -> void:
 	lock_drift = 0.0
 	stationary_check = true
 
-func _send(yaw: float, movement: Vector2 = Vector2.ZERO, sprint: bool = false, pitch: float = 0.0) -> void:
+func _send(yaw: float, movement: Vector2 = Vector2.ZERO, run: bool = false, pitch: float = 0.0) -> void:
 	var intent := AtlasCharacterIntent.new()
 	intent.movement = movement
-	intent.sprint = sprint
+	intent.run = run
 	intent.has_look_direction = true
 	intent.look_direction = Vector2(yaw, pitch)
 	actor.submit_intent(intent)

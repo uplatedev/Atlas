@@ -38,8 +38,8 @@ var _total_pose_offset: Vector3 = Vector3.ZERO
 var _fov: float = 70.0
 var _target_fov: float = 70.0
 var _air_fov_mix: float = 0.0
-var _air_walk_limit: float = 5.0
-var _air_sprint_limit: float = 9.0
+var _air_jog_limit: float = 5.0
+var _air_run_limit: float = 9.0
 var _initialized: bool = false
 var _camera_shape: SphereShape3D = SphereShape3D.new()
 
@@ -134,8 +134,8 @@ func reset_view(reset_motion_history: bool = false) -> void:
 	_pitch = _clamp_pitch(deg_to_rad(_value("camera_start_pitch", -12.0)))
 	if reset_motion_history:
 		_air_fov_mix = 0.0
-		_air_walk_limit = 5.0
-		_air_sprint_limit = 9.0
+		_air_jog_limit = 5.0
+		_air_run_limit = 9.0
 		_clear_landing_history()
 	set_distance(_value("camera_start_distance", 4.0))
 	_zoom_distance = _requested_distance
@@ -319,11 +319,11 @@ func _required_camera_radius() -> float:
 	var size := get_viewport().get_visible_rect().size
 	var aspect := size.x / maxf(size.y, 1.0)
 	var maximum_fov := maxf(_value("camera_fov_third_person", 70.0), _value("camera_fov_first_person", 75.0))
-	var maximum_offset := maxf(0.0, maxf(_value("camera_sneak_fov_offset", -2.0), maxf(_value("camera_crouch_fov_offset", -3.0), _value("camera_prone_fov_offset", -5.0))))
+	var maximum_offset := maxf(0.0, maxf(_value("camera_walk_fov_offset", -2.0), maxf(_value("camera_crouch_fov_offset", -3.0), _value("camera_prone_fov_offset", -5.0))))
 	var slide_bonus := 0.0
 	if _value("camera_fov_refinement_enabled", true):
 		slide_bonus = maxf(_value("camera_slide_fov_bonus", 3.0), _value("camera_first_person_slide_fov_bonus", 1.5))
-	maximum_fov = clampf(maxf(_fov, maximum_fov + maximum_offset + float(_value("camera_sprint_fov_bonus", 6.0)) + maxf(slide_bonus, 0.0)), 30.0, 110.0)
+	maximum_fov = clampf(maxf(_fov, maximum_fov + maximum_offset + float(_value("camera_run_fov_bonus", 6.0)) + maxf(slide_bonus, 0.0)), 30.0, 110.0)
 	var near_height := _camera.near * tan(deg_to_rad(maximum_fov) * 0.5)
 	var near_width := near_height * aspect
 	return sqrt(_camera.near * _camera.near + near_height * near_height + near_width * near_width) + 0.01
@@ -609,26 +609,26 @@ func _motion_profile() -> String:
 	return _motion.motion_profile
 
 
-func _speed_mix(horizontal: Vector3, walk_limit: float, sprint_limit: float) -> float:
-	if sprint_limit <= walk_limit:
+func _speed_mix(horizontal: Vector3, jog_limit: float, run_limit: float) -> float:
+	if run_limit <= jog_limit:
 		return 0.0
-	return clampf((horizontal.length() - walk_limit) / (sprint_limit - walk_limit), 0.0, 1.0)
+	return clampf((horizontal.length() - jog_limit) / (run_limit - jog_limit), 0.0, 1.0)
 
 
 ## Geaccepteerde afzet bevat de vaart vóór sprongbonus. Haar mix is de bovengrens:
 ## luchtrem mag alleen terugnemen; uitgeschakelde refinement bewaart de oude mapping.
-func capture_jump(horizontal: Vector3, walk_limit: float, sprint_limit: float, sneaking: bool) -> void:
-	_air_fov_mix = 0.0 if sneaking else _speed_mix(horizontal, walk_limit, sprint_limit)
-	_air_walk_limit = walk_limit
-	_air_sprint_limit = sprint_limit
+func capture_jump(horizontal: Vector3, jog_limit: float, run_limit: float, walking: bool) -> void:
+	_air_fov_mix = 0.0 if walking else _speed_mix(horizontal, jog_limit, run_limit)
+	_air_jog_limit = jog_limit
+	_air_run_limit = run_limit
 
 
 ## De grondvaart vóór move_and_slide bewaart ook bij gewoon van een rand lopen
 ## exact hetzelfde vluchtbeeld. Grond-FOV zelf gebruikt de echte afgelegde vaart.
-func capture_ground_motion(horizontal: Vector3, walk_limit: float, sprint_limit: float, low_or_sneaking: bool) -> void:
-	_air_fov_mix = 0.0 if low_or_sneaking else _speed_mix(horizontal, walk_limit, sprint_limit)
-	_air_walk_limit = walk_limit
-	_air_sprint_limit = sprint_limit
+func capture_ground_motion(horizontal: Vector3, jog_limit: float, run_limit: float, low_or_walking: bool) -> void:
+	_air_fov_mix = 0.0 if low_or_walking else _speed_mix(horizontal, jog_limit, run_limit)
+	_air_jog_limit = jog_limit
+	_air_run_limit = run_limit
 
 
 func capture_posture(posture: String) -> void:
@@ -638,21 +638,21 @@ func capture_posture(posture: String) -> void:
 
 func get_fov_speed_mix() -> float:
 	_refresh_motion_sample()
-	if _motion_profile() in ["sneak", "kruipen", "crouch", "liggen", "prone"]:
+	if _motion_profile() in ["walk", "kruipen", "crouch", "liggen", "prone"]:
 		return 0.0
 	if not _motion.grounded:
 		if _value("camera_fov_refinement_enabled", true):
-			return minf(_air_fov_mix, _speed_mix(_motion.horizontal_velocity, _air_walk_limit, _air_sprint_limit))
+			return minf(_air_fov_mix, _speed_mix(_motion.horizontal_velocity, _air_jog_limit, _air_run_limit))
 		return _air_fov_mix
-	return _speed_mix(_motion.actual_horizontal_velocity, _motion.walk_speed_limit, _motion.sprint_speed_limit)
+	return _speed_mix(_motion.actual_horizontal_velocity, _motion.jog_speed_limit, _motion.run_speed_limit)
 
 
 func _profile_fov_offset() -> float:
 	if not _value("camera_speed_fov_enabled", true):
 		return 0.0
 	match _motion_profile():
-		"sneak":
-			return _value("camera_sneak_fov_offset", -2.0)
+		"walk":
+			return _value("camera_walk_fov_offset", -2.0)
 		"kruipen", "crouch":
 			return _value("camera_crouch_fov_offset", -3.0)
 		"liggen", "prone":
@@ -674,11 +674,11 @@ func _slide_fov_offset() -> float:
 
 func _refresh_fov(delta: float, immediate: bool) -> void:
 	var mix := clampf(get_fov_speed_mix(), 0.0, 1.0)
-	if _motion_profile() in ["sneak", "kruipen", "crouch", "liggen", "prone"]:
+	if _motion_profile() in ["walk", "kruipen", "crouch", "liggen", "prone"]:
 		mix = 0.0
 	var target := _base_fov() + _profile_fov_offset() + _slide_fov_offset()
 	if _value("camera_speed_fov_enabled", true):
-		target += mix * float(_value("camera_sprint_fov_bonus", 6.0))
+		target += mix * float(_value("camera_run_fov_bonus", 6.0))
 	target = clampf(target, 30.0, 110.0)
 	_target_fov = target
 	var half_life: float = _value("camera_fov_rise_half_life", 0.10) if target > _fov else _value("camera_fov_return_half_life", 0.18)

@@ -29,7 +29,7 @@ func _run() -> void:
 					contact_counts[index]+=1
 					# JOG draagt zijn opvang doorlopend door de steunfase; een
 					# echte JOG-landing voegt geen losse veerimpuls toe.
-					if frame.motion_profile=="lopen" and not frame.turn_step_landed:
+					if frame.motion_profile=="jog" and not frame.turn_step_landed:
 						jog_contact_counts[index]+=1
 						_expect(_view(index).get_debug_state().compression_events==previous_event_counts[index],"JOG-contact voegt geen losse veerimpuls toe %d"%index)
 				elif frame.landed:

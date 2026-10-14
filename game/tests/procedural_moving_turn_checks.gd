@@ -4,7 +4,7 @@ extends "res://tests/procedural_knee_checks.gd"
 ## be4b773 had al tot 63 cm contactstap; de WALK-overdracht vraagt nog visueel vervolg.
 func _run() -> void:
 	var report:Array=[]
-	for mode in ["walk","jog","sprint"]:
+	for mode in ["walk","jog","run"]:
 		_build(4,true)
 		await _ticks(30)
 		var states:Array=[]
@@ -15,8 +15,8 @@ func _run() -> void:
 			for actor in actors:
 				var intent:=AtlasCharacterIntent.new()
 				intent.movement=Vector2(0,-1)
-				intent.sneak=mode=="walk"
-				intent.sprint=mode=="sprint"
+				intent.walk=mode=="walk"
+				intent.run=mode=="run"
 				intent.has_look_direction=true
 				intent.look_direction=Vector2([0.0,PI,-PI*0.5,PI*0.5,TAU][mini(tick/60,4)],0)
 				actor.submit_intent(intent)

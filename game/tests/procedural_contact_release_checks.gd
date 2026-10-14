@@ -27,7 +27,7 @@ func _run() -> void:
 		for side in range(2):
 			if frame.supported and locks[side] and view._locked[side] and previous_step==view._step_index:
 				max_pin_drift=maxf(max_pin_drift,view._contacts[side].distance_to(contacts[side]))
-	_expect(liftoffs>=5,"rechts sprinten bevat echte herhaalde liftoffs")
+	_expect(liftoffs>=5,"rechts runen bevat echte herhaalde liftoffs")
 	_expect(view._released_overreach==0,"gewone afzet telt niet als noodloslating")
 	_expect(max_pin_drift<0.00001 and view._max_planted_error<0.002,"steunpin en werkelijke enkel blijven op hun contact")
 	print("RELEASE_NORMAL liftoffs=",liftoffs," pin_drift=",max_pin_drift," planted_error=",view._max_planted_error," forced_releases=",view._released_overreach)

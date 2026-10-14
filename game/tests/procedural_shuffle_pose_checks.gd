@@ -2,7 +2,7 @@ extends "res://tests/procedural_knee_checks.gd"
 ## Wereldvaste vlakke zool, zichtbare vrije opening en echte hiel/teenhoogte.
 func _run() -> void:
 	var report: Array=[]
-	for sprinting in [false,true]:
+	for running in [false,true]:
 		_build(4,true)
 		await _ticks(20)
 		var previous: Array=[{},{},{},{}]
@@ -13,7 +13,7 @@ func _run() -> void:
 			for actor in actors:
 				var intent:=AtlasCharacterIntent.new()
 				intent.movement=Vector2(1,0)
-				intent.sprint=sprinting
+				intent.run=running
 				intent.has_look_direction=true
 				intent.look_direction=Vector2(0.0 if tick<120 else sin(float(tick-120)*0.035)*2.0,0.0)
 				actor.submit_intent(intent)
@@ -68,16 +68,16 @@ func _run() -> void:
 				view._skeleton.reset_bone_poses()
 		for index in 4:
 			var state:Dictionary=states[index]
-			_expect(state.target_error<0.003,"shuffle bereikt echte doelen %s/%d: %s"%[sprinting,index,state.target_error])
-			_expect(state.pin_marker_drift<0.003,"vlakke zool draait niet weg van het wereldcontact %s/%d: %s"%[sprinting,index,state.pin_marker_drift])
+			_expect(state.target_error<0.003,"shuffle bereikt echte doelen %s/%d: %s"%[running,index,state.target_error])
+			_expect(state.pin_marker_drift<0.003,"vlakke zool draait niet weg van het wereldcontact %s/%d: %s"%[running,index,state.pin_marker_drift])
 			_expect(state.pin_samples>10 and state.basis_change>0.01,"proef draait het lichaam tijdens echte vlakke steun")
 			_expect(state.air_samples>10 and state.min_air_gap>0.02,"shuffle blijft vrij en kruist niet")
-			_expect(state.min_air_sole>=-0.003,"echte vrije hiel/teen blijft boven bekend grondvlak: %s/%d %s"%[sprinting,index,state.min_air_sole])
+			_expect(state.min_air_sole>=-0.003,"echte vrije hiel/teen blijft boven bekend grondvlak: %s/%d %s"%[running,index,state.min_air_sole])
 			_expect(state.ankle_limit_error<0.002,"echte vrije voet behoudt anatomische enkelgrenzen")
 			_expect(state.max_sole_replans<=2,"hoogstens één herstel per vrije voet")
 			_expect(state.max_queries<=2,"geen extra grondqueries voor opening of zoolmeting")
-		print("SHUFFLE POSE ",sprinting," ",JSON.stringify(states))
-		report.append({"sprinting":sprinting,"bodies":states})
+		print("SHUFFLE POSE ",running," ",JSON.stringify(states))
+		report.append({"running":running,"bodies":states})
 		world.queue_free()
 		actors.clear()
 		frames.clear()

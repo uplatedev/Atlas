@@ -98,11 +98,11 @@ func _build(count: int, varied: bool) -> void:
 	camera.size=8.8 if count<=4 else 12.5
 	camera.current=true
 
-func _intent(amount:float,sprint:bool=false,jump:bool=false,crouch:bool=false,prone:bool=false) -> void:
+func _intent(amount:float,run:bool=false,jump:bool=false,crouch:bool=false,prone:bool=false) -> void:
 	for actor in actors:
 		var intent:=AtlasCharacterIntent.new()
 		intent.movement=Vector2(0,-amount)
-		intent.sprint=sprint
+		intent.run=run
 		intent.jump_pressed=jump
 		intent.crouch_pressed=crouch
 		intent.prone_pressed=prone
@@ -157,9 +157,9 @@ func _run() -> void:
 	_intent(1.0,true)
 	await _ticks(50)
 	await _await_kind("none",0.05,0.48)
-	await _capture("sprint_support")
+	await _capture("run_support")
 	await _await_kind("stride",0.65,0.88)
-	await _capture("sprint_flight")
+	await _capture("run_flight")
 	await _detail_views()
 	_intent(1.0,true,true)
 	await _ticks(8)

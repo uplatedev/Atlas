@@ -4,8 +4,8 @@ extends RefCounted
 ## Dezelfde besturingsinvoer voor speler en AI. Edges gelden één physicstick.
 
 var movement: Vector2 = Vector2.ZERO
-var sprint: bool = false
-var sneak: bool = false
+var run: bool = false
+var walk: bool = false
 var jump_pressed: bool = false
 var crouch_pressed: bool = false
 var prone_pressed: bool = false
@@ -16,8 +16,8 @@ var look_direction: Vector2 = Vector2.ZERO
 func copy() -> AtlasCharacterIntent:
 	var result := AtlasCharacterIntent.new()
 	result.movement = movement.limit_length(1.0)
-	result.sprint = sprint
-	result.sneak = sneak
+	result.run = run
+	result.walk = walk
 	result.jump_pressed = jump_pressed
 	result.crouch_pressed = crouch_pressed
 	result.prone_pressed = prone_pressed

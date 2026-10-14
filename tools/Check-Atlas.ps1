@@ -14,6 +14,8 @@ try {
     Write-Host 'Hoofdscene headless starten (10 frames)...'
 	Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--path', $project, '--quit-after', '10'))
 	if ($CharacterChecks) {
+		Write-Host 'Walk/Jog/Run-namen, behouden instellingen en echte scene-opslag controleren...'
+		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/movement_names_checks.gd'))
 		Write-Host 'Character-physics en scenecontrole uitvoeren...'
 		Write-Host (Invoke-AtlasEngine -Engine $engine -Arguments @('--headless', '--fixed-fps', '60', '--path', $project, '--script', 'res://tests/character_checks.gd'))
 		Write-Host 'Herhaalde sprongen, houdingen, hoofdrichting en camera controleren...'
