@@ -20,6 +20,18 @@ T-011 heeft gangcheckpoint 64fcf41a gepubliceerd en lokaal klaarstaan; menselijk
 | T-009 | Camera-accenten, stap 3 | Gepubliceerd en lokaal klaar; camera-proef open | atlas-T009-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-009-camera-accenten` | Landing en lucht-/slide-FOV met F7/F9 lokaal vergelijken |
 | T-010 | Artemis-bronbestanden delen | Afgerond; originele bestanden op main | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` (resultaat op main) | Laptop: main ophalen, source_assets/characters/Artemis openen |
 | T-011 | Grondslide en procedurele Characters | 64fcf41a gepubliceerd en lokaal klaar; beoordeling open | atlas-T011-20261013-01a1340e | STELLAR-FORGE (Windows) | `Smyl3z/T-011-procedurele-characters` | Wandelen/joggen/shuffle en begrensd draaien beoordelen; voetoverdracht blijft open |
+| T-012 | Nieuwste speelversie naar main en deze werkmap | Gereserveerd; publicatie expliciet opgedragen | atlas-T012-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-012-speelversie-main` | Checkpoint 64fcf41a integreren met actuele notities, controles herhalen en lokale main bijwerken |
+
+## T-012 — Nieuwste speelversie op main en deze computer
+
+Reservering door `atlas-T012-20261014-01a13965`, WIN-O6OHNVI0QFJ (Windows), vanaf main `c4212b46d3ad70cf5ab3169b3fd514151b916107`. Opdracht van de gebruiker op 14 oktober 2026: de nieuwste speelbare versie in de Atlas-werkmap zetten en die ook direct naar main publiceren. Scope: integratie van het reeds gepubliceerde T-011-checkpoint `64fcf41a`, behoud van de actuele main-notities, herhaling van import/start en Character-controles, en veilige lokale overdracht. Geen nieuwe gameplay of overname van de inhoudelijke T-011-claim.
+
+De expliciete publicatieopdracht staat integratie van dit bestaande proefcheckpoint toe voordat de nog open menselijke beoordeling is afgerond. Dit verklaart alleen deze publicatie; de open bewegings-/editorbeoordeling en bekende voetposeproblemen blijven zichtbaar en T-011 wordt niet als volledig geaccepteerd gemarkeerd.
+
+- **Gebouwd:** nog geen integratie; de werkmap bevat een schone main-basis. De geselecteerde werkbranch-head is op GitHub gecontroleerd.
+- **Technisch gecontroleerd:** remote en checkout gecontroleerd; Godot `4.7.2.stable.official.ed1daf0bf` beschikbaar. De GitHub-koppeling `uplate` is opnieuw geverifieerd als `uplatedev` met push-/adminrecht. Alleen de Godot-projectkiezer is open, geen projecteditor of runtime.
+- **Door de gebruiker beoordeeld:** publicatie op main expliciet gevraagd; geen nieuwe acceptatie van loop-/draaigevoel geclaimd.
+- **Volgende stap:** na aantoonbare publicatie van deze reservering de integratie in een eigen fysieke worktree voorbereiden, controleren, publiceren en de vaste werkmap op main bijwerken.
 
 ## T-011 — Grondslide en procedurele Characters
 
