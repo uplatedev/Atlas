@@ -4,7 +4,7 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
-Walk, Jog en Run zijn via T-013 de definitieve namen op main en in de vaste werkmap, met behoud van bestaande instellingen en beweging. Import/start, alle 30 bestaande suites en de nieuwe naam-/opslagcontrole slagen; import/start en de naamcontrole zijn ook in de daadwerkelijke werkmap geslaagd. Het huidige strafen is volgens de gebruiker onnatuurlijk; hij vraagt eerst alleen een oordeel over een betere zijgang, nog geen implementatie. [Naamwijziging, huidige code en voorstel](work/T-013.md). De eerdere T-011-bewegings-/editorbeoordeling en bekende voetposeproblemen blijven open.
+De bevestigde T-014-strafeproef vervangt de oude zijhup door directionele Walk/Jog/Run-passen, met dezelfde snelheden en scene-instellingen. Import/start en alle 31 suites slagen; acht grafische reeksen tonen houding en omkeren. Proefcheckpoint `04661714` is gepubliceerd op `Smyl3z/T-014-directionele-strafe` en staat in de vaste Atlas-map op deze computer. [Uitvoering, bewijs en pasproef](work/T-014.md). Menselijk oordeel over de nieuwe houding/passen blijft open; main krijgt gedeeld geheugen en behoudt tot die beoordeling de eerdere gameplay. Eerdere T-011-bewegings-/editorvragen blijven afzonderlijk open.
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -21,17 +21,19 @@ Walk, Jog en Run zijn via T-013 de definitieve namen op main en in de vaste werk
 | T-010 | Artemis-bronbestanden delen | Afgerond; originele bestanden op main | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` (resultaat op main) | Laptop: main ophalen, source_assets/characters/Artemis openen |
 | T-011 | Grondslide en procedurele Characters | 64fcf41a via T-012 naar main; beoordeling open | atlas-T011-20261013-01a1340e | STELLAR-FORGE (Windows) | `Smyl3z/T-011-procedurele-characters` | Wandelen/joggen/shuffle en begrensd draaien beoordelen; voetoverdracht blijft open |
 | T-012 | Nieuwste speelversie naar main en deze werkmap | Afgerond; main en vaste werkmap speelbaar | atlas-T012-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-012-speelversie-main` (geïntegreerd) | Open game/project.godot en F5; T-011-beoordeling en voetposeproblemen blijven open |
-| T-013 | Vaste Walk/Jog/Run-namen en strafe-uitleg | Afgerond: namen en uitleg; strafe-voorstel niet uitvoeren | atlas-T013-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-013-walk-jog-run` (geïntegreerd) | Eerst het strafe-oordeel bespreken; geen nieuwe zijgang bouwen zonder bevestiging |
-| T-014 | Directionele strafe voor Walk/Jog/Run | Gereserveerd; voorstel bevestigd | atlas-T014-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-014-directionele-strafe` | Oude zijhup vervangen, snelheden behouden en nieuwe houding/passen lokaal laten beoordelen |
+| T-013 | Vaste Walk/Jog/Run-namen en strafe-uitleg | Afgerond; strafe-vervolg bevestigd in T-014 | atlas-T013-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-013-walk-jog-run` (geïntegreerd) | Naamkeuze blijft definitief; bevestigde strafe-uitvoering in T-014 |
+| T-014 | Directionele strafe voor Walk/Jog/Run | Gepubliceerd en lokaal klaar; houding/passen te beoordelen | atlas-T014-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-014-directionele-strafe` | A/D met Alt, normaal en Shift; omkeren en diagonalen beoordelen |
 
 ## T-014 — Directionele strafe
 
 Reservering door `atlas-T014-20261014-01a13965`, WIN-O6OHNVI0QFJ (Windows), vanaf main `5dbd95c2108f6c3c884ae6085351241652de3862`. Opdracht op 14 oktober 2026: het T-013-strafevoorstel uitvoeren voor Walk, Jog en Run; snelheden voorlopig ongewijzigd houden en het oude strafe-gedrag uit de code halen. Scope: grondgebonden rustige Walk-zijpassen, compacte Jog-zijgang, meer onderlichaamsoriëntatie bij Run met behouden kijk-/bovenlichaamsrichting, consistente contacten/overgangen en bereikbewaking. Geen snelheids-, input-, camera- of netwerkherontwerp. De eerdere inhoudelijke T-011-claim blijft behouden.
 
-- **Gebouwd:** nog geen implementatie; eigen fysieke worktree voorbereid.
-- **Technisch gecontroleerd:** actuele remote en schone vaste werkmap gecontroleerd. Alleen Godot-projectkiezer open. GitHub-koppeling `uplate` opnieuw geverifieerd als `uplatedev` met push-/adminrecht.
-- **Door de gebruiker beoordeeld:** aanpak en behoud van snelheden expliciet bevestigd. Nieuwe houding en pasvorm moeten daarna worden bekeken.
-- **Volgende stap:** na aantoonbare publicatie van de reservering oude zijhup/contactroute vervangen, technische en visuele controles uitvoeren, de proef publiceren en veilig in de vaste werkmap klaarzetten.
+Gepubliceerd broncheckpoint: [`04661714a5b486007332cb482296a86c7578347d`](https://github.com/uplatedev/Atlas/commit/04661714a5b486007332cb482296a86c7578347d), bronboom `62f7a1eea9cdd4332c9b3a6ca3720fc7b59fef06`, gameboom `9bc7a6176bc88ab18c85bd0e07c17851358bc5b1`. De vaste Atlas-map op WIN-O6OHNVI0QFJ staat op dezelfde geselecteerde gameplay via lokale testbranch `Smyl3z/lokaal-testen-T014`; lokale engineinstelling en eigen bestanden zijn behouden. HUD-bronmetadata, vergelijking en omkeerbeelden staan lokaal en genegeerd. Deze statuscommit wijzigt alleen documentatie; de gepubliceerde gameplay is daarmee identiek aan de gecontroleerde bron.
+
+- **Gebouwd:** directionele Walk/Jog/Run-zijpassen met behouden snelheden, duidelijke profielinstellingen, eigen onderlichaamsoriëntatie en aparte borst-/hoofdrichting. Oude lead/follow-shuffle en zijhup uit actieve runtime/profielen/tests verwijderd. Echte vaste contacten, eerdere omkeertransfer en vloeiende armoverdracht. [Details](work/T-014.md).
+- **Technisch gecontroleerd:** Godot 4.7.2 exact: import/start en alle 31 suites PASS. 24 vaste strafegevallen en 84 directionele lichaamsgevallen; vaste pins, anatomisch bereik, zolen, contact-/gangovergangen, camera/audio en bewaarde scene-opslag. Recht vooruit Run: 92.640 waarden gelijk binnen 5×10⁻¹⁴ aan 5dbd95c2. Acht grafische reeksen, 1.440 PNGs op D3D12/Intel Iris Xe, inclusief omkeren. Exacte gecontroleerde game-/tools-bomen en grenzen in [validation.json](work/T-014/validation.json). Import/start, naam-/opslagcontrole en de volledige 24-geval-strafecontrole slagen ook in de daadwerkelijke vaste werkmap.
+- **Door de gebruiker beoordeeld:** aanpak en behoud van snelheden expliciet bevestigd. Nieuwe houding/passen nog niet bekeken of geaccepteerd; T-011-beoordeling blijft afzonderlijk open.
+- **Volgende stap:** A/D met Alt, normaal en Shift, omkeren, diagonalen en stoppen bekijken. Gameplay-integratie op main volgt na het vereiste menselijke oordeel; het gedeelde geheugen is op main bijgewerkt.
 
 ## T-013 — Walk, Jog en Run
 
