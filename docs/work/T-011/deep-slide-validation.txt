@@ -1,0 +1,27 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+SLIDE SIT live25/55/70 all4 max_ankle_error=0.00000072270632 max_flexion=152.608812116775
+STYLE CHECKS: PASS
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+INTEGRATED BODY 0 liftoffs=13 contacts=13 state={ "turn_body_offset": 0.0, "turn_torso_yaw": 0.0, "turn_pose_yaw": 0.0, "turn_active_side": -1, "turn_step_index": 0, "turn_foot_yaws": [0.0, 0.0], "leg_length": 0.67377617955208, "leg_segments": [(0.334538, 0.339238), (0.334538, 0.339239)], "arm_segments": [(0.239253, 0.237519), (0.239253, 0.237519)], "rays_last_frame": 2, "rays_total": 448, "max_reach_error": 0.0000011092111, "max_planted_error": 0.00000030438153, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(-0.115791, 0.310934, -31.59526), (0.115791, 0.285265, -31.19428)], "max_planner_usec": 553, "compression": 0.01083216691556, "compression_velocity": -0.10673245771964, "compression_events": 16 }
+INTEGRATED BODY 1 liftoffs=12 contacts=12 state={ "turn_body_offset": 0.0, "turn_torso_yaw": 0.0, "turn_pose_yaw": 0.0, "turn_active_side": -1, "turn_step_index": 0, "turn_foot_yaws": [0.0, 0.0], "leg_length": 0.75999999046326, "leg_segments": [(0.38, 0.38), (0.38, 0.38)], "arm_segments": [(0.28, 0.25), (0.28, 0.25)], "rays_last_frame": 2, "rays_total": 448, "max_reach_error": 0.0000002149076, "max_planted_error": 0.00000012383438, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(4.92525, 0.305919, -31.21158), (5.07475, 0.355169, -31.60521)], "max_planner_usec": 357, "compression": 0.01239720592023, "compression_velocity": -0.1215301605131, "compression_events": 15 }
+INTEGRATED BODY 2 liftoffs=12 contacts=12 state={ "turn_body_offset": 0.0, "turn_torso_yaw": 0.0, "turn_pose_yaw": 0.0, "turn_active_side": -1, "turn_step_index": 0, "turn_foot_yaws": [0.0, 0.0], "leg_length": 0.81000000238419, "leg_segments": [(0.49, 0.32), (0.49, 0.32)], "arm_segments": [(0.31, 0.23), (0.31, 0.23)], "rays_last_frame": 2, "rays_total": 448, "max_reach_error": 0.00000019992005, "max_planted_error": 0.00000005960464, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(9.92525, 0.213922, -31.2101), (10.07475, 0.41545, -31.57399)], "max_planner_usec": 247, "compression": 0.01539134480511, "compression_velocity": -0.12994977625223, "compression_events": 15 }
+INTEGRATED BODY 3 liftoffs=12 contacts=12 state={ "turn_body_offset": 0.0, "turn_torso_yaw": 0.0, "turn_pose_yaw": 0.0, "turn_active_side": -1, "turn_step_index": 0, "turn_foot_yaws": [0.0, 0.0], "leg_length": 0.71000003814697, "leg_segments": [(0.27, 0.44), (0.27, 0.44)], "arm_segments": [(0.22, 0.29), (0.22, 0.29)], "rays_last_frame": 2, "rays_total": 448, "max_reach_error": 0.0000002874032, "max_planted_error": 0.00000014057727, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(14.92525, 0.389252, -31.22538), (15.07475, 0.294174, -31.63313)], "max_planner_usec": 174, "compression": 0.00974843801823, "compression_velocity": -0.10557288040811, "compression_events": 15 }
+CAMERA body/view amplitude 0.0804426932591/0.01428039873255
+SUPPORTED STEP zero=true steps=25 contacts=25
+SUPPORTED STEP zero=false steps=25 contacts=25
+AI-look: renderbehoud, muisoverdracht en hoofdgrenzen PASS
+PROCEDURAL INTEGRATION: PASS
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+D3D12 12_0 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5060 Ti
+
+IMAGE turn90_step feet=[0.5127150544927, 0.0] torso=30.7140250111456 active=0 phase=0.45454545454545
+IMAGE turn90_rest feet=[1.18682389135614, 0.0] torso=34.9921296436537 active=-1 phase=1.0
+IMAGE turn180_step feet=[1.18682389135614, 0.52779498949056] torso=34.9976294942228 active=1 phase=0.45454545454545
+IMAGE turn180_rest feet=[2.4085545539856, 2.30383491516113] torso=29.2717097053461 active=-1 phase=1.0
+IMAGE turn_walk9 feet=[-3.14159250259399, -3.14159250259399] torso=5.62162917408496 active=-1 phase=1.0
+IMAGE slide_side feet=[0.0, 0.0] torso=0.0 active=-1 phase=0.0
+DEEP SLIDE SKIN vertices=3110 min_world_y=0.01187111530453
+IMAGE slide_front feet=[0.0, 0.0] torso=0.0 active=-1 phase=0.0
+IMAGE slide_four feet=[0.0, 0.0] torso=0.0 active=-1 phase=0.0

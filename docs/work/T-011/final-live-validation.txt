@@ -1,0 +1,24 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+D3D12 12_0 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5060 Ti
+
+LIVE_IMAGE user://t011_live_idle.png
+LIVE_IMAGE user://t011_live_slow.png
+LIVE_IMAGE user://t011_live_sprint_support.png
+LIVE_IMAGE user://t011_live_sprint_flight.png
+LIVE_IMAGE user://t011_live_artemis_side_0.png
+LIVE_IMAGE user://t011_live_artemis_side_1.png
+LIVE_IMAGE user://t011_live_artemis_side_2.png
+LIVE_IMAGE user://t011_live_artemis_side_3.png
+LIVE_IMAGE user://t011_live_artemis_side_4.png
+LIVE_IMAGE user://t011_live_artemis_side_5.png
+LIVE_IMAGE user://t011_live_artemis_front.png
+LIVE_IMAGE user://t011_live_artemis_back.png
+LIVE_IMAGE user://t011_live_jump.png
+LIVE_IMAGE user://t011_live_slide.png
+LIVE_IMAGE user://t011_live_crouch.png
+LIVE_IMAGE user://t011_live_prone.png
+LIVE_PERFORMANCE 1 {"frame_ms":{"max":2.743,"p50":0.565,"p95":0.87},"physics_cpu_ms":{"max":0.804,"p50":0.739,"p95":0.804},"process_cpu_ms":{"max":2.075,"p50":1.983,"p95":2.075},"queries":669,"queries_per_second":167.232064361097,"render_frames":6400,"wall_seconds":4.000429}
+LIVE_PERFORMANCE 4 {"frame_ms":{"max":3.602,"p50":1.035,"p95":2.448},"physics_cpu_ms":{"max":2.123,"p50":2.116,"p95":2.123},"process_cpu_ms":{"max":2.465,"p50":2.092,"p95":2.465},"queries":2676,"queries_per_second":668.994982537631,"render_frames":3276,"wall_seconds":4.00003}
+LIVE_PERFORMANCE 12 {"frame_ms":{"max":7.381,"p50":2.109,"p95":5.6},"physics_cpu_ms":{"max":5.127,"p50":4.95,"p95":5.127},"process_cpu_ms":{"max":3.554,"p50":3.261,"p95":3.554},"queries":8028,"queries_per_second":2006.33038723326,"render_frames":1462,"wall_seconds":4.001335}
+LIVE_IMAGE user://t011_live_main.png
+LIVE_METRICS user://t011_live_metrics.json

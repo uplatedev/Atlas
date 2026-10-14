@@ -1,0 +1,34 @@
+Final combined source: 7075dfb. No other Godot process active at start.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+D3D12 12_0 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5060 Ti
+
+LIVE_IMAGE user://t011_live_idle.png
+LIVE_IMAGE user://t011_live_slow.png
+LIVE_IMAGE user://t011_live_sprint_support.png
+LIVE_IMAGE user://t011_live_sprint_flight.png
+LIVE_IMAGE user://t011_live_artemis_side_0.png
+LIVE_IMAGE user://t011_live_artemis_side_1.png
+LIVE_IMAGE user://t011_live_artemis_side_2.png
+LIVE_IMAGE user://t011_live_artemis_side_3.png
+LIVE_IMAGE user://t011_live_artemis_side_4.png
+LIVE_IMAGE user://t011_live_artemis_side_5.png
+LIVE_IMAGE user://t011_live_artemis_front.png
+LIVE_IMAGE user://t011_live_artemis_back.png
+LIVE_IMAGE user://t011_live_jump.png
+LIVE_IMAGE user://t011_live_slide.png
+LIVE_IMAGE user://t011_live_crouch.png
+LIVE_IMAGE user://t011_live_prone.png
+LIVE_PERFORMANCE 1 {"frame_ms":{"max":2.691,"p50":0.57,"p95":0.853},"physics_cpu_ms":{"max":0.815,"p50":0.721,"p95":0.815},"process_cpu_ms":{"max":2.057,"p50":2.047,"p95":2.057},"queries":669,"queries_per_second":167.245484371922,"render_frames":6380,"wall_seconds":4.000108}
+LIVE_PERFORMANCE 4 {"frame_ms":{"max":3.82,"p50":1.012,"p95":2.323},"physics_cpu_ms":{"max":2.168,"p50":2.091,"p95":2.168},"process_cpu_ms":{"max":2.118,"p50":2.059,"p95":2.118},"queries":2676,"queries_per_second":668.905015487801,"render_frames":3423,"wall_seconds":4.000568}
+LIVE_PERFORMANCE 12 {"frame_ms":{"max":7.116,"p50":2.178,"p95":5.818},"physics_cpu_ms":{"max":4.699,"p50":4.274,"p95":4.699},"process_cpu_ms":{"max":3.451,"p50":2.981,"p95":3.309},"queries":8028,"queries_per_second":2005.69028424439,"render_frames":1425,"wall_seconds":4.002612}
+LIVE_IMAGE user://t011_live_main.png
+LIVE_METRICS user://t011_live_metrics.json
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+D3D12 12_0 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5060 Ti
+
+TORSO_IMAGE head30 torso=18.5291526824473 motor=0.0 feet=0 active=-1
+LIVE_IMAGE user://t011_live_torso_more_head30.png
+TORSO_IMAGE chest55_feet_still torso=34.8425123144908 motor=0.0 feet=0 active=-1
+LIVE_IMAGE user://t011_live_torso_more_chest55.png
+TORSO_IMAGE first_step torso=34.9359702852892 motor=72.0000020035825 feet=0 active=0
+LIVE_IMAGE user://t011_live_torso_more_first_step.png

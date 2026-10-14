@@ -27,6 +27,7 @@ mono_crash.*.json
 # Atlas: machinegebonden instellingen, werkbestanden en exports
 /.local/
 /tools/*.local.json
+/game/test-version.local.json
 /builds/
 /game/builds/
 /game/android/

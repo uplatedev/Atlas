@@ -1,0 +1,186 @@
+{
+  "footstep_concrete_000.wav": {
+    "sources": {
+      "footstep_concrete_000.ogg": "d7267e183067757c92c169de2a379abea592cfca6b39bb2e8feea15221ad79fe"
+    },
+    "sha256": "2759a69075f32938788ebb695a3da74cf786bc6fa77dd2027da01aa28905c2f2",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.10585,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -24.176,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "footstep_concrete_001.wav": {
+    "sources": {
+      "footstep_concrete_001.ogg": "507a75eb19b897087855a3be3cf11a12d7fa37d143ad535eeebe0b8031c7325d"
+    },
+    "sha256": "bee483b1706f2aa38791ad225fbc5cc408093303bb2ff64b8a056944aa5b495b",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.107574,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -24.426,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "footstep_concrete_002.wav": {
+    "sources": {
+      "footstep_concrete_002.ogg": "b21fa546d74941196b25da8a20b7010abd8c05c4fcf93545d1f344e66a664e13"
+    },
+    "sha256": "939857803e1294e20f88ba295fb13c2676502e2e15d396319a6b9e000d55deb1",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.112698,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -25.521,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "footstep_concrete_003.wav": {
+    "sources": {
+      "footstep_concrete_003.ogg": "8b513c2f0316324060b9174b8f28df6c2147418c506e6a53b77f18e149a5547b"
+    },
+    "sha256": "11b956920dd00fec1399af8478ec0dde9cadd580e49b5f60aba2fe4275fe8846",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.110431,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -24.564,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "footstep_concrete_004.wav": {
+    "sources": {
+      "footstep_concrete_004.ogg": "24dd8db2413e5b81ad181e1205c12a1c7801da5f85715d471b92a4b2f632e45e"
+    },
+    "sha256": "63458fbf9cf728797b36ae7d8771acd945910d2dcfa4d6b5561e0339c9e88175",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.114286,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -24.366,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "low_contact_carpet_000.wav": {
+    "sources": {
+      "footstep_carpet_000.ogg": "b9524658b52a99a20590f8feefc103088637fd13ea8ec35811aee785e1f2f330"
+    },
+    "sha256": "ee24ea2d28bcd6ff063c768b8bb1d4469e0495fc674e2b5061c786a1a694ed87",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.144717,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -28.03,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "low_contact_carpet_001.wav": {
+    "sources": {
+      "footstep_carpet_001.ogg": "9af3c3f76705107339e72036e4053bdca3eaa50ad31c8c929f42ce8d40e5d781"
+    },
+    "sha256": "a1aaa3496bcf218dd502bab7ef59aa009e2cccc2f032707c4f34f47f19824da4",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.144717,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -24.893,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "low_contact_carpet_002.wav": {
+    "sources": {
+      "footstep_carpet_003.ogg": "4ae7454338d57c7d102145919ae653c7d010eb542797c4f25a1c7470be3a7e4c"
+    },
+    "sha256": "029cc7a8ae763e757d131006e7a37c52a820842855865df788b4332125a4ddc8",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.144717,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -27.892,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "jump_soft_000.wav": {
+    "sources": {
+      "impactSoft_medium_000.ogg": "7d3ba0bb5e60a11b5d3e558c141303dcf494256675fbf753c0d252d2cf0481e3"
+    },
+    "sha256": "8680f8f37f42223af3450a898c4c5caa6bdec5f48aefff25866842f662b8deb1",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.117914,
+    "peak_dbfs": -8.373,
+    "rms_dbfs": -22.0,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "landing_soft_000.wav": {
+    "sources": {
+      "impactSoft_heavy_000.ogg": "49e7ca88743fca974bb8676ea138b751cfd8f9033b5e7af8736c2a215d6edbc1"
+    },
+    "sha256": "ee367951bdc4b9e01e88a5a10f82f2efced1c3e1fc72fff3c9e22455127b55e3",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.505034,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -22.492,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "jump_soft_001.wav": {
+    "sources": {
+      "impactSoft_medium_001.ogg": "7642a4fd43e547afe4f7adfadb3dabb681c0ff512f52c1674bae30a726841faf"
+    },
+    "sha256": "a36732435826601ede2fa1b1a56c631bc625714867a0ece214febfeb5e066ae1",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.18322,
+    "peak_dbfs": -7.845,
+    "rms_dbfs": -22.0,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "landing_soft_001.wav": {
+    "sources": {
+      "impactSoft_heavy_001.ogg": "4d0096364ba9e46119d2ff6df493fdc101bd2e1efae061da5e5f77a53b3fdcb6"
+    },
+    "sha256": "e5e9cf35885a06922188b6331eab5f419da80e5dd6f0fca17d7f5d958fd2f01d",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.571973,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -22.644,
+    "loop": false,
+    "boundary_delta": 0.0
+  },
+  "slide_scrape_loop.wav": {
+    "sources": {
+      "footstep_carpet_000.ogg": "b9524658b52a99a20590f8feefc103088637fd13ea8ec35811aee785e1f2f330",
+      "footstep_carpet_001.ogg": "9af3c3f76705107339e72036e4053bdca3eaa50ad31c8c929f42ce8d40e5d781",
+      "footstep_carpet_003.ogg": "4ae7454338d57c7d102145919ae653c7d010eb542797c4f25a1c7470be3a7e4c"
+    },
+    "sha256": "b6be2fa128723778f12b16cfe0f0da292b223fc4db139819d084e0633e730012",
+    "rate_hz": 22050,
+    "channels": 1,
+    "bits": 16,
+    "duration_seconds": 0.8,
+    "peak_dbfs": -6.003,
+    "rms_dbfs": -25.92,
+    "loop": true,
+    "boundary_delta": 0.0
+  }
+}

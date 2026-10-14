@@ -1,0 +1,139 @@
+@tool
+class_name AtlasStrideScheduler
+extends RefCounted
+## Kleine motorplanner. Alleen werkelijk contact beëindigt een pasvlucht.
+
+var phase: float = 0.0
+var step_index: int = 0
+var takeoff_y: float = 0.0
+var height: float = 0.0
+var double_support_ratio: float = 0.0
+var _support_duration: float = 0.0
+var _configured_support_duration: float = 0.0
+var _planned_flight_duration: float = 0.0
+var _support_only: bool = false
+var _next_step_has_flight: bool = false
+var _short_support: bool = true
+var _support_direction: Vector2 = Vector2.ZERO
+var _support_progress: float = 0.0
+var _flight_elapsed: float = 0.0
+var _flight_duration: float = 0.0
+
+
+func reset() -> void:
+	phase = 0.0
+	step_index = 0
+	cancel()
+
+
+func cancel() -> void:
+	_support_direction = Vector2.ZERO
+	_short_support = true
+	_support_only = false
+	_next_step_has_flight = false
+	_support_progress = 0.0
+	_flight_elapsed = 0.0
+	_flight_duration = 0.0
+	height = 0.0
+	phase = 0.0
+
+
+func configure_timing(support_seconds: float, flight_seconds: float, overlap: float) -> void:
+	_configured_support_duration = maxf(support_seconds, 0.0)
+	_support_duration = _configured_support_duration
+	_planned_flight_duration = maxf(flight_seconds, 0.0)
+	double_support_ratio = clampf(overlap, 0.0, 0.3)
+
+
+func get_step_duration() -> float:
+	return _support_duration + (0.0 if _support_only else _planned_flight_duration)
+
+
+func get_support_fraction() -> float:
+	return 1.0 if _support_only else _support_duration / maxf(get_step_duration(), 0.000001)
+
+
+func is_supported_cycle() -> bool:
+	return _support_only
+
+
+## Alleen een nieuwe, werkelijk gesteunde cyclus mag de volle 0..1-fase krijgen.
+func begin_supported_cycle() -> void:
+	if phase <= 0.000001:
+		_support_only = true
+
+
+func support_tick(delta: float, duration: float, moving: bool, first_support_ratio: float = 1.0, horizontal_velocity: Vector2 = Vector2.ZERO, continuous_support: bool = false, movement_requested: bool = false) -> bool:
+	if not moving:
+		# Nul snelheid bij omkeren is geen nieuwe stand. Alleen een echte stop
+		# wist de richting van de nog bestaande pin.
+		if not movement_requested:
+			_support_direction = Vector2.ZERO
+		_short_support = true
+		_support_progress = 0.0
+		phase = 0.0
+		return false
+	var reversing_support := horizontal_velocity.dot(_support_direction) < -0.1
+	if _support_direction == Vector2.ZERO:
+		_support_direction = horizontal_velocity.normalized()
+	elif reversing_support:
+		# Na omkeren ligt de bestaande steun nog aan de oude voorkant.
+		# Dit geldt ook voor sprint: de oude pin krijgt geen nieuw bereik cadeau.
+		_short_support = true
+	# Vanuit stilstand staat de eerste voet nog niet vooruit: een kortere gewone
+	# steunfase voorkomt een onbereikbare achterblijvende pin. Sprint geeft ratio 1.
+	if _short_support:
+		duration *= clampf(minf(first_support_ratio, 0.5) if reversing_support else first_support_ratio, 0.25, 1.0)
+	_support_duration = duration
+	if continuous_support and _support_progress <= 0.000001:
+		_support_only = true
+	# Snelheid verandert de verdere pascadans, niet de al afgelegde fase.
+	# Verstreken tijd delen door een groeiende duur liet de voet achteruit zwaaien.
+	_support_progress += maxf(delta, 0.0) / maxf(duration, maxf(delta, 0.000001))
+	phase = (1.0 if _support_only else 0.5) * clampf(_support_progress, 0.0, 1.0)
+	return _support_progress + 0.000001 >= 1.0
+
+
+func take_off(at_y: float, flight_height: float, gravity: float) -> float:
+	_short_support = false
+	_support_only = false
+	takeoff_y = at_y
+	height = flight_height
+	_support_progress = 0.0
+	_flight_elapsed = 0.0
+	var launch := sqrt(2.0 * gravity * height)
+	_flight_duration = 2.0 * launch / gravity
+	_planned_flight_duration = _flight_duration
+	phase = 0.5
+	return launch
+
+
+func flight_tick(delta: float) -> void:
+	_flight_elapsed += delta
+	# Een voorspelde vliegtijd is geen bewijs van steun; wacht op echte collision.
+	phase = minf(0.999, 0.5 + 0.5 * _flight_elapsed / maxf(_flight_duration, delta))
+
+
+func touch_down(horizontal_velocity: Vector2 = Vector2.ZERO) -> void:
+	step_index += 1
+	cancel()
+	# Contact is vóór de volgende versnelling geplaatst. Bewaar diens richting
+	# zodat omkeren vlak na de landing ook als korte steun wordt herkend.
+	_support_direction = horizontal_velocity.normalized()
+	_short_support = false
+	# Het contactframe plant de volgende voet: verkorte startsteun is nu voorbij.
+	_support_duration = _configured_support_duration
+
+
+func defer_flight_until_next_step() -> bool:
+	# Een volledige gesteunde zwaai eindigt eerst met echte voetwissel;
+	# afzetten op fase 0,5 zou dezelfde voet terug langs zijn baan sturen.
+	_next_step_has_flight = _support_only
+	return _next_step_has_flight
+
+
+func supported_step(horizontal_velocity: Vector2 = Vector2.ZERO) -> void:
+	var continue_support_only := not _next_step_has_flight
+	touch_down(horizontal_velocity)
+	# Geen dubbele steuntijd onder een plafond: hetzelfde bereik, volle zwaaifase.
+	_support_only = continue_support_only

@@ -1,0 +1,5 @@
+Combined source b6fa017; four bodies; forward, both side directions, both diagonals with reversal, stop, zero-height and ceiling.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WALK CONTACT METRICS: user://t011_walk_contacts_metrics.json
+WALK CONTACT CHECKS: PASS

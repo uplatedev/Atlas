@@ -1,0 +1,52 @@
+Hoofdbasis bij bijstappen: oorspronkelijke as, verwachte fout.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TURN head-body-foot sequence steps=3 crossing=0 min_side=0.17166051268578 foot_delta=0.02835295163095 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+HEAD TURN basis error degrees=36.5849930438245 maximum body offset=94.5144025071894
+TURN turn 90 steps=3 crossing=0 min_side=0.17424657940865 foot_delta=0.02320598624647 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN turn -90 steps=3 crossing=0 min_side=0.17424657940865 foot_delta=0.02320598624647 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=5 crossing=0 min_side=0.15872333943844 foot_delta=0.05550684034824 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN turn -180 steps=5 crossing=0 min_side=0.15872333943844 foot_delta=0.05550684034824 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN continuous -360 steps=17 crossing=0 min_side=0.17543302476406 foot_delta=0.02152306400239 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN continuous -720 steps=35 crossing=0 min_side=0.1754330098629 foot_delta=0.02152306959033 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN continuous 360 steps=17 crossing=0 min_side=0.17543302476406 foot_delta=0.02152306400239 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN continuous 720 steps=35 crossing=0 min_side=0.1754330098629 foot_delta=0.02152306959033 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN abrupt reversal steps=6 crossing=0 min_side=0.15872333943844 foot_delta=0.05550684034824 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN WALK delay=2 largest foot delta=0.27098536491394
+TURN STOP delay=2 largest foot delta=0.18465358018875
+TURN WALK delay=7 largest foot delta=0.26959273219109
+TURN STOP delay=7 largest foot delta=0.18316212296486
+TURN WALK delay=12 largest foot delta=0.27509382367134
+TURN STOP delay=12 largest foot delta=0.18316212296486
+TURN turn 180 steps=5 crossing=0 min_side=0.10246597230434 foot_delta=0.03583315387368 lift=0.06736087799072 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=5 crossing=0 min_side=0.10246575623751 foot_delta=0.03583307564259 lift=0.07179248332977 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=5 crossing=0 min_side=0.10246575623751 foot_delta=0.03583307564259 lift=0.06292924284935 lock_drift=0.0 offset=0.0
+TURN METRICS maximum queries=2
+PROCEDURAL TURN: FAIL
+FAIL: op/neer kijken blijft pitch zonder scheef hoofd tijdens bijstappen
+
+Dezelfde proef na correctie van de pitch-as.
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+TURN head-body-foot sequence steps=3 crossing=0 min_side=0.17166051268578 foot_delta=0.02835295163095 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+HEAD TURN basis error degrees=0.03956468118525 maximum body offset=94.5144025071894
+TURN turn 90 steps=3 crossing=0 min_side=0.17424657940865 foot_delta=0.02320598624647 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN turn -90 steps=3 crossing=0 min_side=0.17424657940865 foot_delta=0.02320598624647 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=5 crossing=0 min_side=0.15872333943844 foot_delta=0.05550684034824 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN turn -180 steps=5 crossing=0 min_side=0.15872333943844 foot_delta=0.05550684034824 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN continuous -360 steps=17 crossing=0 min_side=0.17543302476406 foot_delta=0.02152306400239 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN continuous -720 steps=35 crossing=0 min_side=0.1754330098629 foot_delta=0.02152306959033 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN continuous 360 steps=17 crossing=0 min_side=0.17543302476406 foot_delta=0.02152306400239 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN continuous 720 steps=35 crossing=0 min_side=0.1754330098629 foot_delta=0.02152306959033 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN abrupt reversal steps=6 crossing=0 min_side=0.15872333943844 foot_delta=0.05550684034824 lift=0.0597186088562 lock_drift=0.0 offset=0.0
+TURN WALK delay=2 largest foot delta=0.27098536491394
+TURN STOP delay=2 largest foot delta=0.18465358018875
+TURN WALK delay=7 largest foot delta=0.26959273219109
+TURN STOP delay=7 largest foot delta=0.18316212296486
+TURN WALK delay=12 largest foot delta=0.27509382367134
+TURN STOP delay=12 largest foot delta=0.18316212296486
+TURN turn 180 steps=5 crossing=0 min_side=0.10246597230434 foot_delta=0.03583315387368 lift=0.06736087799072 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=5 crossing=0 min_side=0.10246575623751 foot_delta=0.03583307564259 lift=0.07179248332977 lock_drift=0.0 offset=0.0
+TURN turn 180 steps=5 crossing=0 min_side=0.10246575623751 foot_delta=0.03583307564259 lift=0.06292924284935 lock_drift=0.0 offset=0.0
+TURN METRICS maximum queries=2
+PROCEDURAL TURN: PASS

@@ -1,0 +1,10 @@
+Basis: c041f65e. Helper: 798f04d. Presentatie/proeven: 225ab33.
+Lokaal geteste aanvulling in Character: SIDE gebruikt ook bij sprint de bestaande walk_start_support_ratio; root integreert deze motorvoorwaarde afzonderlijk.
+Godot 4.7.2.stable.official.ed1daf0bf, headless physics60 / --fixed-fps60.
+PASS procedural_direction_style_checks: 48 starts, stop na iedere route, 6 doorgaande overgangen; vier lichaamsverhoudingen.
+PASS procedural_presentation_checks
+PASS procedural_knee_checks
+PASS import; geen SCRIPT ERROR, ERROR of lekwaarschuwing.
+PASS procedural_direction_style_preview, D3D12 Forward+, RTX5060Ti; geen stderr.
+Echte beelden: user://t011_live_{side_jog,side_sprint,diagonal_forward,diagonal_back}_{support,flight}.png
+Geen nieuwe performanceclaim. Volledige RUN-baseline en de samengestelde Alt/JOG-proef volgen bij rootintegratie.

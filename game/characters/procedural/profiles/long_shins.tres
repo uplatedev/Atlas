@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="AtlasCharacterBodyProfile" load_steps=2 format=3]
+[ext_resource type="Script" path="res://characters/procedural/body_profile.gd" id="1"]
+[resource]
+resource_local_to_scene = true
+script = ExtResource("1")
+resource_name = "Lange onderbenen"
+mass_kg = 55.0
+test_body = 2
+test_color = Color(0.37, 0.77, 0.54, 1)

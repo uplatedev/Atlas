@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+D3D12 12_0 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5060 Ti
+
+IDLE METRICS async_frames=447 max_chest_degrees=1.78678270125789 blinks=[23, 23] sighs=[3, 3]
+IDLE IMAGE docs/work/T-011/idle-images/front_0.0.png
+IDLE IMAGE docs/work/T-011/idle-images/front_0.55.png
+IDLE IMAGE docs/work/T-011/idle-images/front_1.0.png
+IDLE IMAGE docs/work/T-011/idle-images/side_closed_look.png
+IDLE CHECKS: PASS
+
+Integrated source basis: feedb0e + idle pose integration
+Godot Engine v4.7.2.stable.official.ed1daf0bf
+Headless and D3D12 Forward+ (NVIDIA GeForce RTX 5060 Ti): same test metrics
+IDLE POSE METRICS motor=0.0 contacts=0.00000026656008 gait_phase=0.00000000949763 chest_degrees=1.03929343021848 head_degrees=0.1897456300105 shoulder_m=0.00374764413573 shoulder_axis_error=0.00000000744881 max_idle_chest_step_degrees=0.07912936904061 cache_error=0.0 async_frames=27
+IDLE BODY IMAGE idle-images/body_breath.png chest_degrees=0.54804563630056 blink=0.0
+IDLE BODY IMAGE idle-images/body_sigh.png chest_degrees=-0.95988937038186 blink=0.0
+IDLE BODY IMAGE idle-images/body_blink.png chest_degrees=-0.68024253973693 blink=1.0
+IDLE POSE CHECKS: PASS
+Repeated original helper check:
+IDLE METRICS async_frames=447 max_chest_degrees=1.78678270125789 blinks=[23, 23] sighs=[3, 3]
+IDLE CHECKS: PASS

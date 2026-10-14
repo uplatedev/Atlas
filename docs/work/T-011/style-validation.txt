@@ -1,0 +1,73 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+STYLE CHECKS: PASS
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+KNEE_BODY {"bodies":[{"arm_opposition_failures":0,"arm_opposition_samples":25,"max_ankle_pitch":2.16816585331047,"max_head_yaw_error":0.0000000534885522540662,"max_knee":42.7627711957396,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.268463402986526,"max_relative_ankle":20.0000130269907,"max_target_error":0.000000480548010273196,"min_ankle_pitch":-13.4768561652991,"min_foot_separation":0.267209053039551,"min_forward_bend":0.0343591906130314,"min_knee":11.8890593924747,"min_relative_ankle":-11.9583769254825},{"arm_opposition_failures":0,"arm_opposition_samples":25,"max_ankle_pitch":3.28701821555917,"max_head_yaw_error":0.0000000190425772927938,"max_knee":44.8461837982686,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.276454865932465,"max_relative_ankle":20.00000916214,"max_target_error":0.000000149011611938477,"min_ankle_pitch":-16.0924966916782,"min_foot_separation":0.172500014305115,"min_forward_bend":0.0340960770845413,"min_knee":10.9196233228182,"min_relative_ankle":-13.8013386536474},{"arm_opposition_failures":0,"arm_opposition_samples":25,"max_ankle_pitch":2.40656782130779,"max_head_yaw_error":0.0000000152340629000491,"max_knee":46.8994616061795,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.292921960353851,"max_relative_ankle":20.0000083958999,"max_target_error":0.000000141561031341553,"min_ankle_pitch":-22.0204510414322,"min_foot_separation":0.172500014305115,"min_forward_bend":0.035725325345993,"min_knee":11.2209029671074,"min_relative_ankle":-12.2141142603135},{"arm_opposition_failures":0,"arm_opposition_samples":25,"max_ankle_pitch":3.58826435457224,"max_head_yaw_error":0.0000000228510916855384,"max_knee":45.368706930153,"max_landing_swing_jump":0.00000000745058059692383,"max_local_horizontal_target":0.26009327173233,"max_relative_ankle":20.0000063146155,"max_target_error":0.000000201165676116943,"min_ankle_pitch":-10.8777186079993,"min_foot_separation":0.172500133514404,"min_forward_bend":0.0307264104485512,"min_knee":11.189388474277,"min_relative_ankle":-15.2474224113579}],"speed_m_s":1.0}
+KNEE_BODY {"bodies":[{"arm_opposition_failures":0,"arm_opposition_samples":20,"max_ankle_pitch":5.46638263748719,"max_head_yaw_error":0.0000000703232814203147,"max_knee":63.9861497018286,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.291357547044754,"max_relative_ankle":20.0000128490677,"max_target_error":0.000000685453414916992,"min_ankle_pitch":-20.4886838743355,"min_foot_separation":0.265319108963013,"min_forward_bend":0.0452861040830612,"min_knee":16.2953920109684,"min_relative_ankle":-10.2690920233362},{"arm_opposition_failures":0,"arm_opposition_samples":16,"max_ankle_pitch":5.61789811726074,"max_head_yaw_error":0.0000000152340629000491,"max_knee":62.2665129744945,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.323264211416245,"max_relative_ankle":20.0000077703299,"max_target_error":0.000000134110450744629,"min_ankle_pitch":-22.1980546888802,"min_foot_separation":0.171290218830109,"min_forward_bend":0.042037770152092,"min_knee":13.5208462267042,"min_relative_ankle":-13.2501572719247},{"arm_opposition_failures":0,"arm_opposition_samples":16,"max_ankle_pitch":5.03787819564737,"max_head_yaw_error":0.0000000228510916855384,"max_knee":60.3413558550347,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.308520406484604,"max_relative_ankle":20.0000099202218,"max_target_error":0.000000141561031341553,"min_ankle_pitch":-28.6312263912844,"min_foot_separation":0.171290159225464,"min_forward_bend":0.0439073145389557,"min_knee":13.8662488930317,"min_relative_ankle":-11.5834946165916},{"arm_opposition_failures":0,"arm_opposition_samples":18,"max_ankle_pitch":5.53445470253115,"max_head_yaw_error":0.0000000190425772927938,"max_knee":71.2986800008385,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.337807267904282,"max_relative_ankle":20.0000091043368,"max_target_error":0.000000201165676116943,"min_ankle_pitch":-18.654916896475,"min_foot_separation":0.171290397644043,"min_forward_bend":0.0397921204566956,"min_knee":14.5074807126908,"min_relative_ankle":-13.8879336175285}],"speed_m_s":5.0}
+KNEE_BODY {"bodies":[{"arm_opposition_failures":0,"arm_opposition_samples":8,"max_ankle_pitch":5.53455980028602,"max_head_yaw_error":0.000000185169412247888,"max_knee":129.563916074145,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.379849255084991,"max_relative_ankle":20.0001469454042,"max_target_error":0.00000110268592834473,"min_ankle_pitch":-80.9241172542367,"min_foot_separation":0.231581211090088,"min_forward_bend":0.0425393357872963,"min_knee":15.2419855956556,"min_relative_ankle":-10.1154326967823},{"arm_opposition_failures":0,"arm_opposition_samples":8,"max_ankle_pitch":5.97013013232975,"max_head_yaw_error":0.0000000761703091711752,"max_knee":127.794497513045,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.34188050031662,"max_relative_ankle":20.0000159276643,"max_target_error":0.000000208616256713867,"min_ankle_pitch":-80.1504788117384,"min_foot_separation":0.149500012397766,"min_forward_bend":0.0443220362067223,"min_knee":14.1750007642729,"min_relative_ankle":-11.9340936485575},{"arm_opposition_failures":0,"arm_opposition_samples":8,"max_ankle_pitch":4.82488192580782,"max_head_yaw_error":0.0000000457021904765043,"max_knee":133.078092798346,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.328722029924393,"max_relative_ankle":20.0000182633842,"max_target_error":0.000000149011611938477,"min_ankle_pitch":-103.121260146274,"min_foot_separation":0.149500012397766,"min_forward_bend":0.0462168008089066,"min_knee":14.5124667507849,"min_relative_ankle":-10.1310273515343},{"arm_opposition_failures":0,"arm_opposition_samples":8,"max_ankle_pitch":6.34974087758366,"max_head_yaw_error":0.0000000609362516001966,"max_knee":134.990064237613,"max_landing_swing_jump":0.0,"max_local_horizontal_target":0.357880532741547,"max_relative_ankle":20.0000133674085,"max_target_error":0.000000208616256713867,"min_ankle_pitch":-60.634757177761,"min_foot_separation":0.149499893188477,"min_forward_bend":0.0401503443717957,"min_knee":14.5865469825229,"min_relative_ankle":-13.4838404293921}],"speed_m_s":9.0}
+KNEE MOTOR CHECKS: PASS
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+COMPRESSION_METRICS {"ground_step_peak_m":[0.014867665436023,0.0167570327776795,0.0179953871027613,0.0156621302780869],"jump_peak_m":[0.0804980815811935,0.0907995050726168,0.0967731579870718,0.0848258592793094],"max_motor_difference":0.000000236555933952332,"run_contacts":[42,39,39,40],"run_peak_m":[0.0162435651997178,0.018429977700711,0.019625100761532,0.0171849528706063],"spring_event_counts":[72,69,68,70]}
+COMPRESSION CHECKS: PASS
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+INTEGRATED BODY 0 liftoffs=13 contacts=13 state={ "leg_length": 0.67377617955208, "leg_segments": [(0.334538, 0.339238), (0.334538, 0.339239)], "arm_segments": [(0.239253, 0.237519), (0.239253, 0.237519)], "rays_last_frame": 2, "rays_total": 448, "max_reach_error": 0.00000107495123, "max_planted_error": 0.00000026749555, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(-0.115791, 0.195592, -31.68531), (0.115791, 0.47182, -31.28427)], "max_planner_usec": 202, "compression": 0.00618153351148, "compression_velocity": -0.0760443523903, "compression_events": 16 }
+INTEGRATED BODY 1 liftoffs=12 contacts=12 state={ "leg_length": 0.75999999046326, "leg_segments": [(0.38, 0.38), (0.38, 0.38)], "arm_segments": [(0.28, 0.25), (0.28, 0.25)], "rays_last_frame": 2, "rays_total": 448, "max_reach_error": 0.00000025288108, "max_planted_error": 0.00000010430813, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(4.92525, 0.52112, -31.27736), (5.07475, 0.234173, -31.69941)], "max_planner_usec": 153, "compression": 0.00708719735182, "compression_velocity": -0.08700847221834, "compression_events": 15 }
+INTEGRATED BODY 2 liftoffs=12 contacts=12 state={ "leg_length": 0.81000000238419, "leg_segments": [(0.49, 0.32), (0.49, 0.32)], "arm_segments": [(0.31, 0.23), (0.31, 0.23)], "rays_last_frame": 2, "rays_total": 448, "max_reach_error": 0.00000019992005, "max_planted_error": 0.00000008195639, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(9.92525, 0.486532, -31.257), (10.07475, 0.294368, -31.67739)], "max_planner_usec": 172, "compression": 0.00922054291617, "compression_velocity": -0.10725585366195, "compression_events": 15 }
+INTEGRATED BODY 3 liftoffs=12 contacts=12 state={ "leg_length": 0.71000003814697, "leg_segments": [(0.27, 0.44), (0.27, 0.44)], "arm_segments": [(0.22, 0.29), (0.22, 0.29)], "rays_last_frame": 2, "rays_total": 448, "max_reach_error": 0.00000026697626, "max_planted_error": 0.00000015646219, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(14.92525, 0.526154, -31.33228), (15.07475, 0.152667, -31.73553)], "max_planner_usec": 140, "compression": 0.00432259419591, "compression_velocity": -0.05726567816304, "compression_events": 15 }
+CAMERA body/view amplitude 0.08044269168749/0.01293715370987
+SUPPORTED STEP zero=true steps=26 contacts=26
+SUPPORTED STEP zero=false steps=26 contacts=26
+PROCEDURAL INTEGRATION: PASS
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+BODY 0 { "leg_length": 0.75999999046326, "leg_segments": [(0.38, 0.38), (0.38, 0.38)], "arm_segments": [(0.28, 0.25), (0.28, 0.25)], "rays_last_frame": 2, "rays_total": 32, "max_reach_error": 0.00000024586916, "max_planted_error": 0.00000012065571, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(-0.0966, 0.11, 0.2772), (0.0966, 0.11, 0.2772)], "max_planner_usec": 166, "compression": 0.0, "compression_velocity": 0.0, "compression_events": 2 }
+BODY 1 { "leg_length": 0.81000000238419, "leg_segments": [(0.49, 0.32), (0.49, 0.32)], "arm_segments": [(0.31, 0.23), (0.31, 0.23)], "rays_last_frame": 2, "rays_total": 32, "max_reach_error": 0.00000016118071, "max_planted_error": 0.00000009010275, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(2.9034, 0.11, 0.2208), (3.0966, 0.11, 0.2208)], "max_planner_usec": 90, "compression": 0.0, "compression_velocity": 0.0, "compression_events": 2 }
+BODY 2 { "leg_length": 0.71000003814697, "leg_segments": [(0.27, 0.44), (0.27, 0.44)], "arm_segments": [(0.22, 0.29), (0.22, 0.29)], "rays_last_frame": 2, "rays_total": 32, "max_reach_error": 0.00000013328004, "max_planted_error": 0.00000015196262, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(5.9034, 0.11, 0.3336), (6.0966, 0.11, 0.3336)], "max_planner_usec": 83, "compression": 0.0, "compression_velocity": 0.0, "compression_events": 2 }
+BODY 3 { "leg_length": 0.67377628386021, "leg_segments": [(0.334538, 0.339238), (0.334538, 0.339239)], "arm_segments": [(0.239253, 0.237519), (0.239253, 0.23752)], "rays_last_frame": 2, "rays_total": 32, "max_reach_error": 0.00000100372904, "max_planted_error": 0.00000036271877, "released_overreach": 0, "locked_feet": [false, false], "foot_targets": [(8.850363, 0.097053, 0.238884), (9.149637, 0.097053, 0.238884)], "max_planner_usec": 148, "compression": 0.0, "compression_velocity": 0.0, "compression_events": 2 }
+PROCEDURAL PRESENTATION CHECKS: PASS
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+D3D12 12_0 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5060 Ti
+
+LIVE_IMAGE user://t011_live_style_walk_side.png
+LIVE_IMAGE user://t011_live_style_walk_back_0.png
+LIVE_IMAGE user://t011_live_style_walk_back_1.png
+LIVE_IMAGE user://t011_live_style_walk_back_2.png
+LIVE_IMAGE user://t011_live_style_run_back_0.png
+LIVE_IMAGE user://t011_live_style_run_back_1.png
+LIVE_IMAGE user://t011_live_style_run_back_2.png
+LIVE_IMAGE user://t011_live_style_run_side.png
+LIVE_IMAGE user://t011_live_style_knee_slide_side.png
+SLIDE_SKIN {"body_y":0.000166588055435568,"min_rear_skin_y":0.0375518202781677,"min_skin_y":0.00657525658607483,"min_world_skin_y":0.0067418446415104,"readback_vertices":3110}
+LIVE_IMAGE user://t011_live_style_knee_slide_front.png
+LIVE_IMAGE user://t011_live_style_knee_slide_four.png
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+D3D12 12_0 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5060 Ti
+
+SKIN_INTERPOLATION {"144":{"changed_pairs":179,"render_samples":180,"same_physics_tick_pairs":102,"skin_changed_same_tick":102,"wall_seconds":1.295828},"60":{"changed_pairs":179,"render_samples":180,"same_physics_tick_pairs":1,"skin_changed_same_tick":1,"wall_seconds":2.985065}}
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+D3D12 12_0 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce RTX 5060 Ti
+
+LIVE_IMAGE user://t011_live_idle.png
+LIVE_IMAGE user://t011_live_slow.png
+LIVE_IMAGE user://t011_live_sprint_support.png
+LIVE_IMAGE user://t011_live_sprint_flight.png
+LIVE_IMAGE user://t011_live_artemis_side_0.png
+LIVE_IMAGE user://t011_live_artemis_side_1.png
+LIVE_IMAGE user://t011_live_artemis_side_2.png
+LIVE_IMAGE user://t011_live_artemis_side_3.png
+LIVE_IMAGE user://t011_live_artemis_side_4.png
+LIVE_IMAGE user://t011_live_artemis_side_5.png
+LIVE_IMAGE user://t011_live_artemis_front.png
+LIVE_IMAGE user://t011_live_artemis_back.png
+LIVE_IMAGE user://t011_live_jump.png
+LIVE_IMAGE user://t011_live_slide.png
+LIVE_IMAGE user://t011_live_crouch.png
+LIVE_IMAGE user://t011_live_prone.png
+LIVE_PERFORMANCE 1 {"frame_ms":{"max":4.593,"p50":0.584,"p95":1.117},"physics_cpu_ms":{"max":1.205,"p50":1.01,"p95":1.205},"process_cpu_ms":{"max":3.492,"p50":3.487,"p95":3.492},"queries":669,"queries_per_second":167.249247378387,"render_frames":5608,"wall_seconds":4.000018}
+LIVE_PERFORMANCE 4 {"frame_ms":{"max":5.717,"p50":1.036,"p95":2.785},"physics_cpu_ms":{"max":2.519,"p50":1.773,"p95":2.519},"process_cpu_ms":{"max":5.413,"p50":3.566,"p95":5.413},"queries":2688,"queries_per_second":671.712507046984,"render_frames":3073,"wall_seconds":4.001712}
+LIVE_PERFORMANCE 12 {"frame_ms":{"max":7.706,"p50":2.314,"p95":5.999},"physics_cpu_ms":{"max":4.99,"p50":4.536,"p95":4.99},"process_cpu_ms":{"max":3.922,"p50":3.609,"p95":3.922},"queries":8028,"queries_per_second":2005.77647634943,"render_frames":1373,"wall_seconds":4.00244}
+LIVE_IMAGE user://t011_live_main.png
+LIVE_METRICS user://t011_live_metrics.json

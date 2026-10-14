@@ -1,6 +1,6 @@
 # Menselijke passen — technisch checkpoint
 
-Vervolg op [onderzoek](gait-research.md), [draaionderzoek](turn-research.md) en [grondproef](https://github.com/uplatedev/Atlas/blob/64fcf41a169eaad05b59f0d0672213db12a46038/docs/work/T-011/ground-trial.md). Eigenaar/scope blijft T-011; dit is een speelcheckpoint, geen volledige acceptatie of gameplayintegratie op main.
+Vervolg op [onderzoek](gait-research.md), [draaionderzoek](turn-research.md) en [grondproef](ground-trial.md). Eigenaar/scope blijft T-011; dit is een speelcheckpoint zonder volledige menselijke acceptatie. Op 14 oktober 2026 is de bestaande speelversie op expliciet verzoek van de gebruiker via T-012 naar main gebracht; de hieronder beschreven poseproblemen en beoordeling blijven open.
 
 ## Gebouwd
 
@@ -12,7 +12,7 @@ De pose maakt wandelen en joggen verschillend in voethef, achterbereik, kniehers
 
 `tools/Check-Atlas.ps1 -CharacterChecks` voert de volledige serie uit. De cadansproef telt werkelijke contacten gedurende acht seconden na twee seconden inlopen op vier verschillende lichaamsverhoudingen; hij roept geen plannertimingfunctie als oracle aan. De voetafrolproef reconstrueert echte zoolpunten uit bottransforms. Beide toetsen fysiek bereik, afzonderlijke contacten en begrensde lokale queries; ze beoordelen geen mooi uiterlijk.
 
-`game/tests/procedural_gait_review_preview.gd` levert echte beelden op 60 physics-ticks per seconde, met precies één tick per PNG. [Grondproef](https://github.com/uplatedev/Atlas/blob/64fcf41a169eaad05b59f0d0672213db12a46038/docs/work/T-011/ground-trial.md) bevat styles/views en de menselijke handelingen. `game/tests/procedural_performance_preview.gd` meet afzonderlijk met de echte renderer zonder fixed-fps/vsync, drie seconden opwarmen en vier seconden meten voor1/4/12 Characters. Deze route wacht niet op een specifieke historische pasfase. Lokale GIF/WebP-beelden en ruwe logs blijven buiten bronhistorie.
+`game/tests/procedural_gait_review_preview.gd` levert echte beelden op 60 physics-ticks per seconde, met precies één tick per PNG. [Grondproef](ground-trial.md) bevat styles/views en de menselijke handelingen. `game/tests/procedural_performance_preview.gd` meet afzonderlijk met de echte renderer zonder fixed-fps/vsync, drie seconden opwarmen en vier seconden meten voor1/4/12 Characters. Deze route wacht niet op een specifieke historische pasfase. Lokale GIF/WebP-beelden en ruwe logs blijven buiten bronhistorie.
 
 ## Technisch gecontroleerd op het checkpoint
 
