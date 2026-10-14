@@ -21,6 +21,16 @@ Het nieuwste T-011-speelcheckpoint `64fcf41a` staat via T-012 op expliciet verzo
 | T-010 | Artemis-bronbestanden delen | Afgerond; originele bestanden op main | atlas-T010-20261012-01a12fd0 | STELLAR-FORGE (Windows) | `Smyl3z/T-010-artemis-bestanden` (resultaat op main) | Laptop: main ophalen, source_assets/characters/Artemis openen |
 | T-011 | Grondslide en procedurele Characters | 64fcf41a via T-012 naar main; beoordeling open | atlas-T011-20261013-01a1340e | STELLAR-FORGE (Windows) | `Smyl3z/T-011-procedurele-characters` | Wandelen/joggen/shuffle en begrensd draaien beoordelen; voetoverdracht blijft open |
 | T-012 | Nieuwste speelversie naar main en deze werkmap | Afgerond; main en vaste werkmap speelbaar | atlas-T012-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-012-speelversie-main` (geïntegreerd) | Open game/project.godot en F5; T-011-beoordeling en voetposeproblemen blijven open |
+| T-013 | Vaste Walk/Jog/Run-namen en strafe-uitleg | Gereserveerd | atlas-T013-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-013-walk-jog-run` | Code, Inspector, input en opgeslagen instellingen coherent hernoemen; bestaand strafen onderzoeken |
+
+## T-013 — Walk, Jog en Run
+
+Opdracht van de gebruiker op 14 oktober 2026: Walk, Jog en Run worden de definitieve namen; daarnaast uitleggen hoe het huidige strafe-gedrag in de code is gedaan. Reservering door `atlas-T013-20261014-01a13965`, WIN-O6OHNVI0QFJ (Windows), vanaf main `e0ae185749cb93aaed8cdb49c24a2eea88906717`. Scope: consequente runtime-/Inspector-/HUD-/inputnamen, omzetting van bestaande opgeslagen waarden en relevante regressiecontroles. Bestaand strafe-gedrag onderzoeken en beschrijven; geen nieuwe strafe-besturing of bewegingstuning.
+
+- **Gebouwd:** nog geen codewijzigingen; eigen fysieke worktree voorbereid.
+- **Technisch gecontroleerd:** actuele remote, schone vaste werkmap en Godot-projectkiezer gecontroleerd. GitHub-koppeling `uplate` opnieuw geverifieerd als `uplatedev` met push-/adminrecht.
+- **Door de gebruiker beoordeeld:** definitieve naamkeuze expliciet gevraagd; geen nieuw strafe-ontwerp gevraagd of bevestigd.
+- **Volgende stap:** na gepubliceerde reservering de namen en opgeslagen scene-/resourcevelden tegelijk omzetten, behouden waarden controleren en strafe-uitleg aan de daadwerkelijke code toetsen.
 
 ## T-012 — Nieuwste speelversie op main en deze computer
 
