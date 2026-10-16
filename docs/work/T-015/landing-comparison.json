@@ -1,0 +1,47 @@
+{
+  "baseline_commit": "02a5edc61a35619c78fa8926d081d8868e7d68b2",
+  "physics_hz": 60,
+  "samples_per_body": 90,
+  "bodies": [
+    {
+      "body": 0,
+      "motor_and_contact_frames_exact": true,
+      "landing_ankle_speed_before_mps": 9.299080352811927,
+      "landing_ankle_speed_after_mps": 1.0805950905312456,
+      "reduction_fraction": 0.8837954884211225,
+      "max_pin_drift_m": 0,
+      "wrong_support_or_takeoff_foot": 0,
+      "max_pelvis_drop_change_m": 0.10711216532776091
+    },
+    {
+      "body": 1,
+      "motor_and_contact_frames_exact": true,
+      "landing_ankle_speed_before_mps": 9.094313994393165,
+      "landing_ankle_speed_after_mps": 0.8419482742399557,
+      "reduction_fraction": 0.9074203645531664,
+      "max_pin_drift_m": 0,
+      "wrong_support_or_takeoff_foot": 0,
+      "max_pelvis_drop_change_m": 0.11527516460633429
+    },
+    {
+      "body": 2,
+      "motor_and_contact_frames_exact": true,
+      "landing_ankle_speed_before_mps": 9.301965594395565,
+      "landing_ankle_speed_after_mps": 0.8652524739431756,
+      "reduction_fraction": 0.9069817593751917,
+      "max_pin_drift_m": 0,
+      "wrong_support_or_takeoff_foot": 0,
+      "max_pelvis_drop_change_m": 0.12334128389907818
+    },
+    {
+      "body": 3,
+      "motor_and_contact_frames_exact": true,
+      "landing_ankle_speed_before_mps": 9.002840002092167,
+      "landing_ankle_speed_after_mps": 0.8190510443360614,
+      "reduction_fraction": 0.9090230367144454,
+      "max_pin_drift_m": 0,
+      "wrong_support_or_takeoff_foot": 0,
+      "max_pelvis_drop_change_m": 0.1103678962087263
+    }
+  ]
+}
