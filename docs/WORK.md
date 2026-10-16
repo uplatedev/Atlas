@@ -4,6 +4,8 @@ Dit is het centrale overzicht. IDs blijven behouden; ideeën zijn geen opdrachte
 
 ## Actuele focus
 
+T-015 verfijnt de onderzochte eindzwaai van voorwaartse Run op de nieuwste T-014-speelbasis. De motor behoudt snelheid, cadans en dezelfde voet van landing tot afzet; de vrije voet remt naar de bewaarde wereldplek. De nieuwe landings-/knie-/bekkenpose blijft in de gepubliceerde proef te beoordelen. [Uitvoering en meetbewijs](work/T-015.md).
+
 De bevestigde T-014-strafeproef vervangt de oude zijhup door directionele Walk/Jog/Run-passen, met dezelfde snelheden en scene-instellingen. Import/start en alle 31 suites slagen; acht grafische reeksen tonen houding en omkeren. Proefcheckpoint `04661714` is gepubliceerd op `Smyl3z/T-014-directionele-strafe` en staat in de vaste Atlas-map op deze computer. [Uitvoering, bewijs en pasproef](work/T-014.md). Menselijk oordeel over de nieuwe houding/passen blijft open; main krijgt gedeeld geheugen en behoudt tot die beoordeling de eerdere gameplay. Eerdere T-011-bewegings-/editorvragen blijven afzonderlijk open.
 
 | ID | Taak | Status | Eigenaar/sessie | Machine | Werkbranch | Volgende stap |
@@ -23,6 +25,16 @@ De bevestigde T-014-strafeproef vervangt de oude zijhup door directionele Walk/J
 | T-012 | Nieuwste speelversie naar main en deze werkmap | Afgerond; main en vaste werkmap speelbaar | atlas-T012-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-012-speelversie-main` (geïntegreerd) | Open game/project.godot en F5; T-011-beoordeling en voetposeproblemen blijven open |
 | T-013 | Vaste Walk/Jog/Run-namen en strafe-uitleg | Afgerond; strafe-vervolg bevestigd in T-014 | atlas-T013-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-013-walk-jog-run` (geïntegreerd) | Naamkeuze blijft definitief; bevestigde strafe-uitvoering in T-014 |
 | T-014 | Directionele strafe voor Walk/Jog/Run | Gepubliceerd en lokaal klaar; houding/passen te beoordelen | atlas-T014-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-014-directionele-strafe` | A/D met Alt, normaal en Shift; omkeren en diagonalen beoordelen |
+| T-015 | Vloeiende Run-voetlanding | Technisch gecontroleerd; proef publiceren | atlas-T015-20261016-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-015-vloeiende-voetlanding` | Vrije voet vloeiend laten aansluiten op dezelfde vaste landingsvoet |
+
+## T-015 — Vloeiende Run-voetlanding
+
+Reservering door `atlas-T015-20261016-01a13965`, WIN-O6OHNVI0QFJ (Windows), vanaf main `c2548a8e9d5f9a1bb9f2dcd6f754f94c418c7347`. Op 16 oktober 2026 bevestigt de gebruiker uitvoering van het onderzochte aandachtspunt: de vrije Run-voet vloeiender laten aansluiten op wereldvast grondcontact en diezelfde voet door steun en afzet behouden. Basis is de nieuwste lokale T-014-proef `02a5edc6`; de gewaardeerde voorwaartse renstijl, snelheden, fysieke pascadans en directionele strafe blijven behouden. Geen links/rechtsomwisseling in de motor toevoegen.
+
+- **Gebouwd:** korte wereldvaste eindzwaai voor stabiele voorwaartse Run op vlakke grond; bereikte landingsplek wordt bij echte motorlanding dezelfde steunpin. Motor, snelheden, cadans en directionele strafe behouden. [Uitvoering en bewijs](work/T-015.md).
+- **Technisch gecontroleerd:** Godot 4.7.2: import/start en alle 32 suites PASS, inclusief nieuwe echte-enkelregressie, bereik en gangoverdracht. Bestaande 11m/s-instance-override slaagt ook. Vier rechte referentietraces hebben exact gelijke motor-/contactframes; laatste contactstap 88–91% trager, geen verkeerde steun-/afzetvoet. Exacte geteste game-/tools-bomen en grenzen staan in [validation.json](work/T-015/validation.json). Broncheckpoint volgt bij publicatie.
+- **Door de gebruiker beoordeeld:** onderzoek besproken en aanpassing expliciet opgedragen; nieuwe landingsaansluiting blijft visueel te beoordelen.
+- **Volgende stap:** proef publiceren en veilig in de vaste werkmap zetten; daarna Run van opzij bekijken, inclusief knie-/bekkenhouding en gangwissels. Gameplay-integratie wacht op noodzakelijke menselijke beoordeling.
 
 ## T-014 — Directionele strafe
 
@@ -32,8 +44,10 @@ Gepubliceerd broncheckpoint: [`04661714a5b486007332cb482296a86c7578347d`](https:
 
 - **Gebouwd:** directionele Walk/Jog/Run-zijpassen met behouden snelheden, duidelijke profielinstellingen, eigen onderlichaamsoriëntatie en aparte borst-/hoofdrichting. Oude lead/follow-shuffle en zijhup uit actieve runtime/profielen/tests verwijderd. Echte vaste contacten, eerdere omkeertransfer en vloeiende armoverdracht. [Details](work/T-014.md).
 - **Technisch gecontroleerd:** Godot 4.7.2 exact: import/start en alle 31 suites PASS. 24 vaste strafegevallen en 84 directionele lichaamsgevallen; vaste pins, anatomisch bereik, zolen, contact-/gangovergangen, camera/audio en bewaarde scene-opslag. Recht vooruit Run: 92.640 waarden gelijk binnen 5×10⁻¹⁴ aan 5dbd95c2. Acht grafische reeksen, 1.440 PNGs op D3D12/Intel Iris Xe, inclusief omkeren. Exacte gecontroleerde game-/tools-bomen en grenzen in [validation.json](work/T-014/validation.json). Import/start, naam-/opslagcontrole en de volledige 24-geval-strafecontrole slagen ook in de daadwerkelijke vaste werkmap.
-- **Door de gebruiker beoordeeld:** aanpak en behoud van snelheden expliciet bevestigd. Nieuwe houding/passen nog niet bekeken of geaccepteerd; T-011-beoordeling blijft afzonderlijk open.
+- **Door de gebruiker beoordeeld:** aanpak en behoud van snelheden expliciet bevestigd. Op 16 oktober 2026 vindt de gebruiker de voorwaartse Run in de huidige lokale proef heel goed ogen en vraagt hij een rapport over de werking en principes. Die voorwaartse renstijl is daarmee een positieve referentie; nieuwe zijpassen en overige T-011-bewegings-/editorvragen blijven afzonderlijk open.
 - **Volgende stap:** A/D met Alt, normaal en Shift, omkeren, diagonalen en stoppen bekijken. Gameplay-integratie op main volgt na het vereiste menselijke oordeel; het gedeelde geheugen is op main bijgewerkt.
+
+Onderzoek op verzoek van 16 oktober 2026, zonder gameplaywijziging: gebruiker vraagt of het einde van de Run onterecht van voet wisselt en of de landingsvoet zelf moet afzetten. Op lokale bron `02a5edc6` zijn 90 physicsticks per lichaam op vier verhoudingen gevolgd. Geen verkeerde voetidentiteit tussen landing en afzet; grondpins blijven vast. Artemis: rechts landen → circa 0,067 s rechter steun → rechter afzet → zweef → links landen, enzovoort. De rapportfiguur eindigde op 0,450 s in de zweeffase; de volgende rechter landing volgt op 0,467 s. Afzonderlijk aandachtspunt: de vrije voet heeft in de laatste meetstap naar contact nog circa 9,3 m/s voorwaartse wereldsnelheid en staat daarna vast; een vloeiende snelheidsaansluiting wordt niet gepland. Dat kan een abrupte visuele overdracht geven, maar bewijst geen links/rechtsverwisseling. Onderzoeksgegevens staan lokaal onder `.local/rapport-run/voetoverdracht*.json`; op dat onderzoeksmoment ontbrak een uitvoeringsopdracht en is niets aan beweging of instellingen aangepast. De daaropvolgende bevestigde aanpassing staat onder T-015.
 
 ## T-013 — Walk, Jog en Run
 

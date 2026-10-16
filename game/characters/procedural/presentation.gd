@@ -9,6 +9,7 @@ const IdleMotion = preload("res://characters/procedural/idle_motion.gd")
 const GaitStyle = preload("res://characters/procedural/gait_style.gd")
 const FootPhase = preload("res://characters/procedural/foot_phase.gd")
 const TurnStepPlanner = preload("res://characters/procedural/turn_step_planner.gd")
+const LandingApproach = preload("res://characters/procedural/landing_approach.gd")
 
 var _character: Node3D
 var _profile: AtlasCharacterBodyProfile
@@ -46,6 +47,8 @@ var _locked: Array[bool] = [false, false]
 var _swing_phase_origin: Array[float] = [0.0, 0.0]
 var _swing_style: String = ""
 var _swing_from: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
+var _landing_approaches: Array[AtlasLandingApproach] = [LandingApproach.new(), LandingApproach.new()]
+var _foot_velocities: Array[Vector3] = [Vector3.ZERO, Vector3.ZERO]
 var _pelvis: int = -1
 var _spine: int = -1
 var _head: int = -1
@@ -194,6 +197,9 @@ func reset_pose() -> void:
 	_walk_overlap_release_step = [-1, -1]
 	_swing_phase_origin = [0.0, 0.0]
 	_swing_style = ""
+	for approach in _landing_approaches:
+		approach.reset()
+	_foot_velocities = [Vector3.ZERO, Vector3.ZERO]
 	_initialized_pose = false
 	_speed = 0.0
 	_motion_profile = "jog"
@@ -241,6 +247,7 @@ func consume_frame(frame: Variant) -> void:
 	if _skeleton == null or _profile == null:
 		return
 	var previous_arm_phase := float(_step_index) + _pose_phase() + _arm_phase_offset
+	var previous_targets := _targets.duplicate()
 	var started := Time.get_ticks_usec()
 	_pose_delta = frame.delta
 	_rays_last_frame = 0
@@ -315,6 +322,14 @@ func consume_frame(frame: Variant) -> void:
 	var swing_style_changed := _swing_style != "" and next_swing_style != _swing_style
 	_swing_style = next_swing_style
 	var moving_stride := standing and not stationary and _air_kind in ["none", "stride"]
+	# Alleen de onderzochte voorwaartse Run. Zijgang en andere gangen behouden
+	# hun eigen voetbaan; sprong, val, draaien en stijlwissel wissen voorspellingen.
+	# Tijdens versnellen/remmen is een constante-snelheidsvoorspelling geen
+	# betrouwbare volgende steunplek. Bewaar dan de bestaande overdrachtsbaan.
+	var landing_enabled: bool = moving_stride and _motion_profile == "run" and _running_pose > 0.999 and acceleration.length() < 0.5 and _strafe_amount < 0.001 and _direction.dot(-_body_transform.basis.z) > 0.99 and _turn_release_remaining <= 0.0
+	if not landing_enabled:
+		for side in 2:
+			_release_landing_approach(side)
 	var length := minf(_measured_leg_length * _profile.step_length_ratio, _measured_leg_length * 0.85)
 	var running := _running_blend()
 	var lift := _profile.foot_lift_ratio * _measured_leg_length * lerpf(_profile.walk_lift_ratio, 1.0, running)
@@ -345,7 +360,23 @@ func consume_frame(frame: Variant) -> void:
 			ahead_length = clampf(_speed * contact_seconds * 0.5, _measured_leg_length * 0.12, _measured_leg_length * 0.50)
 		var ahead := _direction * ahead_length
 		var destination := base + ahead if moving_stride else base
+		var unplanned_destination := destination
 		var new_cycle_contact: bool = (frame.stride_landed or frame.ground_step) and side == stance
+		var approach: AtlasLandingApproach = _landing_approaches[side]
+		var approaching: bool = landing_enabled and side != stance and _air_kind == "stride" and _phase >= 0.70
+		var landing_seconds := 0.0
+		if approaching:
+			# De motor werkt op vaste ticks. Rond de resterende vlucht naar boven af:
+			# die tick meldt echte collision, de voorspelling zelf geeft geen steun.
+			var remaining: float = frame.step_duration * (1.0 - frame.support_fraction) * (1.0 - _phase) * 2.0
+			landing_seconds = ceilf(maxf(remaining, 0.0) / frame.delta) * frame.delta
+			if approach.step == _step_index:
+				destination = approach.ground
+			else:
+				destination += horizontal * landing_seconds
+		elif landing_enabled and new_cycle_contact and approach.step == _step_index - 1 and approach.ground.distance_to(destination) < _measured_leg_length * 0.30:
+			# De bereikte landingsplek wordt de pin; geen nieuw punt onder de voet.
+			destination = approach.ground
 		if _turn_release_remaining > 0.0 and supported and side == stance and (frame.stride_landed or not _locked[side]):
 			# Eerste loopcontact mag de afgeronde bijstap niet naar een verre voorspelling verplaatsen.
 			var reached := previous_target - Vector3.UP * _ankle_height
@@ -364,6 +395,12 @@ func consume_frame(frame: Variant) -> void:
 		if has_ground:
 			_normals[side] = hit.normal
 			_ground_points[side] = hit.position
+		if approaching and (not has_ground or _normals[side].dot(Vector3.UP) < 0.999 or absf(ground.y - _contacts[side].y) > _measured_leg_length * 0.05):
+			approaching = false
+			_release_landing_approach(side)
+			# Herneem de gewone baan op het al gemeten lokale grondvlak.
+			# Deze fallback claimt geen nieuwe voorspelde vlakke landing.
+			ground += (unplanned_destination - ground).slide(_normals[side])
 		var ankle := ground + Vector3.UP * _ankle_height
 		var early_walk_swing := false
 		var may_plant := supported and standing and (stationary or _foot_phase.contact[side])
@@ -391,6 +428,7 @@ func consume_frame(frame: Variant) -> void:
 			_contact_forwards[side] = -_body_transform.basis.z
 			_contact_directions[side] = _direction
 			_locked[side] = true
+			approach.reset()
 			var audible_contact: bool = new_cycle_contact and side == stance
 			if audible_contact and _initialized_pose and _speed > 0.10:
 				frame.foot_contacts.append(ground)
@@ -429,6 +467,10 @@ func consume_frame(frame: Variant) -> void:
 			_targets[side].y += _profile.get_swing_lift(progress) * lift
 			if not supported:
 				_targets[side].y = maxf(_targets[side].y, _body_transform.origin.y + _ankle_height * 0.7)
+			if approaching:
+				if approach.step != _step_index:
+					approach.begin(_step_index, previous_target, _foot_velocities[side], ground, landing_seconds + frame.delta)
+				_targets[side] = approach.advance(frame.delta, _ankle_height)
 		elif not supported:
 			_targets[side] = _body_transform * Vector3(rest.x, _ankle_height + _measured_leg_length * 0.16, 0.08 if side == 0 else -0.10)
 		else:
@@ -453,8 +495,20 @@ func consume_frame(frame: Variant) -> void:
 	# Idle has no clock in the render pass and never owns motor/contact state.
 	_idle.advance(frame.delta, standing and stationary and supported and _air_kind == "none" and _turn_planner.active_side < 0)
 	_cache_physics_pose()
+	for side in 2:
+		_foot_velocities[side] = (_targets[side] - previous_targets[side]) / maxf(frame.delta, 0.001)
 	_frame_usec = Time.get_ticks_usec() - started
 	_max_frame_usec = maxi(_max_frame_usec, _frame_usec)
+
+func _release_landing_approach(side: int) -> void:
+	if _landing_approaches[side].step < 0:
+		return
+	if not _locked[side]:
+		# Een nieuwe gang/richting vertrekt uit de bereikte voetpositie; direct
+		# terugkeren naar de oude relatieve zwaai zou de pose laten verspringen.
+		_swing_from[side] = _body_transform.affine_inverse() * _targets[side]
+		_swing_phase_origin[side] = _foot_phase.swing[side]
+	_landing_approaches[side].reset()
 
 func _keep_turn_feet_separated() -> void:
 	# Bij snelle loopinvoer draait de capsule al terwijl de oude steunvoet vast

@@ -1,0 +1,72 @@
+{
+  "task": "T-015",
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "game_tree": "aead90f545f3bcfeb3eace3e5e0a479a71946315",
+  "tools_tree": "22df259b1d4741fc0015d491a21813c5989d2e75",
+  "baseline_commit": "02a5edc61a35619c78fa8926d081d8868e7d68b2",
+  "suite_count": 32,
+  "all_suites": "PASS",
+  "import_and_main_start": "PASS",
+  "physics_hz": 60,
+  "landing_metrics": [
+    {
+      "landings": 17,
+      "left": 8,
+      "max_landing_distance": 0.0180099178105593,
+      "max_landing_speed_ratio": 0.120064897373767,
+      "max_pin_drift": 2.83122062683105e-07,
+      "max_queries": 2,
+      "max_target_error": 1.01327896118164e-06,
+      "right": 9,
+      "support_side": 1,
+      "takeoffs": 17
+    },
+    {
+      "landings": 16,
+      "left": 8,
+      "max_landing_distance": 0.0140343317762017,
+      "max_landing_speed_ratio": 0.093563639509184,
+      "max_pin_drift": 1.26659870147705e-07,
+      "max_queries": 2,
+      "max_target_error": 1.88486438901236e-07,
+      "right": 8,
+      "support_side": 1,
+      "takeoffs": 16
+    },
+    {
+      "landings": 16,
+      "left": 8,
+      "max_landing_distance": 0.0144208744168282,
+      "max_landing_speed_ratio": 0.0961394072740104,
+      "max_pin_drift": 2.16066837310791e-07,
+      "max_queries": 2,
+      "max_target_error": 1.78813934326172e-07,
+      "right": 8,
+      "support_side": 1,
+      "takeoffs": 16
+    },
+    {
+      "landings": 16,
+      "left": 8,
+      "max_landing_distance": 0.0136508503928781,
+      "max_landing_speed_ratio": 0.0910069523918517,
+      "max_pin_drift": 1.564621925354e-07,
+      "max_queries": 2,
+      "max_target_error": 2.38418579101563e-07,
+      "right": 8,
+      "support_side": 1,
+      "takeoffs": 16
+    }
+  ],
+  "existing_instance_speed_override_11_mps": "PASS",
+  "old_source_counterfactual": "FAIL as expected: all four final landing-speed bounds",
+  "full_log_sha256": "209475c0111bbc153f693956c829ef95644f93c5e6e2d872dc0818575d07250f",
+  "visual_review": {
+    "renderer": "D3D12 Forward+ Intel Iris Xe",
+    "real_png_frames": 180,
+    "view": "side",
+    "before_after_review": true,
+    "human_acceptance": "pending"
+  },
+  "scope_limits": "Steady forward Run on flat ground; IK adapts knees/pelvis to new trajectory."
+}
