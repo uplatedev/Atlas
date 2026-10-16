@@ -68,5 +68,16 @@
     "before_after_review": true,
     "human_acceptance": "pending"
   },
-  "scope_limits": "Steady forward Run on flat ground; IK adapts knees/pelvis to new trajectory."
+  "scope_limits": "Steady forward Run on flat ground; IK adapts knees/pelvis to new trajectory.",
+  "published_code_commit": "765e9e8fbe7d987c9535870737b26623d096e3c2",
+  "fixed_workspace_delivery": {
+    "machine": "WIN-O6OHNVI0QFJ",
+    "local_branch": "Smyl3z/lokaal-testen-T015",
+    "import": "PASS",
+    "main_start": "PASS",
+    "landing_regression": "PASS",
+    "source_clean": true,
+    "editor_saved_and_closed_by_user": true,
+    "local_config_preserved": true
+  }
 }
