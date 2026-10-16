@@ -23,6 +23,16 @@ De bevestigde T-014-strafeproef vervangt de oude zijhup door directionele Walk/J
 | T-012 | Nieuwste speelversie naar main en deze werkmap | Afgerond; main en vaste werkmap speelbaar | atlas-T012-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-012-speelversie-main` (geïntegreerd) | Open game/project.godot en F5; T-011-beoordeling en voetposeproblemen blijven open |
 | T-013 | Vaste Walk/Jog/Run-namen en strafe-uitleg | Afgerond; strafe-vervolg bevestigd in T-014 | atlas-T013-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-013-walk-jog-run` (geïntegreerd) | Naamkeuze blijft definitief; bevestigde strafe-uitvoering in T-014 |
 | T-014 | Directionele strafe voor Walk/Jog/Run | Gepubliceerd en lokaal klaar; houding/passen te beoordelen | atlas-T014-20261014-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-014-directionele-strafe` | A/D met Alt, normaal en Shift; omkeren en diagonalen beoordelen |
+| T-015 | Vloeiende Run-voetlanding | Gereserveerd; uitvoering bevestigd | atlas-T015-20261016-01a13965 | WIN-O6OHNVI0QFJ (Windows) | `Smyl3z/T-015-vloeiende-voetlanding` | Vrije voet vloeiend laten aansluiten op dezelfde vaste landingsvoet |
+
+## T-015 — Vloeiende Run-voetlanding
+
+Reservering door `atlas-T015-20261016-01a13965`, WIN-O6OHNVI0QFJ (Windows), vanaf main `c2548a8e9d5f9a1bb9f2dcd6f754f94c418c7347`. Op 16 oktober 2026 bevestigt de gebruiker uitvoering van het onderzochte aandachtspunt: de vrije Run-voet vloeiender laten aansluiten op wereldvast grondcontact en diezelfde voet door steun en afzet behouden. Basis is de nieuwste lokale T-014-proef `02a5edc6`; de gewaardeerde voorwaartse renstijl, snelheden, fysieke pascadans en directionele strafe blijven behouden. Geen links/rechtsomwisseling in de motor toevoegen.
+
+- **Gebouwd:** nog niet; uitsluitend deze exclusieve reservering.
+- **Technisch gecontroleerd:** actuele main, bronversie en GitHub-identiteit/toegang gecontroleerd; implementatiecontroles volgen.
+- **Door de gebruiker beoordeeld:** onderzoek besproken en aanpassing expliciet opgedragen; nieuwe landingsaansluiting blijft visueel te beoordelen.
+- **Volgende stap:** minimale voetbaanoverdracht bouwen, contacten/bereik en bestaande beweging controleren, proef publiceren en veilig in de vaste werkmap zetten.
 
 ## T-014 — Directionele strafe
 
